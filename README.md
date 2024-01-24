@@ -1,2 +1,3 @@
 # shmup
-bullet hell a level project using pygame
+bullet hell (shoot em up) A-level project using pygame.
+Trello board - https://trello.com/b/xCHQx3Uu/shmup-trello
