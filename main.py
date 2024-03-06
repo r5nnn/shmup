@@ -19,8 +19,10 @@ icon = pygame.image.load('assets\\icon.png')
 pygame.display.set_icon(icon)
 
 # window background
-backdrop = pygame.image.load('assets\\stage.png')  # blit everything here
-backdrop_coords = screen.get_rect()  # blit to these coords
+backdrop = pygame.image.load('assets\\stage.png')  # surface to blit everything to
+# from https://www.pygame.org/docs/ref/surface.html#pygame.Surface.blit
+# blit means to Draw a source Surface onto the current Surface. The draw can be positioned with the dest argument.
+backdrop_coords = screen.get_rect()  # coordinates of surface
 
 # game speed
 fps = 165
@@ -44,7 +46,7 @@ FONT = 'assets\\Raleway.ttf'
 
 class Btn:
     def __init__(self, x, y, width, height, font_size, color_hovered, color_clicked, color_released, text_pressed, text,
-                 callback, font=FONT, text_released=WHITE):
+                 callback, font=FONT, text_released=WHITE, center=None):
         """
         :param x: x coord of top left point of rectangle
         :param y: y coord of top left point of rectangle
@@ -59,15 +61,23 @@ class Btn:
         :param callback: function to be executed when button interacted with
         :param font: font used for text
         :param text_released: color of text, defaults to white
+        :param center: optional - if you want to place the rect using coords of the center
         """
-        self.text = ''
+        self.center = center
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        # uses provided rectangle center if it is provided, otherwise uses center based on coordinates given
+        if self.center is not None:
+            self.rect.center = self.center
+        else:
+            self.center = self.rect.center
         self.surface = pygame.Surface((self.width, self.height))
         self.btn_coords = self.surface.get_rect()
-        self.btn_coords.topleft = (self.x, self.y)
+        self.btn_coords.topleft = self.rect.left, self.rect.top  # makes sure that collidepoint() uses correct coords as
+        # if center is provided, coords would be 0, 0
         self.font = pygame.font.Font(font, font_size)  # set font from file path provided, or use default file path
         self.color_hovered = color_hovered
         self.color_released = color_released
@@ -78,33 +88,29 @@ class Btn:
         self.text_color = text_released
         self.raw_text = text
         self.callback = callback
+        self.text = self.font.render(self.raw_text, True, self.text_color)  # create a surface with the specified
+        # text drawn on it
 
-    def create(self, surface):
+    def create(self, surface, event_list):
         """
-        call this method to render the button onto a surface
+        call this method to display the button on a surface
+        :param event_list: list of user input events to be iterated through
         :param surface: surface to which button should be blitted to
-        :return: n/a
-        """
-        self.text = self.font.render(self.raw_text, True,
-                                     self.text_color)  # create a surface with the specified text drawn on it
-        pygame.draw.rect(surface, self.color, (self.x, self.y, self.width, self.height), 0)
-        surface.blit(self.text, (
-            self.x + (self.width / 2 - self.text.get_width() / 2),
-            self.y + (self.height / 2 - self.text.get_height() / 2)))
-
-    def interact(self, event_list):
         """
 
-        :param event_list: list of events from pygame.event.get()
-        :return: n/a
-        """
+        # draws the rect and text inside
+        pygame.draw.rect(surface, self.color, self.rect, 0)
+        text_rect = self.text.get_rect(center=self.center)  # centers text in button
+        surface.blit(self.text, text_rect)  # blits text surface to window
+
+        # handles button interaction
         pos = pygame.mouse.get_pos()  # Pos is the mouse position: tuple of (x, y) coordinates
         if self.btn_coords.collidepoint(pos):  # collidepoint returns True if mouse coords match up with button coords
             self.text_color = self.text_pressed
             for events1 in event_list:
                 if events1.type == pygame.MOUSEBUTTONDOWN:
                     self.color = self.color_clicked
-                    self.callback(self)
+                    self.callback(self)  # function to be called when button clicked
                 else:
                     self.color = self.color_hovered
 
@@ -113,9 +119,17 @@ class Btn:
             self.text_color = self.text_released
 
 
-def printOut(text, size, x, y):
+# temporary function for printing text to center of window
+def printOut(text, size):
+    """
+    blits given string to center of window
+    :param text: text to be blit
+    :param size: font size
+    """
     font = pygame.font.Font(FONT, size)
-    screen.blit(font.render(text, True, WHITE), (x, y))
+    text = font.render(text, True, WHITE)
+    text_rect = text.get_rect(center=(winx / 2, winy / 2))
+    screen.blit(text, text_rect)
 
 
 def clicked():
@@ -124,6 +138,8 @@ def clicked():
 
 run = True
 pause = False
+back_btn = Btn(0, 0, 100, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Back',
+               lambda b: clicked(), center=(winx / 2, winy / 2))
 button1 = Btn(10, 10, 90, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Home',
               lambda b: clicked())
 button2 = Btn(110, 10, 125, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY,
@@ -155,12 +171,11 @@ while run:
                 pause = False
     screen.blit(backdrop, backdrop_coords)
     if not pause:
-        printOut('Press esc to pause', 32, winx / 2 - 140, winy / 2 - 20)
+        printOut('Press esc to pause', 32)
     else:
-        button1.create(screen)
-        button2.create(screen)
-        button1.interact(events)
-        button2.interact(events)
+        button1.create(screen, events)
+        button2.create(screen, events)
+        back_btn.create(screen, events)
     mouse = pygame.mouse.get_pos()  # stores the (x,y) coordinates into the variable as a tuple
     pygame.display.flip()  # update the backdrop surface onto the window
     clock.tick(fps)  # update the clock with the delay of the refresh rate
