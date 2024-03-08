@@ -19,7 +19,7 @@ icon = pygame.image.load('assets\\icon.png')
 pygame.display.set_icon(icon)
 
 # window background
-backdrop = pygame.image.load('assets\\stage.png')  # surface to blit everything to
+backdrop = pygame.image.load('assets\\STAGE.png')  # surface to blit everything to
 # from https://www.pygame.org/docs/ref/surface.html#pygame.Surface.blit
 # blit means to Draw a source Surface onto the current Surface. The draw can be positioned with the dest argument.
 backdrop_coords = screen.get_rect()  # coordinates of surface
@@ -40,6 +40,30 @@ TERTIARY = (35, 35, 35)
 QUATERNARY = (85, 85, 85)
 ACCENT = (237, 148, 255)
 FONT = 'assets\\Raleway.ttf'
+STAGE = 'home'
+
+
+class Txt:
+    def __init__(self, x, y, text, size, font, text_color, center=None):
+        self.center = center
+        self.text_color = text_color
+        self.y = y
+        self.x = x
+        self.font = pygame.font.Font(font, size)
+        self.text = self.font.render(text, True, self.text_color)  # create a surface with the specified
+        # text drawn on it
+        if self.center is not None:
+            self.text_rect = self.text.get_rect(center=self.center)
+            self.text_rect.center = self.center
+        else:
+            self.text_rect = self.text.get_rect(x=self.x, y=self.y)
+            self.center = self.text_rect.center
+
+    def create(self):
+        """
+        call this method to display the button on a surface
+        """
+        screen.blit(self.text, self.text_rect)
 
 
 # Object for making buttons
@@ -64,11 +88,9 @@ class Btn:
         :param center: optional - if you want to place the rect using coords of the center
         """
         self.center = center
-        self.x = x
-        self.y = y
         self.width = width
         self.height = height
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.rect = pygame.Rect(x, y, self.width, self.height)
         # uses provided rectangle center if it is provided, otherwise uses center based on coordinates given
         if self.center is not None:
             self.rect.center = self.center
@@ -86,9 +108,8 @@ class Btn:
         self.text_pressed = text_pressed
         self.color_clicked = color_clicked
         self.text_color = text_released
-        self.raw_text = text
         self.callback = callback
-        self.text = self.font.render(self.raw_text, True, self.text_color)  # create a surface with the specified
+        self.text = self.font.render(text, True, self.text_color)  # create a surface with the specified
         # text drawn on it
 
     def create(self, surface, event_list):
@@ -108,12 +129,14 @@ class Btn:
         if self.btn_coords.collidepoint(pos):  # collidepoint returns True if mouse coords match up with button coords
             self.text_color = self.text_pressed
             for events1 in event_list:
+                # if mouse is hovering over button and clicking
                 if events1.type == pygame.MOUSEBUTTONDOWN:
                     self.color = self.color_clicked
                     self.callback(self)  # function to be called when button clicked
+                # if mouse is hovering over button but not clicking
                 else:
                     self.color = self.color_hovered
-
+        # if mouse is not hovering nor clicking
         else:
             self.color = self.color_released
             self.text_color = self.text_released
@@ -132,18 +155,29 @@ def printOut(text, size):
     screen.blit(text, text_rect)
 
 
-def clicked():
-    print('click')
+def cmd(name):
+    """
+    call this method to update the stage of the screen
+    :param name: the stage you want to switch to
+    """
+    global STAGE
+    STAGE = name
 
 
 run = True
-pause = False
-back_btn = Btn(0, 0, 100, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Back',
-               lambda b: clicked(), center=(winx / 2, winy / 2))
-button1 = Btn(10, 10, 90, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Home',
-              lambda b: clicked())
-button2 = Btn(110, 10, 125, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY,
-              'Test area', lambda b: clicked())
+
+# buttons
+
+back_btn = Btn(0, 0, 205, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Back',
+               lambda b: cmd('home'), center=(winx / 2, 300))
+options_btn = Btn(0, 0, 205, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Options',
+               lambda b: cmd('options'), center=(winx/2, 225))
+
+# display text
+temp_text = Txt(0, 0, 'Press esc to pause', 32, FONT, WHITE, center=(winx/2, winy/2))
+paused_text = Txt(0, 0, 'Paused', 64, FONT, WHITE, center=(winx/2, 150))
+options_text = Txt(0, 0, 'Options', 64, FONT, WHITE, center=(winx/2, 150))
+graphics_txt = Txt(10, 10, 'graphics go here', 32, FONT, WHITE)
 
 # Game Mainloop
 
@@ -166,16 +200,23 @@ while run:
                 finally:
                     main = False
             if event.key == pygame.K_ESCAPE:
-                pause = True
-            else:
-                pause = False
+                if STAGE == 'paused_home':
+                    cmd('home')
+                else:
+                    cmd('paused_home')
     screen.blit(backdrop, backdrop_coords)
-    if not pause:
-        printOut('Press esc to pause', 32)
-    else:
-        button1.create(screen, events)
-        button2.create(screen, events)
-        back_btn.create(screen, events)
+    # match case statement to toggle between multiple stages when navigating menus and options
+    match STAGE:
+        case 'home':
+            temp_text.create()
+        case 'paused_home':
+            paused_text.create()
+            options_btn.create(screen, events)
+            back_btn.create(screen, events)
+        case 'options':
+            options_text.create()
+        case 'paused_graphics':
+            graphics_txt.create()
     mouse = pygame.mouse.get_pos()  # stores the (x,y) coordinates into the variable as a tuple
     pygame.display.flip()  # update the backdrop surface onto the window
     clock.tick(fps)  # update the clock with the delay of the refresh rate
