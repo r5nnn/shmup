@@ -29,6 +29,8 @@ fps = 165
 clock = pygame.time.Clock()
 
 # useful shorthands and global variables
+
+# colors
 BLUE = (25, 25, 200)
 BLACK = (23, 23, 23)
 WHITE = (255, 255, 255)
@@ -39,25 +41,57 @@ SECONDARY = (30, 30, 30)
 TERTIARY = (35, 35, 35)
 QUATERNARY = (85, 85, 85)
 ACCENT = (237, 148, 255)
-FONT = 'assets\\Raleway.ttf'
+
+# assets
+FONT = 'assets\\Raleway.ttf'  # font taken from: https://fonts.google.com/specimen/Raleway
+
+# game info
+KEYS = [['ESC', 'Return to previous screen']]
+KEY_ARRAY = [[50, 270 + (i * 40), KEYS[i][0], 32, FONT, WHITE] for i in range(len(KEYS))]
+INFO_ARRAY = [[winx - 50, 270 + (i * 40), KEYS[i][1], 32, FONT, WHITE] for i in range(len(KEYS))]
+
+
+# status
 STAGE = 'home'
+RUN = True
 
 
 class Txt:
-    def __init__(self, x, y, text, size, font, text_color, center=None):
+    def __init__(self, x, y, text, size, font, text_color, pos='left', center=None):
+        """
+        class for making non-interactible text
+        :param x: x coord of top left point of text
+        :param y: y coord of top left point of text
+        :param text: text to be displayed
+        :param size: size of font for text
+        :param font: what font to use for text
+        :param text_color: color of displayed text
+        :param center: optional - if you want to place the text using coords of the center
+        :param pos: optional - if you want to position text from anything other than top left corner
+        """
+        self.pos = pos
         self.center = center
         self.text_color = text_color
         self.y = y
         self.x = x
-        self.font = pygame.font.Font(font, size)
+        self.font = pygame.font.Font(font, size)  # creates a font object
         self.text = self.font.render(text, True, self.text_color)  # create a surface with the specified
         # text drawn on it
         if self.center is not None:
-            self.text_rect = self.text.get_rect(center=self.center)
+            self.text_rect = self.text.get_rect(center=self.center)  # create a temporary rect the size of the text and
+            # set the center to tuple given
             self.text_rect.center = self.center
         else:
-            self.text_rect = self.text.get_rect(x=self.x, y=self.y)
-            self.center = self.text_rect.center
+            match self.pos:
+                case 'left':
+                    self.text_rect = self.text.get_rect()  # create a temporary rect the size of the text and specify
+                    # the x and y coordinates (since it defaults to 0)
+                    self.text_rect.topleft = (self.x, self.y)
+                    self.center = self.text_rect.center
+                case 'right':
+                    self.text_rect = self.text.get_rect()
+                    self.text_rect.topright = (self.x, self.y)
+                    self.center = self.text_rect.center
 
     def create(self):
         """
@@ -66,12 +100,11 @@ class Txt:
         screen.blit(self.text, self.text_rect)
 
 
-# Object for making buttons
-
 class Btn:
     def __init__(self, x, y, width, height, font_size, color_hovered, color_clicked, color_released, text_pressed, text,
                  callback, font=FONT, text_released=WHITE, center=None):
         """
+        class for making interactible button objects
         :param x: x coord of top left point of rectangle
         :param y: y coord of top left point of rectangle
         :param width: width of rectangle from point x leftwards
@@ -132,6 +165,7 @@ class Btn:
                 # if mouse is hovering over button and clicking
                 if events1.type == pygame.MOUSEBUTTONDOWN:
                     self.color = self.color_clicked
+                elif events1.type == pygame.MOUSEBUTTONUP:
                     self.callback(self)  # function to be called when button clicked
                 # if mouse is hovering over button but not clicking
                 else:
@@ -142,47 +176,46 @@ class Btn:
             self.text_color = self.text_released
 
 
-# temporary function for printing text to center of window
-def printOut(text, size):
-    """
-    blits given string to center of window
-    :param text: text to be blit
-    :param size: font size
-    """
-    font = pygame.font.Font(FONT, size)
-    text = font.render(text, True, WHITE)
-    text_rect = text.get_rect(center=(winx / 2, winy / 2))
-    screen.blit(text, text_rect)
-
-
 def cmd(name):
     """
     call this method to update the stage of the screen
     :param name: the stage you want to switch to
     """
     global STAGE
-    STAGE = name
+    STAGE_STRUCTURE = ['home', 'paused', 'options', 'keybinds']
+    STAGE_STRUCTURE_POINTER = STAGE_STRUCTURE.index(STAGE)
+    if name == 'back':
+        if STAGE_STRUCTURE_POINTER != 0:
+            STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER-1]
+        else:
+            STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER]
+    else:
+        STAGE = name
 
-
-run = True
 
 # buttons
-
 back_btn = Btn(0, 0, 205, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Back',
-               lambda b: cmd('home'), center=(winx / 2, 300))
+               lambda b: cmd('back'), center=(winx / 2, 300))
 options_btn = Btn(0, 0, 205, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Options',
-               lambda b: cmd('options'), center=(winx/2, 225))
+                  lambda b: cmd('options'), center=(winx / 2, 225))
+keybinds_btn = Btn(0, 0, 205, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Keybinds',
+                   lambda b: cmd('keybinds'), center=(winx / 2, 225))
 
-# display text
-temp_text = Txt(0, 0, 'Press esc to pause', 32, FONT, WHITE, center=(winx/2, winy/2))
-paused_text = Txt(0, 0, 'Paused', 64, FONT, WHITE, center=(winx/2, 150))
-options_text = Txt(0, 0, 'Options', 64, FONT, WHITE, center=(winx/2, 150))
-graphics_txt = Txt(10, 10, 'graphics go here', 32, FONT, WHITE)
+# display textt
+temp_txt = Txt(0, 0, 'Press esc to pause', 32, FONT, WHITE, center=(winx / 2, winy / 2))
+paused_txt = Txt(0, 0, 'Paused', 64, FONT, WHITE, center=(winx / 2, 150))
+options_txt = Txt(0, 0, 'Options', 64, FONT, WHITE, center=(winx / 2, 150))
+keybinds_txt = Txt(0, 0, 'Keybinds', 64, FONT, WHITE, center=(winx / 2, 150))
+keybindsKEY_ARRAY_txt = Txt(50, 200, 'Keys', 48, FONT, WHITE)
+keybindsInfo_txt = Txt(winx - 50, 200, 'Description', 48, FONT, WHITE, pos='right')
+KEY_ARRAY = [Txt(i[0], i[1], i[2], i[3], i[4], i[5]) for i in KEY_ARRAY]
+INFO_ARRAY = [Txt(i[0], i[1], i[2], i[3], i[4], i[5], pos='right') for i in INFO_ARRAY]
+
+windll.user32.SetCursorPos(screenx // 2, screeny // 2)
 
 # Game Mainloop
 
-windll.user32.SetCursorPos(screenx // 2, screeny // 2)
-while run:
+while RUN:
     events = pygame.event.get()
     for event in events:  # iterates through inputs checking if they match the exit event
         if event.type == pygame.QUIT:
@@ -200,23 +233,33 @@ while run:
                 finally:
                     main = False
             if event.key == pygame.K_ESCAPE:
-                if STAGE == 'paused_home':
+                if STAGE == 'paused':
                     cmd('home')
                 else:
-                    cmd('paused_home')
+                    cmd('paused')
     screen.blit(backdrop, backdrop_coords)
+
     # match case statement to toggle between multiple stages when navigating menus and options
     match STAGE:
         case 'home':
-            temp_text.create()
-        case 'paused_home':
-            paused_text.create()
+            temp_txt.create()
+        case 'paused':
+            paused_txt.create()
             options_btn.create(screen, events)
             back_btn.create(screen, events)
         case 'options':
-            options_text.create()
-        case 'paused_graphics':
-            graphics_txt.create()
+            options_txt.create()
+            keybinds_btn.create(screen, events)
+            back_btn.create(screen, events)
+        case 'keybinds':
+            keybinds_txt.create()
+            keybindsKEY_ARRAY_txt.create()
+            keybindsInfo_txt.create()
+            for i in KEY_ARRAY:
+                i.create()
+            for i in INFO_ARRAY:
+                i.create()
+
     mouse = pygame.mouse.get_pos()  # stores the (x,y) coordinates into the variable as a tuple
     pygame.display.flip()  # update the backdrop surface onto the window
     clock.tick(fps)  # update the clock with the delay of the refresh rate
