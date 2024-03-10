@@ -13,21 +13,6 @@ winx = 600
 winy = 800
 screen = pygame.display.set_mode([winx, winy], pygame.SCALED, vsync=0)  # creates the window
 
-# window settings
-pygame.display.set_caption('shmup alpha 0.0.1')
-icon = pygame.image.load('assets\\icon.png')
-pygame.display.set_icon(icon)
-
-# window background
-backdrop = pygame.image.load('assets\\STAGE.png')  # surface to blit everything to
-# from https://www.pygame.org/docs/ref/surface.html#pygame.Surface.blit
-# blit means to Draw a source Surface onto the current Surface. The draw can be positioned with the dest argument.
-backdrop_coords = screen.get_rect()  # coordinates of surface
-
-# game speed
-fps = 165
-clock = pygame.time.Clock()
-
 # useful shorthands and global variables
 
 # colors
@@ -36,24 +21,42 @@ BLACK = (23, 23, 23)
 WHITE = (255, 255, 255)
 ALPHA = (0, 255, 0)
 BACKGROUND = (8, 8, 8)
-PRIMARY = (255, 228, 134)
-SECONDARY = (30, 30, 30)
-TERTIARY = (35, 35, 35)
-QUATERNARY = (85, 85, 85)
-ACCENT = (237, 148, 255)
+PRIMARY = (255, 228, 134)  # light yellow
+SECONDARY = (30, 30, 30)  # dark gray
+TERTIARY = (35, 35, 35)  # gray
+QUATERNARY = (85, 85, 85)  # light gray
+ACCENT = (255, 148, 252)  # light pink
 
 # assets
-FONT = 'assets\\Raleway.ttf'  # font taken from: https://fonts.google.com/specimen/Raleway
+FONT = 'assets\\fonts\\Raleway.ttf'  # font taken from: https://fonts.google.com/specimen/Raleway
+PLAYER = pygame.image.load('assets\\textures\\player.png').convert()
+ICON = pygame.image.load('assets\\textures\\icon.png').convert()
+backdrop = pygame.image.load('assets\\textures\\STAGE.png').convert()  # surface to blit everything to
+# from https://www.pygame.org/docs/ref/surface.html#pygame.Surface.blit
+# blit means to Draw a source Surface onto the current Surface. The draw can be positioned with the dest argument.
 
 # game info
+STAGE_STRUCTURE = ['home', 'paused', 'options', 'keybinds']
+INGAME_STRUCTURE = ['game', 'paused', 'options', 'keybinds']
 KEYS = [['ESC', 'Return to previous screen']]
 KEY_ARRAY = [[50, 270 + (i * 40), KEYS[i][0], 32, FONT, WHITE] for i in range(len(KEYS))]
 INFO_ARRAY = [[winx - 50, 270 + (i * 40), KEYS[i][1], 32, FONT, WHITE] for i in range(len(KEYS))]
 
-
 # status
 STAGE = 'home'
 RUN = True
+INGAME = False
+
+# window settings
+pygame.display.set_caption('shmup alpha 0.0.1')
+pygame.display.set_icon(ICON)
+
+# window background
+backdrop_coords = screen.get_rect()  # coordinates of surface
+
+# game speed
+fps = 165
+clock = pygame.time.Clock()
 
 
 class Txt:
@@ -176,19 +179,48 @@ class Btn:
             self.text_color = self.text_released
 
 
+class Player:
+    def __init__(self, x, y, width, height, speed, img):
+        self.img = img
+        self.width = width
+        self.height = height
+        self.rect = pygame.rect.Rect(x, y, self.width, self.height)
+        self.rect_surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+        self.speed = speed
+        self.bounds = None
+
+    def create(self, bounds):
+        border = bounds.get_rect()
+        key = pygame.key.get_pressed()
+        if key[pygame.K_LEFT]:
+            self.rect.move_ip(-self.speed, 0)
+        if key[pygame.K_RIGHT]:
+            self.rect.move_ip(self.speed, 0)
+        if key[pygame.K_UP]:
+            self.rect.move_ip(0, -self.speed)
+        if key[pygame.K_DOWN]:
+            self.rect.move_ip(0, self.speed)
+        self.rect.clamp_ip(border)
+        pygame.draw.rect(self.rect_surf, ACCENT, self.rect_surf.get_rect())
+        screen.blit(self.img, self.rect)
+
+
 def cmd(name):
     """
     call this method to update the stage of the screen
     :param name: the stage you want to switch to
     """
-    global STAGE
-    STAGE_STRUCTURE = ['home', 'paused', 'options', 'keybinds']
+    global STAGE, STAGE_STRUCTURE, INGAME_STRUCTURE
     STAGE_STRUCTURE_POINTER = STAGE_STRUCTURE.index(STAGE)
     if name == 'back':
         if STAGE_STRUCTURE_POINTER != 0:
-            STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER-1]
+            STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER - 1]
         else:
-            STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER]
+            if INGAME:
+                INGAME_STRUCTURE_POINTER = INGAME_STRUCTURE.index(STAGE)
+                STAGE = INGAME_STRUCTURE[INGAME_STRUCTURE_POINTER]
+            else:
+                STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER]
     else:
         STAGE = name
 
@@ -200,9 +232,11 @@ options_btn = Btn(0, 0, 205, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, '
                   lambda b: cmd('options'), center=(winx / 2, 225))
 keybinds_btn = Btn(0, 0, 205, 50, 30, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Keybinds',
                    lambda b: cmd('keybinds'), center=(winx / 2, 225))
+play_btn = Btn(0, 0, 300, 75, 35, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Play',
+               lambda b: cmd('game'), center=(winx / 2, winy / 2))
 
-# display textt
-temp_txt = Txt(0, 0, 'Press esc to pause', 32, FONT, WHITE, center=(winx / 2, winy / 2))
+# display text
+temp_txt = Txt(0, 0, 'Press esc to pause', 32, FONT, WHITE, center=(winx / 2, winy / 2 - 100))
 paused_txt = Txt(0, 0, 'Paused', 64, FONT, WHITE, center=(winx / 2, 150))
 options_txt = Txt(0, 0, 'Options', 64, FONT, WHITE, center=(winx / 2, 150))
 keybinds_txt = Txt(0, 0, 'Keybinds', 64, FONT, WHITE, center=(winx / 2, 150))
@@ -210,6 +244,9 @@ keybindsKEY_ARRAY_txt = Txt(50, 200, 'Keys', 48, FONT, WHITE)
 keybindsInfo_txt = Txt(winx - 50, 200, 'Description', 48, FONT, WHITE, pos='right')
 KEY_ARRAY = [Txt(i[0], i[1], i[2], i[3], i[4], i[5]) for i in KEY_ARRAY]
 INFO_ARRAY = [Txt(i[0], i[1], i[2], i[3], i[4], i[5], pos='right') for i in INFO_ARRAY]
+
+# game objects
+player = Player(winx/2, winy/2, 27, 19, 2, PLAYER)
 
 windll.user32.SetCursorPos(screenx // 2, screeny // 2)
 
@@ -233,16 +270,17 @@ while RUN:
                 finally:
                     main = False
             if event.key == pygame.K_ESCAPE:
-                if STAGE == 'paused':
-                    cmd('home')
+                if STAGE == 'home' or STAGE == 'game':
+                    STAGE = 'paused'
                 else:
-                    cmd('paused')
+                    cmd('back')
     screen.blit(backdrop, backdrop_coords)
 
     # match case statement to toggle between multiple stages when navigating menus and options
     match STAGE:
         case 'home':
             temp_txt.create()
+            play_btn.create(screen, events)
         case 'paused':
             paused_txt.create()
             options_btn.create(screen, events)
@@ -259,6 +297,9 @@ while RUN:
                 i.create()
             for i in INFO_ARRAY:
                 i.create()
+        case 'game':
+            INGAME = True
+            player.create(screen)
 
     mouse = pygame.mouse.get_pos()  # stores the (x,y) coordinates into the variable as a tuple
     pygame.display.flip()  # update the backdrop surface onto the window
