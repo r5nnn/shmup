@@ -37,7 +37,6 @@ backdrop = pygame.image.load('assets\\textures\\STAGE.png').convert()  # surface
 
 # game info
 STAGE_STRUCTURE = ['home', 'paused', 'options', 'keybinds']
-INGAME_STRUCTURE = ['game', 'paused', 'options', 'keybinds']
 KEYS = [['ESC', 'Return to previous screen']]
 KEY_ARRAY = [[50, 270 + (i * 40), KEYS[i][0], 32, FONT, WHITE] for i in range(len(KEYS))]
 INFO_ARRAY = [[winx - 50, 270 + (i * 40), KEYS[i][1], 32, FONT, WHITE] for i in range(len(KEYS))]
@@ -192,13 +191,13 @@ class Player:
     def create(self, bounds):
         border = bounds.get_rect()
         key = pygame.key.get_pressed()
-        if key[pygame.K_LEFT]:
+        if key[pygame.K_LEFT] or key[pygame.K_a]:
             self.rect.move_ip(-self.speed, 0)
-        if key[pygame.K_RIGHT]:
+        if key[pygame.K_RIGHT] or key[pygame.K_d]:
             self.rect.move_ip(self.speed, 0)
-        if key[pygame.K_UP]:
+        if key[pygame.K_UP] or key[pygame.K_w]:
             self.rect.move_ip(0, -self.speed)
-        if key[pygame.K_DOWN]:
+        if key[pygame.K_DOWN] or key[pygame.K_s]:
             self.rect.move_ip(0, self.speed)
         self.rect.clamp_ip(border)
         pygame.draw.rect(self.rect_surf, ACCENT, self.rect_surf.get_rect())
@@ -210,15 +209,20 @@ def cmd(name):
     call this method to update the stage of the screen
     :param name: the stage you want to switch to
     """
-    global STAGE, STAGE_STRUCTURE, INGAME_STRUCTURE
-    STAGE_STRUCTURE_POINTER = STAGE_STRUCTURE.index(STAGE)
+    global STAGE, STAGE_STRUCTURE
     if name == 'back':
-        if STAGE_STRUCTURE_POINTER != 0:
-            STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER - 1]
+        STAGE_STRUCTURE_POINTER = STAGE_STRUCTURE.index(STAGE)
+        if INGAME:
+            STAGE_STRUCTURE[0] = 'game'
+            if STAGE_STRUCTURE_POINTER != 0:
+                STAGE_STRUCTURE_POINTER = STAGE_STRUCTURE.index(STAGE)
+                STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER - 1]
+            else:
+                STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER]
         else:
-            if INGAME:
-                INGAME_STRUCTURE_POINTER = INGAME_STRUCTURE.index(STAGE)
-                STAGE = INGAME_STRUCTURE[INGAME_STRUCTURE_POINTER]
+            STAGE_STRUCTURE[0] = 'home'
+            if STAGE_STRUCTURE_POINTER != 0:
+                STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER - 1]
             else:
                 STAGE = STAGE_STRUCTURE[STAGE_STRUCTURE_POINTER]
     else:
