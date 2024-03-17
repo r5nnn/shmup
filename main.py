@@ -3,7 +3,7 @@ import sys
 from ctypes import windll
 
 # Initialise game assets and variables
-pygame.mixer.pre_init(75100, -16, 2, 2048)  # (frequency, size, channels, buffer)
+pygame.mixer.pre_init(75100, -16, 2, 2048)  # frequency, size, channels and buffer of audio
 pygame.init()  # all pygame modules initialised - not all will be used, but it is simpler this way
 
 # window dimensions
@@ -33,7 +33,7 @@ ACCENT = (255, 148, 252)  # light pink
 FONT = 'assets\\fonts\\editundo.ttf'  # font taken from: https://www.dafont.com/edit-undo.font
 
 # textures
-PLAYER = pygame.image.load('assets\\textures\\player.png').convert()
+PLAYER = pygame.image.load('assets\\textures\\player.png').convert_alpha()
 ICON = pygame.image.load('assets\\textures\\icon.png').convert()
 LOGO = pygame.image.load('assets\\textures\\logo.png').convert()
 BACKDROP = pygame.image.load('assets\\textures\\menu.png').convert()  # surface to blit everything to
@@ -42,11 +42,15 @@ BACKDROP = pygame.image.load('assets\\textures\\menu.png').convert()  # surface 
 
 # music
 MENULOOP = pygame.mixer.Sound('assets\\music\\menuloop.wav')
+CLICK = pygame.mixer.Sound('assets\\music\\click.wav')
 MENULOOP.set_volume(0.2)
+CLICK.set_volume(0.2)
 
 # game info
-STAGE_STRUCTURE = ['home', 'options', 'keybinds']
-KEYS = [['ESC', '''Pauses the game/enters options when in main menu also acts as a back key when in any other menu''']]
+STAGE_STRUCTURE = ['home', 'options', 'keybinds']  # array for creating reusable back buttons that work universally
+# keybinds and their descriptions are automatically placed in the keybinds menu through a for loop
+KEYS = [['ESC', 'Go back/Pause the game'],
+        ['SHIFT', 'Slows down the player and displays hitbox']]
 KEY_ARRAY = [[50, 270 + (i * 40), KEYS[i][0], 32, FONT, WHITE] for i in range(len(KEYS))]
 INFO_ARRAY = [[winx - 50, 270 + (i * 40), KEYS[i][1], 32, FONT, WHITE] for i in range(len(KEYS))]
 
@@ -60,7 +64,7 @@ pygame.display.set_caption('shmup alpha 0.0.1')
 pygame.display.set_icon(ICON)
 
 # window background
-BACKDROP_coords = screen.get_rect()  # coordinates of surface
+BACKDROP_COORDS = screen.get_rect()  # coordinates of surface
 
 # game speed
 fps = 165
@@ -119,7 +123,7 @@ class Txt:
 
 class Btn:
     def __init__(self, x, y, width, height, font_size, color_hovered, color_clicked, color_released, text_pressed, text,
-                 callback, font=FONT, text_released=WHITE, center=None):
+                 callback, font=FONT, text_released=WHITE, center=None, sfx=CLICK):
         """
         class for making interactible button objects
         :param x: x coord of top left point of rectangle
@@ -137,6 +141,7 @@ class Btn:
         :param text_released: color of text, defaults to white
         :param center: optional - if you want to place the rect using coords of the center
         """
+        self.sfx = sfx
         self.center = center
         self.width = width
         self.height = height
@@ -181,8 +186,10 @@ class Btn:
             for events1 in event_list:
                 # if mouse is hovering over button and clicking
                 if events1.type == pygame.MOUSEBUTTONDOWN:
+                    self.sfx.play()
                     self.color = self.color_clicked
                 elif events1.type == pygame.MOUSEBUTTONUP:
+                    self.color = self.color_hovered
                     self.callback(self)  # function to be called when button clicked
                 # if mouse is hovering over button but not clicking
                 else:
@@ -244,7 +251,6 @@ def cmd(name):
     global STAGE, STAGE_STRUCTURE, main
     match name:
         case 'back':
-
             if INGAME:
                 STAGE_STRUCTURE.insert(1, 'paused')
                 STAGE_STRUCTURE_POINTER = STAGE_STRUCTURE.index(STAGE)
@@ -319,7 +325,7 @@ options = [[keybinds_btn, back_btn], [options_txt]]
 keybinds = [[], [keybinds_txt, keybindsKEY_ARRAY_txt, keybindsInfo_txt]]
 
 # game objects
-player = Player(winx / 2, winy / 2, 27, 19, PLAYER, 2)
+player = Player(winx / 2, winy / 2, 27, 19, PLAYER, 8)
 
 windll.user32.SetCursorPos(screenx // 2, screeny // 2)
 # Game Mainloop
@@ -335,18 +341,29 @@ while RUN:
                 main = False
 
         if event.type == pygame.KEYDOWN:  # alternative way to exit through keybind
-            if event.key == pygame.K_ESCAPE:
-                match STAGE:
-                    case 'home':
-                        cmd('options')
-                    case 'game':
-                        cmd('paused')
-                    case _:
-                        cmd('back')
-    screen.blit(BACKDROP, BACKDROP_coords)
+            match event.key:
+                case pygame.K_ESCAPE:
+                    CLICK.play()
+                    match STAGE:
+                        case 'home':
+                            cmd('options')
+                        case 'game':
+                            cmd('paused')
+                        case _:
+                            cmd('back')
+                case pygame.K_LSHIFT:
+                    player.speed = 4
+                    player.img = pygame.image.load('assets\\textures\\hitbox.png').convert_alpha()
+        elif event.type == pygame.KEYUP:
+            match event.key:
+                case pygame.K_LSHIFT:
+                    player.speed = 8
+                    player.img = pygame.image.load('assets\\textures\\player.png').convert_alpha()
+    screen.blit(BACKDROP, BACKDROP_COORDS)
     # match case statement to toggle between multiple stages when navigating menus and options
     match STAGE:
         case 'home':
+            INGAME = False
             BACKDROP = pygame.image.load('assets\\textures\\menu.png').convert()
             if not pygame.mixer.get_busy():
                 MENULOOP.play(loops=-1, fade_ms=1000)
