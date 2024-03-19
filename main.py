@@ -33,18 +33,34 @@ ACCENT = (255, 148, 252)  # light pink
 FONT = 'assets\\fonts\\editundo.ttf'  # font taken from: https://www.dafont.com/edit-undo.font
 
 # textures
-PLAYER = pygame.image.load('assets\\textures\\player.png').convert_alpha()
-ICON = pygame.image.load('assets\\textures\\icon.png').convert()
-LOGO = pygame.image.load('assets\\textures\\logo.png').convert()
-BACKDROP = pygame.image.load('assets\\textures\\menu.png').convert()  # surface to blit everything to
+PLAYER = {
+    'idle': pygame.image.load('assets\\textures\\player\\player.png').convert_alpha(),
+    'idle_hitbox': pygame.image.load('assets\\textures\\player\\player_hitbox.png').convert_alpha(),
+    'left': pygame.image.load('assets\\textures\\player\\playerL.png').convert_alpha(),
+    'left_hitbox': pygame.image.load('assets\\textures\\player\\playerL_hitbox.png').convert_alpha(),
+    'right': pygame.image.load('assets\\textures\\player\\playerR.png').convert_alpha(),
+    'right_hitbox': pygame.image.load('assets\\textures\\player\\playerR_hitbox.png').convert_alpha(),
+    'up': pygame.image.load('assets\\textures\\player\\playerU.png').convert_alpha(),
+    'up_hitbox': pygame.image.load('assets\\textures\\player\\playerU_hitbox.png').convert_alpha(),
+    'down': pygame.image.load('assets\\textures\\player\\playerD.png').convert_alpha(),
+    'down_hitbox': pygame.image.load('assets\\textures\\player\\playerD_hitbox.png').convert_alpha(),
+}
+ICON = pygame.image.load('assets\\textures\\icon\\icon.png').convert()
+LOGO = pygame.image.load('assets\\textures\\icon\\logo.png').convert()
+BACKDROP = pygame.image.load('assets\\textures\\background\\menu.png').convert()  # surface to blit everything to
 # from https://www.pygame.org/docs/ref/surface.html#pygame.Surface.blit
 # blit means to Draw a source Surface onto the current Surface. The draw can be positioned with the dest argument.
 
 # music
 MENULOOP = pygame.mixer.Sound('assets\\music\\menuloop.wav')
+GAME1 = pygame.mixer.Sound('assets\\music\\game1.wav')
 CLICK = pygame.mixer.Sound('assets\\music\\click.wav')
 MENULOOP.set_volume(0.2)
+GAME1.set_volume(0.2)
 CLICK.set_volume(0.2)
+bg = pygame.mixer.Channel(0)
+song = pygame.mixer.Channel(1)
+sfx = pygame.mixer.Channel(2)
 
 # game info
 STAGE_STRUCTURE = ['home', 'options', 'keybinds']  # array for creating reusable back buttons that work universally
@@ -67,7 +83,7 @@ pygame.display.set_icon(ICON)
 BACKDROP_COORDS = screen.get_rect()  # coordinates of surface
 
 # game speed
-fps = 165
+fps = 330
 clock = pygame.time.Clock()
 
 
@@ -123,7 +139,7 @@ class Txt:
 
 class Btn:
     def __init__(self, x, y, width, height, font_size, color_hovered, color_clicked, color_released, text_pressed, text,
-                 callback, font=FONT, text_released=WHITE, center=None, sfx=CLICK):
+                 callback, font=FONT, text_released=WHITE, center=None, click_sound=CLICK):
         """
         class for making interactible button objects
         :param x: x coord of top left point of rectangle
@@ -141,7 +157,7 @@ class Btn:
         :param text_released: color of text, defaults to white
         :param center: optional - if you want to place the rect using coords of the center
         """
-        self.sfx = sfx
+        self.sfx = click_sound
         self.center = center
         self.width = width
         self.height = height
@@ -186,7 +202,7 @@ class Btn:
             for events1 in event_list:
                 # if mouse is hovering over button and clicking
                 if events1.type == pygame.MOUSEBUTTONDOWN:
-                    self.sfx.play()
+                    sfx.play(self.sfx)
                     self.color = self.color_clicked
                 elif events1.type == pygame.MOUSEBUTTONUP:
                     self.color = self.color_hovered
@@ -225,22 +241,45 @@ class Img:
 class Player(Img):
     def __init__(self, x, y, width, height, img, speed):
         super().__init__(x, y, width, height, img)
+        self.imgState = None
         self.speed = speed
 
     def create(self, bounds):
         border = bounds.get_rect()
         key = pygame.key.get_pressed()
+        if key[pygame.K_LSHIFT]:
+            self.speed = 4
+            self.imgState = self.img['idle_hitbox']
+        else:
+            self.speed = 8
+            self.imgState = self.img['idle']
         if key[pygame.K_LEFT] or key[pygame.K_a]:
+            if key[pygame.K_LSHIFT]:
+                self.imgState = self.img['left_hitbox']
+            else:
+                self.imgState = self.img['left']
             self.rect.move_ip(-self.speed, 0)
         if key[pygame.K_RIGHT] or key[pygame.K_d]:
+            if key[pygame.K_LSHIFT]:
+                self.imgState = self.img['right_hitbox']
+            else:
+                self.imgState = self.img['right']
             self.rect.move_ip(self.speed, 0)
         if key[pygame.K_UP] or key[pygame.K_w]:
+            if key[pygame.K_LSHIFT]:
+                self.imgState = self.img['up_hitbox']
+            else:
+                self.imgState = self.img['up']
             self.rect.move_ip(0, -self.speed)
         if key[pygame.K_DOWN] or key[pygame.K_s]:
+            if key[pygame.K_LSHIFT]:
+                self.imgState = self.img['down_hitbox']
+            else:
+                self.imgState = self.img['down']
             self.rect.move_ip(0, self.speed)
         self.rect.clamp_ip(border)
         pygame.draw.rect(self.rect_surf, ACCENT, self.rect_surf.get_rect())
-        screen.blit(self.img, self.rect)
+        screen.blit(self.imgState, self.rect)
 
 
 def cmd(name):
@@ -351,22 +390,16 @@ while RUN:
                             cmd('paused')
                         case _:
                             cmd('back')
-                case pygame.K_LSHIFT:
-                    player.speed = 4
-                    player.img = pygame.image.load('assets\\textures\\hitbox.png').convert_alpha()
-        elif event.type == pygame.KEYUP:
-            match event.key:
-                case pygame.K_LSHIFT:
-                    player.speed = 8
-                    player.img = pygame.image.load('assets\\textures\\player.png').convert_alpha()
     screen.blit(BACKDROP, BACKDROP_COORDS)
     # match case statement to toggle between multiple stages when navigating menus and options
     match STAGE:
         case 'home':
             INGAME = False
-            BACKDROP = pygame.image.load('assets\\textures\\menu.png').convert()
-            if not pygame.mixer.get_busy():
-                MENULOOP.play(loops=-1, fade_ms=1000)
+            BACKDROP = pygame.image.load('assets\\textures\\background\\menu.png').convert()
+            if song.get_busy():
+                song.fadeout(100)
+            if not bg.get_busy():
+                bg.play(MENULOOP, loops=-1, fade_ms=1000)
             generate(home)
         case 'paused':
             generate(paused)
@@ -380,8 +413,11 @@ while RUN:
                 i.create()
         case 'game':
             INGAME = True
+            bg.fadeout(500)
+            if not song.get_busy():
+                song.play(GAME1, loops=-1, fade_ms=1000)
             player.create(screen)
-            BACKDROP = pygame.image.load('assets\\textures\\stage.png').convert()
+            BACKDROP = pygame.image.load('assets\\textures\\background\\stage.png').convert()
 
     mouse = pygame.mouse.get_pos()  # stores the (x,y) coordinates into the variable as a tuple
     pygame.display.flip()  # update the BACKDROP surface onto the window
