@@ -11,7 +11,7 @@ screenx = windll.user32.GetSystemMetrics(0)
 screeny = windll.user32.GetSystemMetrics(1)
 winx = screenx
 winy = screeny
-screen = pygame.display.set_mode([winx, winy], pygame.SCALED, vsync=0)  # creates the window
+screen = pygame.display.set_mode([winx, winy], pygame.SCALED, vsync=0)  # updates the window
 
 # useful shorthands and global variables
 
@@ -105,22 +105,22 @@ class Txt:
         self.text_color = text_color
         self.y = y
         self.x = x
-        self.font = pygame.font.Font(font, size)  # creates a font object
+        self.font = pygame.font.Font(font, size)  # updates a font object
         self.text_split = text.split('\n')
         self.text_list = []
         for sentence in self.text_split:
-            self.fontRender = self.font.render(sentence, True, self.text_color)  # create a surface with the specified
+            self.fontRender = self.font.render(sentence, True, self.text_color)  # update a surface with the specified
             # text drawn on it
             self.text_list.append(self.fontRender)
         for lines in self.text_list:
             if self.center is not None:
-                self.text_rect = lines.get_rect(center=self.center)  # create a temporary rect the size of the text and
+                self.text_rect = lines.get_rect(center=self.center)  # update a temporary rect the size of the text and
                 # set the center to tuple given
                 self.text_rect.center = self.center
             else:
                 match self.pos:
                     case 'left':
-                        self.text_rect = lines.get_rect()  # create a temporary rect the size of the text and specify
+                        self.text_rect = lines.get_rect()  # update a temporary rect the size of the text and specify
                         # the x and y coordinates (since it defaults to 0)
                         self.text_rect.topleft = (self.x, self.y)
                         self.center = self.text_rect.center
@@ -129,7 +129,7 @@ class Txt:
                         self.text_rect.topright = (self.x, self.y)
                         self.center = self.text_rect.center
 
-    def create(self):
+    def update(self):
         """
         call this method to display the button on a surface
         """
@@ -180,10 +180,10 @@ class Btn:
         self.color_clicked = color_clicked
         self.text_color = text_released
         self.callback = callback
-        self.text = self.font.render(text, True, self.text_color)  # create a surface with the specified
+        self.text = self.font.render(text, True, self.text_color)  # update a surface with the specified
         # text drawn on it
 
-    def create(self, surface, event_list):
+    def update(self, surface, event_list):
         """
         call this method to display the button on a surface
         :param event_list: list of user input events to be iterated through
@@ -216,8 +216,9 @@ class Btn:
             self.text_color = self.text_released
 
 
-class Img:
+class Img(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, img, center=None):
+        pygame.sprite.Sprite.__init__(self)
         self.center = center
         self.width = width
         self.y = y
@@ -229,12 +230,12 @@ class Img:
             self.rect.center = self.center
         else:
             self.center = self.rect.center
-        self.rect_surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+        self.image = pygame.Surface(self.rect.size, pygame.SRCALPHA)
         self.bounds = None
         self.border = None
 
-    def create(self, *args):
-        pygame.draw.rect(self.rect_surf, ACCENT, self.rect_surf.get_rect(center=self.center))
+    def update(self, *args):
+        pygame.draw.rect(self.image, ACCENT, self.image.get_rect(center=self.center))
         screen.blit(self.img, self.rect)
 
 
@@ -244,7 +245,7 @@ class Player(Img):
         self.imgState = None
         self.speed = speed
 
-    def create(self, bounds):
+    def update(self, bounds):
         border = bounds.get_rect()
         key = pygame.key.get_pressed()
         if key[pygame.K_LSHIFT]:
@@ -278,7 +279,7 @@ class Player(Img):
                 self.imgState = self.img['down']
             self.rect.move_ip(0, self.speed)
         self.rect.clamp_ip(border)
-        pygame.draw.rect(self.rect_surf, ACCENT, self.rect_surf.get_rect())
+        pygame.draw.rect(self.image, ACCENT, self.image.get_rect())
         screen.blit(self.imgState, self.rect)
 
 
@@ -322,10 +323,10 @@ def generate(arr):
     for list1 in arr:
         for listObject in list1:
             if arr.index(list1) == 0:
-                listObject.create(screen, events)
+                listObject.update(screen, events)
             else:
                 # noinspection
-                listObject.create()
+                listObject.update()
 
 
 # buttons
@@ -408,15 +409,15 @@ while RUN:
         case 'keybinds':
             generate(keybinds)
             for i in KEY_ARRAY:
-                i.create()
+                i.update()
             for i in INFO_ARRAY:
-                i.create()
+                i.update()
         case 'game':
             INGAME = True
             bg.fadeout(500)
             if not song.get_busy():
                 song.play(GAME1, loops=-1, fade_ms=1000)
-            player.create(screen)
+            player.update(screen)
             BACKDROP = pygame.image.load('assets\\textures\\background\\stage.png').convert()
 
     mouse = pygame.mouse.get_pos()  # stores the (x,y) coordinates into the variable as a tuple
