@@ -1,39 +1,13 @@
 import sys
-from img_ import Img
-from bullet import Bullet
-from txt import Txt
-from btn import Btn
-from player import Player
+from classes.img_ import Img
+from classes.bullet import Bullet
+from classes.txt import Txt
+from classes.btn import Btn
+from classes.player import Player
 from constants import *
 
 # Initialise game assets and variables
 pygame.init()
-
-# player
-# dict to make referring to file path easy
-PLAYER = {
-    'idle': pygame.image.load('assets\\textures\\player\\player.png').convert_alpha(),
-    'idle_hitbox': pygame.image.load('assets\\textures\\player\\player_hitbox.png').convert_alpha(),
-    'left': pygame.image.load('assets\\textures\\player\\playerL.png').convert_alpha(),
-    'left_hitbox': pygame.image.load('assets\\textures\\player\\playerL_hitbox.png').convert_alpha(),
-    'right': pygame.image.load('assets\\textures\\player\\playerR.png').convert_alpha(),
-    'right_hitbox': pygame.image.load('assets\\textures\\player\\playerR_hitbox.png').convert_alpha(),
-    'up': pygame.image.load('assets\\textures\\player\\playerU.png').convert_alpha(),
-    'up_hitbox': pygame.image.load('assets\\textures\\player\\playerU_hitbox.png').convert_alpha(),
-    'down': pygame.image.load('assets\\textures\\player\\playerD.png').convert_alpha(),
-    'down_hitbox': pygame.image.load('assets\\textures\\player\\playerD_hitbox.png').convert_alpha(),
-}
-
-# game info
-STAGE_STRUCTURE = ['home', 'options', 'keybinds']  # array for creating reusable back buttons that work universally
-# keybinds and their descriptions are automatically placed in the keybinds menu through a for loop
-KEYS = [['W / UP ARROW', 'Move up'], ['A / LEFT ARROW', 'Move left'], ['S / DOWN ARROW', 'Move down'],
-        ['D / RIGHT ARROW', 'Move right'], ['SHIFT', 'Slows down the player and displays hitbox'],
-        ['ESC', 'Go back/Pause the game']]  # iterable 2d array
-# which is used to create keybinds screen
-KEY_ARRAY = [[50, 270 + (i * 40), KEYS[i][0], 32, FONT, WHITE] for i in range(len(KEYS))]  # generates list of values to
-# be iterated through when placing key text
-INFO_ARRAY = [[winx - 50, 270 + (i * 40), KEYS[i][1], 32, FONT, WHITE] for i in range(len(KEYS))]  # ... key info
 
 # status
 STAGE = 'home'
@@ -58,7 +32,7 @@ def cmd(name):
     call this method to update the stage of the screen
     :param name: the stage you want to switch to
     """
-    global STAGE, STAGE_STRUCTURE, main
+    global STAGE, main
     match name:
         case 'back':
             # different stage structure if you're ingame
@@ -164,7 +138,7 @@ while RUN:
         if event.type == pygame.KEYDOWN:
             match event.key:
                 case pygame.K_ESCAPE:
-                    CLICK.play()
+                    sfx.play(CLICK)
                     match STAGE:
                         case 'home':
                             cmd('options')
@@ -177,6 +151,7 @@ while RUN:
         current_time = pygame.time.get_ticks()
         if current_time - previous_time > 100:
             previous_time = current_time
+            sfx.play(SHOOT)
             bullet = Bullet(player.rect.center[0], player.rect.y, BULLETS['player'], 16)
             bullets.add(bullet)  # noqa
             bullets.update()

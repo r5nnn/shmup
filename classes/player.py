@@ -1,5 +1,5 @@
 import pygame
-from img_ import Img
+from classes.img_ import Img
 
 
 class Player(Img):

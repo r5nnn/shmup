@@ -1,7 +1,7 @@
 import pygame
 from ctypes import windll
 
-pygame.mixer.pre_init(75100, -16, 2, 2048)  # frequency, size, channels and buffer of audio
+pygame.mixer.pre_init(75100, -16, 8, 512)  # frequency, size, channels and buffer of audio
 pygame.init()
 
 # window dimensions
@@ -46,10 +46,38 @@ BULLETS = {
 MENULOOP = pygame.mixer.Sound('assets\\music\\menuloop.wav')
 GAME1 = pygame.mixer.Sound('assets\\music\\game1.wav')
 CLICK = pygame.mixer.Sound('assets\\music\\click.wav')
+SHOOT = pygame.mixer.Sound('assets\\music\\shoot.wav')
 
 MENULOOP.set_volume(0.2)
 GAME1.set_volume(0.2)
 CLICK.set_volume(0.2)
+SHOOT.set_volume(0.05)
 bg = pygame.mixer.Channel(0)  # channel 0 is for background soundtracks
 song = pygame.mixer.Channel(1)  # channel 1 is for in game soundtracks
 sfx = pygame.mixer.Channel(2)  # channel 2 is for sfx
+
+# player
+# dict to make referring to file path easy
+PLAYER = {
+    'idle': pygame.image.load('assets\\textures\\player\\player.png').convert_alpha(),
+    'idle_hitbox': pygame.image.load('assets\\textures\\player\\player_hitbox.png').convert_alpha(),
+    'left': pygame.image.load('assets\\textures\\player\\playerL.png').convert_alpha(),
+    'left_hitbox': pygame.image.load('assets\\textures\\player\\playerL_hitbox.png').convert_alpha(),
+    'right': pygame.image.load('assets\\textures\\player\\playerR.png').convert_alpha(),
+    'right_hitbox': pygame.image.load('assets\\textures\\player\\playerR_hitbox.png').convert_alpha(),
+    'up': pygame.image.load('assets\\textures\\player\\playerU.png').convert_alpha(),
+    'up_hitbox': pygame.image.load('assets\\textures\\player\\playerU_hitbox.png').convert_alpha(),
+    'down': pygame.image.load('assets\\textures\\player\\playerD.png').convert_alpha(),
+    'down_hitbox': pygame.image.load('assets\\textures\\player\\playerD_hitbox.png').convert_alpha(),
+}
+
+# game info
+STAGE_STRUCTURE = ['home', 'options', 'keybinds']  # array for creating reusable back buttons that work universally
+# keybinds and their descriptions are automatically placed in the keybinds menu through a for loop
+KEYS = [['W / UP ARROW', 'Move up'], ['A / LEFT ARROW', 'Move left'], ['S / DOWN ARROW', 'Move down'],
+        ['D / RIGHT ARROW', 'Move right'], ['SHIFT', 'Slows down the player and displays hitbox'],
+        ['ESC', 'Go back/Pause the game']]  # iterable 2d array
+# which is used to create keybinds screen
+KEY_ARRAY = [[50, 270 + (i * 40), KEYS[i][0], 32, FONT, WHITE] for i in range(len(KEYS))]  # generates list of values to
+# be iterated through when placing key text
+INFO_ARRAY = [[winx - 50, 270 + (i * 40), KEYS[i][1], 32, FONT, WHITE] for i in range(len(KEYS))]  # ... key info
