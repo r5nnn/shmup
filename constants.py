@@ -13,6 +13,8 @@ screen = pygame.display.set_mode((winx, winy), pygame.NOFRAME, pygame.SCALED, vs
 # pygame.NOFRAME makes the window borderless and pygame.SCALED means any textures are scaled proportional to window
 # size (4k display compatibility)
 
+previous_time = [pygame.time.get_ticks(), pygame.time.get_ticks()]  # used for a delay when shooting
+
 # backgrounds
 BACKDROP = pygame.image.load('assets\\textures\\background\\menu.png').convert()  # surface to blit everything to
 # from https://www.pygame.org/docs/ref/surface.html#pygame.Surface.blit
@@ -37,11 +39,6 @@ FONT = 'assets\\fonts\\editundo.ttf'  # font taken from: https://www.dafont.com/
 ICON = pygame.image.load('assets\\textures\\icon\\icon.png').convert()
 LOGO = pygame.image.load('assets\\textures\\icon\\logo.png').convert()
 
-# bullets
-BULLETS = {
-    'player': pygame.image.load('assets\\textures\\bullets\\bullet.png').convert()
-}
-
 # music
 MENULOOP = pygame.mixer.Sound('assets\\music\\menuloop.wav')
 GAME1 = pygame.mixer.Sound('assets\\music\\game1.wav')
@@ -55,6 +52,11 @@ SHOOT.set_volume(0.05)
 bg = pygame.mixer.Channel(0)  # channel 0 is for background soundtracks
 song = pygame.mixer.Channel(1)  # channel 1 is for in game soundtracks
 sfx = pygame.mixer.Channel(2)  # channel 2 is for sfx
+
+# sprite groups
+enemy_bullets = pygame.sprite.Group()
+player_bullets = pygame.sprite.Group()
+enemies = pygame.sprite.Group()
 
 # player
 # dict to make referring to file path easy
@@ -71,13 +73,32 @@ PLAYER = {
     'down_hitbox': pygame.image.load('assets\\textures\\player\\playerD_hitbox.png').convert_alpha(),
 }
 
+ENEMY = {
+    'idle': pygame.image.load('assets\\textures\\enemy\\enemy.png').convert_alpha(),
+    'idlemask': pygame.image.load('assets\\textures\\enemy\\enemy_hitbox.png').convert_alpha()
+}
+
+# bullets
+BULLETS = {
+    'player': pygame.image.load('assets\\textures\\bullets\\bullet.png').convert(),
+    'playermask': pygame.image.load('assets\\textures\\bullets\\bullet_hitbox.png').convert(),
+    'enemy': pygame.image.load('assets\\textures\\bullets\\bullet.png').convert(),
+    'enemymask': pygame.image.load('assets\\textures\\bullets\\bullet_hitbox.png').convert()
+}
+
 # game info
 STAGE_STRUCTURE = ['home', 'options', 'keybinds']  # array for creating reusable back buttons that work universally
 # keybinds and their descriptions are automatically placed in the keybinds menu through a for loop
+
 KEYS = [['W / UP ARROW', 'Move up'], ['A / LEFT ARROW', 'Move left'], ['S / DOWN ARROW', 'Move down'],
         ['D / RIGHT ARROW', 'Move right'], ['SHIFT', 'Slows down the player and displays hitbox'],
-        ['ESC', 'Go back/Pause the game']]  # iterable 2d array
+        ['ESC', 'Go back/Pause the game'], ['Z', 'Shoot the bullet']]  # iterable 2d array
 # which is used to create keybinds screen
+
 KEY_ARRAY = [[50, 270 + (i * 40), KEYS[i][0], 32, FONT, WHITE] for i in range(len(KEYS))]  # generates list of values to
 # be iterated through when placing key text
+
 INFO_ARRAY = [[winx - 50, 270 + (i * 40), KEYS[i][1], 32, FONT, WHITE] for i in range(len(KEYS))]  # ... key info
+
+ENEMYCOUNT = 2
+ENEMY_ARRAY = [[200 + (i * 100), 100, ENEMY['idle'], ENEMY['idlemask']] for i in range(ENEMYCOUNT)]

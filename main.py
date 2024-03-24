@@ -4,6 +4,7 @@ from classes.bullet import Bullet
 from classes.txt import Txt
 from classes.btn import Btn
 from classes.player import Player
+from classes.enemy import Enemy
 from constants import *
 
 # Initialise game assets and variables
@@ -24,7 +25,6 @@ BACKDROP_COORDS = screen.get_rect()  # get_rect() returns coordinates of surface
 # game speed
 fps = 330
 clock = pygame.time.Clock()
-previous_time = pygame.time.get_ticks()
 
 
 def cmd(name):
@@ -117,10 +117,13 @@ keybinds = [[], [keybinds_txt, keybindsKEY_ARRAY_txt, keybindsInfo_txt]]
 # game objects
 player = Player(winx / 2, winy / 2, PLAYER, 6, 3)
 
-# sprite groups
-bullets = pygame.sprite.Group()
+ENEMY_ARRAY = [Enemy(i[0], i[1], i[2], i[3]) for i in ENEMY_ARRAY]
+for i in ENEMY_ARRAY:
+    enemies.add(i)  # noqa
 
 windll.user32.SetCursorPos(screenx // 2, screeny // 2)
+
+pygame.time.set_timer(1, 1000)
 
 # Game Mainloop
 
@@ -128,33 +131,34 @@ while RUN:
     screen.blit(BACKDROP, BACKDROP_COORDS)  # noqa
     events = pygame.event.get()
     for event in events:  # iterates through inputs checking if they match the exit event
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            try:
-                sys.exit()
-            finally:
-                main = False
+        match event.type:
+            case pygame.QUIT:
+                pygame.quit()
+                try:
+                    sys.exit()
+                finally:
+                    main = False
 
-        if event.type == pygame.KEYDOWN:
-            match event.key:
-                case pygame.K_ESCAPE:
-                    sfx.play(CLICK)
-                    match STAGE:
-                        case 'home':
-                            cmd('options')
-                        case 'game':
-                            cmd('paused')
-                        case _:
-                            cmd('back')
+            case pygame.KEYDOWN:
+                match event.key:
+                    case pygame.K_ESCAPE:
+                        sfx.play(CLICK)
+                        match STAGE:
+                            case 'home':
+                                cmd('options')
+                            case 'game':
+                                cmd('paused')
+                            case _:
+                                cmd('back')
 
     if pygame.key.get_pressed()[pygame.K_z]:
         current_time = pygame.time.get_ticks()
-        if current_time - previous_time > 100:
-            previous_time = current_time
+        if current_time - previous_time[0] > 100:
+            previous_time[0] = current_time
             sfx.play(SHOOT)
-            bullet = Bullet(player.rect.center[0], player.rect.y, BULLETS['player'], 16)
-            bullets.add(bullet)  # noqa
-            bullets.update()
+            bulletp = Bullet(player.rect.center[0], player.rect.y, BULLETS['player'], ENEMY['idlemask'], 16)
+            player_bullets.add(bulletp)  # noqa
+            player_bullets.update('player')
 
     # match case statement to toggle between multiple stages when navigating menus and options
     match STAGE:
@@ -181,9 +185,14 @@ while RUN:
             bg.fadeout(500)
             if not song.get_busy():
                 song.play(GAME1, loops=-1, fade_ms=1000)
-            bullets.draw(screen)
-            bullets.update()
+            enemies.draw(screen)
+            enemies.update(screen)
+            player_bullets.draw(screen)
+            player_bullets.update('player')
             player.update(screen)
+            hit_list = pygame.sprite.groupcollide(enemies, player_bullets, False, False)
+            for enemy in hit_list:
+                enemy.kill()
             BACKDROP = pygame.image.load('assets\\textures\\background\\stage.png').convert()
 
     mouse = pygame.mouse.get_pos()  # stores the (x,y) coordinates into the variable as a tuple
