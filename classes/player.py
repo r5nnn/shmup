@@ -1,5 +1,6 @@
 import pygame
 from classes.img_ import Img
+from constants import sfxDie, DIE
 
 
 class Player(Img):
@@ -53,3 +54,7 @@ class Player(Img):
             self.rect.move_ip(0, self.speed)
         self.rect.clamp_ip(border)
         bounds.blit(self.imgState, self.rect)
+
+    def hit(self, respawnPoint):
+        self.rect.x, self.rect.y = respawnPoint[0], respawnPoint[1]
+        sfxDie.play(DIE)

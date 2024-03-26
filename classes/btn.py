@@ -1,5 +1,5 @@
 import pygame
-from constants import FONT, WHITE, CLICK, sfx
+from constants import FONT, WHITE, CLICK, sfxShoot
 
 
 class Btn:
@@ -67,7 +67,7 @@ class Btn:
             for events1 in event_list:
                 # if mouse is hovering over button and clicking
                 if events1.type == pygame.MOUSEBUTTONDOWN:
-                    sfx.play(self.sfx)
+                    sfxShoot.play(self.sfx)
                     self.color = self.color_clicked
                 elif events1.type == pygame.MOUSEBUTTONUP:
                     self.color = self.color_hovered

@@ -40,18 +40,24 @@ ICON = pygame.image.load('assets\\textures\\icon\\icon.png').convert()
 LOGO = pygame.image.load('assets\\textures\\icon\\logo.png').convert()
 
 # music
-MENULOOP = pygame.mixer.Sound('assets\\music\\menuloop.wav')
-GAME1 = pygame.mixer.Sound('assets\\music\\game1.wav')
-CLICK = pygame.mixer.Sound('assets\\music\\click.wav')
-SHOOT = pygame.mixer.Sound('assets\\music\\shoot.wav')
+MENULOOP = pygame.mixer.Sound('assets\\music\\menu\\menuloop.wav')
+GAME1 = pygame.mixer.Sound('assets\\music\\game\\game1.wav')
+CLICK = pygame.mixer.Sound('assets\\music\\sfx\\click.wav')
+SHOOT = pygame.mixer.Sound('assets\\music\\sfx\\shoot.wav')
+KILL = pygame.mixer.Sound('assets\\music\\sfx\\hit.wav')
+DIE = pygame.mixer.Sound('assets\\music\\sfx\\die.wav')
 
 MENULOOP.set_volume(0.2)
 GAME1.set_volume(0.2)
 CLICK.set_volume(0.2)
 SHOOT.set_volume(0.05)
+KILL.set_volume(0.2)
+DIE.set_volume(0.2)
 bg = pygame.mixer.Channel(0)  # channel 0 is for background soundtracks
 song = pygame.mixer.Channel(1)  # channel 1 is for in game soundtracks
-sfx = pygame.mixer.Channel(2)  # channel 2 is for sfx
+sfxShoot = pygame.mixer.Channel(2)  # channel 2 is for shoot
+sfxKill = pygame.mixer.Channel(3)  # channel 3 is for sfx
+sfxDie = pygame.mixer.Channel(4)  # channel 4 is for sfx
 
 # sprite groups
 enemy_bullets = pygame.sprite.Group()
@@ -99,6 +105,3 @@ KEY_ARRAY = [[50, 270 + (i * 40), KEYS[i][0], 32, FONT, WHITE] for i in range(le
 # be iterated through when placing key text
 
 INFO_ARRAY = [[winx - 50, 270 + (i * 40), KEYS[i][1], 32, FONT, WHITE] for i in range(len(KEYS))]  # ... key info
-
-ENEMYCOUNT = 2
-ENEMY_ARRAY = [[200 + (i * 100), 100, ENEMY['idle'], ENEMY['idlemask']] for i in range(ENEMYCOUNT)]

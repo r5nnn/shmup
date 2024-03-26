@@ -3,8 +3,9 @@ from classes.img_ import Img
 
 
 class Bullet(Img):
-    def __init__(self, x, y, img, maskimg, speed):
+    def __init__(self, x, y, img, maskimg, speed, dmg):
         super().__init__(x, y, img)
+        self.dmg = dmg
         self.mask = pygame.mask.from_surface(maskimg)
         self.speed = speed
 
@@ -12,3 +13,4 @@ class Bullet(Img):
         if not pygame.display.get_surface().get_rect().contains(self.rect):
             self.kill()
         self.rect.move_ip(0, -self.speed)
+        

@@ -14,17 +14,13 @@ pygame.init()
 STAGE = 'home'
 RUN = True
 INGAME = False
+FPS = 330
+clock = pygame.time.Clock()
 
 # window settings
 pygame.display.set_caption('shmup alpha 0.0.1')
 pygame.display.set_icon(ICON)
-
-# window background
 BACKDROP_COORDS = screen.get_rect()  # get_rect() returns coordinates of surface
-
-# game speed
-fps = 330
-clock = pygame.time.Clock()
 
 
 def cmd(name):
@@ -79,6 +75,15 @@ def generate(arr):
                 listObject.update(screen)
 
 
+def spawnEnemy(formation, enemycount):
+    match formation:
+        case 'arrow':
+            enemy_array = [[0, 0, ENEMY['idle'], ENEMY['idlemask'], 100, (winx / 2, 100)] for _ in range(enemycount)]
+            enemy_array = [Enemy(i[0], i[1], i[2], i[3], i[4], center=i[5]) for i in enemy_array]
+            for i in enemy_array:
+                enemies.add(i)  # noqa
+
+
 # buttons
 back_btn = Btn(0, 0, 205, 50, 36, TERTIARY, QUATERNARY, SECONDARY, PRIMARY, 'Back',
                lambda b: cmd('back'), center=(winx / 2, 300))
@@ -115,15 +120,13 @@ options = [[keybinds_btn, back_btn], [options_txt]]
 keybinds = [[], [keybinds_txt, keybindsKEY_ARRAY_txt, keybindsInfo_txt]]
 
 # game objects
-player = Player(winx / 2, winy / 2, PLAYER, 6, 3)
-
-ENEMY_ARRAY = [Enemy(i[0], i[1], i[2], i[3]) for i in ENEMY_ARRAY]
-for i in ENEMY_ARRAY:
-    enemies.add(i)  # noqa
+player = Player(winx / 2, winy - 100, PLAYER, 6, 3)
 
 windll.user32.SetCursorPos(screenx // 2, screeny // 2)
 
 pygame.time.set_timer(1, 1000)
+
+spawnEnemy('arrow', 1)
 
 # Game Mainloop
 
@@ -142,7 +145,7 @@ while RUN:
             case pygame.KEYDOWN:
                 match event.key:
                     case pygame.K_ESCAPE:
-                        sfx.play(CLICK)
+                        sfxShoot.play(CLICK)
                         match STAGE:
                             case 'home':
                                 cmd('options')
@@ -155,8 +158,8 @@ while RUN:
         current_time = pygame.time.get_ticks()
         if current_time - previous_time[0] > 100:
             previous_time[0] = current_time
-            sfx.play(SHOOT)
-            bulletp = Bullet(player.rect.center[0], player.rect.y, BULLETS['player'], ENEMY['idlemask'], 16)
+            sfxShoot.play(SHOOT)
+            bulletp = Bullet(player.rect.center[0], player.rect.y, BULLETS['player'], ENEMY['idlemask'], 16, 10)
             player_bullets.add(bulletp)  # noqa
             player_bullets.update('player')
 
@@ -190,11 +193,16 @@ while RUN:
             player_bullets.draw(screen)
             player_bullets.update('player')
             player.update(screen)
-            hit_list = pygame.sprite.groupcollide(enemies, player_bullets, False, False)
-            for enemy in hit_list:
-                enemy.kill()
+            enemy_playerBullet_hitDict = pygame.sprite.groupcollide(enemies, player_bullets, False, False)
+            player_enemy_hitList = pygame.sprite.spritecollide(player, enemies, False)
+            for i in player_enemy_hitList:
+                player.hit((winx / 2, winy - 100))
+            for enemy in enemy_playerBullet_hitDict:
+                enemy.hit(bulletp.dmg)  # noqa
+                for i in enemy_playerBullet_hitDict[enemy]:
+                    i.kill()
             BACKDROP = pygame.image.load('assets\\textures\\background\\stage.png').convert()
 
     mouse = pygame.mouse.get_pos()  # stores the (x,y) coordinates into the variable as a tuple
     pygame.display.flip()  # update the BACKDROP surface onto the window
-    clock.tick(fps)  # update the clock with the delay of the refresh rate
+    clock.tick(FPS)  # update the clock with the delay of the refresh rate
