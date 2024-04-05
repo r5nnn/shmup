@@ -1,4 +1,4 @@
-# shmup
+![](https://github.com/r5nnn/shmup/blob/main/assets/textures/icon/logo.png)  
 Bullet hell (shoot em up) esque A-level project using pygame.  
 ## Assets
 Font used - [edit-undo](https://www.dafont.com/edit-undo.font)  
