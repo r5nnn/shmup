@@ -8,7 +8,7 @@ Main menu - [HOYO-MiX - Oneiros of Borehole Planet | Honkai Star Rail](https://w
 Stage 1 - [Chris Christodoulou - Moisture Deficit | Risk of Rain (2013)](https://www.youtube.com/watch?v=RbzA6lX84xM)  
 ### Links
 [Trello board](https://trello.com/b/xCHQx3Uu/shmup-trello)  
-## version changelog
+## Version changelog
 ### v0.0.1 prototype
 - #### created menu concept, and a prototype of player movement and shooting aswell as a test dummy enemy.
 - created color palette [#1]
