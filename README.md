@@ -10,6 +10,7 @@ Stage 1 - [Chris Christodoulou - Moisture Deficit | Risk of Rain (2013)](https:/
 [Trello board](https://trello.com/b/xCHQx3Uu/shmup-trello)  
 ## version changelog
 ### v0.0.1 prototype
+- #### created menu concept, and a prototype of player movement and shooting aswell as a test dummy enemy.
 - created color palette [#1]
 - created character sprite [#2]
 - created title screen [#3]
@@ -26,6 +27,7 @@ Stage 1 - [Chris Christodoulou - Moisture Deficit | Risk of Rain (2013)](https:/
 - added collision detection with bullets and hitbox [#14]
 - added health to enemies [#15]
 ### v0.0.2 prototype
+- #### workflow rework - screens are loaded/unloaded using a state stack. All modules reworked and rewritten. Event handling now uses observer pattern.
 - added deltatime for compatibility when not at fps cap [#16]
 - added method for placing relative to top left or center [#17]
 - added text wrapping [#18]
