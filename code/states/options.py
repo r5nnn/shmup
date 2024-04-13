@@ -6,7 +6,7 @@ import pygame
 
 from .modules.eventmanager import generalEventManager
 from .state import State
-from .modules.btn import Btn, BtnBack
+from .modules.btn import BtnTxt, BtnBack
 from .modules.img import Img
 from .keybinds import Keybinds
 
@@ -36,8 +36,8 @@ class Options(State):
                                scale=4)
 
         # buttons
-        self.btn_keybinds = Btn(self.game, 36, self.game.WINX/2, self.img_options.rect.bottom * 1.03, 205, 50,
-                                'Keybinds', self.keybinds, btn_ref='midtop')
+        self.btn_keybinds = BtnTxt(self.game, 36, self.game.WINX/2, self.img_options.img_rect.bottom * 1.03, 205, 50, 'Keybinds', self.keybinds,
+                                   btn_ref='midtop')
         self.btn_back = BtnBack(self.game, 32, self.game.WINX/2, self.btn_keybinds.rect.bottom * 1.03, 205, 50,
                                 btn_ref='midtop')
 

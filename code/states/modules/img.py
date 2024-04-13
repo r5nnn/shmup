@@ -21,8 +21,8 @@ class Img(pygame.sprite.Sprite):
         """
         super().__init__()  # pygame.sprite.Sprite is not used in this class, but child classes inheriting from this parent will
         self.image = pygame.transform.scale_by(img, scale) if scale != 1 else img
-        self.rect = self.image.get_rect()
-        setattr(self.rect, ref, (x, y))
+        self.img_rect = self.image.get_rect()
+        setattr(self.img_rect, ref, (x, y))
 
     def update(self, surface: pygame.Surface) -> None:
         """Draws image onto surface.
@@ -30,4 +30,4 @@ class Img(pygame.sprite.Sprite):
         Args:
             surface: Surface which image will be blitted to.
         """
-        surface.blit(self.image, self.rect)
+        surface.blit(self.image, self.img_rect)

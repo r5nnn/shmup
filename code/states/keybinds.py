@@ -7,7 +7,7 @@ import pygame
 from .modules.eventmanager import generalEventManager
 from .state import State
 from .modules.txt import Txt
-from .modules.btn import Btn, BtnBack
+from .modules.btn import BtnTxt, BtnBack
 from .modules.img import Img
 
 # avoids relative import error while making pycharm happy (shows error when type resides in another module when using
@@ -36,12 +36,13 @@ class Keybinds(State):
                                 scale=4)
 
         # text
-        self.txt_keys = Txt(self.game.font_dir, 64, self.game.WINX * 0.02, self.img_keybinds.rect.bottom, 'Keys')
-        self.txt_description = Txt(self.game.font_dir, 64, self.game.WINX - self.game.WINX * 0.02, self.img_keybinds.rect.bottom, 'Description', ref='topright')
+        self.txt_keys = Txt(self.game.font_dir, 64, self.game.WINX * 0.02, self.img_keybinds.img_rect.bottom, 'Keys')
+        self.txt_description = Txt(self.game.font_dir, 64, self.game.WINX - self.game.WINX * 0.02, self.img_keybinds.img_rect.bottom, 'Description',
+                                   ref='topright')
 
         # buttons
-        self.btn_back = BtnBack(self.game, 64, self.game.WINX - self.game.WINX * 0.02, self.img_keybinds.rect.centery, 250, 75, btn_ref='midright')
-        self.btn_modify = Btn(self.game, 64, self.game.WINX * 0.02, self.img_keybinds.rect.centery, 250, 75, 'Modify', btn_ref='midleft')
+        self.btn_back = BtnBack(self.game, 64, self.game.WINX - self.game.WINX * 0.02, self.img_keybinds.img_rect.centery, 250, 75, btn_ref='midright')
+        self.btn_modify = BtnTxt(self.game, 64, self.game.WINX * 0.02, self.img_keybinds.img_rect.centery, 250, 75, 'Modify', btn_ref='midleft')
 
         self.keys = [['--General--', ''], ['ESC', 'Go back/Pause the game'], ['END', 'Force quit game'], ['Z', 'Shoot the bullet'],
                      ['--Game--', ''], ['W / UP ARROW', 'Move up'], ['A / LEFT ARROW', 'Move left'], ['S / DOWN ARROW', 'Move down'],
@@ -49,10 +50,10 @@ class Keybinds(State):
 
         # append all objects to one list for iterating through
         self.objects = ([self.img_keybinds, self.txt_keys, self.txt_description, self.btn_back, self.btn_modify] +
-                        [Txt(self.game.font_dir, 32, self.game.WINX * 0.02, self.img_keybinds.rect.bottom * 1.4 + (i * 40),
+                        [Txt(self.game.font_dir, 32, self.game.WINX * 0.02, self.img_keybinds.img_rect.bottom * 1.4 + (i * 40),
                              self.keys[i][0])  # generates Txt surface objects for each keybind in self.keys
                          for i in range(len(self.keys))] +
-                        [Txt(self.game.font_dir, 32, self.game.WINX - self.game.WINX * 0.02, self.img_keybinds.rect.bottom * 1.4 + (i * 40),
+                        [Txt(self.game.font_dir, 32, self.game.WINX - self.game.WINX * 0.02, self.img_keybinds.img_rect.bottom * 1.4 + (i * 40),
                              self.keys[i][1], ref='topright')  # generates Txt surface objects for each keybind description in self.keys
                          for i in range(len(self.keys))])
 

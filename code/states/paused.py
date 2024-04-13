@@ -8,7 +8,7 @@ from .modules.eventmanager import generalEventManager
 from .state import State
 from .options import Options
 from .modules.img import Img
-from .modules.btn import Btn, BtnBack
+from .modules.btn import BtnTxt, BtnBack
 
 # avoids relative import error while making pycharm happy (shows error when type resides in another module when using
 # PEP 563 – Postponed Evaluation of Annotations)
@@ -26,8 +26,8 @@ class Paused(State):
         For additional info on args, view help on parent class State.
         """
         super().__init__(game)
-        # create button background rect
-        self.rect = pygame.Rect(self.game.WINX / 2, self.game.WINY / 2, self.game.WINX * 0.3, self.game.WINY * 0.5)
+        # create window background rect
+        self.rect = pygame.Rect(0, 0, self.game.WINX * 0.3, self.game.WINY * 0.5)
         # create surface compatible with modifying alpha (pygame.SRCALPHA)
         self.rect_surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
         self.rect_surf.set_alpha(128)  # half opacity
@@ -40,10 +40,11 @@ class Paused(State):
                               pygame.image.load(os.path.join(self.game.title_dir, 'paused.png')).convert(), scale=3)
 
         # buttons
-        self.btn_resume = BtnBack(self.game, 36, self.game.WINX / 2, self.paused_img.rect.bottom * 1.1, 250, 50, 'Resume', btn_ref='midtop')
-        self.btn_options = Btn(self.game, 36, self.game.WINX / 2, self.btn_resume.rect.bottom * 1.02, 250, 50, 'Options', func=self.options, btn_ref='midtop')
-        self.btn_saveandexit = Btn(self.game, 36, self.game.WINX / 2, self.btn_options.rect.bottom * 1.02, 250, 50, 'Save and Exit',
-                                   func=self.title, btn_ref='midtop')
+        self.btn_resume = BtnBack(self.game, 36, self.game.WINX / 2, self.paused_img.img_rect.bottom * 1.1, 250, 50, 'Resume', btn_ref='midtop')
+        self.btn_options = BtnTxt(self.game, 36, self.game.WINX / 2, self.btn_resume.rect.bottom * 1.02, 250, 50, 'Options', func=self.options,
+                                  btn_ref='midtop')
+        self.btn_saveandexit = BtnTxt(self.game, 36, self.game.WINX / 2, self.btn_options.rect.bottom * 1.02, 250, 50, 'Save and Exit',
+                                      func=self.title, btn_ref='midtop')
 
         # append objects to list for iteration
         self.objects = [self.paused_img, self.btn_resume, self.btn_options, self.btn_saveandexit]

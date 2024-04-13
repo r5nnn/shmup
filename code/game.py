@@ -135,7 +135,8 @@ class Game:
 
         self.textures_dir = os.path.join(self.assets_dir, "textures")  # assets\textures
         self.title_dir = os.path.join(self.textures_dir, "title")  # assets\textures\title
-        self.win_icon = pygame.image.load(os.path.join(self.title_dir, "icon.png")).convert()  # ..\title.png
+        self.icon_dir = os.path.join(self.textures_dir, "icon")  # assets\textures\title\icon
+        self.win_icon = pygame.image.load(os.path.join(self.icon_dir, "shmup.png")).convert()  # ..\title.png
         self.background_dir = os.path.join(self.textures_dir, "background")  # assets\textures\background
         self.player_dir = os.path.join(self.textures_dir, "player")  # assets\textures\player
 
@@ -167,8 +168,8 @@ class Game:
         finally:
             self.running = False
 
-    def back(self) -> None:
-        self.sfx_click.play()
+    def back(self, play_sfx=True) -> None:
+        self.sfx_click.play() if play_sfx else None
         self.state_stack[-1].on_exit()
         if (not self.playing or len(self.state_stack) != 2) and len(self.state_stack) > 1:
             self.state_stack[-1].exit_state()
