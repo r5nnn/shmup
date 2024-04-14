@@ -1,27 +1,31 @@
-"""Places and blits buttons onto surfaces and handles user input."""
-from typing import Callable, Literal, TYPE_CHECKING, override
+"""Module for blitting and interacting with various buttons."""
+from typing import Callable, TYPE_CHECKING, override
 
 import pygame
 
 from .img import Img
 from .txt import Txt
+from .constants import rect_attributes, button_colors
 
+# avoids relative import error while making pycharm happy (shows error when type resides in another module when using
+# PEP 563 – Postponed Evaluation of Annotations)
 if TYPE_CHECKING:
     from ...game import Game
 
 
-class Btn:
-    clicked = False
+class _Btn:
+    """
+    Attributes:
+        clicked: Boolean which shows if any button of the _Btn class or any of its children are pressed.
+    """
+    clicked: bool = False
 
     def __init__(self, game: 'Game',
-                 x: int, y: int, width: int, height: int, func: Callable = None, sfx: str = None,
-                 col_btn: list[tuple[int, int, int]] = [(30, 30, 30), (35, 35, 35), (85, 85, 85)],
-                 btn_ref: Literal['topleft', 'midtop', 'topright',
-                                  'midleft', 'center', 'midright',
-                                  'bottomleft', 'midbottom', 'bottomright'] = 'center'):
-        """Initialises Btn with Txt parent class.
+                 x: int, y: int, width: int, height: int, func: Callable = None, sfx_dir: str | None = None,
+                 col_btn: list[tuple[int, int, int]] = button_colors, btn_ref: rect_attributes = 'center'):
+        """Parent class for all types of buttons.
 
-        Creates button background rect, Sfx object, and text through parent class Txt.
+        Not meant to be explicitly instantiated, as no label can be shown on the button. Creates the background rect and sfx object.
 
         Args:
             game: Script for running game.
@@ -30,170 +34,153 @@ class Btn:
             width: Width of button background rect.
             height: Height of button background rect.
             func: Function to be called upon button being clicked, ignored if None.
-            sfx: Path to .wav audio file played when button clicked.
+            sfx_dir: Path to .wav audio file played when button clicked.
             col_btn: RGB values of button background rect color when button is clicked, hovered, or neither. [0] is the color when neither, [1] is the color
             when hovered, and [2] is the color when clicked.
-            col_txt: RGB valies of button text color when button is clicked, hovered or neither. [0] is the color when neither, [1] is the color when hovered,
-            and [2] is the color when clicked.
             btn_ref: References which point on the button rect the coordinates point to.
-
-        For additional info on args, view help on parent class Txt.
         """
         self.game = game
         self.func = func
         self.col_btn = col_btn
         self.clicked = False
-        self.rect = pygame.Rect(x, y, width, height)  # create button background rect
-        self.sfx = pygame.mixer.Sound(self.game.click_btn_sfx if sfx is None else sfx)
+        self.rect = pygame.Rect(x, y, width, height)  # button background rect
+        self.sfx = pygame.mixer.Sound(self.game.click_btn_sfx if sfx_dir is None else sfx_dir)  # button sound effect
         self.current_btn_col = self.col_btn[0]
         setattr(self.rect, btn_ref, (x, y))
 
-    def on_click(self, event) -> None:
-        if self.rect.collidepoint(self.game.pos) and not Btn.clicked and event.button == 1:
+    def on_click(self, event: pygame.MOUSEBUTTONDOWN) -> None:
+        """Call when mouse is clicked.
+
+        Collision checks the mouse with the button, plays sfx. Also handles cancelling click through a right click.
+
+        Args:
+            event: Mouse button that was clicked.
+        """
+        if self.rect.collidepoint(self.game.pos) and not _Btn.clicked and event.button == 1:
             self.clicked = True
-            Btn.clicked = True
+            _Btn.clicked = True
             self.current_btn_col = self.col_btn[2]
             self.sfx.set_volume(0.2)
             self.game.channel_btn.play(self.sfx)
         if event.button == 3:  # right click to cancel click
             self.clicked = False
-            Btn.clicked = False
+            _Btn.clicked = False
 
-    def on_release(self, event) -> None:
+    def on_release(self, event: pygame.MOUSEBUTTONUP) -> None:
+        """Call when mouse released.
+
+        Checks if mouse was clicked on MOUSEDOWN, plays sfx. Calls function assigned when clicking button.
+
+        Args:
+            event: Mouse button that was released.
+        """
         if self.clicked and event.button == 1:
             self.clicked = False
-            Btn.clicked = False
+            _Btn.clicked = False
             self.sfx.set_volume(0.15)
             self.game.channel_btn.play(self.sfx)
             self.func() if callable(self.func) else None
 
 
 # noinspection PyMethodOverriding
-class BtnTxt(Btn, Txt):
-    """
-    Attributes:
-        clicked: A boolean indicating if any button has been clicked or not
-    """
-
+class BtnTxt(_Btn, Txt):
     def __init__(self, game: 'Game',
-                 size: int, x: int, y: int, width: int, height: int, text: str, func: Callable = None, font_path: str = None, sfx: str = None,
-                 col_btn: list[tuple[int, int, int]] = [(30, 30, 30), (35, 35, 35), (85, 85, 85)],
-                 col_txt: list[tuple[int, int, int]] = [(255, 255, 255), (255, 255, 255), (255, 255, 255)],
-                 btn_ref: Literal['topleft', 'midtop', 'topright',
-                                  'midleft', 'center', 'midright',
-                                  'bottomleft', 'midbottom', 'bottomright'] = 'center',
-                 wrap: bool = False, wrapwidth: int = None):
-        """Initialises Btn with Txt parent class.
+                 size: int, x: int, y: int, width: int, height: int, text: str, func: Callable = None, font_dir: str = None, sfx_dir: str = None,
+                 col_btn: list[tuple[int, int, int]] = button_colors, col_txt: list[tuple[int, int, int]] = [(255, 255, 255), (255, 255, 255), (255, 255, 255)],
+                 btn_ref: rect_attributes = 'center', wrap: bool = False, wrapwidth: int = None):
+        """Class for buttons that only need text displayed on the label.
 
-        Creates button background rect, Sfx object, and text through parent class Txt.
+        Creates text for button through parent class Txt.
 
         Args:
-            game: Script for running game.
-            x: X coordinate of button background rect.
-            y: Y coordinate of button background rect.
-            width: Width of button background rect.
-            height: Height of button background rect.
-            func: Function to be called upon button being clicked, ignored if None.
-            sfx: Path to .wav audio file played when button clicked.
-            col_btn: RGB values of button background rect color when button is clicked, hovered, or neither. [0] is the color when neither, [1] is the color
-            when hovered, and [2] is the color when clicked.
+            text: String of text to be displayed on button label.
+            font_dir: String of the directory to a .ttf file of the font to be displayed.
             col_txt: RGB valies of button text color when button is clicked, hovered or neither. [0] is the color when neither, [1] is the color when hovered,
             and [2] is the color when clicked.
-            btn_ref: References which point on the button rect the coordinates point to.
+            wrap: If true, wrap text.
+            wrapwidth: Width in ptx of when text should start wrapping
 
-        For additional info on args, view help on parent class Txt.
+        For additional info on args, view help on parent class Txt and _Btn.
         """
-        Btn.__init__(self, game, x, y, width, height, func, sfx, col_btn, btn_ref)
+        _Btn.__init__(self, game, x, y, width, height, func, sfx_dir, col_btn, btn_ref)
         self.col_txt = col_txt
-        # wrapwidth must be changed before calling parent class init
+        # wrapwidth must be defined before calling parent class Txt
         self.wrapwidth = self.rect.width if wrapwidth is None else wrapwidth
         self.current_txt_col = self.col_txt[0]
-        # create text for button using parent Txt class
-        Txt.__init__(self, self.game.font_dir if font_path is None else font_path, size,
-                     x=self.rect.centerx, y=self.rect.centery, text=text, ref='center', wrap=wrap, wrapwidth=self.wrapwidth)
+        Txt.__init__(self, self.game.font_dir if font_dir is None else font_dir, size, x=self.rect.centerx, y=self.rect.centery, text=text, ref='center',
+                     wrap=wrap, wrapwidth=self.wrapwidth)
 
     @override
     def update(self, surface: pygame.Surface) -> None:
-        """Renders text blits button rect to surface, handles user inputs.
+        """Renders text, blits button rect to surface, handles user inputs.
 
         Args:
             surface: Surface which button will be blitted to.
         """
-        pygame.draw.rect(surface, self.current_btn_col, self.rect)  # rect must be drawn before text is blitted to stop overlap
-        Txt.update(self, surface, self.current_txt_col)  # renders text using parent class
-        if self.rect.collidepoint(self.game.pos) and not Btn.clicked:
+        pygame.draw.rect(surface, self.current_btn_col, self.rect)  # main button rect
+        Txt.update(self, surface, self.current_txt_col)  # text to be rendered on top of button
+        if self.rect.collidepoint(self.game.pos) and not _Btn.clicked:
             # button is hovered not clicked
             self.current_btn_col = self.col_btn[1]
             self.current_txt_col = self.col_txt[1]
-        elif not Btn.clicked:
+        elif not _Btn.clicked:
             # button is not hovered or clicked
             self.current_btn_col = self.col_btn[0]
             self.current_txt_col = self.col_txt[0]
         if self.clicked:
+            # button is clicked
             self.current_btn_col = self.col_btn[2]
             self.current_txt_col = self.col_txt[2]
 
 
 class BtnBack(BtnTxt):
+    def __init__(self, game: 'Game', size: int, x: int, y: int, width: int, height: int, text: str = 'Back', btn_ref: rect_attributes = 'center'):
+        """Class for making buttons that go back a screen via the state stack.
 
-    def __init__(self, game: 'Game', size: int, x: int, y: int, width: int, height: int, text='Back', btn_ref='center'):
-        super().__init__(game, size, x, y, width, height, text, col_btn=[(30, 30, 30), (35, 35, 35), (85, 85, 85)],
-                         col_txt=[(255, 255, 255), (255, 255, 255), (255, 255, 255)], btn_ref=btn_ref)
+        Func auto assigned.
+
+        For additional info on args, view help on parent class BtnTxt."""
+        super().__init__(game, size, x, y, width, height, text, col_txt=[(255, 255, 255), (255, 255, 255), (255, 255, 255)], btn_ref=btn_ref)
         self.func = self.back
 
-    def back(self):
+    def back(self) -> None:
         """Pops top item out of the state stack."""
         self.game.state_stack[-1].on_exit()
         self.game.state_stack[-1].exit_state()
 
 
-class BtnImg(Btn, Img):
+class BtnImg(_Btn, Img):
     def __init__(self, game: 'Game',
                  x: int, y: int, width: int, height: int, img: pygame.Surface, imgx: int = None, imgy: int = None, scale: int = 1, func: Callable = None,
-                 sfx: str = None,
-                 col_btn: list[tuple[int, int, int]] = [(30, 30, 30), (35, 35, 35), (85, 85, 85)],
-                 btn_ref: Literal['topleft', 'midtop', 'topright',
-                                  'midleft', 'center', 'midright',
-                                  'bottomleft', 'midbottom', 'bottomright'] = 'center',
-                 img_ref: Literal['topleft', 'midtop', 'topright',
-                                  'midleft', 'center', 'midright',
-                                  'bottomleft', 'midbottom', 'bottomright'] = 'center'):
-        """Initialises Btn with Img parent class.
+                 sfx_dir: str = None, col_btn: list[tuple[int, int, int]] = button_colors, btn_ref: rect_attributes = 'center',
+                 img_ref: rect_attributes = 'center'):
+        """Class for making buttons with images displayed on the labels.
 
-        Creates button background rect, Sfx object, and img through parent class Img.
+        Uses parent class Img to place image onto label of button.
 
         Args:
-            game: Script for running game.
-            x: X coordinate of button background rect.
-            y: Y coordinate of button background rect.
-            width: Width of button background rect.
-            height: Height of button background rect.
-            imgx: X coordinate of image with refrence to button based on img_ref
-            func: Function to be called upon button being clicked, ignored if None.
-            sfx: Path to .wav audio file played when button clicked.
-            col_btn: RGB values of button background rect color when button is clicked, hovered, or neither. [0] is the color when neither, [1] is the color
-            when hovered, and [2] is the color when clicked.
-            btn_ref: References which point on the button rect the coordinates point to.
+            img_ref: References which point on the button rect the coordinates of the image point to.
 
-        For additional info on args, view help on parent class Img.
+        For additional info on args, view help on parent classes Img and _Btn.
         """
-        Btn.__init__(self, game, x, y, width, height, func, sfx, col_btn, btn_ref)
-        # create img for button using parent Img class
+        _Btn.__init__(self, game, x, y, width, height, func, sfx_dir, col_btn, btn_ref)
         Img.__init__(self, imgx if imgx is not None else self.rect.centerx, imgy if imgy is not None else self.rect.centery, img, scale, img_ref)
 
+    @override
     def update(self, surface: pygame.Surface) -> None:
-        """Renders text blits button rect to surface, handles user inputs.
+        """Renders button rect, blits image and handles user input.
 
         Args:
             surface: Surface which button will be blitted to.
         """
-        pygame.draw.rect(surface, self.current_btn_col, self.rect)  # rect must be drawn before text is blitted to stop overlap
-        Img.update(self, surface)  # renders text using parent class
-        if self.rect.collidepoint(self.game.pos) and not Btn.clicked:
+        pygame.draw.rect(surface, self.current_btn_col, self.rect)  # main button rect
+        Img.update(self, surface)  # image surface
+        if self.rect.collidepoint(self.game.pos) and not _Btn.clicked:
             # button is hovered not clicked
             self.current_btn_col = self.col_btn[1]
-        elif not Btn.clicked:
+        elif not _Btn.clicked:
             # button is not hovered or clicked
             self.current_btn_col = self.col_btn[0]
         if self.clicked:
+            # button is clicked
             self.current_btn_col = self.col_btn[2]

@@ -1,4 +1,4 @@
-"""Allows for parsing spritesheets in order to load in specific sprites."""
+"""Module that allows for parsing spritesheets in order to load in specific sprites."""
 import sys
 import json
 import pygame
@@ -26,30 +26,30 @@ class Spritesheet:
             self.data = json.load(metadata_json)  # extracts json data as python dicts
         metadata_json.close()
 
-    def get_sprite(self, x: int, y: int, width: int, height: int) -> pygame.Surface:
+    def _get_sprite(self, x: int, y: int, width: int, height: int) -> pygame.Surface:
         """Returns subsurface from spritesheet of coordinates specified.
 
-        This method is not meant to be called explicitly, rather call Spritesheet.parse_sprite for the sprite surface
+        This method is not meant to be called explicitly, rather call Spritesheet.parse_sprite for the sprite surface.
 
         Args:
-            x: Topleft x coordinate of image to cut out
-            y: Topleft y coordinate of image to cut out
-            width: Width of image to cut out
-            height: Height of image to cut out
+            x: Topleft x coordinate of image to cut out.
+            y: Topleft y coordinate of image to cut out.
+            width: Width of image to cut out.
+            height: Height of image to cut out.
 
         Returns: surface from spritesheet of coordinates specified.
         """
         return self.spritesheet.subsurface(x, y, width, height)
 
     def parse_sprite(self, name: str) -> pygame.Surface:
-        """Parses sprite coordinates from name of sprite given
+        """Parses sprite coordinates from name of sprite given.
 
         Json file must include the name of each sprite with their respective x, y, width and height attributes.
 
         Args:
             name: Name of sprite as listed in spritesheet json file.
 
-        Returns: surface including sprite specified
+        Returns: surface including sprite specified.
         """
         sprite = self.data['frames'][name]['frame']
-        return self.get_sprite(sprite['x'], sprite['y'], sprite['w'], sprite['h'])
+        return self._get_sprite(sprite['x'], sprite['y'], sprite['w'], sprite['h'])

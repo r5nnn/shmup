@@ -169,6 +169,9 @@ class Game:
             self.running = False
 
     def back(self, play_sfx=True) -> None:
+        """Pops top item out of state stack.
+
+        Enters options if in the title screen, and pauses the game if ingame."""
         self.sfx_click.play() if play_sfx else None
         self.state_stack[-1].on_exit()
         if (not self.playing or len(self.state_stack) != 2) and len(self.state_stack) > 1:
@@ -179,12 +182,13 @@ class Game:
             paused.enter_state()
             paused.on_enter()
         else:
-            options = Options(self, self.title_screen)
+            options = Options(self)
             options.enter_state()
             options.on_enter()
 
     @staticmethod
     def on_keydown(event) -> None:
+        """Triggers on keypress, calls key handler."""
         keyEventManager.notify(event, selector=attrgetter("key"))
 
 

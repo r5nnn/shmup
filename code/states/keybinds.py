@@ -1,6 +1,6 @@
-"""Used for anything related to the keybinds state"""
+"""Handles anything related to the keybinds state"""
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 import pygame
 
@@ -17,20 +17,15 @@ if TYPE_CHECKING:
 
 
 class Keybinds(State):
-
-    def __init__(self, game: 'Game', prev_state: State):
-        """Initialises Keybinds with parent class State
+    def __init__(self, game: 'Game'):
+        """Initialises Keybinds with parent class State.
 
         Assigns backdrop to whatever was used in the previous state and creates all the surfaces to display. Iterates through all relevant keybinds and
         generates the UI.
 
-        Args:
-            prev_state: Previous State in the state stack, used for inheriting properties e.g. backgrounds
-
         For additional info on args, view help on parent class State.
         """
         super().__init__(game)
-        self.backdrop = prev_state.backdrop  # copy backdrop of previous screen
         # surface
         self.img_keybinds = Img(self.game.WINX / 2, self.game.WINY / 2 * 0.2, pygame.image.load(os.path.join(self.game.title_dir, 'keybinds.png')).convert(),
                                 scale=4)
@@ -44,11 +39,10 @@ class Keybinds(State):
         self.btn_back = BtnBack(self.game, 64, self.game.WINX - self.game.WINX * 0.02, self.img_keybinds.img_rect.centery, 250, 75, btn_ref='midright')
         self.btn_modify = BtnTxt(self.game, 64, self.game.WINX * 0.02, self.img_keybinds.img_rect.centery, 250, 75, 'Modify', btn_ref='midleft')
 
-        self.keys = [['--General--', ''], ['ESC', 'Go back/Pause the game'], ['END', 'Force quit game'], ['Z', 'Shoot the bullet'],
+        self.keys = [['--General--', ''], ['ESC', 'Go back/Pause the game'], ['END', 'Force quit game'], ['RIGHT CLICK', 'Cancel button click'],
                      ['--Game--', ''], ['W / UP ARROW', 'Move up'], ['A / LEFT ARROW', 'Move left'], ['S / DOWN ARROW', 'Move down'],
                                        ['D / RIGHT ARROW', 'Move right'], ['SHIFT', 'Slows down the player and displays hitbox']]
 
-        # append all objects to one list for iterating through
         self.objects = ([self.img_keybinds, self.txt_keys, self.txt_description, self.btn_back, self.btn_modify] +
                         [Txt(self.game.font_dir, 32, self.game.WINX * 0.02, self.img_keybinds.img_rect.bottom * 1.4 + (i * 40),
                              self.keys[i][0])  # generates Txt surface objects for each keybind in self.keys
@@ -57,17 +51,22 @@ class Keybinds(State):
                              self.keys[i][1], ref='topright')  # generates Txt surface objects for each keybind description in self.keys
                          for i in range(len(self.keys))])
 
+    @override
     def on_enter(self) -> None:
         for i in [self.btn_back, self.btn_modify]:
             generalEventManager.register(pygame.MOUSEBUTTONDOWN, i.on_click)
             generalEventManager.register(pygame.MOUSEBUTTONUP, i.on_release)
 
+    @override
     def on_exit(self) -> None:
         for i in [self.btn_modify, self.btn_back]:
             generalEventManager.deregister(pygame.MOUSEBUTTONDOWN, i.on_click)
             generalEventManager.deregister(pygame.MOUSEBUTTONUP, i.on_release)
-    
+
+    @override
     def render_state(self, surface: pygame.Surface) -> None:
         if self.game.playing:
-            self.prev_state.prev_state.prev_state.render_state(surface)  # prev state of prev state of prev state is Stage1
+            self.prev_state.prev_state.prev_state.render_state(surface)  # Stage1
+        else:
+            self.backdrop = self.prev_state.backdrop
         super().render_state(surface)

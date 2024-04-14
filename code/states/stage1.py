@@ -1,6 +1,6 @@
-"""Used for anything related to the Stage1 state"""
+"""Handles anything related to the Stage1 state"""
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 import pygame
 
@@ -16,9 +16,9 @@ if TYPE_CHECKING:
 
 class Stage1(State):
     def __init__(self, game: 'Game'):
-        """Initialises Stage1 with parent class State
+        """Initialises Stage1 with parent class State.
 
-        Creates all the surfaces to display. Starts playing stage audio.
+        Creates all the surfaces to display.
 
         For additional info on args, view help on parent class State."""
         super().__init__(game)
@@ -29,10 +29,12 @@ class Stage1(State):
         self.bgm.set_volume(0.2)
 
         # create player object
-        self.player = Player(self.game, self, os.path.join(self.game.player_dir, 'player-sheet'), self.game.WINX / 2,
+        self.player = Player(os.path.join(self.game.player_dir, 'player-sheet'), self.game.WINX / 2,
                              self.game.WINY / 2 * 0.8, 2)
 
+    @override
     def on_enter(self) -> None:
+        """Starts playing stage audio."""
         super().on_enter()
         pygame.mouse.set_visible(False)
         self.game.playing = True
@@ -44,24 +46,37 @@ class Stage1(State):
         generalEventManager.register(pygame.KEYDOWN, self.on_keydown)
         generalEventManager.register(pygame.KEYUP, self.on_keyup)
 
+    @override
     def on_exit(self) -> None:
         pygame.mouse.set_visible(True)
         generalEventManager.deregister(pygame.KEYDOWN, self.on_keydown)
         generalEventManager.deregister(pygame.KEYUP, self.on_keyup)
         self.player.on_exit()
 
+    @override
     def update_state(self) -> None:
         # update player
         self.player.update()
 
+    @override
     def render_state(self, surface: pygame.Surface) -> None:
         super().render_state(surface)
         self.player.render(surface)
 
-    def on_keydown(self, event) -> None:
+    def on_keydown(self, event: pygame.event.Event) -> None:
+        """Passes detected keydown events onto player for handling.
+
+        Args:
+            event: Keydown event to be passed
+            """
         if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_LSHIFT]:
             self.player.on_keydown(event)
 
-    def on_keyup(self, event) -> None:
+    def on_keyup(self, event: pygame.event.Event) -> None:
+        """Passes detected keyup events onto player for handling.
+
+        Args:
+            event: Keyup event to be passed.
+        """
         if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_LSHIFT]:
             self.player.on_keyup(event)

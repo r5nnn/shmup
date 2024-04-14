@@ -1,15 +1,12 @@
-"""Renders and wraps text, then blits it onto surface"""
-from typing import Literal
+"""Module for rendering and wrapping text and blitting it onto a surface"""
 import pygame
+
+from .constants import rect_attributes
 
 
 class Txt:
-    def __init__(self, font_path: str, size: int, x: int, y: int, text: str,
-                 ref: Literal['topleft', 'midtop', 'topright',
-                              'midleft', 'center', 'midright',
-                              'bottomleft', 'midbottom', 'bottomright'] = 'topleft',
-                 wrap: bool = False, wrapwidth: int = None):
-        """Initialises Txt by splitting the text and wrapping it
+    def __init__(self, font_path: str, size: int, x: int, y: int, text: str, ref: rect_attributes = 'topleft', wrap: bool = False, wrapwidth: int = None):
+        """Initialises Txt by splitting the text and wrapping it.
 
         Sets coordinates of Txt surface and renders text for each line after wrapping.
 
@@ -27,7 +24,7 @@ class Txt:
         self.x, self.y = x, y
         self.ref = ref
         self.font = pygame.font.Font(font_path, size)
-        self.text = self.wrap(text, wrapwidth) if wrap else [text]
+        self.text = self._wrap(text, wrapwidth) if wrap else [text]
         self.rects = []
         # fonts are rendered (not blit) on init in order to refer to their coordinates using self.rects
         y_offset = 0
@@ -39,7 +36,13 @@ class Txt:
             self.rects.append(text_rect)
             y_offset += font_height
 
-    def update(self, surface: object, color: tuple = (255, 255, 255)) -> None:
+    def update(self, surface: object, color: tuple[int, int, int] = (255, 255, 255)) -> None:
+        """Handles blitting text onto a surface.
+
+        Args:
+            surface: Surface to blit text to.
+            color: Color of text.
+        """
         y_offset = 0  # this is incremented by the font height for each line
         for line in self.text:
             font_height = self.font.size(line)[1]
@@ -49,10 +52,10 @@ class Txt:
             surface.blit(font_surface, text_rect)
             y_offset += font_height
 
-    def wrap(self, text: str, wrapwidth: int) -> list:
+    def _wrap(self, text: str, wrapwidth: int) -> list:
         """Wraps text at wrapwidth.
 
-        If text contains newline instead wraps at newline regardless of wrapwidth
+        If text contains newline instead wraps at newline regardless of wrapwidth.
 
         Args:
             text: Text to be rendered.

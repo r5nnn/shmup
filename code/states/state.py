@@ -30,6 +30,8 @@ class State:
     def render_state(self, surface: pygame.Surface) -> None:
         """Call to blit state to surface.
 
+
+
         Args:
             surface: Surface which image will be blitted to.
         """

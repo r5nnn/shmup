@@ -41,13 +41,13 @@ class Title(State):
         self.btn_options = BtnTxt(self.game, 64, self.game.WINX / 2, self.btn_play.rect.bottom * 1.02, 300, 75, 'Options', self.options, btn_ref='midtop')
         self.btn_quit = BtnTxt(self.game, 64, self.game.WINX / 2, self.btn_options.rect.bottom * 1.02, 300, 75, 'Quit', self.quit, btn_ref='midtop')
         self.btn_github = BtnImg(self.game, 0, self.game.WINY, 50, 50,
-                                 pygame.image.load(os.path.join(self.game.icon_dir, "github.png")).convert_alpha(),
+                                 pygame.image.load(os.path.join(self.game.icon_dir, 'github.png')).convert_alpha(),
                                  btn_ref='bottomleft', scale=2, func=self.github)
         self.btn_trello = BtnImg(self.game, self.btn_github.rect.right * 1.1, self.game.WINY, 50, 50,
-                                 pygame.image.load(os.path.join(self.game.icon_dir, "trello.png")).convert_alpha(), btn_ref='bottomleft', scale=2,
+                                 pygame.image.load(os.path.join(self.game.icon_dir, 'trello.png')).convert_alpha(), btn_ref='bottomleft', scale=2,
                                  func=self.trello)
         self.btn_info = BtnImg(self.game, self.btn_github.rect.right * 2.2, self.game.WINY, 50, 50,
-                               pygame.image.load(os.path.join(self.game.icon_dir, "info.png")).convert_alpha(), btn_ref='bottomleft', scale=2)
+                               pygame.image.load(os.path.join(self.game.icon_dir, 'info.png')).convert_alpha(), btn_ref='bottomleft', scale=2)
 
         # text
         self.ver_txt = Txt(self.game.font_dir, 32, self.game.WINX, self.game.WINY, self.game.game_ver,
@@ -82,7 +82,7 @@ class Title(State):
     def options(self) -> None:
         """Calls the exit method of Title, Creates and appends Options state to the top of the state stack and calls its on enter method."""
         self.on_exit()
-        new_state = Options(self.game, self.game.state_stack[-1])
+        new_state = Options(self.game)
         new_state.on_enter()
         new_state.enter_state()
 
@@ -101,21 +101,25 @@ class Title(State):
             self.game.running = False
 
     def github(self) -> None:
+        """Calls the exit method of Title, opens a popup."""
         popup = Popup(self.game, 'Open https://github.com/r5nnn/shmup in your browser?', 'Open', 'Cancel', self.github_click)
         self.on_exit()
         popup.enter_state()
         popup.on_enter()
 
     def github_click(self) -> None:
-        webbrowser.open("https://github.com/r5nnn/shmup")
+        """Handles clicking on the github popup. Opens link in browser"""
+        webbrowser.open('https://github.com/r5nnn/shmup')
         self.game.back(play_sfx=False)
 
     def trello(self) -> None:
+        """Calls the exit method of Title, opens a popup"""
         popup = Popup(self.game, 'Open https://trello.com/b/xCHQx3Uu/shmup-trello in your browser?', 'Open', 'Cancel', self.trello_click)
         self.on_exit()
         popup.enter_state()
         popup.on_enter()
 
     def trello_click(self) -> None:
-        webbrowser.open("https://trello.com/b/xCHQx3Uu/shmup-trello")
+        """Handles clicking on the trello popup. Opens link in browser"""
+        webbrowser.open('https://trello.com/b/xCHQx3Uu/shmup-trello')
         self.game.back(play_sfx=False)

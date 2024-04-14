@@ -1,4 +1,5 @@
-"""Used for associating events with functions"""
+"""Module for associating events with functions"""
+import operator
 from typing import Callable
 from operator import attrgetter
 from collections import defaultdict
@@ -6,6 +7,7 @@ from collections import defaultdict
 from pygame.event import Event
 
 
+# noinspection PyArgumentList
 class EventManager:
     """
     Attributes:
@@ -22,14 +24,13 @@ class EventManager:
         self.handlers: dict[int, list[Callable[[Event], None]]] = defaultdict(list)
         self.pass_event = {}
 
-    def notify(self, event: Event, selector=attrgetter("type")) -> None:
+    def notify(self, event: Event, selector: operator.attrgetter = attrgetter("type")) -> None:
         """Calls the registered function with its associated event.
 
         Args:
             event: The event occuring in the event handling loop.
             selector: Which attribute of event.Event to look for
         """
-        # noinspection PyTypeChecker
         for handler in self.handlers[selector(event)]:
             handler(event) if self.pass_event[selector(event)] else handler()
 
@@ -55,7 +56,15 @@ class EventManager:
         if handler in self.handlers[event_type]:
             self.handlers[event_type] = [handler_ for handler_ in self.handlers[event_type] if handler_ != handler]
 
-    def _is_registered(self, event_type, handler):
+    def is_registered(self, event_type: int, handler: Callable[[Event], None]) -> bool:
+        """Check if handler is bound to an event.
+
+        Args:
+            event_type: Event type to check.
+            handler: Handler bound to event.
+
+        Returns: Bool confirming if handler is registered.
+        """
         return event_type in self.handlers and handler in self.handlers[event_type]
 
     @classmethod
