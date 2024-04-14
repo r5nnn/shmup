@@ -1,4 +1,5 @@
 """Module used for creating and handling popup screens"""
+import webbrowser
 from typing import TYPE_CHECKING, Callable, override
 
 import pygame
@@ -63,3 +64,13 @@ class Popup(State):
 
     def on_release(self, event: pygame.event.Event) -> None:
         ...
+
+
+class PopupLink(Popup):
+    def __init__(self, game: "Game", link: str):
+        self.link = link
+        super().__init__(game, txt=f"Open {link} in your browser?", btn1_txt="Open", btn2_txt='Cancel', btn1_func=self.open)
+
+    def open(self) -> None:
+        webbrowser.open(self.link)
+        self.game.back(play_sfx=False)
