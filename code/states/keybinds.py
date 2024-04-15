@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, override
 
 import pygame
 
-from .modules.eventmanager import generalEventManager
 from .state import State
 from .modules.txt import Txt
 from .modules.btn import BtnTxt, BtnBack
@@ -41,27 +40,15 @@ class Keybinds(State):
 
         self.keys = [['--General--', ''], ['ESC', 'Go back/Pause the game'], ['END', 'Force quit game'], ['RIGHT CLICK', 'Cancel button click'],
                      ['--Game--', ''], ['W / UP ARROW', 'Move up'], ['A / LEFT ARROW', 'Move left'], ['S / DOWN ARROW', 'Move down'],
-                                       ['D / RIGHT ARROW', 'Move right'], ['SHIFT', 'Slows down the player and displays hitbox']]
+                     ['D / RIGHT ARROW', 'Move right'], ['SHIFT', 'Slows down the player and displays hitbox']]
 
-        self.objects = ([self.img_keybinds, self.txt_keys, self.txt_description, self.btn_back, self.btn_modify] +
-                        [Txt(self.game.font_dir, 32, self.game.WINX * 0.02, self.img_keybinds.img_rect.bottom * 1.4 + (i * 40),
-                             self.keys[i][0])  # generates Txt surface objects for each keybind in self.keys
-                         for i in range(len(self.keys))] +
-                        [Txt(self.game.font_dir, 32, self.game.WINX - self.game.WINX * 0.02, self.img_keybinds.img_rect.bottom * 1.4 + (i * 40),
-                             self.keys[i][1], ref='topright')  # generates Txt surface objects for each keybind description in self.keys
-                         for i in range(len(self.keys))])
-
-    @override
-    def on_enter(self) -> None:
-        for i in [self.btn_back, self.btn_modify]:
-            generalEventManager.register(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.register(pygame.MOUSEBUTTONUP, i.on_release)
-
-    @override
-    def on_exit(self) -> None:
-        for i in [self.btn_modify, self.btn_back]:
-            generalEventManager.deregister(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.deregister(pygame.MOUSEBUTTONUP, i.on_release)
+        self.objects = [[self.img_keybinds, self.txt_keys, self.txt_description], [self.btn_back, self.btn_modify]]
+        self.objects[0] += ([Txt(self.game.font_dir, 32, self.game.WINX * 0.02, self.img_keybinds.img_rect.bottom * 1.4 + (i * 40),
+                                 self.keys[i][0])  # generates Txt surface objects for each keybind in self.keys
+                             for i in range(len(self.keys))] +
+                            [Txt(self.game.font_dir, 32, self.game.WINX - self.game.WINX * 0.02, self.img_keybinds.img_rect.bottom * 1.4 + (i * 40),
+                                 self.keys[i][1], ref='topright')  # generates Txt surface objects for each keybind description in self.keys
+                             for i in range(len(self.keys))])
 
     @override
     def render_state(self, surface: pygame.Surface) -> None:

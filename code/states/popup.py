@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Callable, override
 
 import pygame
 
-from .modules.eventmanager import generalEventManager
 from .modules.txt import Txt
 from .state import State
 from .modules.btn import BtnTxt, BtnBack
@@ -37,25 +36,13 @@ class Popup(State):
         self.rect_surf.set_alpha(170)  # 2/3 opacity
         pygame.draw.rect(self.rect_surf, (0, 0, 0), self.rect_surf.get_rect())
 
-        self.objects = [self.btn1, self.btn2, self.txt]
+        self.objects = [[self.txt], [self.btn1, self.btn2]]
 
     @override
     def render_state(self, surface: pygame.Surface) -> None:
         self.prev_state.render_state(surface)
         surface.blit(self.rect_surf, self.rect_surf.get_rect(center=(self.game.WINX/2, self.game.WINY/2 * 0.9)))
         super().render_state(surface)
-
-    @override
-    def on_enter(self) -> None:
-        for i in [self.btn1, self.btn2, self]:
-            generalEventManager.register(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.register(pygame.MOUSEBUTTONUP, i.on_release)
-
-    @override
-    def on_exit(self) -> None:
-        for i in [self.btn1, self.btn2, self]:
-            generalEventManager.deregister(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.deregister(pygame.MOUSEBUTTONUP, i.on_release)
 
     def on_click(self, event: pygame.event.Event) -> None:
         """Handles clicking anywhere but the popup to exit."""

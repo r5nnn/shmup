@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, override
 
 import pygame
 
-from .modules.eventmanager import generalEventManager
 from .state import State
 from .modules.btn import BtnTxt, BtnBack
 from .modules.img import Img
@@ -32,31 +31,12 @@ class Options(State):
                                scale=4)
 
         # buttons
-        self.btn_keybinds = BtnTxt(self.game, 36, self.game.WINX/2, self.img_options.img_rect.bottom * 1.03, 205, 50, 'Keybinds', self.keybinds,
-                                   btn_ref='midtop')
+        self.btn_keybinds = BtnTxt(self.game, 36, self.game.WINX/2, self.img_options.img_rect.bottom * 1.03, 205, 50, 'Keybinds',
+                                   lambda: self.switch_state(Keybinds), btn_ref='midtop')
         self.btn_back = BtnBack(self.game, 32, self.game.WINX/2, self.btn_keybinds.rect.bottom * 1.03, 205, 50,
                                 btn_ref='midtop')
 
-        self.objects = [self.img_options, self.btn_keybinds, self.btn_back]
-
-    @override
-    def on_enter(self) -> None:
-        for i in [self.btn_keybinds, self.btn_back]:
-            generalEventManager.register(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.register(pygame.MOUSEBUTTONUP, i.on_release)
-
-    @override
-    def on_exit(self) -> None:
-        for i in [self.btn_keybinds, self.btn_back]:
-            generalEventManager.deregister(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.deregister(pygame.MOUSEBUTTONUP, i.on_release)
-
-    def keybinds(self) -> None:
-        """Creates and appends Keybinds state to the top of the state stack."""
-        self.on_exit()
-        new_state = Keybinds(self.game)
-        new_state.on_enter()
-        new_state.enter_state()
+        self.objects = [[self.img_options], [self.btn_keybinds, self.btn_back]]
 
     @override
     def render_state(self, surface: pygame.Surface) -> None:

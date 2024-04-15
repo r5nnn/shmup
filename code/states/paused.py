@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, override
 
 import pygame
 
-from .modules.eventmanager import generalEventManager
 from .state import State
 from .options import Options
 from .modules.img import Img
@@ -40,42 +39,22 @@ class Paused(State):
 
         # buttons
         self.btn_resume = BtnBack(self.game, 36, self.game.WINX / 2, self.paused_img.img_rect.bottom * 1.1, 250, 50, 'Resume', btn_ref='midtop')
-        self.btn_options = BtnTxt(self.game, 36, self.game.WINX / 2, self.btn_resume.rect.bottom * 1.02, 250, 50, 'Options', func=self.options,
-                                  btn_ref='midtop')
+        self.btn_options = BtnTxt(self.game, 36, self.game.WINX / 2, self.btn_resume.rect.bottom * 1.02, 250, 50, 'Options',
+                                  func=lambda: self.switch_state(Options), btn_ref='midtop')
         self.btn_saveandexit = BtnTxt(self.game, 36, self.game.WINX / 2, self.btn_options.rect.bottom * 1.02, 250, 50, 'Save and Exit',
                                       func=self.title, btn_ref='midtop')
 
         # append objects to list for iteration
-        self.objects = [self.paused_img, self.btn_resume, self.btn_options, self.btn_saveandexit]
+        self.objects = [[self.paused_img], [self.btn_resume, self.btn_options, self.btn_saveandexit]]
 
     @override
     def render_state(self, surface: pygame.Surface) -> None:
         self.prev_state.render_state(surface)
-        self.backdrop = self.prev_state.backdrop
         surface.blit(self.rect_surf, self.rect_surf.get_rect(center=(self.game.WINX / 2, self.game.WINY / 2)))
         super().render_state(surface)
-
-    @override
-    def on_enter(self) -> None:
-        for i in [self.btn_options, self.btn_resume, self.btn_saveandexit]:
-            generalEventManager.register(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.register(pygame.MOUSEBUTTONUP, i.on_release)
-
-    @override
-    def on_exit(self) -> None:
-        for i in [self.btn_options, self.btn_resume, self.btn_saveandexit]:
-            generalEventManager.deregister(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.deregister(pygame.MOUSEBUTTONUP, i.on_release)
 
     def title(self):
         """Pops states off the top of the state stack until at title"""
         self.on_exit()
         self.game.state_stack[0].on_enter()
         self.game.state_stack = [self.game.state_stack[0]]
-
-    def options(self):
-        """Creates and appends Options state to the top of the state stack."""
-        self.on_exit()
-        options = Options(self.game)
-        options.on_enter()
-        options.enter_state()
