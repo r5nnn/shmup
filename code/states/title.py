@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, override
 
 import pygame
 
-from .credits import Credits
+from .credits import CreditsFr
 from .options import Options
 from .popup import PopupLink
 from .stage1 import Stage1
@@ -45,15 +45,15 @@ class Title(State):
         self.btn_trello = BtnImg(self.game, self.btn_github.rect.right * 1.1, self.game.WINY, 50, 50,
                                  pygame.image.load(os.path.join(self.game.icon_dir, 'trello.png')).convert_alpha(), btn_ref='bottomleft', scale=2,
                                  func=lambda: self.switch_state(PopupLink, 'https://trello.com/b/xCHQx3Uu/shmup-trello'))
-        self.btn_info = BtnImg(self.game, self.btn_github.rect.right * 2.2, self.game.WINY, 50, 50,
-                               pygame.image.load(os.path.join(self.game.icon_dir, 'info.png')).convert_alpha(), btn_ref='bottomleft', scale=2,
-                               func=lambda: self.switch_state(Credits))
+        self.btn_credits = BtnImg(self.game, self.btn_github.rect.right * 2.2, self.game.WINY, 50, 50,
+                                  pygame.image.load(os.path.join(self.game.icon_dir, 'credits.png')).convert_alpha(), btn_ref='bottomleft', scale=2,
+                                  func=lambda: self.switch_state(CreditsFr))
 
         # text
         self.ver_txt = Txt(self.game.font_dir, 32, self.game.WINX, self.game.WINY, self.game.game_ver,
                            ref='bottomright')
 
-        self.objects = [[self.logo_img, self.ver_txt], [self.btn_play, self.btn_options, self.btn_quit, self.btn_github, self.btn_trello, self.btn_info]]
+        self.objects = [[self.logo_img, self.ver_txt], [self.btn_play, self.btn_options, self.btn_quit, self.btn_github, self.btn_trello, self.btn_credits]]
 
         self.bgm = pygame.mixer.Sound(file=self.game.menu_music)  # make sure to keep file=self.filepath as stated by the pygame docs:
         # From https://www.pygame.org/docs/ref/mixer.html#pygame.mixer.Sound: A Unicode string can only be a file pathname. A bytes object can be either a

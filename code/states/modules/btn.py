@@ -87,7 +87,7 @@ class BtnTxt(_Btn, Txt):
     def __init__(self, game: 'Game',
                  size: int, x: int, y: int, width: int, height: int, text: str, func: Callable = None, font_dir: str = None, sfx_dir: str = None,
                  col_btn: list[tuple[int, int, int]] = button_colors, col_txt: list[tuple[int, int, int]] = [(255, 255, 255), (255, 255, 255), (255, 255, 255)],
-                 btn_ref: rect_attributes = 'center', wrap: bool = False, wrapwidth: int = None):
+                 btn_ref: rect_attributes = 'center', txt_ref: rect_attributes = 'center', wrap: bool = False, wrapwidth: int = None):
         """Class for buttons that only need text displayed on the label.
 
         Creates text for button through parent class Txt.
@@ -107,7 +107,7 @@ class BtnTxt(_Btn, Txt):
         # wrapwidth must be defined before calling parent class Txt
         self.wrapwidth = self.rect.width if wrapwidth is None else wrapwidth
         self.current_txt_col = self.col_txt[0]
-        Txt.__init__(self, self.game.font_dir if font_dir is None else font_dir, size, x=self.rect.centerx, y=self.rect.centery, text=text, ref='center',
+        Txt.__init__(self, self.game.font_dir if font_dir is None else font_dir, size, x=self.rect.centerx, y=self.rect.centery, text=text, ref=txt_ref,
                      wrap=wrap, wrapwidth=self.wrapwidth)
 
     @override

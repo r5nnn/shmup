@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Callable, override
 
 import pygame
 
+from .modules.eventmanager import generalEventManager
 from .modules.txt import Txt
 from .state import State
 from .modules.btn import BtnTxt, BtnBack
@@ -19,18 +20,18 @@ class Popup(State):
         super().__init__(game)
 
         # buttons
-        self.btn1 = BtnTxt(self.game, 32, self.game.WINX/2 * 0.85, self.game.WINY/2, 200, 50, btn1_txt, func=btn1_func)
+        self.btn1 = BtnTxt(self.game, 32, self.game.WINX / 2 * 0.85, self.game.WINY / 2, 200, 50, btn1_txt, func=btn1_func)
         if btn2_func is None:
-            self.btn2 = BtnBack(self.game, 32, self.game.WINX/2 * 1.15, self.game.WINY/2, 200, 50, text=btn2_txt)
+            self.btn2 = BtnBack(self.game, 32, self.game.WINX / 2 * 1.15, self.game.WINY / 2, 200, 50, text=btn2_txt)
         else:
-            self.btn2 = BtnTxt(self.game, 32, self.game.WINX/2 * 1.15, self.game.WINY/2, 200, 50, btn2_txt, btn2_func)
+            self.btn2 = BtnTxt(self.game, 32, self.game.WINX / 2 * 1.15, self.game.WINY / 2, 200, 50, btn2_txt, btn2_func)
 
         # text
-        self.txt = Txt(self.game.font_dir, 32, self.game.WINX/2, self.game.WINY/2 * 0.8, txt, "midbottom")
+        self.txt = Txt(self.game.font_dir, 32, self.game.WINX / 2, self.game.WINY / 2 * 0.8, txt, "midbottom")
 
         # surface
         self.rect = pygame.Rect(0, 0, self.txt.rects[0].width * 1.05, (self.btn1.rect.bottom - self.txt.rects[0].top) * 1.5)
-        self.rect.center = (self.game.WINX/2, self.game.WINY/2 * 0.9)
+        self.rect.center = (self.game.WINX / 2, self.game.WINY / 2 * 0.9)
         # create surface compatible with modifying alpha (pygame.SRCALPHA)
         self.rect_surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
         self.rect_surf.set_alpha(170)  # 2/3 opacity
@@ -41,7 +42,7 @@ class Popup(State):
     @override
     def render_state(self, surface: pygame.Surface) -> None:
         self.prev_state.render_state(surface)
-        surface.blit(self.rect_surf, self.rect_surf.get_rect(center=(self.game.WINX/2, self.game.WINY/2 * 0.9)))
+        surface.blit(self.rect_surf, self.rect_surf.get_rect(center=(self.game.WINX / 2, self.game.WINY / 2 * 0.9)))
         super().render_state(surface)
 
     def on_click(self, event: pygame.event.Event) -> None:
@@ -51,6 +52,18 @@ class Popup(State):
 
     def on_release(self, event: pygame.event.Event) -> None:
         ...
+
+    @override
+    def on_enter(self) -> None:
+        super().on_enter()
+        generalEventManager.register(pygame.MOUSEBUTTONDOWN, self.on_click)
+        generalEventManager.register(pygame.MOUSEBUTTONUP, self.on_release)
+
+    @override
+    def on_exit(self) -> None:
+        super().on_exit()
+        generalEventManager.deregister(pygame.MOUSEBUTTONDOWN, self.on_click)
+        generalEventManager.deregister(pygame.MOUSEBUTTONUP, self.on_release)
 
 
 class PopupLink(Popup):
