@@ -1,5 +1,8 @@
 ![](https://github.com/r5nnn/shmup/blob/main/assets/textures/title/logo_scaled.png)  
+<p align="center">
 Bullet hell (shoot em up) esque A-level project using pygame.  
+</p>
+
 ## Assets
 Font used - [edit-undo](https://www.dafont.com/edit-undo.font)  
 Sprite editor - [aseprite](https://www.aseprite.org/)  
