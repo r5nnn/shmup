@@ -2,11 +2,13 @@
 from typing import override
 
 import pygame.sprite
+
+from .bullet import Bullet
 from .spritesheet import Spritesheet
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, sprite_dir: str, x: int, y: int, speed: int):
+    def __init__(self, sprite_dir: str, x: int, y: int, speed: int, bullet: pygame.Surface, bullet_delay: int, bullet_sfx: str):
         """Class for creating a sprite that a user can control.
 
         Extracts sprites out of the spritesheet given and creates a rect for the player at the coordinates specified.
@@ -19,43 +21,61 @@ class Player(pygame.sprite.Sprite):
         """
         super().__init__()
         self.speed = speed
+        self.bullet_img = bullet
+        self.bullet_delay = bullet_delay
         self.spritesheet = Spritesheet(sprite_dir)
+        self.bullet_sfx = pygame.mixer.Sound(file=bullet_sfx)
+        self.channel_bullet_shoot = pygame.mixer.Channel(3)
+        self.channel_bullet_shoot.set_volume(0.04)
         self.player = [[self.spritesheet.parse_sprite(f'{sprite_dir.split('\\')[-1]} {i} {x}.png') for x in range(2)] for i in ['idle', 'down', 'left',
                                                                                                                                 'right', 'up']]
         self.modifier_key = 0
         self.player_state = 0
+        self.previous_time = 0
         self.rect = self.player[self.player_state][self.modifier_key].get_rect(center=(x, y))
         self.key_list = []
+        self.bullets = pygame.sprite.Group()
 
     @override
     def update(self) -> None:
         """Handles moving the sprite in accordance with user input."""
-        self.dx, self.dy, self.player_state, self.modifier_key = 0, 0, 0, 0
+        self.dx, self.dy, self.player_state, self.modifier_key = 0, 0, 0, False
         for key in self.key_list:
-            if key == pygame.K_UP:
-                self.dy = -self.speed
-                self.player_state = 4
-            elif key == pygame.K_DOWN:
-                self.dy = self.speed
-                self.player_state = 1
-            elif key == pygame.K_LEFT:
-                self.dx = -self.speed
-                self.player_state = 2
-            elif key == pygame.K_RIGHT:
-                self.dx = self.speed
-                self.player_state = 3
+            match key:
+                case pygame.K_UP:
+                    self.dy = -self.speed
+                    self.player_state = 4
+                case pygame.K_DOWN:
+                    self.dy = self.speed
+                    self.player_state = 1
+                case pygame.K_LEFT:
+                    self.dx = -self.speed
+                    self.player_state = 2
+                case pygame.K_RIGHT:
+                    self.dx = self.speed
+                    self.player_state = 3
         if pygame.K_LSHIFT in self.key_list:
             self.dx /= 2
             self.dy /= 2
-            self.modifier_key = 1
+            self.modifier_key = True
+        if pygame.K_z in self.key_list:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.previous_time > self.bullet_delay:
+                self.previous_time = current_time
+                bullet = Bullet(self, self.bullet_img, 6)
+                self.channel_bullet_shoot.play(self.bullet_sfx)
+                # noinspection PyTypeChecker
+                self.bullets.add(bullet)
         self.rect.move_ip(self.dx, self.dy)
+        self.bullets.update()
 
     def render(self, surface: pygame.Surface) -> None:
         """Handles blitting the player onto the screen.
 
         Makes sure player movement fits screen boundaries."""
         self.rect.clamp_ip(surface.get_rect())
-        surface.blit(self.player[self.player_state][self.modifier_key], self.rect)
+        surface.blit(self.player[self.player_state][1 if self.modifier_key else 0], self.rect)
+        self.bullets.draw(surface)
 
     def on_keydown(self, event: pygame.event.Event) -> None:
         """Handles user keydown events.

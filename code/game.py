@@ -139,6 +139,7 @@ class Game:
         self.win_icon = pygame.image.load(os.path.join(self.icon_dir, "shmup.png")).convert()  # ..\title.png
         self.background_dir = os.path.join(self.textures_dir, "background")  # assets\textures\background
         self.player_dir = os.path.join(self.textures_dir, "player")  # assets\textures\player
+        self.bullets_dir = os.path.join(self.textures_dir, "bullets")  # assets\textures\bullets
 
         self.fonts_dir = os.path.join(self.assets_dir, "fonts")  # assets\fonts
         self.font_dir = os.path.join(self.fonts_dir, "editundo.ttf")  # ..\editundo.ttf

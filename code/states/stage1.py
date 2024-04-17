@@ -30,7 +30,8 @@ class Stage1(State):
 
         # create player object
         self.player = Player(os.path.join(self.game.player_dir, 'player-sheet'), self.game.WINX / 2,
-                             self.game.WINY / 2 * 0.8, 2)
+                             self.game.WINY / 2 * 0.8, 2, pygame.image.load(os.path.join(self.game.bullets_dir, 'bullet.png')).convert_alpha(), 100,
+                             os.path.join(self.game.sfx_dir, 'shoot.wav'))
 
     @override
     def on_enter(self) -> None:
@@ -69,7 +70,7 @@ class Stage1(State):
         Args:
             event: Keydown event to be passed
             """
-        if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_LSHIFT]:
+        if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_LSHIFT, pygame.K_z]:
             self.player.on_keydown(event)
 
     def on_keyup(self, event: pygame.event.Event) -> None:
@@ -78,5 +79,5 @@ class Stage1(State):
         Args:
             event: Keyup event to be passed.
         """
-        if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_LSHIFT]:
+        if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_LSHIFT, pygame.K_z]:
             self.player.on_keyup(event)
