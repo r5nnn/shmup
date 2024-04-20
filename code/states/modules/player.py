@@ -1,14 +1,22 @@
 """Module for placing and blitting player, handles user input and collision."""
-from typing import override
+from typing import override, TYPE_CHECKING
 
 import pygame.sprite
 
 from .bullet import Bullet
+from .constants import rect_attributes
+from .entity import Entity
 from .spritesheet import Spritesheet
 
+# avoids relative import error while making pycharm happy (shows error when type resides in another module when using
+# PEP 563 – Postponed Evaluation of Annotations)
+if TYPE_CHECKING:
+    from ..stage1 import Stage1
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, sprite_dir: str, x: int, y: int, speed: int, bullet: pygame.Surface, bullet_delay: int, bullet_sfx: str):
+
+class Player(Entity):
+    def __init__(self, stage: 'Stage1', x: int, y: int, speed: int, sprite_dir: str, bullet: pygame.Surface, bullet_delay: int,
+                 bullet_sfx: str, sprite_ref: rect_attributes = 'center'):
         """Class for creating a sprite that a user can control.
 
         Extracts sprites out of the spritesheet given and creates a rect for the player at the coordinates specified.
@@ -19,7 +27,8 @@ class Player(pygame.sprite.Sprite):
             y: Y coordinate where to first place the sprite
             speed: Speed of sprite in ptx
         """
-        super().__init__()
+        super().__init__(game=stage.game, img_dir=sprite_dir)
+        self.stage = stage
         self.speed = speed
         self.bullet_img = bullet
         self.bullet_delay = bullet_delay
@@ -27,8 +36,12 @@ class Player(pygame.sprite.Sprite):
         self.bullet_sfx = pygame.mixer.Sound(file=bullet_sfx)
         self.channel_bullet_shoot = pygame.mixer.Channel(3)
         self.channel_bullet_shoot.set_volume(0.04)
-        self.player = [[self.spritesheet.parse_sprite(f'{sprite_dir.split('\\')[-1]} {i} {x}.png') for x in range(2)] for i in ['idle', 'down', 'left',
-                                                                                                                                'right', 'up']]
+        self.player = [[self.spritesheet.parse_sprite(f'{sprite_dir.split('\\')[-1]} {i}{x}.png') for x in ['', ' mod']]
+                       for i in ['idle', 'down', 'left', 'right', 'up']]
+        self.image = self.player[0][0]
+        self.rect = self.image.get_rect()
+        setattr(self.rect, sprite_ref, (x, y))
+        self.mask = pygame.mask.from_surface(pygame.transform.scale_by(self.spritesheet.parse_sprite(f'{sprite_dir.split('\\')[-1]} mask.png'), 1))
         self.modifier_key = 0
         self.player_state = 0
         self.previous_time = 0
@@ -76,6 +89,10 @@ class Player(pygame.sprite.Sprite):
         self.rect.clamp_ip(surface.get_rect())
         surface.blit(self.player[self.player_state][1 if self.modifier_key else 0], self.rect)
         self.bullets.draw(surface)
+
+    def collided(self, collider):
+        if self.stage.enemies.has(collider):
+            self.rect.center = self.game.WINX/2, self.game.WINY/2
 
     def on_keydown(self, event: pygame.event.Event) -> None:
         """Handles user keydown events.

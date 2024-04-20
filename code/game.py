@@ -62,13 +62,18 @@ class Game:
         pygame.display.set_caption("shmup alpha " + self.game_ver)
         pygame.display.set_icon(self.win_icon)
 
+        # load audio channels
+        self.channel_btn = pygame.mixer.Channel(0)
+        self.channel_bgm = pygame.mixer.Channel(1)
+        self.channel_bgm_s1 = pygame.mixer.Channel(2)
+
         self.load_states()  # update all screens with correct objects and loads first screen into stack (title)
 
         # register all global input handlers
-        generalEventManager.register(pygame.QUIT, self.on_quit, pass_event=False)
+        generalEventManager.register(pygame.QUIT, self.on_quit)
         generalEventManager.register(pygame.KEYDOWN, self.on_keydown)
-        keyEventManager.register(pygame.K_END, self.on_quit, pass_event=False)
-        keyEventManager.register(pygame.K_ESCAPE, self.back, pass_event=False)
+        keyEventManager.register(pygame.K_END, self.on_quit)
+        keyEventManager.register(pygame.K_ESCAPE, self.back)
 
         self.sfx_click = pygame.mixer.Sound(file=self.click_btn_sfx)  # make sure to keep file=self.filepath as stated by the pygame docs:
         # From https://www.pygame.org/docs/ref/mixer.html#pygame.mixer.Sound: A Unicode string can only be a file pathname. A bytes object can be either a
@@ -139,7 +144,8 @@ class Game:
         self.win_icon = pygame.image.load(os.path.join(self.icon_dir, "shmup.png")).convert()  # ..\title.png
         self.background_dir = os.path.join(self.textures_dir, "background")  # assets\textures\background
         self.player_dir = os.path.join(self.textures_dir, "player")  # assets\textures\player
-        self.bullets_dir = os.path.join(self.textures_dir, "bullets")  # assets\textures\bullets
+        self.bullet_dir = os.path.join(self.textures_dir, "bullet")  # assets\textures\bullet
+        self.enemy_dir = os.path.join(self.textures_dir, "enemy")  # assets\textures\enemy
 
         self.fonts_dir = os.path.join(self.assets_dir, "fonts")  # assets\fonts
         self.font_dir = os.path.join(self.fonts_dir, "editundo.ttf")  # ..\editundo.ttf
@@ -151,10 +157,6 @@ class Game:
         self.stage1_music = os.path.join(self.game_dir, "stage1.wav")  # assets\music\menu\game
         self.sfx_dir = os.path.join(self.music_dir, "sfx")  # assets\music\sfx
         self.click_btn_sfx = os.path.join(self.sfx_dir, "click.wav")  # ..\click.wav
-
-        self.channel_btn = pygame.mixer.Channel(0)
-        self.channel_bgm = pygame.mixer.Channel(1)
-        self.channel_bgm_s1 = pygame.mixer.Channel(2)
 
     def load_states(self) -> None:
         """loads first state"""

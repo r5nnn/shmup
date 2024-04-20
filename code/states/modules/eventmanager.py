@@ -1,85 +1,41 @@
 """Module for associating events with functions"""
+import inspect
 import operator
-from typing import Callable
+from typing import Callable, override
 from operator import attrgetter
-from collections import defaultdict
 
 from pygame.event import Event
 
+from .observer import _Observer
 
-# noinspection PyArgumentList
-class EventManager:
-    """
-    Attributes:
-        managers: A dict containing the name of the manager linked to its object
-    """
+
+class EventManager(_Observer):
     managers = dict()
 
     def __init__(self, name: str):
-        """Initialises EventManager with the name of the manager and creates a defaultdict for the handlers.
-        Args:
-            name: The name to be tied with the event manager for easy refrence via a dict.
-        """
-        self.name = name
-        self.handlers: dict[int, list[Callable[[Event], None]]] = defaultdict(list)
-        self.pass_event = {}
+        super().__init__(name)
+        self.handlers: dict[int, list[Callable[[Event], None]]]
 
+    @override
     def notify(self, event: Event, selector: operator.attrgetter = attrgetter("type")) -> None:
-        """Calls the registered function with its associated event.
-
+        """
         Args:
             event: The event occuring in the event handling loop.
             selector: Which attribute of event.Event to look for
         """
         for handler in self.handlers[selector(event)]:
-            handler(event) if self.pass_event[selector(event)] else handler()
+            if 'event' in inspect.getfullargspec(handler).args:
+                handler(event)
+            else:
+                handler()
 
-    def register(self, event_type: int, handler: Callable[[Event], None], pass_event: bool = True) -> None:
-        """Registers a handler function with an associated event type.
+    @override
+    def register(self, event_type: int, handler: Callable[[Event], None]) -> None:
+        super().register(event_type, handler)
 
-        Args:
-            event_type: The type of event to trigger the function call.
-            handler: The function to be called upon detecting the event.
-            pass_event: Should event be passed to function when detected
-        """
-        # print(f"{self.name} registered {event_type}")
-        self.handlers[event_type].append(handler)
-        self.pass_event[event_type] = pass_event
-
+    @override
     def deregister(self, event_type: int, handler: Callable[[Event], None]) -> None:
-        """Deregister a handler function from its associated event type.
-
-        Args:
-            event_type: The event type to stop detecting.
-            handler: The function to stop calling on detection.
-        """
-        if handler in self.handlers[event_type]:
-            self.handlers[event_type] = [handler_ for handler_ in self.handlers[event_type] if handler_ != handler]
-
-    def is_registered(self, event_type: int, handler: Callable[[Event], None]) -> bool:
-        """Check if handler is bound to an event.
-
-        Args:
-            event_type: Event type to check.
-            handler: Handler bound to event.
-
-        Returns: Bool confirming if handler is registered.
-        """
-        return event_type in self.handlers and handler in self.handlers[event_type]
-
-    @classmethod
-    def get(cls, name: str) -> "EventManager":
-        """Creates a object of name given if it doesn't already exist, otherwise just returns the already existing object.
-
-        Args:
-            name: The name attribute of the object to create/look for.
-
-        Returns:
-            The object if found, or a new object with the name provided.
-        """
-        if name not in cls.managers:
-            cls.managers[name] = cls(name)
-        return cls.managers[name]
+        super().deregister(event_type, handler)
 
 
 generalEventManager = EventManager.get("General Events")

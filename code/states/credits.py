@@ -52,7 +52,8 @@ class Credits(State):
                                'Font used:\nEdit Undo BRK (© ÆNIGMA FONTS kentpw@norwich.net)\n\nSprite editor used:\nAseprite (paid, or build yourself from'
                                'https://github.com/aseprite/aseprite)\n\nMusic:\nMain menu - Oneiros of Borehole Planet · HOYO-MiX · © 2024 miHoYo\nStage 1 - '
                                'Moisture Deficit · Chris Christodoulou · © 2013 Chris Christodoulou\n\nPlaytesters:\nNone ;( but Domenico and Chris when I '
-                               'force them\n\nSpecial thanks:\nChristof, Milo, Oscar x2, James, Carlos', ref='midtop', wrap=True,
+                               'force them\n\nSpecial thanks:\nChristof, Milo, Oscar x2, James, Carlos\n\nAnd finally:\nThank you for playing <3\n\n\n\n\n\n('
+                               'rate the rizz cmon thats like a 10)', ref='midtop', wrap=True,
                                wrapwidth=self.game.WINX*0.75)
         self.objects = [[self.txt_credits], [self.btn_back]]
 

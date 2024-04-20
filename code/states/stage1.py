@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING, override
 
 import pygame
 
+from .modules.collisionmanager import collisionDetector
+from .modules.entity import Enemy
 from .modules.eventmanager import generalEventManager
 from .state import State
 from .modules.player import Player
@@ -28,10 +30,22 @@ class Stage1(State):
         # pathname or a buffer object. Use the 'file' or 'buffer' keywords to avoid ambiguity; otherwise Sound may guess wrong.
         self.bgm.set_volume(0.2)
 
-        # create player object
-        self.player = Player(os.path.join(self.game.player_dir, 'player-sheet'), self.game.WINX / 2,
-                             self.game.WINY / 2 * 0.8, 2, pygame.image.load(os.path.join(self.game.bullets_dir, 'bullet.png')).convert_alpha(), 100,
+        # player
+        self.players = pygame.sprite.Group()
+        self.player = Player(self, self.game.WINX / 2,
+                             self.game.WINY / 2 * 0.8, 2, os.path.join(self.game.player_dir, 'player'),
+                             pygame.image.load(os.path.join(self.game.bullet_dir, 'bullet.png')).convert_alpha(), 100,
                              os.path.join(self.game.sfx_dir, 'shoot.wav'))
+        self.players.add(self.player)
+
+        # enemies
+        self.enemies = pygame.sprite.Group()
+        self.enemy = Enemy(self, self.game.WINX/2, self.game.WINY/3, img_dir=os.path.join(self.game.enemy_dir, "bystander"))
+        # noinspection PyTypeChecker
+        self.enemies.add(self.enemy)
+        collisionDetector.register(self.player.bullets, self.enemies)
+        collisionDetector.register(self.enemies, self.players)
+
 
     @override
     def on_enter(self) -> None:
@@ -58,11 +72,14 @@ class Stage1(State):
     def update_state(self) -> None:
         # update player
         self.player.update()
+        self.enemies.update()
+        collisionDetector.update()
 
     @override
     def render_state(self, surface: pygame.Surface) -> None:
         super().render_state(surface)
         self.player.render(surface)
+        self.enemies.draw(surface)
 
     def on_keydown(self, event: pygame.event.Event) -> None:
         """Passes detected keydown events onto player for handling.
