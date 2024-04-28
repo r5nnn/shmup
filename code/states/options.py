@@ -26,14 +26,14 @@ class Options(State):
         super().__init__(game)
 
         # surface
-        self.img_options = Img(self.game.WINX / 2, self.game.WINY / 2 * 0.4,
+        self.img_options = Img(self.game.WINX / 2, self.game.WINY * 0.1,
                                pygame.image.load(os.path.join(self.game.title_dir, 'options.png')).convert_alpha(),
                                scale=4)
 
         # buttons
-        self.btn_keybinds = BtnTxt(self.game, 36, self.game.WINX/2, self.img_options.img_rect.bottom * 1.03, 205, 50, 'Keybinds',
+        self.btn_keybinds = BtnTxt(self.game, 36, self.game.WINX/2, self.img_options.img_rect.bottom + 30, 205, 50, 'Keybinds',
                                    lambda: self.switch_state(Keybinds), btn_ref='midtop')
-        self.btn_back = BtnBack(self.game, 32, self.game.WINX/2, self.btn_keybinds.rect.bottom * 1.03, 205, 50,
+        self.btn_back = BtnBack(self.game, 32, self.game.WINX/2, self.btn_keybinds.rect.bottom + 10, 205, 50,
                                 btn_ref='midtop')
 
         self.objects = [[self.img_options], [self.btn_keybinds, self.btn_back]]

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 class Player(Entity):
     def __init__(self, stage: 'Stage1', x: int, y: int, speed: int, sprite_dir: str, bullet: pygame.Surface, bullet_delay: int,
-                 bullet_sfx: str, sprite_ref: rect_attributes = 'center'):
+                 bullet_shoot_sfx: str, player_hit_sfx: str, stats: dict[str, int], sprite_ref: rect_attributes = 'center'):
         """Class for creating a sprite that a user can control.
 
         Extracts sprites out of the spritesheet given and creates a rect for the player at the coordinates specified.
@@ -30,12 +30,13 @@ class Player(Entity):
         super().__init__(game=stage.game, img_dir=sprite_dir)
         self.stage = stage
         self.speed = speed
+        self.hp, self.atk = stats['hp'], stats['atk']
         self.bullet_img = bullet
         self.bullet_delay = bullet_delay
         self.spritesheet = Spritesheet(sprite_dir)
-        self.bullet_sfx = pygame.mixer.Sound(file=bullet_sfx)
-        self.channel_bullet_shoot = pygame.mixer.Channel(3)
-        self.channel_bullet_shoot.set_volume(0.04)
+        self.bullet_shoot_sfx = pygame.mixer.Sound(file=bullet_shoot_sfx)
+        self.player_hit_sfx = pygame.mixer.Sound(file=player_hit_sfx)
+        self.channel_bullet_shoot = self.stage.game.channel_player_bullet_shoot
         self.player = [[self.spritesheet.parse_sprite(f'{sprite_dir.split('\\')[-1]} {i}{x}.png') for x in ['', ' mod']]
                        for i in ['idle', 'down', 'left', 'right', 'up']]
         self.image = self.player[0][0]
@@ -75,8 +76,8 @@ class Player(Entity):
             current_time = pygame.time.get_ticks()
             if current_time - self.previous_time > self.bullet_delay:
                 self.previous_time = current_time
-                bullet = Bullet(self, self.bullet_img, 6)
-                self.channel_bullet_shoot.play(self.bullet_sfx)
+                bullet = Bullet(self, self.bullet_img, 6, self.atk)
+                self.channel_bullet_shoot.play(self.bullet_shoot_sfx)
                 # noinspection PyTypeChecker
                 self.bullets.add(bullet)
         self.rect.move_ip(self.dx, self.dy)
@@ -92,7 +93,9 @@ class Player(Entity):
 
     def collided(self, collider):
         if self.stage.enemies.has(collider):
-            self.rect.center = self.game.WINX/2, self.game.WINY/2
+            self.hp -= 1
+            self.game.channel_player_hit.play(self.player_hit_sfx)
+            self.rect.center = self.game.WINX / 2, self.game.WINY / 2
 
     def on_keydown(self, event: pygame.event.Event) -> None:
         """Handles user keydown events.

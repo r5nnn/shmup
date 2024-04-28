@@ -19,17 +19,22 @@ class Entity(pygame.sprite.Sprite):
         self.game = game
         self.img_dir = img_dir if img_dir is not None else os.path.join(self.game.textures_dir, 'null')
         self.spritesheet = Spritesheet(self.img_dir)
+        self.hp = None
 
     def update(self) -> None:
-        ...
+        if self.hp <= 0:
+            self.kill()
 
     def collided(self, collider):
         ...
 
 
 class Enemy(Entity):
-    def __init__(self, stage: 'Stage1', x: int, y: int, ref: rect_attributes = 'center', img_dir: str = None, scale: int = 1):
+    def __init__(self, stage: 'Stage1', x: int, y: int, stats: dict[str, int], dead_sfx: str, ref: rect_attributes = 'center', img_dir: str = None,
+                 scale: int = 1):
         super().__init__(stage.game, img_dir)
+        self.hp, self.df, self.atk = stats['hp'], stats['df'], stats['atk']
+        self.die_sfx = pygame.mixer.Sound(file=dead_sfx)
         self.image = pygame.transform.scale_by(self.spritesheet.parse_sprite(f'{self.img_dir.split('\\')[-1]} sprite.png'), scale)
         self.rect = self.image.get_rect()
         setattr(self.rect, ref, (x, y))
@@ -38,4 +43,10 @@ class Enemy(Entity):
 
     def collided(self, collider):
         if self.stage.player.bullets.has(collider):
+            self.hp -= collider.atk
             collider.kill()
+
+    def update(self) -> None:
+        if self.hp <= 0:
+            self.kill()
+            self.game.channel_enemy_die.play(self.die_sfx)

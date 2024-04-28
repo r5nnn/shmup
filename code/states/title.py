@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, override
 import pygame
 
 from .credits import CreditsFr
+from .editor import EditorHome
 from .options import Options
 from .popup import PopupLink
 from .stage1 import Stage1
@@ -36,9 +37,11 @@ class Title(State):
 
         # buttons
         self.btn_play = BtnTxt(self.game, 64, self.game.WINX / 2, self.game.WINY / 2, 300, 75, 'Play', self.play)
-        self.btn_options = BtnTxt(self.game, 64, self.game.WINX / 2, self.btn_play.rect.bottom * 1.02, 300, 75, 'Options', lambda: self.switch_state(Options),
+        self.btn_editor = BtnTxt(self.game, 64, self.game.WINX / 2, self.btn_play.rect.bottom + 15, 300, 75, 'Editor', lambda: self.switch_state(
+                                 EditorHome), btn_ref='midtop')
+        self.btn_options = BtnTxt(self.game, 64, self.game.WINX / 2, self.btn_editor.rect.bottom + 15, 300, 75, 'Options', lambda: self.switch_state(Options),
                                   btn_ref='midtop')
-        self.btn_quit = BtnTxt(self.game, 64, self.game.WINX / 2, self.btn_options.rect.bottom * 1.02, 300, 75, 'Quit', self.game.on_quit, btn_ref='midtop')
+        self.btn_quit = BtnTxt(self.game, 64, self.game.WINX / 2, self.btn_options.rect.bottom + 15, 300, 75, 'Quit', self.game.on_quit, btn_ref='midtop')
         self.btn_github = BtnImg(self.game, 0, self.game.WINY, 50, 50,
                                  pygame.image.load(os.path.join(self.game.icon_dir, 'github.png')).convert_alpha(),
                                  btn_ref='bottomleft', scale=2, func=lambda: self.switch_state(PopupLink, 'https://github.com/r5nnn/shmup'))
@@ -53,7 +56,8 @@ class Title(State):
         self.ver_txt = Txt(self.game.font_dir, 32, self.game.WINX, self.game.WINY, self.game.game_ver,
                            ref='bottomright')
 
-        self.objects = [[self.logo_img, self.ver_txt], [self.btn_play, self.btn_options, self.btn_quit, self.btn_github, self.btn_trello, self.btn_credits]]
+        self.objects = [[self.logo_img, self.ver_txt], [self.btn_play, self.btn_editor, self.btn_options, self.btn_quit, self.btn_github, self.btn_trello,
+                                                        self.btn_credits]]
 
         self.bgm = pygame.mixer.Sound(file=self.game.menu_music)  # make sure to keep file=self.filepath as stated by the pygame docs:
         # From https://www.pygame.org/docs/ref/mixer.html#pygame.mixer.Sound: A Unicode string can only be a file pathname. A bytes object can be either a

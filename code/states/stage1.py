@@ -35,12 +35,15 @@ class Stage1(State):
         self.player = Player(self, self.game.WINX / 2,
                              self.game.WINY / 2 * 0.8, 2, os.path.join(self.game.player_dir, 'player'),
                              pygame.image.load(os.path.join(self.game.bullet_dir, 'bullet.png')).convert_alpha(), 100,
-                             os.path.join(self.game.sfx_dir, 'shoot.wav'))
+                             os.path.join(self.game.sfx_dir, 'shoot.wav'), os.path.join(self.game.sfx_dir, 'player_die.wav'),
+                             {'hp': 4, 'atk': 1})
         self.players.add(self.player)
 
         # enemies
         self.enemies = pygame.sprite.Group()
-        self.enemy = Enemy(self, self.game.WINX/2, self.game.WINY/3, img_dir=os.path.join(self.game.enemy_dir, "bystander"))
+        self.enemy = Enemy(self, self.game.WINX/2, self.game.WINY/3, {'hp': 10, 'df': 0, 'atk': 1}, os.path.join(self.game.sfx_dir, 'enemy_die.wav'),
+                           img_dir=os.path.join(
+            self.game.enemy_dir, "bystander"))
         # noinspection PyTypeChecker
         self.enemies.add(self.enemy)
         collisionDetector.register(self.player.bullets, self.enemies)

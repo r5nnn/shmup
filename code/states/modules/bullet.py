@@ -2,8 +2,9 @@ import pygame.sprite
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, entity, bullet: pygame.Surface, speed: int):
+    def __init__(self, entity, bullet: pygame.Surface, speed: int, atk):
         super().__init__()
+        self.atk = atk
         self.image = bullet
         self.rect = self.image.get_rect()
         self.rect.center = (entity.rect.centerx, entity.rect.top)

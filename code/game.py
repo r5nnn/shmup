@@ -66,6 +66,14 @@ class Game:
         self.channel_btn = pygame.mixer.Channel(0)
         self.channel_bgm = pygame.mixer.Channel(1)
         self.channel_bgm_s1 = pygame.mixer.Channel(2)
+        self.channel_player_bullet_shoot = pygame.mixer.Channel(3)
+        self.channel_player_hit = pygame.mixer.Channel(4)
+        self.channel_enemy_die = pygame.mixer.Channel(5)
+
+        # set channel volume
+        self.channel_player_bullet_shoot.set_volume(0.04)
+        self.channel_enemy_die.set_volume(0.1)
+        self.channel_player_hit.set_volume(0.04)
 
         self.load_states()  # update all screens with correct objects and loads first screen into stack (title)
 
