@@ -14,11 +14,13 @@ if TYPE_CHECKING:
 
 
 class Entity(pygame.sprite.Sprite):
+
     def __init__(self, game: 'Game', img_dir: str = None):
         super().__init__()
         self.game = game
         self.img_dir = img_dir if img_dir is not None else os.path.join(self.game.textures_dir, 'null')
         self.spritesheet = Spritesheet(self.img_dir)
+        self.rect = None
         self.hp = None
 
     def update(self) -> None:

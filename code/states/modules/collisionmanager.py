@@ -1,3 +1,4 @@
+"""Module for associating objects with each other for collision."""
 from collections import defaultdict
 from typing import TYPE_CHECKING, override
 
@@ -13,12 +14,16 @@ if TYPE_CHECKING:
 
 class CollisionDetector:
     def __init__(self):
+        """Initialises the dictionary storing sprites that should collide with each other."""
         self.collision_checks: dict[pygame.sprite.Group, list[pygame.sprite.Group]] = defaultdict(list)
 
     def register(self, group: pygame.sprite.Group, collision_group: pygame.sprite.Group) -> None:
-        # if group in self.collision_checks:
-        #     self.collision_checks[group].append(collision_group) if collision_group not in self.collision_checks[group] else None
-        # else:
+        """Registers 2 sprites which should collide with each other.
+
+        Args:
+            group: Sprite that should collide with collision_group.
+            collision_group: Sprite that should collide with group.
+        """
         self.collision_checks[collision_group].append(group) if group not in self.collision_checks[collision_group] else None
 
     def deregister(self, group: pygame.sprite.Group, group_key: pygame.sprite.Group) -> None:

@@ -1,4 +1,4 @@
-"""Module for placing and blitting player, handles user input and collision."""
+"""Module for placing and blitting player, detects relevant user input."""
 from typing import override, TYPE_CHECKING
 
 import pygame.sprite
