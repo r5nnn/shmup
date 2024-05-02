@@ -28,7 +28,7 @@ class Title(State):
 
         # surfaces
         self.backdrop = pygame.image.load(os.path.join(self.game.background_dir, 'menu.png')).convert()
-        if game.YIPEE < 999:  # 1/1000
+        if game.YIPEE < 950:  # 0.005%
             self.logo_img = Img(self.game.WINX / 2, self.game.WINY / 2 * 0.55,
                                 pygame.image.load(os.path.join(self.game.title_dir, 'logo.png')).convert(), scale=4)
         else:

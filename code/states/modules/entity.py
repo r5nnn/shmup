@@ -1,5 +1,5 @@
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import pygame.sprite
 
@@ -10,6 +10,7 @@ from .spritesheet import Spritesheet
 # PEP 563 – Postponed Evaluation of Annotations)
 if TYPE_CHECKING:
     from ...game import Game
+    from ..editor import LevelEditor
     from ..stage1 import Stage1
 
 
@@ -32,8 +33,8 @@ class Entity(pygame.sprite.Sprite):
 
 
 class Enemy(Entity):
-    def __init__(self, stage: 'Stage1', x: int, y: int, stats: dict[str, int], dead_sfx: str, ref: rect_attributes = 'center', img_dir: str = None,
-                 scale: int = 1):
+    def __init__(self, stage: Union['Stage1', 'LevelEditor'], x: int, y: int, stats: dict[str, int], dead_sfx: str,
+                 ref: rect_attributes = 'center', img_dir: str = None, scale: int = 1):
         super().__init__(stage.game, img_dir)
         self.hp, self.df, self.atk = stats['hp'], stats['df'], stats['atk']
         self.die_sfx = pygame.mixer.Sound(file=dead_sfx)

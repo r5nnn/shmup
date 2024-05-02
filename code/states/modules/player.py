@@ -80,7 +80,7 @@ class Player(Entity):
                 self.channel_bullet_shoot.play(self.bullet_shoot_sfx)
                 # noinspection PyTypeChecker
                 self.bullets.add(bullet)
-        self.rect.move_ip(self.dx, self.dy)
+        self.rect.move_ip(round(self.dx*self.game.dt), round(self.dy*self.game.dt))
         self.bullets.update()
 
     def render(self, surface: pygame.Surface) -> None:
