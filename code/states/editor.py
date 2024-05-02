@@ -29,13 +29,21 @@ class LevelEditor(State):
     def __init__(self, game):
         super().__init__(game)
         self.enemies = pygame.sprite.Group()
+        # create window background rect
+        self.rect = pygame.Rect(0, 0, self.game.WINX * 0.3, self.game.WINY * 0.5)
+        # create surface compatible with modifying alpha (pygame.SRCALPHA)
+        self.rect_surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+        self.rect_surf.set_alpha(128)  # half opacity
+        # draw rectangle onto surface
+        pygame.draw.rect(self.rect_surf, (0, 0, 0), self.rect_surf.get_rect())
 
     def on_enter(self) -> None:
         generalEventManager.register(pygame.MOUSEBUTTONDOWN, self.on_click)
         super().on_enter()
 
     def render_state(self, surface: pygame.Surface) -> None:
-        self.backdrop = self.prev_state.backdrop
+        surface.blit(self.prev_state.backdrop, (0, 0))
+        surface.blit(self.rect_surf, self.rect_surf.get_rect(midright=(self.game.WINX, self.game.WINY / 2)))
         super().render_state(surface)
         self.enemies.draw(surface)
 
