@@ -29,7 +29,11 @@ class EditorHome(State):
 class LevelEditor(State):
     def __init__(self, game):
         super().__init__(game)
+
+        self.enemy_picker = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
+        self.enemy_list = ['bystander', '6']
+
         self.left_sidebar = pygame.Rect(0, 0, self.game.WINX * 0.2, self.game.WINY)
         # create surface compatible with modifying alpha (pygame.SRCALPHA)
         self.rect_surf = pygame.Surface(self.left_sidebar.size, pygame.SRCALPHA)
@@ -38,7 +42,11 @@ class LevelEditor(State):
         self.txt_enemies = Txt(self.game.font_dir, 64, self.rect_surf_rect.centerx, self.game.WINY * 0.025, 'Enemies', ref='midtop')
         pygame.draw.rect(self.rect_surf, (0, 0, 0), self.rect_surf.get_rect())
 
+        self.a = [Enemy(self, self.rect_surf_rect.centerx * 0.5, self.txt_enemies.rects[0].bottom + 10, {'hp': 2, 'df': 0, 'atk': 4}, os.path.join(self.game.sfx_dir, 'shoot.wav'), ref='topleft', img_dir=os.path.join(self.game.enemy_dir, x)) for i, x in enumerate(self.enemy_list)]
+        self.enemy_picker.add(self.a[0])
+
         self.objects = [[self.txt_enemies], []]
+        self.groups = [[self.enemy_picker], [self.enemies]]
 
     def on_enter(self) -> None:
         generalEventManager.register(pygame.MOUSEBUTTONDOWN, self.on_click)
