@@ -18,6 +18,7 @@ class State:
         """
         self.game = game
         self.objects = None
+        self.groups = None
         self.backdrop = None
 
     def on_enter(self) -> None:
@@ -48,6 +49,12 @@ class State:
             for objects in self.objects:
                 for obj in objects:
                     obj.update(surface)
+        if self.groups is not None:
+            for arr in self.groups:
+                for groups in arr:
+                    groups.draw(surface)
+            for groups in self.groups[1]:
+                groups.update()
 
     def enter_state(self) -> None:
         """Append state to the top of the state stack."""
