@@ -50,6 +50,7 @@ class Game:
         self.dt_res = 8
         self.dt, self.prev_time = 0, 0
         self.state_stack = []
+        print('hello')
         self.screen = pygame.display.set_mode((self.WINX, self.WINY), pygame.NOFRAME, pygame.SCALED,
                                               vsync=self.vsync)  # creates display surface, pygame.NOFRAME makes the
         # window borderless and pygame.SCALED means any textures are scaled proportional to window size
