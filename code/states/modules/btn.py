@@ -20,9 +20,15 @@ class _Btn:
     """
     clicked: bool = False
 
-    def __init__(self, game: 'Game',
-                 x: int, y: int, width: int, height: int, func: Callable = None, sfx_dir: str | None = None,
-                 col_btn: list[tuple[int, int, int]] = button_colors, btn_ref: rect_attributes = 'center'):
+    def __init__(self,
+                 game: 'Game',
+                 x: int,
+                 y: int,
+                 width: int,
+                 height: int,
+                 func: Callable = None,
+                 col_btn: list[tuple[int, int, int]] = button_colors,
+                 btn_ref: rect_attributes = 'center'):
         """Parent class for all types of buttons.
 
         Not meant to be explicitly instantiated, as no label can be shown on the button. Creates the background rect and sfx object.
@@ -34,7 +40,6 @@ class _Btn:
             width: Width of button background rect.
             height: Height of button background rect.
             func: Function to be called upon button being clicked, ignored if None.
-            sfx_dir: Path to .wav audio file played when button clicked.
             col_btn: RGB values of button background rect color when button is clicked, hovered, or neither. [0] is the color when neither, [1] is the color
             when hovered, and [2] is the color when clicked.
             btn_ref: References which point on the button rect the coordinates point to.
@@ -44,7 +49,6 @@ class _Btn:
         self.col_btn = col_btn
         self.clicked = False
         self.rect = pygame.Rect(x, y, width, height)  # button background rect
-        self.sfx = pygame.mixer.Sound(self.game.click_btn_sfx if sfx_dir is None else sfx_dir)  # button sound effect
         self.current_btn_col = self.col_btn[0]
         setattr(self.rect, btn_ref, (x, y))
 
@@ -60,8 +64,8 @@ class _Btn:
             self.clicked = True
             _Btn.clicked = True
             self.current_btn_col = self.col_btn[2]
-            self.sfx.set_volume(0.2)
-            self.game.channel_btn.play(self.sfx)
+            self.game.btn_sfx.set_volume(0.2)
+            self.game.btn_sfx.force_play_audio("click")
         if event.button == 3:  # right click to cancel click
             self.clicked = False
             _Btn.clicked = False
@@ -77,17 +81,29 @@ class _Btn:
         if self.clicked and event.button == 1:
             self.clicked = False
             _Btn.clicked = False
-            self.sfx.set_volume(0.15)
-            self.game.channel_btn.play(self.sfx)
+            self.game.btn_sfx.set_volume(0.15)
+            self.game.btn_sfx.force_play_audio("click")
             self.func() if callable(self.func) else None
 
 
 # noinspection PyMethodOverriding
 class BtnTxt(_Btn, Txt):
-    def __init__(self, game: 'Game',
-                 size: int, x: int, y: int, width: int, height: int, text: str, func: Callable = None, font_dir: str = None, sfx_dir: str = None,
-                 col_btn: list[tuple[int, int, int]] = button_colors, col_txt: list[tuple[int, int, int]] = [(255, 255, 255), (255, 255, 255), (255, 255, 255)],
-                 btn_ref: rect_attributes = 'center', txt_ref: rect_attributes = 'center', wrap: bool = False, wrapwidth: int = None):
+    def __init__(self,
+                 game: 'Game',
+                 size: int,
+                 x: int,
+                 y: int,
+                 width: int,
+                 height: int,
+                 text: str,
+                 func: Callable = None,
+                 font_dir: str = None,
+                 col_btn: list[tuple[int, int, int]] = button_colors,
+                 col_txt: list[tuple[int, int, int]] = None,
+                 btn_ref: rect_attributes = 'center',
+                 txt_ref: rect_attributes = 'center',
+                 wrap: bool = False,
+                 wrapwidth: int = None):
         """Class for buttons that only need text displayed on the label.
 
         Creates text for button through parent class Txt.
@@ -102,8 +118,8 @@ class BtnTxt(_Btn, Txt):
 
         For additional info on args, view help on parent class Txt and _Btn.
         """
-        _Btn.__init__(self, game, x, y, width, height, func, sfx_dir, col_btn, btn_ref)
-        self.col_txt = col_txt
+        _Btn.__init__(self, game, x, y, width, height, func, col_btn, btn_ref)
+        self.col_txt = col_txt if col_txt is not None else [(255, 255, 255), (255, 255, 255), (255, 255, 255)]
         # wrapwidth must be defined before calling parent class Txt
         self.wrapwidth = self.rect.width if wrapwidth is None else wrapwidth
         self.current_txt_col = self.col_txt[0]
@@ -150,9 +166,18 @@ class BtnBack(BtnTxt):
 
 
 class BtnImg(_Btn, Img):
-    def __init__(self, game: 'Game',
-                 x: int, y: int, width: int, height: int, img: pygame.Surface, imgx: int = None, imgy: int = None, scale: int = 1, func: Callable = None,
-                 sfx_dir: str = None, col_btn: list[tuple[int, int, int]] = button_colors, btn_ref: rect_attributes = 'center',
+    def __init__(self,
+                 game: 'Game',
+                 x: int,
+                 y: int,
+                 width: int,
+                 height: int,
+                 img: pygame.Surface,
+                 imgx: int = None,
+                 imgy: int = None,
+                 scale: int = 1,
+                 func: Callable = None,
+                 col_btn: list[tuple[int, int, int]] = button_colors, btn_ref: rect_attributes = 'center',
                  img_ref: rect_attributes = 'center'):
         """Class for making buttons with images displayed on the labels.
 
@@ -163,7 +188,7 @@ class BtnImg(_Btn, Img):
 
         For additional info on args, view help on parent classes Img and _Btn.
         """
-        _Btn.__init__(self, game, x, y, width, height, func, sfx_dir, col_btn, btn_ref)
+        _Btn.__init__(self, game, x, y, width, height, func, col_btn, btn_ref)
         Img.__init__(self, imgx if imgx is not None else self.rect.centerx, imgy if imgy is not None else self.rect.centery, img, scale, img_ref)
 
     @override

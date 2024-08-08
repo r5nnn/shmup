@@ -14,6 +14,7 @@ from states.title import Title
 from states.options import Options
 from states.paused import Paused
 from states.modules.eventmanager import generalEventManager, keyEventManager
+from states.modules.audio import Audio
 
 
 class Game:
@@ -50,7 +51,6 @@ class Game:
         self.dt_res = 8
         self.dt, self.prev_time = 0, 0
         self.state_stack = []
-        print('hello')
         self.screen = pygame.display.set_mode((self.WINX, self.WINY), pygame.NOFRAME, pygame.SCALED,
                                               vsync=self.vsync)  # creates display surface, pygame.NOFRAME makes the
         # window borderless and pygame.SCALED means any textures are scaled proportional to window size
@@ -64,17 +64,20 @@ class Game:
         pygame.display.set_icon(self.win_icon)
 
         # load audio channels
-        self.channel_btn = pygame.mixer.Channel(0)
-        self.channel_bgm = pygame.mixer.Channel(1)
-        self.channel_bgm_s1 = pygame.mixer.Channel(2)
-        self.channel_player_bullet_shoot = pygame.mixer.Channel(3)
-        self.channel_player_hit = pygame.mixer.Channel(4)
-        self.channel_enemy_die = pygame.mixer.Channel(5)
-
-        # set channel volume
-        self.channel_player_bullet_shoot.set_volume(0.04)
-        self.channel_enemy_die.set_volume(0.1)
-        self.channel_player_hit.set_volume(0.04)
+        self.bgm = Audio()
+        self.bgm.add_audio(self.menu_music)
+        self.bgm.add_audio(self.stage1_music)
+        self.bgm.set_volume(0.2)
+        self.btn_sfx = Audio()
+        self.btn_sfx.add_audio(self.click_btn_sfx_dir)
+        self.btn_sfx.set_volume(0.2)
+        self.bullet_sfx = Audio()
+        self.bullet_sfx.set_volume(0.05)
+        self.bullet_sfx.add_audio(self.bullet_sfx_dir)
+        self.player_sfx = Audio()
+        self.enemy_sfx = Audio()
+        self.enemy_sfx.set_volume(0.1)
+        self.enemy_sfx.add_audio(self.enemy_die_sfx)
 
         self.load_states()  # update all screens with correct objects and loads first screen into stack (title)
 
@@ -84,12 +87,7 @@ class Game:
         keyEventManager.register(pygame.K_END, self.on_quit)
         keyEventManager.register(pygame.K_ESCAPE, self.back)
 
-        self.sfx_click = pygame.mixer.Sound(file=self.click_btn_sfx)  # make sure to keep file=self.filepath as stated by the pygame docs:
-        # From https://www.pygame.org/docs/ref/mixer.html#pygame.mixer.Sound: A Unicode string can only be a file pathname. A bytes object can be either a
-        # pathname or a buffer object. Use the 'file' or 'buffer' keywords to avoid ambiguity; otherwise Sound may guess wrong.
-        self.sfx_click.set_volume(0.2)
-
-        self.running, self.playing = True, False
+        self.running, self.playing, self.debug = True, False, False
 
     def gameloop(self) -> None:
         """loops through and runs game"""
@@ -165,7 +163,10 @@ class Game:
         self.game_dir = os.path.join(self.music_dir, "game")  # assets\music\menu\game
         self.stage1_music = os.path.join(self.game_dir, "stage1.wav")  # assets\music\menu\game
         self.sfx_dir = os.path.join(self.music_dir, "sfx")  # assets\music\sfx
-        self.click_btn_sfx = os.path.join(self.sfx_dir, "click.wav")  # ..\click.wav
+        self.click_btn_sfx_dir = os.path.join(self.sfx_dir, "click.wav")  # ..\click.wav
+        self.bullet_sfx_dir = os.path.join(self.sfx_dir, "shoot.wav")  # ..\shoot.wav
+        self.player_die_sfx_dir = os.path.join(self.sfx_dir, "player_die.wav")  # ..\player_die.wav
+        self.enemy_die_sfx = os.path.join(self.sfx_dir, "enemy_die.wav")  # ..\enemy_die.wav
 
     def load_states(self) -> None:
         """loads first state"""
@@ -184,7 +185,7 @@ class Game:
         """Pops top item out of state stack.
 
         Enters options if in the title screen, and pauses the game if ingame."""
-        self.sfx_click.play() if play_sfx else None
+        self.btn_sfx.force_play_audio('click') if play_sfx else None
         self.state_stack[-1].on_exit()
         if (not self.playing or len(self.state_stack) != 2) and len(self.state_stack) > 1:
             self.state_stack[-1].exit_state()

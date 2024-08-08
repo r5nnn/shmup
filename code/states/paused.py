@@ -30,7 +30,7 @@ class Paused(State):
         self.rect_surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
         self.rect_surf.set_alpha(128)  # half opacity
         # draw rectangle onto surface
-        pygame.draw.rect(self.rect_surf, (0, 0, 0), self.rect_surf.get_rect())
+        pygame.draw.rect(self.rect_surf, (0, 0, 0), self.rect)
 
         # surface
         self.paused_img = Img(self.game.WINX / 2,

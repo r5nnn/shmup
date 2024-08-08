@@ -15,8 +15,16 @@ if TYPE_CHECKING:
 
 
 class Player(Entity):
-    def __init__(self, stage: 'Stage1', x: int, y: int, speed: int, sprite_dir: str, bullet: pygame.Surface, bullet_delay: int,
-                 bullet_shoot_sfx: str, player_hit_sfx: str, stats: dict[str, int], sprite_ref: rect_attributes = 'center'):
+    def __init__(self,
+                 stage: 'Stage1',
+                 x: int,
+                 y: int,
+                 speed: int,
+                 sprite_dir: str,
+                 bullet: pygame.Surface,
+                 bullet_delay: int,
+                 stats: dict[str, int],
+                 sprite_ref: rect_attributes = 'center'):
         """Class for creating a sprite that a user can control.
 
         Extracts sprites out of the spritesheet given and creates a rect for the player at the coordinates specified.
@@ -34,9 +42,7 @@ class Player(Entity):
         self.bullet_img = bullet
         self.bullet_delay = bullet_delay
         self.spritesheet = Spritesheet(sprite_dir)
-        self.bullet_shoot_sfx = pygame.mixer.Sound(file=bullet_shoot_sfx)
-        self.player_hit_sfx = pygame.mixer.Sound(file=player_hit_sfx)
-        self.channel_bullet_shoot = self.stage.game.channel_player_bullet_shoot
+        self.bullet_sfx = self.stage.game.bullet_sfx
         self.player = [[self.spritesheet.parse_sprite(f'{sprite_dir.split('\\')[-1]} {i}{x}.png') for x in ['', ' mod']]
                        for i in ['idle', 'down', 'left', 'right', 'up']]
         self.image = self.player[0][0]
@@ -77,7 +83,7 @@ class Player(Entity):
             if current_time - self.previous_time > self.bullet_delay:
                 self.previous_time = current_time
                 bullet = Bullet(self, self.bullet_img, 6, self.atk)
-                self.channel_bullet_shoot.play(self.bullet_shoot_sfx)
+                self.bullet_sfx.force_play_audio('shoot')
                 # noinspection PyTypeChecker
                 self.bullets.add(bullet)
         self.rect.move_ip(round(self.dx*self.game.dt), round(self.dy*self.game.dt))
@@ -94,7 +100,7 @@ class Player(Entity):
     def collided(self, collider):
         if self.stage.enemies.has(collider):
             self.hp -= 1
-            self.game.channel_player_hit.play(self.player_hit_sfx)
+            self.game.player_sfx.force_play_audio('player_die')
             self.rect.center = self.game.WINX / 2, self.game.WINY / 2
 
     def on_keydown(self, event: pygame.event.Event) -> None:

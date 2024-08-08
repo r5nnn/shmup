@@ -33,11 +33,11 @@ class Entity(pygame.sprite.Sprite):
 
 
 class Enemy(Entity):
-    def __init__(self, stage: Union['Stage1', 'LevelEditor'], x: int, y: int, stats: dict[str, int], dead_sfx: str,
+    def __init__(self, stage: Union['Stage1', 'LevelEditor'], x: int, y: int, stats: dict[str, int],
                  ref: rect_attributes = 'center', img_dir: str = None, scale: int = 1):
         super().__init__(stage.game, img_dir)
         self.hp, self.df, self.atk = stats['hp'], stats['df'], stats['atk']
-        self.die_sfx = pygame.mixer.Sound(file=dead_sfx)
+        self.die_sfx = self.game.enemy_sfx
         self.image = pygame.transform.scale_by(self.spritesheet.parse_sprite(f'{self.img_dir.split('\\')[-1]} sprite.png'), scale)
         self.rect = self.image.get_rect()
         setattr(self.rect, ref, (x, y))
@@ -52,4 +52,4 @@ class Enemy(Entity):
     def update(self) -> None:
         if self.hp <= 0:
             self.kill()
-            self.game.channel_enemy_die.play(self.die_sfx)
+            self.die_sfx.force_play_audio('enemy_die')

@@ -59,20 +59,12 @@ class Title(State):
         self.objects = [[self.logo_img, self.ver_txt], [self.btn_play, self.btn_editor, self.btn_options, self.btn_quit, self.btn_github, self.btn_trello,
                                                         self.btn_credits]]
 
-        self.bgm = pygame.mixer.Sound(file=self.game.menu_music)  # make sure to keep file=self.filepath as stated by the pygame docs:
-        # From https://www.pygame.org/docs/ref/mixer.html#pygame.mixer.Sound: A Unicode string can only be a file pathname. A bytes object can be either a
-        # pathname or a buffer object. Use the 'file' or 'buffer' keywords to
-        self.bgm.set_volume(0.2)
-        # avoid ambiguity; otherwise Sound may guess wrong.
-
     @override
     def on_enter(self) -> None:
         """Registers click detection for all the buttons, starts playing title music."""
         super().on_enter()
         self.game.playing = False
-        pygame.mixer.Channel(2).fadeout(1000)
-        if not self.game.channel_bgm.get_busy():
-            self.game.channel_bgm.play(self.bgm, loops=-1, fade_ms=4000)
+        self.game.bgm.play_audio("menuloop", loops=-1)
 
     def play(self) -> None:
         """Calls the exit method of Title, the enter method of Stage1 and appends the Stage1 state to the top of the state stack."""

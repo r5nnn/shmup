@@ -25,30 +25,28 @@ class Stage1(State):
         For additional info on args, view help on parent class State."""
         super().__init__(game)
         self.backdrop = pygame.image.load(os.path.join(self.game.background_dir, 'stage.png')).convert()
-        self.bgm = pygame.mixer.Sound(file=self.game.stage1_music)  # make sure to keep file=self.filepath as stated by the pygame docs:
-        # From https://www.pygame.org/docs/ref/mixer.html#pygame.mixer.Sound: A Unicode string can only be a file pathname. A bytes object can be either a
-        # pathname or a buffer object. Use the 'file' or 'buffer' keywords to avoid ambiguity; otherwise Sound may guess wrong.
-        self.bgm.set_volume(0.2)
 
         # player
         self.players = pygame.sprite.Group()
-        self.player = Player(self, self.game.WINX / 2,
-                             self.game.WINY / 2 * 0.8, 250, os.path.join(self.game.player_dir, 'player'),
-                             pygame.image.load(os.path.join(self.game.bullet_dir, 'bullet.png')).convert_alpha(), 100,
-                             os.path.join(self.game.sfx_dir, 'shoot.wav'), os.path.join(self.game.sfx_dir, 'player_die.wav'),
+        self.player = Player(self,
+                             self.game.WINX / 2,
+                             self.game.WINY / 2 * 0.8,
+                             250,
+                             os.path.join(self.game.player_dir, 'player'),
+                             pygame.image.load(os.path.join(self.game.bullet_dir, 'bullet.png')).convert_alpha(),
+                             100,
                              {'hp': 4, 'atk': 1})
         self.players.add(self.player)
 
         # enemies
         self.enemies = pygame.sprite.Group()
-        self.enemy = Enemy(self, self.game.WINX/2, self.game.WINY/3, {'hp': 10, 'df': 0, 'atk': 1}, os.path.join(self.game.sfx_dir, 'enemy_die.wav'),
-                           img_dir=os.path.join(
-            self.game.enemy_dir, "6"))
+        self.enemy = Enemy(self, self.game.WINX/2, self.game.WINY/3,
+                           {'hp': 10, 'df': 0, 'atk': 1},
+                           img_dir=os.path.join(self.game.enemy_dir, "6"))
         # noinspection PyTypeChecker
         self.enemies.add(self.enemy)
         collisionDetector.register(self.player.bullets, self.enemies)
         collisionDetector.register(self.enemies, self.players)
-
 
     @override
     def on_enter(self) -> None:
@@ -56,11 +54,7 @@ class Stage1(State):
         super().on_enter()
         pygame.mouse.set_visible(False)
         self.game.playing = True
-        # fadeout menu music
-        self.game.channel_bgm.fadeout(1000)
-        # start playing background music if it wasnt already playing
-        if not self.game.channel_bgm_s1.get_busy():
-            self.game.channel_bgm_s1.play(self.bgm, loops=-1)
+        self.game.bgm.play_audio('stage1', loops=-1)
         generalEventManager.register(pygame.KEYDOWN, self.on_keydown)
         generalEventManager.register(pygame.KEYUP, self.on_keyup)
 
