@@ -45,3 +45,5 @@ Stage 1 - [Chris Christodoulou - Moisture Deficit | Risk of Rain (2013)](https:/
 - created event manager class using observer pattern for event handling [#27]
 - updated button clicking logic [#28]
 - player movement and sprites now update based on latest key pressed [#29]
+- fixed audio bugs and made new audio class for handling future audio better [#30]
+- optimised stage transition logic by removing redundant code [#31]
