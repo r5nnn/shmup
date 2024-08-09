@@ -25,7 +25,7 @@ class Paused(State):
         """
         super().__init__(game)
         # create window background rect
-        self.rect = pygame.Rect(0, 0, self.game.WINX * 0.3, self.game.WINY * 0.5)
+        self.rect = pygame.Rect(0, 0, self.game.WINX, self.game.WINY)
         # create surface compatible with modifying alpha (pygame.SRCALPHA)
         self.rect_surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
         self.rect_surf.set_alpha(128)  # half opacity
@@ -34,8 +34,8 @@ class Paused(State):
 
         # surface
         self.paused_img = Img(self.game.WINX / 2,
-                              self.rect_surf.get_rect(center=(self.game.WINX / 2, self.game.WINY / 2)).y * 1.4,
-                              pygame.image.load(os.path.join(self.game.title_dir, 'paused.png')).convert(), scale=3)
+                              self.game.WINY / 2 * 0.75,
+                              pygame.image.load(os.path.join(self.game.title_dir, 'paused.png')).convert(), scale=3, ref='center')
 
         # buttons
         self.btn_resume = BtnBack(self.game, 36, self.game.WINX / 2, self.paused_img.img_rect.bottom * 1.1, 250, 50, 'Resume', btn_ref='midtop')

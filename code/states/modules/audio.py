@@ -14,7 +14,7 @@ class Audio:
         self.audio_list = {}
         self.current_audio = None
 
-    def add_audio(self, audio_dir, tag=None) -> None:
+    def add_audio(self, audio_dir: str, tag: str = None) -> None:
         """Load audio from the given path.
         
         Args:
@@ -26,7 +26,7 @@ class Audio:
         tag = Path(audio_dir).stem if tag is None else None
         self.audio_list[tag] = pygame.mixer.Sound(audio_dir)
 
-    def play_audio(self, tag, loops=0) -> None:
+    def play_audio(self, tag: str, loops: int = 0) -> None:
         """Play the currently loaded music.
         Does nothing if music is already playing. In order to replace music use replace_audio() instead
 
@@ -36,6 +36,8 @@ class Audio:
         """
         if len(self.audio_list) == 0:
             raise KeyError("No audio loaded to play.")
+        if loops < -1:
+            raise ValueError("loops parameter cannot be smaller than -1.")
         if not self.channel.get_busy():
             self.current_audio = None
         if self.current_audio != tag:
@@ -46,7 +48,7 @@ class Audio:
         """Stop the currently playing audio."""
         self.channel.stop()
 
-    def force_play_audio(self, tag, loops=0) -> None:
+    def force_play_audio(self, tag: str, loops: int = 0) -> None:
         """Overwrite any playing audio and play a new track.
 
         Args:
@@ -55,22 +57,24 @@ class Audio:
         """
         if len(self.audio_list) == 0:
             raise KeyError("No audio loaded to play.")
+        if loops < -1:
+            raise ValueError("loops parameter cannot be smaller than -1.")
         self.stop()
         self.play_audio(tag=tag, loops=loops)
 
-    def set_volume(self, volume):
+    def set_volume(self, volume: float):
         """Set the volume of the audio. Volume should be between 0.0 and 1.0."""
         if not 0.0 <= volume <= 1.0:
             raise ValueError("Volume must be between 0.0 and 1.0.")
         self.channel.set_volume(volume)
 
-    def increase_volume(self, increment=0.1):
+    def increase_volume(self, increment: float = 0.1):
         """Increase the volume by a specified increment."""
         current_volume = self.channel.get_volume()
         new_volume = min(1.0, current_volume + increment)
         self.set_volume(new_volume)
 
-    def decrease_volume(self, decrement=0.1):
+    def decrease_volume(self, decrement: float = 0.1):
         """Decrease the volume by a specified decrement."""
         current_volume = self.channel.get_volume()
         new_volume = max(0.0, current_volume - decrement)

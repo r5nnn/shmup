@@ -25,6 +25,15 @@ class Keybinds(State):
         For additional info on args, view help on parent class State.
         """
         super().__init__(game)
+        if self.game.playing:
+            # create window background rect
+            self.rect = pygame.Rect(0, 0, self.game.WINX, self.game.WINY)
+            # create surface compatible with modifying alpha (pygame.SRCALPHA)
+            self.rect_surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+            self.rect_surf.set_alpha(128)  # half opacity
+            # draw rectangle onto surface
+            pygame.draw.rect(self.rect_surf, (0, 0, 0), self.rect)
+
         # surface
         self.img_keybinds = Img(self.game.WINX / 2, self.game.WINY / 2 * 0.2, pygame.image.load(os.path.join(self.game.title_dir, 'keybinds.png')).convert(),
                                 scale=4)
@@ -54,6 +63,7 @@ class Keybinds(State):
     def render_state(self, surface: pygame.Surface) -> None:
         if self.game.playing:
             self.prev_state.prev_state.prev_state.render_state(surface)  # Stage1
+            surface.blit(self.rect_surf, self.rect_surf.get_rect(center=(self.game.WINX / 2, self.game.WINY / 2)))
         else:
             self.backdrop = self.prev_state.backdrop
         super().render_state(surface)

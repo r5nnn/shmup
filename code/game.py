@@ -68,16 +68,22 @@ class Game:
         self.bgm.add_audio(self.menu_music)
         self.bgm.add_audio(self.stage1_music)
         self.bgm.set_volume(0.2)
+
         self.btn_sfx = Audio()
         self.btn_sfx.add_audio(self.click_btn_sfx_dir)
         self.btn_sfx.set_volume(0.2)
+
         self.bullet_sfx = Audio()
-        self.bullet_sfx.set_volume(0.05)
         self.bullet_sfx.add_audio(self.bullet_sfx_dir)
+        self.bullet_sfx.set_volume(0.05)
+
         self.player_sfx = Audio()
+        self.player_sfx.add_audio(self.player_die_sfx_dir)
+        self.player_sfx.set_volume(0.2)
+
         self.enemy_sfx = Audio()
-        self.enemy_sfx.set_volume(0.1)
         self.enemy_sfx.add_audio(self.enemy_die_sfx)
+        self.enemy_sfx.set_volume(0.1)
 
         self.load_states()  # update all screens with correct objects and loads first screen into stack (title)
 
