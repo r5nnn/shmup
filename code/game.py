@@ -11,8 +11,6 @@ from operator import attrgetter
 import pygame
 
 from states.title import Title
-from states.options import Options
-from states.paused import Paused
 from states.modules.eventmanager import generalEventManager, keyEventManager
 from states.modules.audio import Audio
 
@@ -91,9 +89,8 @@ class Game:
         generalEventManager.register(pygame.QUIT, self.on_quit)
         generalEventManager.register(pygame.KEYDOWN, self.on_keydown)
         keyEventManager.register(pygame.K_END, self.on_quit)
-        keyEventManager.register(pygame.K_ESCAPE, self.back)
 
-        self.running, self.playing, self.debug = True, False, False
+        self.running, self.playing = True, False
 
     def gameloop(self) -> None:
         """loops through and runs game"""
@@ -178,7 +175,6 @@ class Game:
         """loads first state"""
         self.title_screen = Title(self)
         self.title_screen.enter_state()
-        self.title_screen.on_enter()
 
     def on_quit(self) -> None:
         pygame.quit()
@@ -186,24 +182,6 @@ class Game:
             sys.exit()
         finally:
             self.running = False
-
-    def back(self, play_sfx=True) -> None:
-        """Pops top item out of state stack.
-
-        Enters options if in the title screen, and pauses the game if ingame."""
-        self.btn_sfx.force_play_audio('click') if play_sfx else None
-        self.state_stack[-1].on_exit()
-        if (not self.playing or len(self.state_stack) != 2) and len(self.state_stack) > 1:
-            self.state_stack[-1].exit_state()
-            self.state_stack[-1].on_enter()
-        elif self.playing:
-            paused = Paused(self)
-            paused.enter_state()
-            paused.on_enter()
-        else:
-            options = Options(self)
-            options.enter_state()
-            options.on_enter()
 
     @staticmethod
     def on_keydown(event) -> None:

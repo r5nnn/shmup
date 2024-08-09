@@ -5,9 +5,12 @@ from typing import TYPE_CHECKING, override
 import pygame
 
 from .modules.collisionmanager import collisionDetector
-from .modules.entity import Enemy
 from .modules.eventmanager import generalEventManager
+
 from .state import State
+from .paused import Paused
+
+from .modules.entity import Enemy
 from .modules.player import Player
 
 # avoids relative import error while making pycharm happy (shows error when type resides in another module when using
@@ -49,21 +52,16 @@ class Stage1(State):
         collisionDetector.register(self.enemies, self.players)
 
     @override
-    def on_enter(self) -> None:
+    def enter_state(self) -> None:
         """Starts playing stage audio."""
-        super().on_enter()
+        super().enter_state()
         pygame.mouse.set_visible(False)
         self.game.playing = True
         self.game.bgm.play_audio('stage1', loops=-1)
         generalEventManager.register(pygame.KEYDOWN, self.on_keydown)
         generalEventManager.register(pygame.KEYUP, self.on_keyup)
 
-    @override
-    def on_exit(self) -> None:
-        pygame.mouse.set_visible(True)
-        generalEventManager.deregister(pygame.KEYDOWN, self.on_keydown)
-        generalEventManager.deregister(pygame.KEYUP, self.on_keyup)
-        self.player.on_exit()
+
 
     @override
     def update_state(self) -> None:
@@ -95,3 +93,8 @@ class Stage1(State):
         """
         if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_LSHIFT, pygame.K_z]:
             self.player.on_keyup(event)
+
+    @override
+    def back(self, play_sfx: bool = True):
+        self.game.btn_sfx.force_play_audio('click') if play_sfx else None
+        self.switch_state(Paused)

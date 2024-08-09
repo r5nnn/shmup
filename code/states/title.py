@@ -60,14 +60,17 @@ class Title(State):
                                                         self.btn_credits]]
 
     @override
-    def on_enter(self) -> None:
+    def enter_state(self) -> None:
         """Registers click detection for all the buttons, starts playing title music."""
-        super().on_enter()
+        super().enter_state()
         self.game.playing = False
         self.game.bgm.play_audio("menuloop", loops=-1)
 
+    @override
+    def back(self, play_sfx: bool = True):
+        self.game.btn_sfx.force_play_audio('click') if play_sfx else None
+        self.switch_state(Options)
+
     def play(self) -> None:
         """Calls the exit method of Title, the enter method of Stage1 and appends the Stage1 state to the top of the state stack."""
-        self.on_exit()
-        self.stage1.on_enter()
         self.stage1.enter_state()

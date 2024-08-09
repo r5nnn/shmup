@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, override
 
 import pygame
 
+from .modules.eventmanager import generalEventManager
 from .state import State
 from .options import Options
 from .modules.img import Img
@@ -53,8 +54,23 @@ class Paused(State):
         surface.blit(self.rect_surf, self.rect_surf.get_rect(center=(self.game.WINX / 2, self.game.WINY / 2)))
         super().render_state(surface)
 
+    @override
+    def enter_state(self) -> None:
+        super().enter_state()
+        pygame.mouse.set_visible(True)
+        generalEventManager.deregister(pygame.KEYDOWN, self.prev_state.on_keydown)
+        generalEventManager.deregister(pygame.KEYUP, self.prev_state.on_keyup)
+        self.prev_state.player.on_exit()
+
+    @override
+    def exit_state(self) -> None:
+        super().exit_state()
+        pygame.mouse.set_visible(False)
+        self.game.bgm.play_audio('stage1', loops=-1)
+        generalEventManager.register(pygame.KEYDOWN, self.game.state_stack[-1].on_keydown)
+        generalEventManager.register(pygame.KEYUP, self.game.state_stack[-1].on_keyup)
+
     def title(self):
         """Pops states off the top of the state stack until at title"""
-        self.on_exit()
-        self.game.state_stack[0].on_enter()
+        self.game.state_stack[0].enter_state()
         self.game.state_stack = [self.game.state_stack[0]]

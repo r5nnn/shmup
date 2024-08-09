@@ -161,8 +161,7 @@ class BtnBack(BtnTxt):
 
     def back(self) -> None:
         """Pops top item out of the state stack."""
-        self.game.state_stack[-1].on_exit()
-        self.game.state_stack[-1].exit_state()
+        self.game.state_stack[-1].back(play_sfx=False)
 
 
 class BtnImg(_Btn, Img):
