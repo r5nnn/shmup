@@ -16,11 +16,20 @@ if TYPE_CHECKING:
 
 
 class Popup(State):
-    def __init__(self, game: "Game", txt: str, btn1_txt: str, btn2_txt: str, btn1_func: Callable, btn2_func: Callable = None):
+    def __init__(self,
+                 game: "Game",
+                 txt: str,
+                 btn1_txt: str,
+                 btn2_txt: str,
+                 btn1_func: Callable = None,
+                 btn2_func: Callable = None,
+                 func1_exit: bool = False):
         super().__init__(game)
+        self.func1_exit = func1_exit
 
         # buttons
-        self.btn1 = BtnTxt(self.game, 32, self.game.WINX / 2 * 0.85, self.game.WINY / 2, 200, 50, btn1_txt, func=btn1_func)
+        self.btn1 = BtnTxt(self.game, 32, self.game.WINX / 2 * 0.85, self.game.WINY / 2, 200, 50, btn1_txt,
+                           func=lambda: self._func(btn1_func))
         if btn2_func is None:
             self.btn2 = BtnBack(self.game, 32, self.game.WINX / 2 * 1.15, self.game.WINY / 2, 200, 50, text=btn2_txt)
         else:
@@ -48,22 +57,30 @@ class Popup(State):
     def on_click(self, event: pygame.event.Event) -> None:
         """Handles clicking anywhere but the popup to exit."""
         if not self.rect.collidepoint(self.game.pos) and event.button == 1:
-            self.game.back()
+            self.back()
 
     def on_release(self, event: pygame.event.Event) -> None:
         ...
 
+    def _func(self, func):
+        if self.func1_exit:
+            self.exit_state()
+        func()
+
     @override
-    def on_enter(self) -> None:
-        super().on_enter()
+    def enter_state(self) -> None:
+        super().enter_state()
         generalEventManager.register(pygame.MOUSEBUTTONDOWN, self.on_click)
         generalEventManager.register(pygame.MOUSEBUTTONUP, self.on_release)
 
     @override
-    def on_exit(self) -> None:
-        super().on_exit()
+    def exit_state(self) -> None:
         generalEventManager.deregister(pygame.MOUSEBUTTONDOWN, self.on_click)
         generalEventManager.deregister(pygame.MOUSEBUTTONUP, self.on_release)
+        super().exit_state()
+
+    def back(self, play_sfx=None) -> None:
+        super().back()
 
 
 class PopupLink(Popup):
@@ -73,4 +90,4 @@ class PopupLink(Popup):
 
     def open(self) -> None:
         webbrowser.open(self.link)
-        self.game.back(play_sfx=False)
+        self.back(play_sfx=False)

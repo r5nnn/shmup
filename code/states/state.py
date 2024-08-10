@@ -82,4 +82,3 @@ class State:
         """Pops top item out of state stack. Must be overriden in specific cases."""
         self.game.btn_sfx.force_play_audio('click') if play_sfx else None
         self.exit_state()
-        
