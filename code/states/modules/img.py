@@ -1,28 +1,31 @@
-"""Module for placing and blitting pygame image surfaces."""
 import pygame
 
-from .constants import rect_attributes
+from .constants import rect_allignments
 
 
 class Img:
-    def __init__(self, x: int, y: int, img: pygame.Surface, scale: int = 1, ref: rect_attributes = 'center'):
-        """Class for blitting image surfaces onto the screen.
-
-        Scales image surface and sets the attribute of the bounding rect to the coordinates provided, using the refrence provided
+    def __init__(self, x: int, y: int, img: pygame.Surface,
+                 scale: int = 1, allign: rect_allignments = 'center'):
+        """
+        Class for rendering images to the screen.
+        Can also scale images and allows alligning the text.
 
         Args:
             x: X coordinate of image.
             y: Y coordinate of image.
             img: Surface of image.
-            scale: If not 1, scales image by factor provided, using the nearest neighbor algorithm.
-            ref: References which point on the rect the coordinates point to.
+            scale: If not 1, scales image by factor provided, using the nearest
+            neighbor algorithm.
+            allign: References which point on the rect the coordinates point to.
         """
-        self.image = pygame.transform.scale_by(img, scale) if scale != 1 else img
+        self.image = pygame.transform.scale_by(img, scale) \
+            if scale != 1 else img
         self.img_rect = self.image.get_rect()
-        setattr(self.img_rect, ref, (x, y))
+        setattr(self.img_rect, allign, (x, y))
 
     def update(self, surface: pygame.Surface) -> None:
-        """Draws image onto surface.
+        """
+        Renders image onto surface.
 
         Args:
             surface: Surface which image will be blitted to.

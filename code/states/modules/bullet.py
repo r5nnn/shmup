@@ -1,31 +1,31 @@
-"""Module for placing and blitting bullets."""
 from typing import TYPE_CHECKING, override
 
 import pygame.sprite
 
+# avoids relative import error while making pycharm happy
+# (shows error when type resides in another module when using
+# PEP 563 – Postponed Evaluation of Annotations)
 if TYPE_CHECKING:
-    from .entity import Enemy, Entity
+    from .entity import Entity
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, entity: "Entity", bullet: pygame.Surface, speed: int, atk: int):
-        """Parent class for all types of bullets.
-
-        Initialises the bullet image and grabs coordinates from specified surface
+    def __init__(self, entity: "Entity",
+                 bullet: pygame.Surface, speed: int):
+        """
+        Creates bullets that shoot out of the entity specified.
+        Bullets store attack value from entity
 
         Args:
             entity: The entity that will shoot the bullet.
             bullet: Surface of the bullet.
             speed: Speed at which the bullet will travel at.
-            atk: Damage that bullet should do on contact.
         """
         super().__init__()
-        self.atk = atk
+        self.atk = entity.atk
         self.image = bullet
-
         self.rect = self.image.get_rect()
         self.rect.center = (entity.rect.centerx, entity.rect.top)
-
         self.dx, self.dy = 0, -speed
 
     @override

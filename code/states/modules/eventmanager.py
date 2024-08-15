@@ -1,4 +1,3 @@
-"""Module for associating events with functions"""
 import inspect
 import operator
 from typing import Callable, override
@@ -13,11 +12,16 @@ class EventManager(_Observer):
     managers = dict()
 
     def __init__(self, name: str):
+        """
+        Allows you to register a pygame event to a method so that
+        the method is called whenever the event is detected.
+        """
         super().__init__(name)
         self.handlers: dict[int, list[Callable[[Event], None]]]
 
     @override
-    def notify(self, event: Event, selector: operator.attrgetter = attrgetter("type")) -> None:
+    def notify(self, event: Event,
+               selector: operator.attrgetter = attrgetter("type")) -> None:
         """
         Args:
             event: The event occuring in the event handling loop.
@@ -30,11 +34,13 @@ class EventManager(_Observer):
                 handler()
 
     @override
-    def register(self, event_type: int, handler: Callable[[Event], None]) -> None:
+    def register(self, event_type: int,
+                 handler: Callable[[Event], None]) -> None:
         super().register(event_type, handler)
 
     @override
-    def deregister(self, event_type: int, handler: Callable[[Event], None]) -> None:
+    def deregister(self, event_type: int,
+                   handler: Callable[[Event], None]) -> None:
         super().deregister(event_type, handler)
 
 

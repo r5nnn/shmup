@@ -23,6 +23,7 @@ class Entity(pygame.sprite.Sprite):
         self.spritesheet = Spritesheet(self.img_dir)
         self.rect = None
         self.hp = None
+        self.atk = None
 
     def update(self) -> None:
         if self.hp <= 0:

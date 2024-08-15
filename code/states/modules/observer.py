@@ -1,4 +1,3 @@
-"""Private class meant to be inherited by other classes that use the observer design pattern."""
 from collections import defaultdict
 from typing import Callable, Any
 
@@ -6,14 +5,16 @@ from typing import Callable, Any
 class _Observer:
     """
     Attributes:
-        managers: A dict containing the name of the manager linked to its object
+        managers: A dict containing the names of a manager linked to its object.
     """
     managers = dict()
 
     def __init__(self, name: str):
-        """Private class meant to be inherited by other classes that use the observer design pattern.
-
-        Initialises Observer with the name of the observer and creates a defaultdict for the handlers.
+        """
+        Private class meant to be inherited by other classes that use the
+        observer design pattern.
+        Allows you to register an event to a method so that
+        the method is called whenever the event is detected.
 
         Args:
             name: The name to be tied with the observer
@@ -22,10 +23,16 @@ class _Observer:
         self.handlers: dict = defaultdict(list)
 
     def notify(self, *args: Any) -> None:
-        """Calls the registered handler"""
+        """
+        Calls the registered handler.
+
+        Args:
+            *args: Any parameters to pass to the handler.
+        """
 
     def register(self, event_type: Any, handler: Callable) -> None:
-        """Registers a handler function with an associated event type.
+        """
+        Registers a handler function with an associated event type.
 
         Args:
             event_type: The type of event to trigger the function call.
@@ -34,29 +41,36 @@ class _Observer:
         self.handlers[event_type].append(handler)
 
     def deregister(self, event_type: Any, handler: Callable) -> None:
-        """Deregister a handler function from its associated event type.
+        """
+        Deregister a handler function from its associated event type.
 
         Args:
             event_type: The event type to stop detecting.
             handler: The function to stop calling on detection.
         """
         if handler in self.handlers[event_type]:
-            self.handlers[event_type] = [i for i in self.handlers[event_type] if i != handler]
+            self.handlers[event_type] = \
+                [i for i in self.handlers[event_type] if i != handler]
 
     def is_registered(self, event_type: Any, handler: Callable) -> bool:
-        """Check if handler is bound to an event.
+        """
+        Check if handler is bound to an event.
 
-                Args:
-                    event_type: Event type to check.
-                    handler: Handler bound to event.
+        Args:
+            event_type: Event type to check.
+            handler: Handler bound to event.
 
-                Returns: Bool confirming if handler is registered.
-                """
-        return event_type in self.handlers and handler in self.handlers[event_type]
+        Returns:
+            Bool confirming if handler is registered.
+        """
+        return event_type in self.handlers and \
+            handler in self.handlers[event_type]
 
     @classmethod
     def get(cls, name: str) -> "_Observer":
-        """Creates a object of name given if it doesn't already exist, otherwise just returns the already existing object.
+        """
+        Creates an object of name given if it doesn't already exist,
+        otherwise just returns the already existing object.
 
         Args:
             name: The name attribute of the object to create/look for.
