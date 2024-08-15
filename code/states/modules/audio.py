@@ -10,6 +10,7 @@ class Audio:
 
     def __init__(self):
         """
+        Class for creating and managing pygame channel and sound objects.
         Keeps track of channels used, assigns new
         channel each time class is called.
         Allows for loading up multiple audio files for a channel,
@@ -65,7 +66,7 @@ class Audio:
         elif len(self.audio_list) > 1 and tag is None:
             warnings.warn("Tag not specified when more than one audio loaded")
         if loops < -1:
-            raise ValueError("loops parameter cannot be smaller than -1.")
+            raise ValueError("loops argument cannot be smaller than -1.")
 
         # set tag to first sound object if unspecified
         tag = self.audio_list[0] if tag is None else tag
