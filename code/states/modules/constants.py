@@ -6,4 +6,6 @@ rect_allignments = Literal['topleft', 'midtop', 'topright',
                            'bottomleft', 'midbottom', 'bottomright']
 
 # colors
+white = (255, 255, 255)
+black = (0, 0, 0)
 button_colors = [(30, 30, 30), (35, 35, 35), (85, 85, 85)]
