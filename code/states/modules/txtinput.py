@@ -283,7 +283,6 @@ class TextInputVisualizer:
 
         Call this every time a pygame.keydown event occurs.
         """
-
         # Update self.manager internal state, rerender if value changes
         value_before = self.manager.value
         self.manager.update(event)

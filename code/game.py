@@ -163,6 +163,7 @@ class Game:
 
         self.fonts_dir = os.path.join(self.assets_dir, "fonts")
         self.font_dir = os.path.join(self.fonts_dir, "editundo.ttf")
+        self.font1_dir = os.path.join(self.fonts_dir, "Raleway.ttf")
 
         self.music_dir = os.path.join(self.assets_dir, "music")
         self.menu_dir = os.path.join(self.music_dir, "menu")

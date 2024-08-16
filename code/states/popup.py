@@ -78,10 +78,10 @@ class Popup(State):
     def on_release(self, event: pygame.event.Event) -> None:
         ...
 
-    def _func(self, func):
+    def _func(self, func, *args):
         if self.func1_exit:
             self.exit_state()
-        func()
+        func(*args)
 
     @override
     def enter_state(self) -> None:
@@ -108,19 +108,42 @@ class PopupLink(Popup):
         self.back(play_sfx=False)
 
 
-class TextboxPopup(Popup):
+class PopupTextbox(Popup):
     def __init__(self,
                  game: "Game",
                  txt: str,
-                 font: pygame.font.Font,
                  btn1_txt: str,
                  btn2_txt: str,
                  btn1_func: Callable = None,
                  btn2_func: Callable = None,
-                 func1_exit: bool = False):
+                 func1_exit: bool = False,
+                 font: pygame.font.Font = None,
+                 font_size: int = None):
         super().__init__(game, txt, btn1_txt, btn2_txt,
                          btn1_func, btn2_func, func1_exit)
-        manager = TextInputManager(validator=lambda text: len(text) <= 5)
-        textinput_custom = TextInputVisualizer(
-            manager=manager, font_object=font
+        self.textinput_manager = TextInputManager(
+            validator=lambda text: len(text) <= 29)
+        self.textinput = TextInputVisualizer(
+            manager=self.textinput_manager,
+            font_object=font if font is not None else
+            pygame.font.Font(self.game.font_dir, font_size)
         )
+
+    def render_state(self, surface: pygame.Surface) -> None:
+        super().render_state(surface)
+        surface.blit(
+            self.textinput.surface, (self.rect.left + 10,
+                                     self.txt.rects[0].bottom + 20)
+        )
+
+    def enter_state(self) -> None:
+        super().enter_state()
+        generalEventManager.register(pygame.KEYDOWN, self.textinput.update)
+
+    def exit_state(self) -> None:
+        generalEventManager.deregister(pygame.KEYDOWN, self.textinput.update)
+        super().exit_state()
+
+    def _func(self, func, *args):
+        if len(self.textinput_manager.value) > 0:
+            super()._func(func, self.textinput.value)

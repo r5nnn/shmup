@@ -6,10 +6,8 @@ import pygame
 
 from .modules.btn import BtnBack, BtnTxt
 from .modules.img import Img
-from .modules.eventmanager import generalEventManager
-from .modules.txtinput import TextInputVisualizer, TextInputManager
 from .state import State
-from .popup import Popup
+from .popup import Popup, PopupTextbox
 
 
 class EditorHome(State):
@@ -25,7 +23,14 @@ class EditorHome(State):
             (self.game.WINX / 2, self.img_editor.img_rect.bottom + 20),
             205, 50,
             'New Stage',
-            lambda: self.switch_state(LevelEditor),
+            lambda: self.switch_state(PopupTextbox,
+                                      'Enter the name of your stage:',
+                                      'Confirm',
+                                      'Cancel',
+                                      btn1_func=self.create_stage,
+                                      font=pygame.font.Font(
+                                          self.game.font1_dir, 32),
+                                      func1_exit=True),
             font_size=32,
             btn_allign='midtop'
         )
@@ -34,11 +39,10 @@ class EditorHome(State):
             (self.game.WINX / 2, self.btn_new_stage.rect.bottom + 10),
             205, 50,
             'Load Stage',
-            self.name_state,
+            self.create_stage,
             font_size=32,
             btn_allign='midtop'
         )
-        self.text_input = None
         self.btn_back = BtnBack(
             self.game,
             (self.game.WINX / 2, self.btn_load_stage.rect.bottom + 10),
@@ -54,13 +58,30 @@ class EditorHome(State):
     def render_state(self, surface: pygame.Surface) -> None:
         self.backdrop = self.prev_state.backdrop
         super().render_state(surface)
-        surface.blit(self.text_input.surface,
-                     self.text_input.surface.get_rect(
-                         center=(self.game.WINX/2, self.game.WINY/2))
-                     ) if self.text_input is not None else None
 
-    def name_state(self):
-        ...
+    def create_stage(self, name: str):
+        self.data = {
+            name: {
+            }
+        }
+        if not (exists := os.path.isfile(path := os.path.join('stages', f'{name}.json'))):
+            try:
+                with open(path, 'w') as f:
+                    json.dump(self.data, f)
+            except OSError:
+                exists = "Error, invalid file name, try again:"
+        # since strings with any form of characters become True when converted
+        # into a boolean, this check can be used to avoid using a goto function
+        # or rewriting the popup object twice. Peak coding brother.
+        if bool(exists):
+            self.switch_state(PopupTextbox,
+                              exists if type(exists) is str else 'Error, file already exists, try again:',
+                              'Confirm',
+                              'Cancel',
+                              btn1_func=self.create_stage,
+                              font=pygame.font.Font(
+                                  self.game.font1_dir, 32),
+                              func1_exit=True)
 
 
 class LevelEditor(State):
@@ -102,13 +123,6 @@ class LevelEditor(State):
             func=self.save_exit,
             font_size=36,
             btn_allign='topright')
-
-        self.data = {
-
-        }
-
-        # with open(os.path.join(save_dir, 'unnamed.json'), 'w') as f:
-        #     json.dump(self.data, f)
 
         self.objects = [[], [self.btn_exit, self.btn_save, self.btn_save_exit]]
 
