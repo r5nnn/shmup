@@ -1,6 +1,6 @@
 ![](https://github.com/r5nnn/shmup/blob/main/assets/textures/title/logo_scaled.png)  
 <p align="center">
-Bullet hell esque OCR A-level project using pygame.  
+Bullet hell OCR A-level project using pygame.  
 </p>
 
 ## Assets
