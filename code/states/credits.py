@@ -3,7 +3,7 @@ import os
 import pygame
 
 from .modules.btn import BtnBack, BtnTxt
-from .modules.img import Img
+from .modules.surfaces import Img
 from .modules.txt import Txt
 from .state import State
 from typing import TYPE_CHECKING, override

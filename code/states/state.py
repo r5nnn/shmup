@@ -1,3 +1,4 @@
+import typing
 from typing import TYPE_CHECKING
 
 import pygame
@@ -32,7 +33,7 @@ class State:
             game: Class that runs the game.
         """
         self.game = game
-        self.objects = None
+        self.buttons = []
         self.groups = None
         self.backdrop = None
 
@@ -46,12 +47,8 @@ class State:
         Args:
             surface: Surface which state will be rendered to.
         """
-        surface.blit(self.backdrop, (0, 0)) \
-            if self.backdrop is not None else None
-        if self.objects is not None:
-            for objects in self.objects:
-                for obj in objects:
-                    obj.update(surface)
+        for button in self.buttons:
+            button.update(surface)
         if self.groups is not None:
             for arr in self.groups:
                 for groups in arr:
@@ -66,9 +63,11 @@ class State:
         mouse inputs.
         """
         keyEventManager.register(pygame.K_ESCAPE, self.back)
-        for i in self.objects[1] if self.objects is not None else []:
-            generalEventManager.register(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.register(pygame.MOUSEBUTTONUP, i.on_release)
+        for button in self.buttons if self.buttons is not None else []:
+            generalEventManager.register(
+                pygame.MOUSEBUTTONDOWN, button.on_click)
+            generalEventManager.register(
+                pygame.MOUSEBUTTONUP, button.on_release)
 
     def unbind_keys(self) -> None:
         """
@@ -77,9 +76,11 @@ class State:
         mouse inputs.
         """
         keyEventManager.deregister(pygame.K_ESCAPE, self.back)
-        for i in self.objects[1] if self.objects is not None else []:
-            generalEventManager.deregister(pygame.MOUSEBUTTONDOWN, i.on_click)
-            generalEventManager.deregister(pygame.MOUSEBUTTONUP, i.on_release)
+        for button in self.buttons if self.buttons is not None else []:
+            generalEventManager.deregister(
+                pygame.MOUSEBUTTONDOWN, button.on_click)
+            generalEventManager.deregister(
+                pygame.MOUSEBUTTONUP, button.on_release)
 
     def enter_state(self) -> None:
         """Appends state to the top of the state stack."""

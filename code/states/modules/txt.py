@@ -73,8 +73,9 @@ class Txt:
             self.rects.append(text_rect)
             y_offset += font_height
 
-    def update(self, surface: pygame.surface.Surface,
-               color: tuple[int, int, int] = (255, 255, 255)) -> None:
+    def blit(self,
+             surface: pygame.surface.Surface,
+             color: tuple[int, int, int] = (255, 255, 255)) -> None:
         """
         Displays and updates the text.
 

@@ -58,11 +58,9 @@ class Game:
         # creates display surface, pygame.NOFRAME makes the window borderless
         # and pygame.SCALED means any textures are scaled proportional to window
         # size
-        self.screen = pygame.display.set_mode(
-            (self.WINX, self.WINY),
-            pygame.NOFRAME, pygame.SCALED,
-            vsync=self.vsync
-        )
+        self.screen = pygame.display.set_mode((self.WINX, self.WINY),
+                                              pygame.NOFRAME, pygame.SCALED,
+                                              vsync=self.vsync)
         # get_rect() returns rect of size of surface given
         self.screen_rect = self.screen.get_rect()
 
@@ -130,10 +128,10 @@ class Game:
         self.state_stack[-1].render_state(self.backdrop)
         # renders backdrop to 0, 0 on screen,
         # which is the main surface displaying everything
-        self.screen.blit(
-            pygame.transform.scale(self.backdrop, (self.SCREENX, self.SCREENY)),
-            (0, 0)
-        )
+        # self.screen.blit(
+        #     pygame.transform.scale(self.backdrop, (self.SCREENX, self.SCREENY)),
+        #     (0, 0)
+        # )
         pygame.display.update()  # update game window
         self.clock.tick(Game.FPS)  # sets fps cap
 

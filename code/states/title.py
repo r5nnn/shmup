@@ -9,7 +9,7 @@ from .options import Options
 from .popup import PopupLink
 from .stage1 import Stage1
 from .state import State
-from .modules.img import Img
+from .modules.surfaces import Img
 from .modules.btn import BtnImg, BtnTxt
 from .modules.txt import Txt
 
@@ -38,20 +38,16 @@ class Title(State):
         self.backdrop = pygame.image.load(
             os.path.join(self.game.background_dir, 'menu.png')
         ).convert()
-        if game.YIPEE < 950:  # 0.005%
-            self.logo_img = Img(
-                (self.game.WINX / 2, self.game.WINY / 2 * 0.55),
-                pygame.image.load(os.path.join(
-                    self.game.title_dir, 'logo.png')).convert(),
-                scale=4
-            )
-        else:
-            self.logo_img = Img(
-                (self.game.WINX / 2, self.game.WINY / 2 * 0.55),
-                pygame.image.load(os.path.join(
-                    self.game.title_dir, 'logoo.png')).convert(),
-                scale=4
-            )
+
+        if game.YIPEE < 950:
+            name = 'logo.png'
+        else:  # 0.005%
+            name = 'logoo.png'
+        self.logo_img = Img(
+            pygame.image.load(
+                os.path.join(self.game.title_dir, name)),
+            scale=4, coords=(self.game.WINX / 2, self.game.WINY / 2 * 0.55),
+        )
 
         # buttons
         self.btn_play = BtnTxt(
@@ -100,11 +96,9 @@ class Title(State):
             allign='bottomright', size=32
         )
 
-        self.objects = [
-            [self.logo_img, self.ver_txt],
-            [self.btn_play, self.btn_editor, self.btn_options, self.btn_quit,
-             self.btn_github, self.btn_trello, self.btn_credits]
-        ]
+        self.buttons = [self.btn_play, self.btn_editor, self.btn_options,
+                        self.btn_quit, self.btn_github, self.btn_trello,
+                        self.btn_credits]
 
     @override
     def enter_state(self) -> None:
@@ -130,3 +124,6 @@ class Title(State):
         Instead stage1 is loaded upon the title being loaded.
         """
         self.stage1.enter_state()
+
+    def render_state(self, surface: pygame.Surface) -> None:
+        super().render_state(surface)

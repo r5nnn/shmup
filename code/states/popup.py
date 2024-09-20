@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Callable, override
 
 import pygame
 
+from .modules.constants import black
 from .modules.eventmanager import generalEventManager
 from .modules.txt import Txt
 from .modules.txtinput import TextInputManager, TextInputVisualizer
@@ -51,15 +52,13 @@ class Popup(State):
                        txt, allign="midbottom", size=32)
 
         # surface
-        self.rect = pygame.Rect(
-            0, 0, self.txt.rects[0].width * 1.05,
+        self.surface = pygame.Surface(
+            self.txt.rects[0].width * 1.05,
             (self.btn1.rect.bottom - self.txt.rects[0].top) * 1.5
             )
-        self.rect.center = (self.game.WINX / 2, self.game.WINY / 2 * 0.9)
-        # create surface compatible with modifying alpha (pygame.SRCALPHA)
-        self.rect_surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
-        self.rect_surf.set_alpha(170)  # 2/3 opacity
-        pygame.draw.rect(self.rect_surf, (0, 0, 0), self.rect_surf.get_rect())
+        self.surface.center = (self.game.WINX / 2, self.game.WINY / 2 * 0.9)
+        self.surface.set_alpha(170)
+        self.surface.fill(black)
 
         self.objects = [[self.txt], [self.btn1, self.btn2]]
 
