@@ -1,7 +1,7 @@
 import inspect
 import operator
-from typing import Callable, override
 from operator import attrgetter
+from typing import Callable, override
 
 from pygame.event import Event
 
@@ -42,6 +42,7 @@ class EventManager(_Observer):
     def deregister(self, event_type: int,
                    handler: Callable[[Event], None]) -> None:
         super().deregister(event_type, handler)
+
 
 
 generalEventManager = EventManager.get("General Events")

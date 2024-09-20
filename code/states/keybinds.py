@@ -6,7 +6,7 @@ import pygame
 from .state import State
 from .modules.txt import Txt
 from .modules.btn import BtnTxt, BtnBack
-from .modules.img import Img
+from .modules.surfaces import Img
 
 # avoids relative import error while making pycharm happy
 # (shows error when type resides in another module when using

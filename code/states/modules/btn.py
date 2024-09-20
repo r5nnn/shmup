@@ -2,7 +2,7 @@ from typing import Callable, TYPE_CHECKING, override
 
 import pygame
 
-from .img import Img
+from .surfaces import Img
 from .txt import Txt
 from .constants import rect_allignments, button_colors, white
 
@@ -51,10 +51,12 @@ class _Btn:
         self.func = func
         self.col_btn = col_btn
         self.clicked = False
-        # button background rect
-        self.rect = pygame.Rect(coords[0], coords[1], width, height)
         self.current_btn_col = self.col_btn[0]
-        setattr(self.rect, btn_allign, (coords[0], coords[1]))
+        self.rect = pygame.Rect(coords[0], coords[1], width, height)
+        setattr(self.rect, btn_allign, coords)
+    
+    def update(self, surface: pygame.Surface):
+        pygame.draw.rect(surface, self.current_btn_col, self.rect)
 
     def on_click(self, event: pygame.MOUSEBUTTONDOWN) -> None:
         """
@@ -144,10 +146,9 @@ class BtnTxt(_Btn, Txt):
         Args:
             surface: Surface which button will be blitted to.
         """
-        # main button rect
-        pygame.draw.rect(surface, self.current_btn_col, self.rect)
+        super().update(surface)
         # text to be rendered on top of button
-        Txt.update(self, surface, self.current_txt_col)
+        Txt.blit(self, surface, self.current_txt_col)
         if self.rect.collidepoint(self.game.pos) and not _Btn.clicked:
             # button is hovered not clicked
             self.current_btn_col = self.col_btn[1]
@@ -211,9 +212,9 @@ class BtnImg(_Btn, Img):
         """
         _Btn.__init__(self, game, coords, width, height,
                       func, col_btn, btn_allign)
-        Img.__init__(self,
-                     img_coords if img_allign != 'center' else self.rect.center,
-                     img, scale, img_allign)
+        Img.__init__(self, img, scale,
+                     coords=img_coords if img_allign != 'center' else
+                     self.rect.center, allign=img_allign)
 
     @override
     def update(self, surface: pygame.Surface) -> None:
@@ -223,9 +224,8 @@ class BtnImg(_Btn, Img):
         Args:
             surface: Surface which button will be blitted to.
         """
-        # main button rect
-        pygame.draw.rect(surface, self.current_btn_col, self.rect)
-        Img.update(self, surface)  # image surface
+        super().update(surface)
+        Img.blit(self, surface)  # image surface
         if self.rect.collidepoint(self.game.pos) and not _Btn.clicked:
             # button is hovered not clicked
             self.current_btn_col = self.col_btn[1]

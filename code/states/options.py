@@ -5,7 +5,7 @@ import pygame
 
 from .state import State
 from .modules.btn import BtnTxt, BtnBack
-from .modules.img import Img
+from .modules.surfaces import Img
 from .keybinds import Keybinds
 
 # avoids relative import error while making pycharm happy

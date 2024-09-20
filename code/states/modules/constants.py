@@ -1,9 +1,8 @@
 from typing import Literal
 
 # type hints shorthands
-rect_allignments = Literal['topleft', 'midtop', 'topright',
-                           'midleft', 'center', 'midright',
-                           'bottomleft', 'midbottom', 'bottomright']
+rect_allignments = Literal['midtop', 'topright', 'midleft', 'center',
+                           'midright', 'bottomleft', 'midbottom', 'bottomright']
 
 # colors
 white = (255, 255, 255)

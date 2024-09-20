@@ -1,5 +1,10 @@
+import inspect
+import operator
 from collections import defaultdict
-from typing import Callable, Any
+from operator import attrgetter
+from typing import Any, Callable, override
+
+from pygame.event import Event
 
 
 class _Observer:
@@ -81,3 +86,39 @@ class _Observer:
         if name not in cls.managers:
             cls.managers[name] = cls(name)
         return cls.managers[name]
+
+
+class EventManager(_Observer):
+    managers = dict()
+
+    def __init__(self, name: str):
+        """
+        Allows you to register a pygame event to a method so that
+        the method is called whenever the event is detected.
+        """
+        super().__init__(name)
+        self.handlers: dict[int, list[Callable[[Event], None]]]
+
+    @override
+    def notify(self, event: Event,
+               selector: operator.attrgetter = attrgetter("type")) -> None:
+        """
+        Args:
+            event: The event occuring in the event handling loop.
+            selector: Which attribute of event.Event to look for
+        """
+        for handler in self.handlers[selector(event)]:
+            if 'event' in inspect.getfullargspec(handler).args:
+                handler(event)
+            else:
+                handler()
+
+    @override
+    def register(self, event_type: int,
+                 handler: Callable[[Event], None]) -> None:
+        super().register(event_type, handler)
+
+    @override
+    def deregister(self, event_type: int,
+                   handler: Callable[[Event], None]) -> None:
+        super().deregister(event_type, handler)

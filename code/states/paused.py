@@ -6,7 +6,7 @@ import pygame
 from .modules.eventmanager import generalEventManager
 from .state import State
 from .options import Options
-from .modules.img import Img
+from .modules.surfaces import Img
 from .modules.btn import BtnTxt, BtnBack
 
 # avoids relative import error while making pycharm happy
