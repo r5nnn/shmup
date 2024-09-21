@@ -8,16 +8,16 @@ class SpritesheetMaker:
         """
         Class that allows for parsing spritesheets in order to load in
         specific sprites.
-        Creates the spritesheet surface, and reads associated json file.
+        Creates the spritesheet.py surface, and reads associated json file.
 
-        Args: spritesheet_dir: Directory to spritesheet, without file ending.
+        Args: spritesheet_dir: Directory to spritesheet.py, without file ending.
         Spritesheet image should end .png while associated json file should have
         the same name
         """
-        # load in entire spritesheet surface
+        # load in entire spritesheet.py surface
         self.spritesheet = (pygame.image.load(spritesheet_dir + '.png').
                             convert_alpha())
-        # load in json data of spritesheet
+        # load in json data of spritesheet.py
         self.metadata = spritesheet_dir + '.json'
 
         # error handling
@@ -34,7 +34,7 @@ class SpritesheetMaker:
     def _get_sprite(self, x: int, y: int,
                     width: int, height: int) -> pygame.Surface:
         """
-        Returns subsurface from spritesheet of coordinates specified.
+        Returns subsurface from spritesheet.py of coordinates specified.
         This method is not meant to be called explicitly, rather call
         Spritesheet.parse_sprite for the sprite surface.
 
@@ -44,7 +44,7 @@ class SpritesheetMaker:
             width: Width of image to cut out.
             height: Height of image to cut out.
 
-        Returns: surface from spritesheet of coordinates specified.
+        Returns: surface from spritesheet.py of coordinates specified.
         """
         return self.spritesheet.subsurface(x, y, width, height)
 
@@ -55,7 +55,7 @@ class SpritesheetMaker:
         respective x, y, width and height attributes.
 
         Args:
-            name: Name of sprite as listed in spritesheet json file.
+            name: Name of sprite as listed in spritesheet.py json file.
 
         Returns: surface including sprite specified.
         """

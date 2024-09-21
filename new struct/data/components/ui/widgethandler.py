@@ -113,5 +113,10 @@ class WidgetHandler:
                   f'not in WidgetHandler.')
 
     @staticmethod
+    def update_screen(screen):
+        for widget in WidgetHandler._widgets:
+            widget.surface = screen
+
+    @staticmethod
     def get_widgets():
         return WidgetHandler._widgets

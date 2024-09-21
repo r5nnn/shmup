@@ -207,6 +207,6 @@ class UserEvents:
         pygame.time.set_timer(self.user_event, 0)
 
 
-generalEventManager = EventManager("type")
-keyManager = KeyManager()
-generalEventManager.register(pygame.KEYDOWN, keyManager.notify)
+event_manager = EventManager("type")
+key_manager = KeyManager()
+event_manager.register(pygame.KEYDOWN, key_manager.notify)

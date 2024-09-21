@@ -25,7 +25,7 @@ class Player(Entity):
                  sprite_ref: rect_allignments = 'center'):
         """
         Class for creating a sprite that a user can control.
-        Extracts sprites out of the spritesheet given and creates
+        Extracts sprites out of the spritesheet.py given and creates
         a rect forthe player at the coordinates specified.
 
         Args:

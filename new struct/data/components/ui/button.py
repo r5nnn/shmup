@@ -5,12 +5,16 @@ import pygame.display
 from . import RectUpdateNeeded
 from .text import Text
 from ..events import Mouse
-from ...globals import button_colors, rect_alignments
+from data import rect_alignments
 
 
 class Button:
     coords = RectUpdateNeeded()
     align = RectUpdateNeeded()
+    button_colors = {'inactive': pygame.Color(30, 30, 30),
+                     'hovered': pygame.Color(35, 35, 35),
+                     'clicked': pygame.Color(85, 85, 85)
+                     }
 
     def __init__(self,
                  surface: pygame.Surface,
@@ -68,11 +72,11 @@ class Button:
         self._align = align
         self._align_rect(self._rect, self._align, self._rect.topleft)
         self._coords = getattr(self._rect, self._align)
-        self.colors = colors if colors is not None else button_colors
+        self.colors = colors if colors is not None else Button.button_colors
         self._color = self.colors['inactive']
         self.border = border
         self.border_colors = border_colors if border_colors is not None \
-            else button_colors
+            else Button.button_colors
         self._border_color = self.border_colors['inactive']
         self._border_thickness = border_thickness
         # no need to align border rect as button rect already aligned.

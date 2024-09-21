@@ -1,59 +1,62 @@
 import os
-from abc import abstractmethod, ABC
 
 import pygame.display
 
-from .components.events import generalEventManager, keyManager
-from .globals import MONITOR_SIZE, screen
+from .components.events import event_manager, key_manager
+from .states import stateManager
 
 
 class Control:
+    """Class that controls the game."""
     def __init__(self, state_dict, start_state):
-        self.state_stack = []
-        self.state_dict = state_dict
-        self.state_name = start_state
-        self.state = self.state_dict[self.state_name]
-        self.state_stack.append(self.state_name)
+        """Adds dictionary to stateManager and defines starting state.
+        Initialises game properties, binds global keybinds.
 
-        self.screen = screen
-        self.screen_rect = self.screen.get_rect()
-        self.screen_size = self.screen.get_size()
-        self.screen_flags = (pygame.SCALED | pygame.FULLSCREEN)
+        :param state_dict: Dictionary of every state object and its name.
+        :param start_state: Name of the state to start with.
+        """
+        stateManager(state_dict)
+        stateManager.append(start_state)
+
+        self.screen = pygame.display.get_surface()
+        self.screen_flags = (pygame.FULLSCREEN | pygame.SCALED)
 
         self.running = True
         self.clock = pygame.time.Clock()
-        self.fps = 144
-        generalEventManager.register(pygame.QUIT, self.quit)
-        keyManager.register([pygame.K_END], self.quit)
-        keyManager.register([pygame.K_F11],
+        self.refresh_rate = 165
+
+        event_manager.register(pygame.QUIT, self.quit)
+        key_manager.register([pygame.K_END], self.quit)
+        key_manager.register([pygame.K_F11],
                             lambda: self._toggle_tag(pygame.FULLSCREEN))
-        keyManager.register([pygame.K_LSHIFT, pygame.K_F11],
+        key_manager.register([pygame.K_LSHIFT, pygame.K_F11],
                             lambda: self._toggle_tag(pygame.NOFRAME))
 
-    def update(self):
-        self.state_dict[self.state_stack[-1]].update()
+    @staticmethod
+    def update():
+        """Updates current state."""
+        stateManager.current_state.update()
 
     def render(self):
-        self.state_dict[self.state_stack[-1]].render()
+        """Renders current state, ticks the clock and flips the display."""
+        stateManager.current_state.render()
 
-        self.clock.tick(self.fps)
+        self.clock.tick(self.refresh_rate)
         pygame.display.flip()
 
     @staticmethod
     def event_loop():
+        """Passes events the the event manager."""
         for event in pygame.event.get():
-            generalEventManager.notify(event)
-
-    def setup_states(self, state_dict, start_state):
-        self.state_dict = state_dict
-        self.state_name = start_state
-        self.state = self.state_dict[self.state_name]
-        self.state_stack.append(self.state_name)
+            event_manager.notify(event)
 
     def quit(self):
+        """Sets running to False."""
         self.running = False
 
     def main(self):
+        """The main loop of the game. Handles events, updates then renders
+        objects."""
         while self.running:
             self.event_loop()
             self.update()
@@ -64,35 +67,6 @@ class Control:
         pygame.display.quit()
         os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 0)
         pygame.display.init()
-        pygame.display.set_mode(self.screen_size, self.screen_flags)
-        self.state_dict[self.state_stack[-1]].screen = (
-            pygame.display.get_surface())
-
-
-class State(ABC):
-
-    def __init__(self):
-        self._screen = pygame.display.get_surface()
-        self.background = pygame.Surface(MONITOR_SIZE)
-        self.surfaces = []
-
-    @property
-    def screen(self):
-        return self._screen
-
-    @screen.setter
-    def screen(self, value):
-        self._screen = value
-        self.update_screen()
-
-    @abstractmethod
-    def update_screen(self):
-        pass
-
-    def update(self, *args):
-        pass
-
-    def render(self):
-        self.screen.blit(self.background, (0, 0))
-        for surface, coordinates in self.surfaces:
-            self.screen.blit(surface, coordinates)
+        pygame.display.set_mode(self.screen.get_size(), self.screen_flags)
+        for state in stateManager.states:
+            state.screen = pygame.display.get_surface()

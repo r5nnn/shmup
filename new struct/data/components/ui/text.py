@@ -6,7 +6,7 @@ import pygame
 from pygame import freetype
 
 from .. import ui
-from ...globals import FONTS, rect_alignments, white
+from data import fonts, rect_alignments
 
 alignments = Literal['left', 'right', 'center', 'block']
 
@@ -35,18 +35,13 @@ class _TextBase(ABC):
     def _align_rect(self, *args):
         pass
 
-    @abstractmethod
-    def blit(self):
-        pass
-
 
 class Text(_TextBase):
     font = ui.RenderNeeded()
     text = ui.RenderNeeded()
-    coords = ui.RectUpdateNeeded()
     x = ui.RectUpdateNeeded()
     y = ui.RectUpdateNeeded()
-    align = ui.RectUpdateNeeded()
+    coords = ui.RectUpdateNeeded()
     color = ui.RenderNeeded()
     text_surface = ui.RenderNeeded()
 
@@ -56,7 +51,7 @@ class Text(_TextBase):
                  coordinates: tuple,
                  font: pygame.freetype.Font | int = None,
                  font_size: int = 32,
-                 color: pygame.Color | tuple = white,
+                 color: pygame.Color | tuple = pygame.Color('white'),
                  align: rect_alignments = 'topleft',
                  antialias: bool = False):
         """
@@ -86,7 +81,6 @@ class Text(_TextBase):
         self._text_surface, self._rect = self._render_text(self._text,
                                                            self._color)
         self._align_rect(self._rect, self._align, coordinates)
-        self._coords = self._x, self._y = self._rect.topleft
 
     @property
     def rect(self):
@@ -101,6 +95,12 @@ class Text(_TextBase):
         self._antialias = value
         self._font.antialiased = value
 
+    def contains(self, x, y):
+        return (self._rect.left < x - self.surface.get_abs_offset()[0]
+                < self._rect.left + self._rect.width) and \
+               (self._rect.top < y - self.surface.get_abs_offset()[1]
+                < self._rect.top + self._rect.height)
+
     def _render_text(self, text, color):
         self._requires_render = False
         return self._font.render(text, color, self.font_size
@@ -109,6 +109,7 @@ class Text(_TextBase):
     def _align_rect(self, rect, align, coords):
         self._requires_rect_update = False
         setattr(rect, align, coords)
+        self._coords = self._x, self._y = getattr(rect, align)
 
     def blit(self):
         """
@@ -123,8 +124,11 @@ class Text(_TextBase):
             self._align_rect(self._rect, self._align, self._coords)
         self.surface.blit(self._text_surface, self._rect)
 
+    def update(self):
+        ...
 
-_TextBase.default_font_dir = FONTS()['editundo']
+
+_TextBase.default_font_dir = fonts()['editundo']
 
 
 class WrappedText(_TextBase):
@@ -143,7 +147,7 @@ class WrappedText(_TextBase):
                  rect: pygame.Rect,
                  font: pygame.font.Font | int = None,
                  font_size: int = 32,
-                 color: pygame.Color | tuple = white,
+                 color: pygame.Color | tuple = pygame.Color('white'),
                  align: rect_alignments = 'topleft',
                  text_align: Literal['right', 'left', 'block'] = 'left',
                  antialias: bool = False,
@@ -183,7 +187,6 @@ class WrappedText(_TextBase):
         self._align_rect(self._rect, self._align, self._coords)
         self._render_text(antialias, color)
 
-    @override
     def blit(self):
         if self._requires_rect_update:
             self._requires_render = True

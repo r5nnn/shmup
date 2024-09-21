@@ -2,10 +2,10 @@ import colorsys
 
 
 def shift_rgb(rgb_color, shift_amount):
-    """
-    Shifts the color in the RGB spectrum by the specified amount.
+    """Shifts the color in the RGB spectrum by the specified amount.
 
-    :param rgb_color: A tuple of (R, G, B) values where each is in the range 0-255.
+    :param rgb_color: A tuple of (R, G, B) values where each is in the range
+        0-255.
     :param shift_amount: The amount to shift the color in the spectrum.
     :return: A tuple of (R, G, B) representing the shifted color.
     """
@@ -36,7 +36,8 @@ class ColorGradient:
         self.direction = 1  # 1 for forward, -1 for backward
 
     def _interpolate_hue(self, h1, h2, t):
-        """Interpolate between two hues, considering shortest or longest path."""
+        """Interpolate between two hues, considering shortest or longest path.
+        """
         if self.use_longest_path:
             if h2 > h1:
                 h1 += 1  # Move to the next hue circle (wrap around)
