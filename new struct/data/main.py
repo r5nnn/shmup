@@ -1,6 +1,4 @@
-import pygame
-
-from . import tools
+from . import control
 from .states import title
 
 
@@ -8,5 +6,5 @@ def main():
     state_dict = {
         "Title": title.Title()
     }
-    game = tools.Control(state_dict, "Title")
+    game = control.Control(state_dict, "Title")
     game.main()

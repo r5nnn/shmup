@@ -6,22 +6,21 @@ import pygame
 from pygame import freetype
 
 from .. import ui
-from data import fonts, rect_alignments
-
-alignments = Literal['left', 'right', 'center', 'block']
+from data import fonts, CustomTypes
 
 
 class _TextBase(ABC):
     default_font_dir = None
 
     def __init__(self,
-                 font: pygame.font.Font | int = None,
-                 font_size: int = 32,):
+                 font: pygame.freetype.Font | int = None,
+                 font_size: int = 32, ):
         if font and _TextBase.default_font_dir is None:
-            raise TypeError("Text.font not specified and no font passed when "
-                            "creating instance. One or the other must be "
+            raise TypeError("default_font_dir not specified and no font passed "
+                            "when creating instance. One or the other must be "
                             "defined.")
-        elif font is not None and font_size != 32:
+        elif (font is not None and font_size != 32) and not isinstance(
+                font, pygame.freetype.Font):
             warnings.warn("font_size parameter passed when default font not "
                           "used.")
 
@@ -38,6 +37,7 @@ class _TextBase(ABC):
 
 class Text(_TextBase):
     font = ui.RenderNeeded()
+    font_size = ui.RenderNeeded()
     text = ui.RenderNeeded()
     x = ui.RectUpdateNeeded()
     y = ui.RectUpdateNeeded()
@@ -52,14 +52,14 @@ class Text(_TextBase):
                  font: pygame.freetype.Font | int = None,
                  font_size: int = 32,
                  color: pygame.Color | tuple = pygame.Color('white'),
-                 align: rect_alignments = 'topleft',
+                 align: CustomTypes.rect_alignments = 'topleft',
                  antialias: bool = False):
         """
         Class for creating and managing text surfaces.
 
         Only to be used when the text is non interactable and doesn't need
-        wrapping.
-        Allows alligning the text to the coords provided.
+        wrapping. Allows alligning the text to the coords provided.
+
         :param surface: Surface which the text surface will be blit onto.
         :param text: Text to be displayed.
         :param coordinates: X and Y coordinates of font.
@@ -71,9 +71,10 @@ class Text(_TextBase):
         """
         super().__init__(font, font_size)  # argument error checking occurs here
         self.surface = surface
-        self._font = font if font is not None else \
-            pygame.freetype.Font(Text.default_font_dir, font_size)
-        self.font_size = self._font.size
+        self._font = font if font is not None \
+            else pygame.freetype.Font(Text.default_font_dir)
+        self.font_size = font_size if font_size is not None \
+            else self._font.size
         self._text = text
         self._align = align.lower()
         self.antialias = antialias
@@ -98,13 +99,12 @@ class Text(_TextBase):
     def contains(self, x, y):
         return (self._rect.left < x - self.surface.get_abs_offset()[0]
                 < self._rect.left + self._rect.width) and \
-               (self._rect.top < y - self.surface.get_abs_offset()[1]
-                < self._rect.top + self._rect.height)
+            (self._rect.top < y - self.surface.get_abs_offset()[1]
+             < self._rect.top + self._rect.height)
 
     def _render_text(self, text, color):
         self._requires_render = False
-        return self._font.render(text, color, self.font_size
-                                 if self.font_size != self._font.size else None)
+        return self._font.render(text, color, self.font_size)
 
     def _align_rect(self, rect, align, coords):
         self._requires_rect_update = False
@@ -112,26 +112,22 @@ class Text(_TextBase):
         self._coords = self._x, self._y = getattr(rect, align)
 
     def blit(self):
-        """
-        Draws the text onto the surface.
-        Rerenders the text surface and updates
-        the position of the rect if nessecary.
-        """
+        """Draws the text onto the surface."""
+        self.surface.blit(self._text_surface, self._rect)
+
+    def update(self):
+        """Rerenders the text surface and updates
+        the position of the rect if nessecary."""
         if self._requires_render:
             self._text_surface, self._rect = self._render_text(self._text,
                                                                self._color)
         if self._requires_rect_update:
             self._align_rect(self._rect, self._align, self._coords)
-        self.surface.blit(self._text_surface, self._rect)
-
-    def update(self):
-        ...
-
-
-_TextBase.default_font_dir = fonts()['editundo']
 
 
 class WrappedText(_TextBase):
+    default_font_dir = None
+
     text = ui.RenderNeeded()
     rect = ui.RectUpdateNeeded()
     font = ui.RenderNeeded()
@@ -148,7 +144,7 @@ class WrappedText(_TextBase):
                  font: pygame.font.Font | int = None,
                  font_size: int = 32,
                  color: pygame.Color | tuple = pygame.Color('white'),
-                 align: rect_alignments = 'topleft',
+                 align: CustomTypes.rect_alignments = 'topleft',
                  text_align: Literal['right', 'left', 'block'] = 'left',
                  antialias: bool = False,
                  line_spacing: int = 0):
@@ -174,8 +170,7 @@ class WrappedText(_TextBase):
         self.surface = surface
         self._text = text
         self._rect = rect if rect is not None else self.surface.get_rect()
-        self._font = font if font is not None \
-            else pygame.font.Font(WrappedText.default_font_dir, font_size)
+        self._font = font if font is not None else WrappedText.default_font_dir
         self._color = color
         self._align = align.lower()
         self._antialias = antialias
@@ -201,10 +196,10 @@ class WrappedText(_TextBase):
             line_left = self._rect[0]
             if self.text_align == 'right':
                 line_left += + self._rect[2] - line_len - self._space_width * (
-                            len(line_surfaces) - 1)
+                        len(line_surfaces) - 1)
             elif self.text_align == 'center':
                 line_left += (self._rect[2] - line_len - self._space_width * (
-                            len(line_surfaces) - 1)) // 2
+                        len(line_surfaces) - 1)) // 2
             elif self.text_align == 'block' and len(line_surfaces) > 1:
                 self._space_width = (self._rect[2] - line_len) // (len(
                     line_surfaces) - 1)
@@ -250,3 +245,6 @@ class WrappedText(_TextBase):
     def _align_rect(self, rect, align, coords):
         self._requires_rect_update = False
         setattr(rect, align, coords)
+
+
+_TextBase.default_font_dir = fonts()['editundo']

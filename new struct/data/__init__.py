@@ -1,18 +1,16 @@
 import json
 import os
 import sys
-from abc import ABC, abstractmethod
-from typing import Literal
+from abc import ABC, ABCMeta, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Literal, override
 
 import pygame
+from pygame import freetype
 
 pygame.init()
 pygame.display.set_caption("shmup")
 pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN | pygame.SCALED)
-
-# type hints
-rect_alignments = Literal['midtop', 'topright', 'midleft', 'center',
-                          'midright', 'bottomleft', 'midbottom', 'bottomright']
 
 
 def parse_spritesheet(sprite_sheet: str):
@@ -37,13 +35,35 @@ def parse_spritesheet(sprite_sheet: str):
     sprites = {}
     for sprite in data:
         frame = data[sprite]
-        sprites[f"{sprite_name} {frame["tag"]}"] = (
+        sprites[sprite] = (
             spritesheet.subsurface(frame["pos"]['x'], frame["pos"]['y'],
                                    frame["pos"]['w'], frame["pos"]['h']))
     return sprites
 
 
-class _Load(ABC):
+@dataclass(frozen=True)
+class CustomTypes:
+    rect_alignments = Literal['topleft', 'midtop', 'topright',
+                              'midleft', 'center', 'midright',
+                              'bottomleft', 'midbottom', 'bottomright']
+    alignments = Literal['left', 'right', 'center', 'block']
+
+
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(
+                *args, **kwargs)
+        return cls._instances[cls]
+
+
+class _SingletonABCMeta(Singleton, ABCMeta):
+    pass
+
+
+class _Load(ABC, metaclass=_SingletonABCMeta):
     def __init__(self, directory: str, *accept: str,
                  exclude_dirs: list[str] = None):
         """Loads in files from specified directories. Allows for filtering
@@ -71,19 +91,18 @@ class _Load(ABC):
         """Abstract method to be implemented by subclasses to process files."""
         pass
 
-    def __call__(self) -> dict[str, str]:
+    def __call__(self, name: str = None) -> dict[str, Any] | Any:
         """
         :returns: A dictionary of file names pointing to their directories."""
-        return self.files
+        return self.files[name] if name is not None else self.files
 
 
 class _LoadImages(_Load):
-    def __init__(self,
-                 directory: str,
-                 accept: tuple[str] = (".png", ".jpeg", ".jpg"),
-                 exclude_dirs: list[str] = None):
-        super().__init__(directory, *accept, exclude_dirs=exclude_dirs)
+    def __init__(self, directory: str, exclude_dirs: list[str] = None):
+        super().__init__(directory, *(".png", ".jpeg", ".jpg"),
+                         exclude_dirs=exclude_dirs)
 
+    @override
     def process_file(self, file: str, name: str, directory: str):
         if os.path.isfile(os.path.join(directory, file+".json")):
             image = parse_spritesheet(file)
@@ -96,7 +115,16 @@ class _LoadImages(_Load):
         self.files[name] = image
 
 
-fonts = _Load(os.path.join("resources", "fonts"), ".ttf")
+class _LoadFonts(_Load):
+    def __init__(self, directory: str, exclude_dirs: list[str] = None):
+        super().__init__(directory, *".ttf", exclude_dirs=exclude_dirs)
+
+    @override
+    def process_file(self, file: str, name: str, directory: str):
+        self.files[name] = pygame.freetype.Font(directory)
+
+
+fonts = _LoadFonts(os.path.join("resources", "fonts"))
 graphics = _LoadImages(os.path.join("resources", "graphics"))
 
 
@@ -117,3 +145,10 @@ class Validator(ABC):
     @abstractmethod
     def _validate(self, instance, value):
         pass
+
+@dataclass(frozen=True)
+class CustomTypes:
+    rect_alignments = Literal['topleft', 'midtop', 'topright',
+                              'midleft', 'center', 'midright',
+                              'bottomleft', 'midbottom', 'bottomright']
+    alignments = Literal['left', 'right', 'center', 'block']
