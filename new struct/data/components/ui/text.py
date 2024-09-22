@@ -5,8 +5,8 @@ from typing import Literal, override
 import pygame
 from pygame import freetype
 
+from data.utils import CustomTypes, fonts
 from .. import ui
-from data import fonts, CustomTypes
 
 
 class _TextBase(ABC):
@@ -49,8 +49,8 @@ class Text(_TextBase):
                  surface: pygame.Surface,
                  text: str,
                  coordinates: tuple,
+                 font_size: int,
                  font: pygame.freetype.Font | int = None,
-                 font_size: int = 32,
                  color: pygame.Color | tuple = pygame.Color('white'),
                  align: CustomTypes.rect_alignments = 'topleft',
                  antialias: bool = False):
@@ -72,9 +72,8 @@ class Text(_TextBase):
         super().__init__(font, font_size)  # argument error checking occurs here
         self.surface = surface
         self._font = font if font is not None \
-            else pygame.freetype.Font(Text.default_font_dir)
-        self.font_size = font_size if font_size is not None \
-            else self._font.size
+            else pygame.freetype.Font(_TextBase.default_font_dir)
+        self.font_size = font_size
         self._text = text
         self._align = align.lower()
         self.antialias = antialias
@@ -104,7 +103,7 @@ class Text(_TextBase):
 
     def _render_text(self, text, color):
         self._requires_render = False
-        return self._font.render(text, color, self.font_size)
+        return self._font.render(text, color, size=self.font_size)
 
     def _align_rect(self, rect, align, coords):
         self._requires_rect_update = False
@@ -247,4 +246,4 @@ class WrappedText(_TextBase):
         setattr(rect, align, coords)
 
 
-_TextBase.default_font_dir = fonts()['editundo']
+_TextBase.default_font_dir = fonts('editundo', 'path')

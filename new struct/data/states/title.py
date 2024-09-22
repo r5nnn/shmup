@@ -3,22 +3,21 @@ import pygame
 from . import State
 from ..components.ui import widgethandler
 from ..components.ui.button import Button
-from ..components.ui.text import Text
-from data import graphics
+from data.utils import fonts, graphics
 
 
 class Title(State):
     def __init__(self):
         super().__init__()
-        self.background = graphics()['menu']
-        self.logo = pygame.transform.scale_by(graphics()['logo'], 4)
+        self.background = graphics('menu')
+        self.logo = pygame.transform.scale_by(graphics('logo'), 4)
         dimensions = (self._screen_size[0]*0.98-self.logo.get_width(),
                       self._screen_size[1]*0.1)
         self.surfaces.append([self.logo, dimensions])
         dimensions = (self._screen_size[0]*0.98-300,
                       self._screen_size[1]*0.1 + self.logo.get_height())
         self.button = Button(self.screen, pygame.Rect(*dimensions, 300, 100),
-                             text='Play', radius=10, font_size=64)
+                             text='Play', radius=10, font=fonts('editundo'))
         widgethandler.WidgetHandler.add_widget(self.button)
 
     def update_screen(self):

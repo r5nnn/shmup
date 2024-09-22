@@ -1,6 +1,6 @@
 from typing import override
 
-from data import Validator
+from data.utils import Validator
 
 
 class RenderNeeded(Validator):

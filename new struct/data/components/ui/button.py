@@ -5,7 +5,7 @@ import pygame.display
 from . import RectUpdateNeeded
 from .text import Text
 from ..events import Mouse
-from data import rect_alignments
+from data.utils import CustomTypes
 
 
 class Button:
@@ -19,7 +19,7 @@ class Button:
     def __init__(self,
                  surface: pygame.Surface,
                  rect: pygame.Rect,
-                 align: rect_alignments = 'topleft',
+                 align: CustomTypes.rect_alignments = 'topleft',
                  colors: dict[str, tuple] = None,
                  border: bool = False,
                  border_colors: dict[str, tuple] = None,
@@ -93,7 +93,7 @@ class Button:
              'hovered': (255, 255, 255),
              'clicked': (255, 255, 255)}
         self._text_color = self.text_colors['inactive']
-        self._text = Text(self._surface, text, (0, 0), font, font_size,
+        self._text = Text(self._surface, text, (0, 0), font_size, font,
                           color=self._text_color)
         self.text_align = text_align
         self.image = image if image is not None else None
