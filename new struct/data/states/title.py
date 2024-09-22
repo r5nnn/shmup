@@ -1,27 +1,55 @@
+import random
+
 import pygame
 
+from data.utils import graphics
 from . import State
 from ..components.ui import widgethandler
-from ..components.ui.button import ButtonBase, ButtonImage, ButtonText
-from data.utils import fonts, graphics
+from ..components.ui.button import ButtonImage
 
 
 class Title(State):
     def __init__(self):
         super().__init__()
         self.background = graphics('menu')
-        self.logo = pygame.transform.scale_by(graphics('logo'), 4)
-        dimensions = (self._screen_size[0]*0.98-self.logo.get_width(),
-                      self._screen_size[1]*0.1)
-        self.surfaces.append([self.logo, dimensions])
-        dimensions = (self._screen_size[0]*0.98-self.logo.get_width()/2-100/2,
-                      self._screen_size[1]*0.1 + self.logo.get_height()*1.1)
-        self.button = ButtonImage(
-            self.screen, pygame.Rect(*dimensions, 100, 100),
-            tuple(pygame.transform.scale_by(i, 3)
-                  for i in graphics('play').values()))
-        widgethandler.WidgetHandler.add_widget(self.button)
-        widgethandler.WidgetHandler.move_to_bottom(self.button)
+        self.logo = pygame.transform.scale_by(graphics('logo'), 5)
+        self.splashes = [
+            pygame.transform.scale_by(graphics('at the stake'), 5),
+            pygame.transform.scale_by(graphics('can we get more christof'), 5),
+            pygame.transform.scale_by(graphics('its real'), 5),
+            pygame.transform.scale_by(graphics('tiferet'), 5),
+            pygame.transform.scale_by(graphics('xtr5ne'), 5)
+        ]
+        self.splash = random.choice(self.splashes)
+        self.surfaces += [[self.logo,
+                           (self._screen_size[0]/2-self.logo.get_width()/2,
+                               self._screen_size[1]*0.1)],
+                          [self.splash,
+                           (self._screen_size[0]/2-self.splash.get_width(),
+                            self._screen_size[1]*0.275)]]
+        self.play = ButtonImage(
+            self.screen, pygame.Rect(self._screen_size[0]*0.6,
+                                     self._screen_size[1]*0.35, 0, 0),
+            tuple(pygame.transform.scale_by(images, 3)
+                  for images in graphics('play').values()))
+        self.editor = ButtonImage(
+            self.screen, pygame.Rect(self._screen_size[0]*0.6,
+                                     self._screen_size[1]*0.475, 0, 0),
+            tuple(pygame.transform.scale_by(images, 3)
+                  for images in graphics('editor').values())
+        )
+        self.options = ButtonImage(
+            self.screen, pygame.Rect(self._screen_size[0]*0.6,
+                                     self._screen_size[1]*0.6, 0, 0),
+            tuple(pygame.transform.scale_by(images, 3)
+                  for images in graphics('options').values()))
+        self.quit = ButtonImage(
+            self.screen, pygame.Rect(self._screen_size[0]*0.6,
+                                     self._screen_size[1]*0.725, 0, 0),
+            tuple(pygame.transform.scale_by(images, 3)
+                  for images in graphics('quit').values()))
+        for widget in [self.play, self.editor, self.options, self.quit]:
+            widgethandler.WidgetHandler.add_widget(widget)
 
     def update_screen(self):
         widgethandler.WidgetHandler.update_screen(pygame.display.get_surface())

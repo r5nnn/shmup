@@ -1,15 +1,12 @@
 from typing import Callable
 
 import pygame.display
-from pygame.pixelcopy import surface_to_array
-
-from . import RectUpdateNeeded, widgethandler
 from .text import Text
 from ..events import Mouse
 from data.utils import CustomTypes
 
 
-class ButtonBase:
+class _ButtonBase:
     def __init__(self,
                  surface: pygame.Surface,
                  rect: pygame.Rect,
@@ -25,7 +22,8 @@ class ButtonBase:
         Base class for button functionality.
 
         Handles the basic appearance and interaction such as border, colors,
-        and on-click/on-release events. Child classes will add text or image-specific logic.
+        and on-click/on-release events. Child classes will add text or
+        image-specific logic.
         """
         self._surface = surface
         self._rect = rect
@@ -42,7 +40,8 @@ class ButtonBase:
 
         # Border management
         self.border = border
-        self.border_colors = border_colors if border_colors is not None else None
+        self.border_colors = border_colors if border_colors is not None \
+            else None
         self._border_color = self.border_colors[
             'inactive'] if self.border_colors else None
         self._border_thickness = border_thickness
@@ -69,6 +68,10 @@ class ButtonBase:
     @surface.setter
     def surface(self, value):
         self._surface = value
+
+    @property
+    def rect(self):
+        return self._rect
 
     @property
     def width(self):
@@ -177,7 +180,7 @@ class ButtonBase:
             )
 
 
-class ButtonText(ButtonBase):
+class ButtonText(_ButtonBase):
     def __init__(self,
                  surface: pygame.Surface,
                  rect: pygame.Rect,
@@ -261,7 +264,7 @@ class ButtonText(ButtonBase):
         self._text.update()
 
 
-class ButtonImage(ButtonBase):
+class ButtonImage(_ButtonBase):
     def __init__(self,
                  surface: pygame.Surface,
                  rect: pygame.Rect,
@@ -308,14 +311,16 @@ class ButtonImage(ButtonBase):
                 self.image_rect.bottom = self._rect.bottom
 
     def contains(self, x, y):
-        """Check if the mouse is over the image or rect, depending on collision mode."""
+        """Check if the mouse is over the image or rect, depending on collision
+        mode."""
         if self.use_rect_collision:
             return super().contains(x, y)  # Use rect-based collision
         else:
             local_x = x - self.image_rect.left
             local_y = y - self.image_rect.top
             try:
-                return self._current_image.get_at((local_x, local_y)).a != 0  # Pixel-perfect collision
+                # Pixel-perfect collision
+                return self._current_image.get_at((local_x, local_y)).a != 0
             except IndexError:
                 return False
 
@@ -332,8 +337,10 @@ class ButtonImage(ButtonBase):
             self._current_image = self.images[0]  # Idle
 
     def blit(self):
-        """Draw the image onto the surface. Optionally draw the button rect if using rect collision."""
+        """Draw the image onto the surface. Optionally draw the button rect if
+        using rect collision."""
         if self.use_rect_collision:
-            pygame.draw.rect(self._surface, self._color, self._rect, border_radius=self.radius)
+            pygame.draw.rect(self._surface, self._color, self._rect,
+                             border_radius=self.radius)
 
         self._surface.blit(self._current_image, self.image_rect.topleft)

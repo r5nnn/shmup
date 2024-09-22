@@ -30,22 +30,18 @@ class State(ABC):
     def update_screen(self):
         """Method meant to update the screen variables of all elements
         in the state using it."""
-        pass
 
     @abstractmethod
     def startup(self):
         """Called when the state enters the top of the state stack."""
-        pass
 
     @abstractmethod
     def cleanup(self):
         """Called when the state leaves the top of the state stack."""
-        pass
 
     @abstractmethod
     def update(self, *args):
         """Called before self.render, meant to update all the state elements."""
-        pass
 
     @abstractmethod
     def render(self):
