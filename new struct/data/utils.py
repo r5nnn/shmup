@@ -37,11 +37,10 @@ def parse_spritesheet(sprite_sheet: str):
         data = json.load(metadata_json)
     metadata_json.close()
     sprites = {}
-    for sprite in data:
-        frame = data[sprite]
+    for sprite in (frames := data["frames"]):
+        res = frames[sprite]["frame"]
         sprites[sprite] = (
-            spritesheet.subsurface(frame["pos"]['x'], frame["pos"]['y'],
-                                   frame["pos"]['w'], frame["pos"]['h']))
+            spritesheet.subsurface(res['x'], res['y'], res['w'], res['h']))
     return sprites
 
 
@@ -101,8 +100,8 @@ class _LoadImages(_Load):
     @override
     def process_file(self, file: str, name: str, directory: str):
         path = super().process_file(file, name, directory)  # returns path
-        if os.path.isfile(os.path.join(directory, file+".json")):
-            image = parse_spritesheet(file)
+        if os.path.isfile(os.path.join(directory, name+".json")):
+            image = parse_spritesheet(path)
         else:
             image = pygame.image.load(path)
             if image.get_alpha():
