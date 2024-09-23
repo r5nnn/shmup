@@ -15,9 +15,8 @@ class Title(State):
         self.background = graphics('menu')
         self.logo = pygame.transform.scale_by(graphics('logo'), 5)
         self.splashes = [
-            pygame.transform.scale_by(graphics('at the stake'), 5),
+            pygame.transform.scale_by(graphics('gun die'), 5),
             pygame.transform.scale_by(graphics('can we get more christof'), 5),
-            pygame.transform.scale_by(graphics('its real'), 5),
             pygame.transform.scale_by(graphics('tiferet'), 5),
         ]
         self.splash = random.choice(self.splashes)
