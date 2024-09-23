@@ -2,14 +2,17 @@ from abc import ABC, abstractmethod
 
 import pygame
 
+from data.utils import Singleton
+
 
 class State(ABC):
-    """Parent class for creating states."""
+    """Parent class for creating _states."""
     def __init__(self):
         """Defines the screen and creates a black background meant to be
         overriden."""
         self._screen = pygame.display.get_surface()
         self._screen_size = self._screen.get_size()
+
         self.background = pygame.Surface(self._screen_size)
         self.surfaces = []
 
@@ -51,25 +54,15 @@ class State(ABC):
             self.screen.blit(surface, coordinates)
 
 
-class StateManager:
+class StateManager(metaclass=Singleton):
     """Class for interacting with the state stack."""
     def __init__(self):
         """Defines properties."""
-        self._states = {}
+        
+        self.states = None
         self._state_stack = []
         self._current_state = None
-
-    def __call__(self, state_dict: dict):
-        """Meant to be called only once to define the _states property.
-
-        :param state_dict: A dictionary of initialised state objects and their
-            names.
-        """
-        self._states = state_dict
-
-    @property
-    def states(self):
-        return self._states
+        self.control = None
 
     @property
     def state_stack(self):
@@ -77,12 +70,12 @@ class StateManager:
 
     @property
     def current_state(self):
-        return self._states[self._state_stack[-1]]
+        return self.states[self._state_stack[-1]]
 
     def _validate(self, state_name):
-        if state_name not in self._states:
+        if state_name not in self.states:
             raise KeyError(f'No such state {state_name} in state dictionary: '
-                           f'{self._states}')
+                           f'{self.states}')
 
     def append(self, state_name: str):
         """Gets the state object from the name passed and appends the state name
@@ -129,7 +122,7 @@ class StateManager:
     def back_to(self, state_name: str):
         """Removes every state on top of the state to go back to, and calls the
         relevant startup and cleanup methods (only of the top state and state
-        moving back to, states inbetween are ignored).
+        moving back to, _states inbetween are ignored).
 
         :param state_name: The name of the state to go back to as stored in the
             _states property dictionary.
@@ -146,6 +139,10 @@ class StateManager:
         index = self._state_stack.index(state_name)
         self._state_stack = self._state_stack[:index+1]
         self.current_state.startup()
+    
+    def quit(self):
+        self.current_state.cleanup()
+        self.control.quit()
 
 
 stateManager = StateManager()

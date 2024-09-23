@@ -6,6 +6,7 @@ from data.utils import graphics
 from . import State
 from ..components.ui import widgethandler
 from ..components.ui.button import ButtonImage
+from . import stateManager
 
 
 class Title(State):
@@ -18,7 +19,6 @@ class Title(State):
             pygame.transform.scale_by(graphics('can we get more christof'), 5),
             pygame.transform.scale_by(graphics('its real'), 5),
             pygame.transform.scale_by(graphics('tiferet'), 5),
-            pygame.transform.scale_by(graphics('xtr5ne'), 5)
         ]
         self.splash = random.choice(self.splashes)
         self.surfaces += [[self.logo,
@@ -47,7 +47,7 @@ class Title(State):
             self.screen, pygame.Rect(self._screen_size[0]*0.6,
                                      self._screen_size[1]*0.725, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
-                  for images in graphics('quit').values()))
+                  for images in graphics('quit').values()), on_click=stateManager.quit)
         for widget in [self.play, self.editor, self.options, self.quit]:
             widgethandler.WidgetHandler.add_widget(widget)
 
