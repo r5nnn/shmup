@@ -53,6 +53,47 @@ class Singleton(type):
                 *args, **kwargs)
         return cls._instances[cls]
 
+class _Observer(ABC):
+
+    def __init__(self):
+        """
+        Allows you to register an event to a handler so that
+        the handler is called whenever the event is detected.
+        """
+        self._handlers = defaultdict(list)
+
+    @abstractmethod
+    def notify(self, *args):
+        """Calls the registered handler."""
+
+    @abstractmethod
+    def register(self, event, handler):
+        """Registers the event to a handler."""
+
+    @abstractmethod
+    def deregister(self, event, handler):
+        """
+        Deregisters the event from its handler.
+
+        Args:
+            event: Event to bound to handler.
+            handler: Handler to deregister.
+        """
+
+    def is_registered(self, event, handler) -> bool:
+        """
+            Check if handler is bound to an event.
+
+            Args:
+                event: Event to check.
+                handler: Handler bound to event.
+
+            Returns:
+                Bool confirming if handler is registered.
+        """
+        return event in self._handlers and \
+            handler in self._handlers[event]
+
 
 class _SingletonABCMeta(Singleton, ABCMeta):
     pass
