@@ -210,3 +210,4 @@ class UserEvents:
 event_manager = EventManager("type")
 key_manager = KeyManager()
 event_manager.register(pygame.KEYDOWN, key_manager.notify)
+event_manager.register(pygame.KEYUP, key_manager.notify)

@@ -14,7 +14,6 @@ class State(ABC):
         self._screen_size = self._screen.get_size()
 
         self.background = pygame.Surface(self._screen_size)
-        self.surfaces = []
 
     @property
     def screen(self):
@@ -50,8 +49,6 @@ class State(ABC):
     def render(self):
         """Meant to render all the state's elements to the screen."""
         self.screen.blit(self.background, (0, 0))
-        for surface, coordinates in self.surfaces:
-            self.screen.blit(surface, coordinates)
 
 
 class StateManager(metaclass=Singleton):
