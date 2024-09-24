@@ -78,7 +78,8 @@ class InputBinder:
     @staticmethod
     def _are_inputs_active(inputs, input_manager):
         print(type(inputs), "inputs")
-        """Check if the required inputs are active based on the InputManager."""
+        """Check if the required inputs are active based on the InputManager.
+        """
         for input_type, value in inputs:
             if input_type == 'key' and not input_manager.is_key_pressed(value):
                 return False
