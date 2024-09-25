@@ -4,7 +4,7 @@ from .states import title
 
 def main():
     state_dict = {
-        "Title": title.Title()
+        "Title": title.Title
     }
     game = control.Control(state_dict, "Title")
     game.main()
