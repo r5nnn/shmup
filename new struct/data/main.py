@@ -1,10 +1,9 @@
 from . import control
 from .states import title
 
-
 def main():
-    state_dict = {
-        "Title": title.Title
+    states = {
+        "title": title.Title
     }
-    game = control.Control(state_dict, "Title")
+    game = control.Control(states, "title")
     game.main()

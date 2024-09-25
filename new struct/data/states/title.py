@@ -7,7 +7,6 @@ from . import State
 from ..components.ui import widgethandler
 from ..components.ui.button import ButtonImage
 from ..components.events import key_manager
-from . import stateManager
 
 
 class Title(State):
@@ -42,7 +41,7 @@ class Title(State):
                                      self._screen_size[1]*0.725, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
                   for images in graphics('quit').values()),
-            on_click=stateManager.quit)
+            on_click=self.state_manager.quit)
         for widget in [self.play, self.editor, self.options, self.quit]:
             widgethandler.WidgetHandler.add_widget(widget)
 

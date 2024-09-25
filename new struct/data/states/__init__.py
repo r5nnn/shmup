@@ -4,6 +4,7 @@ import warnings
 import pygame
 
 from data.utils import Singleton
+from data.components import input
 
 
 class State(ABC):
@@ -13,6 +14,9 @@ class State(ABC):
         overriden."""
         self._screen = pygame.display.get_surface()
         self._screen_size = self._screen.get_size()
+        self.state_manager = stateManager
+        self.input_manager = stateManager.input_manager
+        self.input_binder = stateManager.input_binder
 
         self.background = pygame.Surface(self._screen_size)
 
@@ -44,7 +48,8 @@ class State(ABC):
 
     @abstractmethod
     def update(self, *args):
-        """Called before self.render, meant to update all the state elements."""
+        """Called before self.render, meant to update all the state elements.
+        """
 
     @abstractmethod
     def render(self):
@@ -52,22 +57,29 @@ class State(ABC):
         self.screen.blit(self.background, (0, 0))
 
 
+from data.states import title, options
+
+
 class StateManager(metaclass=Singleton):
     """Class for interacting with the state stack."""
-    def __init__(self, inputmanger, inputbinder):
+    def __init__(self, inputmanager, inputbinder):
         """Defines properties."""
         self._input_manager = inputmanager
         self._input_binder = inputbinder
         
-        self._state_dict = {}
+        self.state_dict = {}
         self._state_stack = []
         self._current_state = None
         self.control = None
 
     @property
-    def state_dict(self):
-        return self._state_dict
-    
+    def input_manager(self):
+        return self._input_manager
+
+    @property
+    def input_binder(self):
+        return self._input_binder
+
     @property
     def state_stack(self):
         return self._state_stack
@@ -79,29 +91,29 @@ class StateManager(metaclass=Singleton):
         except IndexError:
             return None
 
-    def _validate(state_name):
+    def _validate(self, state_name):
         try:
-            self.state_dict[state_name]
+            self.state_dict[state_name.lower()]
         except KeyError:
             print(f'No such state {state_name} in state dictionary: '
                   f'{self.state_dict}')
             raise
-            
-    def _initialise_state(state_name):
-        self._validate(state_name)
-        state_class = self.state_dict[state_name]
-        return state_class(self.input_manager, self.input_binder)
+
+    def _initialise_state(self, state_name):
+        self._validate(state_name.lower())
+        state_class = self.state_dict[state_name.lower()]
+        return state_class()
     
     def append(self, state_name: str):
-        """Gets the state object from the name passed and appends the state name
-        to the end of the state stack. Calls relevant startup and cleanup
+        """Gets the state object from the name passed and appends the state
+        name to the end of the state stack. Calls relevant startup and cleanup
         methods.
 
         :param state_name: The name of the state to append as stored in the
-            _states property dictionary.
+        _states property dictionary.
 
-        :raises KeyError: When state_name is not present in the _states property
-            dictionary.
+        :raises KeyError: When state_name is not present in the _states
+        property dictionary.
         """
         if self.current_state:
             self.current_state.cleanup()
@@ -115,8 +127,9 @@ class StateManager(metaclass=Singleton):
             self.current_state.cleanup()
             self._state_stack.pop()
             self.current_state.startup()
-        except Exeption:  # todo
-            warnings.Warn("Attempted to pop top leve state when no states in state stack.")
+        except AttributeError:
+            warnings.warn("Attempted to pop top leve state when no states in"
+                             " state stack.")
 
     def switch(self, state_name: str):
         """Removes the last state from the state stack, gets the state object
@@ -133,8 +146,8 @@ class StateManager(metaclass=Singleton):
         try:
             self.current_state.cleanup()
             self._state_stack.pop()
-        except Exception:  # todo
-            warnings.Warn("Attempted to switch state while no state was present in the state stack.")
+        except AttributeError:
+            warnings.warn("Attempted to switch state while no state was present in the state stack.")
         self._state_stack.append(self._initialise_state(state_name))
         self.current_state.startup()
 
@@ -162,4 +175,4 @@ class StateManager(metaclass=Singleton):
         self.control.quit()
 
 
-stateManager = StateManager()
+stateManager = StateManager(input.InputManager(), input.InputBinder())
