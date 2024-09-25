@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import warnings
 
 import pygame
 
@@ -53,27 +54,44 @@ class State(ABC):
 
 class StateManager(metaclass=Singleton):
     """Class for interacting with the state stack."""
-    def __init__(self):
+    def __init__(self, inputmanger, inputbinder):
         """Defines properties."""
+        self._input_manager = inputmanager
+        self._input_binder = inputbinder
         
-        self.states = None
+        self._state_dict = {}
         self._state_stack = []
         self._current_state = None
         self.control = None
 
+    @property
+    def state_dict(self):
+        return self._state_dict
+    
     @property
     def state_stack(self):
         return self._state_stack
 
     @property
     def current_state(self):
-        return self.states[self._state_stack[-1]]
+        try:
+            return self._state_stack[-1]
+        except IndexError:
+            return None
 
-    def _validate(self, state_name):
-        if state_name not in self.states:
-            raise KeyError(f'No such state {state_name} in state dictionary: '
-                           f'{self.states}')
-
+    def _validate(state_name):
+        try:
+            self.state_dict[state_name]
+        except KeyError:
+            print(f'No such state {state_name} in state dictionary: '
+                  f'{self.state_dict}')
+            raise
+            
+    def _initialise_state(state_name):
+        self._validate(state_name)
+        state_class = self.state_dict[state_name]
+        return state_class(self.input_manager, self.input_binder)
+    
     def append(self, state_name: str):
         """Gets the state object from the name passed and appends the state name
         to the end of the state stack. Calls relevant startup and cleanup
@@ -85,18 +103,20 @@ class StateManager(metaclass=Singleton):
         :raises KeyError: When state_name is not present in the _states property
             dictionary.
         """
-        self._validate(state_name)
-        if len(self._state_stack) > 1:
+        if self.current_state:
             self.current_state.cleanup()
-        self._state_stack.append(state_name)
+        self._state_stack.append(self._initialise_state(state_name))
         self.current_state.startup()
 
     def pop(self):
         """Removes the last state from the state stack, calls relevant startup
         and cleanup methods."""
-        self.current_state.cleanup()
-        self._state_stack.pop()
-        self.current_state.startup()
+        try:
+            self.current_state.cleanup()
+            self._state_stack.pop()
+            self.current_state.startup()
+        except Exeption:  # todo
+            warnings.Warn("Attempted to pop top leve state when no states in state stack.")
 
     def switch(self, state_name: str):
         """Removes the last state from the state stack, gets the state object
@@ -110,10 +130,12 @@ class StateManager(metaclass=Singleton):
         :raises KeyError: When state_name is not present in the _states property
             dictionary.
         """
-        self._validate(state_name)
-        self.current_state.cleanup()
-        self._state_stack.pop()
-        self._state_stack.append(state_name)
+        try:
+            self.current_state.cleanup()
+            self._state_stack.pop()
+        except Exception:  # todo
+            warnings.Warn("Attempted to switch state while no state was present in the state stack.")
+        self._state_stack.append(self._initialise_state(state_name))
         self.current_state.startup()
 
     def back_to(self, state_name: str):
@@ -126,13 +148,11 @@ class StateManager(metaclass=Singleton):
 
         :raises KeyError: When state_name is not present in the _states property
             dictionary.
-        :raises ValueError: When state_name is not present in the state stack.
         """
-        self._validate(state_name)
-        if state_name not in self._state_stack:
-            raise ValueError(f'{state_name} state not in state stack: '
-                             f'{self._state_stack}')
-        self.current_state.cleanup()
+        try:
+            self.current_state.cleanup()
+        except Exception:  # todo
+            warnings.Warn("Attempted to go back to state.")
         index = self._state_stack.index(state_name)
         self._state_stack = self._state_stack[:index+1]
         self.current_state.startup()
