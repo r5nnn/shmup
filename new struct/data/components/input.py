@@ -15,27 +15,33 @@ class InputManager(metaclass=Singleton):
         self._held_keys = list()
         self._mouse_buttons = list()
         self._mouse_pos = (0, 0)
-   
-    def process_events(self, events: list):
+        self._quit = False
+
+    @property
+    def quit(self):
+        return self._quit
+
+    def process_events(self, event: pygame.event.Event):
         """Clears keydown and keyup events, iterates through
         pygame events and updates the input lists as necessary.
         
-        :param events: the list returned by pygame.event.get()
+        :param event: the events returned by pygame.event.get()
         """
         self._keydown_events.clear()
         self._keyup_events.clear()
 
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                self._keydown_events.append(event.key)
-                self._held_keys.append(event.key)
-            elif event.type == pygame.KEYUP:
-                self._keyup_events.append(event.key)
-                self._held_keys.remove(event.key)
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                self._mouse_buttons.append(event.button)
-            elif event.type == pygame.MOUSEBUTTONUP:
-                self._mouse_buttons.remove(event.button)
+        if event.type == pygame.KEYDOWN:
+            self._keydown_events.append(event.key)
+            self._held_keys.append(event.key)
+        elif event.type == pygame.KEYUP:
+            self._keyup_events.append(event.key)
+            self._held_keys.remove(event.key)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            self._mouse_buttons.append(event.button)
+        elif event.type == pygame.MOUSEBUTTONUP:
+            self._mouse_buttons.remove(event.button)
+        elif event.type == pygame.QUIT:
+            self._quit = True
 
         self._mouse_pos = pygame.mouse.get_pos()
 
@@ -67,25 +73,34 @@ class InputBinder:
     def __init__(self):
         self._bindings = {}
 
-    def bind(self, inputs: tuple, action: Callable):
+    def bind(self, *inputs: tuple[str, int], action: Callable):
         """Bind a specific input combination to an action."""
         self._bindings[inputs] = action
 
     def process_bindings(self, input_manager: InputManager):
         """Check current input state and trigger actions."""
         for inputs, action in self._bindings.items():
-            print(self._bindings.items())
             if self._are_inputs_active(inputs, input_manager):
                 action()
 
     @staticmethod
     def _are_inputs_active(inputs, input_manager):
-        """Check if the required inputs are active based on the InputManager."""
-        print(inputs)
+        """Check if the required inputs are active based on the InputManager.
+        """
         for input_type, value in inputs:
+            print(input_type, value)
             if input_type == 'key' and not input_manager.is_key_pressed(value):
                 return False
-            elif input_type == 'mouse' and not input_manager.is_mouse_button_pressed(value):
+            elif (input_type == 'keyup' and not
+            input_manager.is_key_down(value)):
+                return False
+            elif (input_type == 'keydown' and not
+            input_manager.is_key_up(value)):
+                return False
+            elif (input_type == 'mouse' and not
+            input_manager.is_mouse_button_pressed(value)):
+                return False
+            elif input_type == 'quit' and not input_manager.quit:
                 return False
         return True
   

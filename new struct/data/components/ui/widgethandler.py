@@ -2,6 +2,7 @@ import weakref
 from collections import OrderedDict
 from collections.abc import MutableSet
 
+import pygame.display
 from pygame.event import Event
 
 from ..events import Mouse

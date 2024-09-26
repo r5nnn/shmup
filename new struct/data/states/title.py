@@ -1,4 +1,5 @@
 import random
+from os import sched_yield
 
 import pygame
 
@@ -21,23 +22,23 @@ class Title(State):
         ]
         self.splash = random.choice(self.splashes)
         self.play = ButtonImage(
-            self.screen, pygame.Rect(self._screen_size[0]*0.6,
+            self._screen, pygame.Rect(self._screen_size[0]*0.6,
                                      self._screen_size[1]*0.35, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
                   for images in graphics('play').values()))
         self.editor = ButtonImage(
-            self.screen, pygame.Rect(self._screen_size[0]*0.6,
+            self._screen, pygame.Rect(self._screen_size[0]*0.6,
                                      self._screen_size[1]*0.475, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
                   for images in graphics('editor').values())
         )
         self.options = ButtonImage(
-            self.screen, pygame.Rect(self._screen_size[0]*0.6,
+            self._screen, pygame.Rect(self._screen_size[0]*0.6,
                                      self._screen_size[1]*0.6, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
                   for images in graphics('options').values()))
         self.quit = ButtonImage(
-            self.screen, pygame.Rect(self._screen_size[0]*0.6,
+            self._screen, pygame.Rect(self._screen_size[0]*0.6,
                                      self._screen_size[1]*0.725, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
                   for images in graphics('quit').values()),
@@ -46,7 +47,7 @@ class Title(State):
             widgethandler.WidgetHandler.add_widget(widget)
 
     def update_screen(self):
-        widgethandler.WidgetHandler.update_screen(pygame.display.get_surface())
+        widgethandler.WidgetHandler.update_screen(self._screen)
 
     def startup(self):
         ...
@@ -58,10 +59,10 @@ class Title(State):
     def render(self):
         super().render()
         widgethandler.WidgetHandler.blit()
-        self.screen.blit(self.logo,
+        self._screen.blit(self.logo,
                          (self._screen_size[0] / 2 - self.logo.get_width() / 2,
                           self._screen_size[1] * 0.1))
-        self.screen.blit(self.splash,
+        self._screen.blit(self.splash,
                            (self._screen_size[0]/2-self.splash.get_width(),
                             self._screen_size[1]*0.275))
 
@@ -69,8 +70,8 @@ class Title(State):
         widgethandler.WidgetHandler.update()
 
     def switch_splash(self, direction):
-        print(direction)
         try:
-            self.splash = self.splashes[self.splashes.index(self.splash)+direction]
+            self.splash = self.splashes[self.splashes.index(self.splash)+
+                                        direction]
         except IndexError:
             self.splash = self.splashes[0]

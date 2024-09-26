@@ -28,12 +28,12 @@ class Control:
         self.input_manager = InputManager()
         self.input_binder = InputBinder()
 
-        self.input_binder.bind((pygame.QUIT,), self.quit)
-        key_manager.register([pygame.K_END], self.quit)
-        key_manager.register([pygame.K_F11],
-                             lambda: self._toggle_tag(pygame.FULLSCREEN))
-        key_manager.register([pygame.K_LSHIFT, pygame.K_F11],
-                             lambda: self._toggle_tag(pygame.NOFRAME))
+        self.input_binder.bind(("key", pygame.K_END), action=self.quit)
+        self.input_binder.bind(("key", pygame.K_F11),
+                               action=lambda:
+                               self._toggle_tag(pygame.FULLSCREEN))
+        # key_manager.register([pygame.K_LSHIFT, pygame.K_F11],
+        #                      lambda: self._toggle_tag(pygame.NOFRAME))
 
     def update(self):
         """Updates current state."""
@@ -49,7 +49,10 @@ class Control:
 
     def event_loop(self):
         """Passes events to the event manager."""
-        self.input_manager.process_events(pygame.event.get())
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.quit()
+            self.input_manager.process_events(event)
 
     def quit(self):
         """Sets running to False."""
@@ -68,6 +71,6 @@ class Control:
         pygame.display.quit()
         os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 0)
         pygame.display.init()
-        pygame.display.set_mode(self.screen.get_size(), self.screen_flags)
-        for state in stateManager.states:
+        pygame.display.set_mode((1920, 1080), self.screen_flags)
+        for state in stateManager.state_stack:
             state.screen = pygame.display.get_surface()

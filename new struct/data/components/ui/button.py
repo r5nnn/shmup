@@ -25,7 +25,7 @@ class _ButtonBase:
         and on-click/on-release events. Child classes will add text or
         image-specific logic.
         """
-        self._surface = surface
+        self.surface = surface
         self._rect = rect
         self._width = self._rect.width
         self._height = self._rect.height
@@ -53,21 +53,14 @@ class _ButtonBase:
         )
 
         # Event handlers
-        self.on_click = on_click if on_click is not None else lambda *args: None
+        self.on_click = on_click if on_click is not None else lambda *args: \
+            None
         self.on_release = on_release if on_release is not None else lambda \
             *args: None
 
         self.radius = radius
         self.clicked = False
         self._disabled = False
-
-    @property
-    def surface(self):
-        return self._surface
-
-    @surface.setter
-    def surface(self, value):
-        self._surface = value
 
     @property
     def rect(self):
@@ -94,7 +87,8 @@ class _ButtonBase:
         self._height = value
         self._rect.height = self._height
         if self.border:
-            self._border_rect.height = self._height - self._border_thickness * 2
+            self._border_rect.height = (self._height - self._border_thickness *
+                                        2)
         self._align_rect(self._rect, self._align, self._coords)
 
     @property
@@ -119,9 +113,9 @@ class _ButtonBase:
 
     def contains(self, x, y):
         """Basic collision detection for the button rectangle."""
-        return (self._rect.left < x - self._surface.get_abs_offset()[0]
+        return (self._rect.left < x - self.surface.get_abs_offset()[0]
                 < self._rect.left + self._width) and \
-            (self._rect.top < y - self._surface.get_abs_offset()[1]
+            (self._rect.top < y - self.surface.get_abs_offset()[1]
              < self._rect.top + self._height)
 
     def _align_rect(self, rect, align, coords):
@@ -170,12 +164,12 @@ class _ButtonBase:
         """Draws the button onto the surface."""
         if self.border:
             pygame.draw.rect(
-                self._surface, self.border_color, self._border_rect,
+                self.surface, self.border_color, self._border_rect,
                 border_radius=self.radius
             )
         if self.colors is not None:
             pygame.draw.rect(
-                self._surface, self.color, self._rect,
+                self.surface, self.color, self._rect,
                 border_radius=self.radius
             )
 
@@ -203,7 +197,7 @@ class ButtonText(_ButtonBase):
         self._text_color = self.text_colors['inactive']
 
         # Text instance
-        self._text = Text(self._surface, text, (0, 0), font_size, font,
+        self._text = Text(self.surface, text, (0, 0), font_size, font,
                           color=self._text_color)
         self.text_align = text_align
         self.margin = margin
@@ -213,11 +207,11 @@ class ButtonText(_ButtonBase):
 
     @property
     def surface(self):
-        return self._surface
+        return self.surface
 
     @surface.setter
     def surface(self, value):
-        self._surface = value
+        self.surface = value
         self._text.surface = value
 
     @property
@@ -340,7 +334,7 @@ class ButtonImage(_ButtonBase):
         """Draw the image onto the surface. Optionally draw the button rect if
         using rect collision."""
         if self.use_rect_collision:
-            pygame.draw.rect(self._surface, self._color, self._rect,
+            pygame.draw.rect(self.surface, self._color, self._rect,
                              border_radius=self.radius)
 
-        self._surface.blit(self._current_image, self.image_rect.topleft)
+        self.surface.blit(self._current_image, self.image_rect.topleft)

@@ -3,6 +3,7 @@ import warnings
 
 import pygame
 
+from data.components.ui import widgethandler
 from data.utils import Singleton
 from data.components import input
 
@@ -54,7 +55,7 @@ class State(ABC):
     @abstractmethod
     def render(self):
         """Meant to render all the state's elements to the screen."""
-        self.screen.blit(self.background, (0, 0))
+        self._screen.blit(self.background, (0, 0))
 
 
 from data.states import title, options
@@ -164,8 +165,8 @@ class StateManager(metaclass=Singleton):
         """
         try:
             self.current_state.cleanup()
-        except Exception:  # todo
-            warnings.Warn("Attempted to go back to state.")
+        except Exception:
+            warnings.warn("Attempted to go back to state.")
         index = self._state_stack.index(state_name)
         self._state_stack = self._state_stack[:index+1]
         self.current_state.startup()
