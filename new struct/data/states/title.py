@@ -6,7 +6,7 @@ from data.utils import graphics
 from . import State
 from ..components.ui import widgethandler
 from ..components.ui.button import ButtonImage
-from . import stateManager
+from ..components.events import key_manager
 
 
 class Title(State):
@@ -15,18 +15,11 @@ class Title(State):
         self.background = graphics('menu')
         self.logo = pygame.transform.scale_by(graphics('logo'), 5)
         self.splashes = [
-            pygame.transform.scale_by(graphics('at the stake'), 5),
+            pygame.transform.scale_by(graphics('gun die'), 5),
             pygame.transform.scale_by(graphics('can we get more christof'), 5),
-            pygame.transform.scale_by(graphics('its real'), 5),
             pygame.transform.scale_by(graphics('tiferet'), 5),
         ]
         self.splash = random.choice(self.splashes)
-        self.surfaces += [[self.logo,
-                           (self._screen_size[0]/2-self.logo.get_width()/2,
-                               self._screen_size[1]*0.1)],
-                          [self.splash,
-                           (self._screen_size[0]/2-self.splash.get_width(),
-                            self._screen_size[1]*0.275)]]
         self.play = ButtonImage(
             self.screen, pygame.Rect(self._screen_size[0]*0.6,
                                      self._screen_size[1]*0.35, 0, 0),
@@ -47,7 +40,8 @@ class Title(State):
             self.screen, pygame.Rect(self._screen_size[0]*0.6,
                                      self._screen_size[1]*0.725, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
-                  for images in graphics('quit').values()), on_click=stateManager.quit)
+                  for images in graphics('quit').values()),
+            on_click=self.state_manager.quit)
         for widget in [self.play, self.editor, self.options, self.quit]:
             widgethandler.WidgetHandler.add_widget(widget)
 
@@ -55,14 +49,29 @@ class Title(State):
         widgethandler.WidgetHandler.update_screen(pygame.display.get_surface())
 
     def startup(self):
-        ...
+        key_manager.register([pygame.K_a], lambda: self.switch_splash(-1))
+        key_manager.register([pygame.K_d], lambda: self.switch_splash(1))
 
     def cleanup(self):
-        ...
+        key_manager.deregister([pygame.K_a], lambda: self.switch_splash(-1))
+        key_manager.deregister([pygame.K_d], lambda: self.switch_splash(1))
 
     def render(self):
         super().render()
         widgethandler.WidgetHandler.blit()
+        self.screen.blit(self.logo,
+                         (self._screen_size[0] / 2 - self.logo.get_width() / 2,
+                          self._screen_size[1] * 0.1))
+        self.screen.blit(self.splash,
+                           (self._screen_size[0]/2-self.splash.get_width(),
+                            self._screen_size[1]*0.275))
 
     def update(self):
         widgethandler.WidgetHandler.update()
+
+    def switch_splash(self, direction):
+        print(direction)
+        try:
+            self.splash = self.splashes[self.splashes.index(self.splash)+direction]
+        except IndexError:
+            self.splash = self.splashes[0]

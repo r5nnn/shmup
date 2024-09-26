@@ -12,12 +12,9 @@ class Control:
     def __init__(self, state_dict, start_state):
         """Adds dictionary to stateManager and defines starting state.
         Initialises game properties, binds global keybinds.
-
-        :param state_dict: Dictionary of every state object and its name.
-        :param start_state: Name of the state to start with.
         """
         stateManager.control = self
-        stateManager.states = state_dict
+        stateManager.state_dict = state_dict
         stateManager.append(start_state)
 
         self.screen = pygame.display.get_surface()
