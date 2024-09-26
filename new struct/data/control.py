@@ -3,6 +3,7 @@ import os
 import pygame.display
 
 from .components.events import event_manager, key_manager
+from .components.input import InputManager, InputBinder
 from .states import stateManager
 
 
@@ -24,17 +25,20 @@ class Control:
         self.clock = pygame.time.Clock()
         self.refresh_rate = 165
 
-        event_manager.register(pygame.QUIT, self.quit)
+        self.input_manager = InputManager()
+        self.input_binder = InputBinder()
+
+        self.input_binder.bind((pygame.QUIT,), self.quit)
         key_manager.register([pygame.K_END], self.quit)
         key_manager.register([pygame.K_F11],
                              lambda: self._toggle_tag(pygame.FULLSCREEN))
         key_manager.register([pygame.K_LSHIFT, pygame.K_F11],
                              lambda: self._toggle_tag(pygame.NOFRAME))
 
-    @staticmethod
-    def update():
+    def update(self):
         """Updates current state."""
         stateManager.current_state.update()
+        self.input_binder.process_bindings(self.input_manager)
 
     def render(self):
         """Renders current state, ticks the clock and flips the display."""
@@ -43,11 +47,9 @@ class Control:
         self.clock.tick(self.refresh_rate)
         pygame.display.flip()
 
-    @staticmethod
-    def event_loop():
+    def event_loop(self):
         """Passes events to the event manager."""
-        for event in pygame.event.get():
-            event_manager.notify(event)
+        self.input_manager.process_events(pygame.event.get())
 
     def quit(self):
         """Sets running to False."""

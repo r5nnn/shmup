@@ -49,8 +49,7 @@ class Title(State):
         widgethandler.WidgetHandler.update_screen(pygame.display.get_surface())
 
     def startup(self):
-        key_manager.register([pygame.K_a], lambda: self.switch_splash(-1))
-        key_manager.register([pygame.K_d], lambda: self.switch_splash(1))
+        ...
 
     def cleanup(self):
         key_manager.deregister([pygame.K_a], lambda: self.switch_splash(-1))
