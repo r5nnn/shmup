@@ -21,7 +21,7 @@ class InputManager(metaclass=Singleton):
     def quit(self):
         return self._quit
 
-    def process_events(self, event: pygame.event.Event):
+    def process_events(self, events: list):
         """Clears keydown and keyup events, iterates through
         pygame events and updates the input lists as necessary.
         
@@ -30,23 +30,28 @@ class InputManager(metaclass=Singleton):
         self._keydown_events.clear()
         self._keyup_events.clear()
 
-        if event.type == pygame.KEYDOWN:
-            self._keydown_events.append(event.key)
-            self._held_keys.append(event.key)
-        elif event.type == pygame.KEYUP:
-            self._keyup_events.append(event.key)
-            self._held_keys.remove(event.key)
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            self._mouse_buttons.append(event.button)
-        elif event.type == pygame.MOUSEBUTTONUP:
-            self._mouse_buttons.remove(event.button)
-        elif event.type == pygame.QUIT:
-            self._quit = True
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                self._keydown_events.append(event.key)
+                self._held_keys.append(event.key)
+            elif event.type == pygame.KEYUP:
+                self._keyup_events.append(event.key)
+                self._held_keys.remove(event.key)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self._mouse_buttons.append(event.button)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self._mouse_buttons.remove(event.button)
+            elif event.type == pygame.QUIT:
+                self._quit = True
 
         self._mouse_pos = pygame.mouse.get_pos()
 
     def is_key_pressed(self, key: int):
-        """returns: True if key is in the held_keys list."""
+        """Checks if key is currently being held down
+        
+        :param key: the key to check for.
+        
+        returns: True if key is in the held_keys list."""
         return key in self._held_keys
 
     def is_key_down(self, key: int):
@@ -74,11 +79,16 @@ class InputBinder:
         self._bindings = {}
 
     def bind(self, *inputs: tuple[str, int], action: Callable):
-        """Bind a specific input combination to an action."""
+        """Bind a specific input combination to an action.
+        
+        :param inputs: Tuple of the type and input
+        :param action: The"""
         self._bindings[inputs] = action
 
     def process_bindings(self, input_manager: InputManager):
-        """Check current input state and trigger actions."""
+        """Check current input state and trigger actions.
+        
+        :param input_manager: """
         for inputs, action in self._bindings.items():
             if self._are_inputs_active(inputs, input_manager):
                 action()
