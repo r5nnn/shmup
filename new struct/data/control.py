@@ -2,7 +2,6 @@ import os
 
 import pygame.display
 
-from .components.events import event_manager, key_manager
 from .components.input import InputManager, InputBinder
 from .states import stateManager
 
@@ -28,17 +27,17 @@ class Control:
         self.input_manager = InputManager()
         self.input_binder = InputBinder()
 
-        self.input_binder.bind(("key", pygame.K_END), action=self.quit)
-        self.input_binder.bind(("key", pygame.K_F11),
-                               action=lambda:
-                               self._toggle_tag(pygame.FULLSCREEN))
-        # key_manager.register([pygame.K_LSHIFT, pygame.K_F11],
-        #                      lambda: self._toggle_tag(pygame.NOFRAME))
+        self.input_binder.bind(("keydown", pygame.K_END), action=self.quit)
+        self.input_binder.bind(("keydown", pygame.K_F11),
+                               ("key", pygame.K_LSHIFT),
+                               action=lambda: self._toggle_tag(pygame.NOFRAME))
 
     def update(self):
-        """Updates current state."""
+        """Updates current state, checks for quit requests."""
+        if self.input_manager.quit:
+            self.quit()
         stateManager.current_state.update()
-        self.input_binder.process_bindings(self.input_manager)
+        self.input_binder.notify(self.input_manager)
 
     def render(self):
         """Renders current state, ticks the clock and flips the display."""
@@ -49,10 +48,7 @@ class Control:
 
     def event_loop(self):
         """Passes events to the event manager."""
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.quit()
-            self.input_manager.process_events(event)
+        self.input_manager.process_events(pygame.event.get())
 
     def quit(self):
         """Sets running to False."""
