@@ -3,7 +3,6 @@ import warnings
 
 import pygame
 
-from data.components.ui import widgethandler
 from data.utils import Singleton
 from data.components import input
 
@@ -56,9 +55,6 @@ class State(ABC):
     def render(self):
         """Meant to render all the state's elements to the screen."""
         self._screen.blit(self.background, (0, 0))
-
-
-from data.states import title, options
 
 
 class StateManager(metaclass=Singleton):
@@ -129,8 +125,8 @@ class StateManager(metaclass=Singleton):
             self._state_stack.pop()
             self.current_state.startup()
         except AttributeError:
-            warnings.warn("Attempted to pop top leve state when no states in"
-                             " state stack.")
+            warnings.warn("Attempted to pop top level state when no states in"
+                          "the state stack.")
 
     def switch(self, state_name: str):
         """Removes the last state from the state stack, gets the state object
@@ -141,14 +137,15 @@ class StateManager(metaclass=Singleton):
         :param state_name: The name of the state to switch as stored in the
             _states property dictionary.
 
-        :raises KeyError: When state_name is not present in the _states property
-            dictionary.
+        :raises KeyError: When state_name is not present in the _states
+            property dictionary.
         """
         try:
             self.current_state.cleanup()
             self._state_stack.pop()
         except AttributeError:
-            warnings.warn("Attempted to switch state while no state was present in the state stack.")
+            warnings.warn("Attempted to switch state while no state was "
+                          "present in the state stack.")
         self._state_stack.append(self._initialise_state(state_name))
         self.current_state.startup()
 
@@ -160,13 +157,14 @@ class StateManager(metaclass=Singleton):
         :param state_name: The name of the state to go back to as stored in the
             _states property dictionary.
 
-        :raises KeyError: When state_name is not present in the _states property
-            dictionary.
+        :raises KeyError: When state_name is not present in the _states
+            property dictionary.
         """
         try:
             self.current_state.cleanup()
-        except Exception:
-            warnings.warn("Attempted to go back to state.")
+        except AttributeError:
+            warnings.warn("Attempted to go back to state when no state was "
+                          "present in the state stack.")
         index = self._state_stack.index(state_name)
         self._state_stack = self._state_stack[:index+1]
         self.current_state.startup()
