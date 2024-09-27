@@ -84,7 +84,6 @@ class InputBinder(metaclass=Singleton):
         :param inputs: Tuple of the type and input
         :param action: The"""
         self._bindings[inputs] = action
-        print(self._bindings)
 
     def unbind(self, *inputs: tuple[str, int]):
         if inputs in self._bindings:

@@ -17,6 +17,7 @@ class State(ABC):
         self.state_manager = stateManager
         self.input_manager = stateManager.input_manager
         self.input_binder = stateManager.input_binder
+        self.input_binder.bind(('keydown', pygame.K_ESCAPE), self.back)
 
         self.background = pygame.Surface(self._screen_size)
 
@@ -55,6 +56,12 @@ class State(ABC):
     def render(self):
         """Meant to render all the state's elements to the screen."""
         self._screen.blit(self.background, (0, 0))
+
+    @abstractmethod
+    def back(self):
+        """Default behaviour exits to the previous states, however should be
+        overriden in certain cases e.g. for the first state."""
+        self.state_manager.pop()
 
 
 class StateManager(metaclass=Singleton):

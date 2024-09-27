@@ -6,7 +6,6 @@ from data.utils import graphics
 from . import State
 from ..components.ui import widgethandler
 from ..components.ui.button import ButtonImage
-from ..components.events import key_manager
 
 
 class Title(State):
@@ -22,23 +21,24 @@ class Title(State):
         self.splash = random.choice(self.splashes)
         self.play = ButtonImage(
             self._screen, pygame.Rect(self._screen_size[0]*0.6,
-                                     self._screen_size[1]*0.35, 0, 0),
+                                      self._screen_size[1]*0.35, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
                   for images in graphics('play').values()))
         self.editor = ButtonImage(
             self._screen, pygame.Rect(self._screen_size[0]*0.6,
-                                     self._screen_size[1]*0.475, 0, 0),
+                                      self._screen_size[1]*0.475, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
                   for images in graphics('editor').values())
         )
         self.options = ButtonImage(
             self._screen, pygame.Rect(self._screen_size[0]*0.6,
-                                     self._screen_size[1]*0.6, 0, 0),
+                                      self._screen_size[1]*0.6, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
-                  for images in graphics('options').values()))
+                  for images in graphics('options').values()),
+            on_click=lambda: self.state_manager.append("options"))
         self.quit = ButtonImage(
             self._screen, pygame.Rect(self._screen_size[0]*0.6,
-                                     self._screen_size[1]*0.725, 0, 0),
+                                      self._screen_size[1]*0.725, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
                   for images in graphics('quit').values()),
             on_click=self.state_manager.quit)
