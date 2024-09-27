@@ -25,7 +25,7 @@ class InputManager(metaclass=Singleton):
         """Clears keydown and keyup events, iterates through
         pygame events and updates the input lists as necessary.
         
-        :param event: the events returned by pygame.event.get()
+        :param events: pygame.event.get()
         """
         self._keydown_events.clear()
         self._keyup_events.clear()
@@ -71,7 +71,7 @@ class InputManager(metaclass=Singleton):
         return self._mouse_pos
 
 
-class InputBinder:
+class InputBinder(metaclass=Singleton):
     """Class for binding inputs to execute callables via the
     observer algorithm."""
 
@@ -84,13 +84,19 @@ class InputBinder:
         :param inputs: Tuple of the type and input
         :param action: The"""
         self._bindings[inputs] = action
+        print(self._bindings)
 
-    def process_bindings(self, input_manager: InputManager):
+    def unbind(self, *inputs: tuple[str, int]):
+        if inputs in self._bindings:
+            self._bindings.pop(inputs)
+
+    def notify(self, input_manager: InputManager):
         """Check current input state and trigger actions.
         
         :param input_manager: """
         for inputs, action in self._bindings.items():
             if self._are_inputs_active(inputs, input_manager):
+                # todo: ask the really smart person how to do this bettah
                 action()
 
     @staticmethod
@@ -98,17 +104,16 @@ class InputBinder:
         """Check if the required inputs are active based on the InputManager.
         """
         for input_type, value in inputs:
-            print(input_type, value)
             if input_type == 'key' and not input_manager.is_key_pressed(value):
                 return False
-            elif (input_type == 'keyup' and not
-            input_manager.is_key_down(value)):
-                return False
             elif (input_type == 'keydown' and not
-            input_manager.is_key_up(value)):
+                  input_manager.is_key_down(value)):
+                return False
+            elif (input_type == 'keyup' and not
+                  input_manager.is_key_up(value)):
                 return False
             elif (input_type == 'mouse' and not
-            input_manager.is_mouse_button_pressed(value)):
+                  input_manager.is_mouse_button_pressed(value)):
                 return False
             elif input_type == 'quit' and not input_manager.quit:
                 return False
