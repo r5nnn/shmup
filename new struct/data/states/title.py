@@ -1,5 +1,4 @@
 import random
-from os import sched_yield
 
 import pygame
 
@@ -50,11 +49,14 @@ class Title(State):
         widgethandler.WidgetHandler.update_screen(self._screen)
 
     def startup(self):
-        ...
+        self.input_binder.bind(('keydown', pygame.K_LEFT),
+                               action=lambda: self.switch_splash(-1))
+        self.input_binder.bind(('keydown', pygame.K_RIGHT),
+                               action=lambda: self.switch_splash(1))
 
     def cleanup(self):
-        key_manager.deregister([pygame.K_a], lambda: self.switch_splash(-1))
-        key_manager.deregister([pygame.K_d], lambda: self.switch_splash(1))
+        self.input_binder.unbind(('keydown', pygame.K_LEFT))
+        self.input_binder.unbind(('keydown', pygame.K_RIGHT))
 
     def render(self):
         super().render()
@@ -63,15 +65,15 @@ class Title(State):
                          (self._screen_size[0] / 2 - self.logo.get_width() / 2,
                           self._screen_size[1] * 0.1))
         self._screen.blit(self.splash,
-                           (self._screen_size[0]/2-self.splash.get_width(),
-                            self._screen_size[1]*0.275))
+                          (self._screen_size[0]/2-self.splash.get_width(),
+                           self._screen_size[1]*0.275))
 
     def update(self):
         widgethandler.WidgetHandler.update()
 
     def switch_splash(self, direction):
         try:
-            self.splash = self.splashes[self.splashes.index(self.splash)+
+            self.splash = self.splashes[self.splashes.index(self.splash) +
                                         direction]
         except IndexError:
             self.splash = self.splashes[0]
