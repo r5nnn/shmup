@@ -3,7 +3,7 @@ from typing import override
 
 import pygame
 
-from data.utils import graphics
+from data import image_paths, sprites
 from . import State
 from ..components.ui import widgethandler
 from ..components.ui.button import ButtonImage
@@ -12,36 +12,40 @@ from ..components.ui.button import ButtonImage
 class Title(State):
     def __init__(self):
         super().__init__()
-        self.background = graphics('menu')
-        self.logo = pygame.transform.scale_by(graphics('logo'), 5)
+        self.background = pygame.image.load(image_paths('menu')).convert()
+        self.logo = pygame.transform.scale_by(pygame.image.load(
+            image_paths('logo')), 4)
         self.splashes = [
-            pygame.transform.scale_by(graphics('gun die'), 5),
-            pygame.transform.scale_by(graphics('can we get more christof'), 5),
-            pygame.transform.scale_by(graphics('tiferet'), 5),
+            pygame.transform.scale_by(pygame.image.load(
+                image_paths('gun die')).convert(), 5),
+            pygame.transform.scale_by(pygame.image.load(
+                image_paths('can we get more christof')).convert(), 5),
+            pygame.transform.scale_by(pygame.image.load(
+                image_paths('tiferet')).convert(), 5)
         ]
         self.splash = random.choice(self.splashes)
         self.play = ButtonImage(
             self._screen, pygame.Rect(self._screen_size[0]*0.6,
                                       self._screen_size[1]*0.35, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
-                  for images in graphics('play').values()))
+                  for images in sprites('play').values()))
         self.editor = ButtonImage(
             self._screen, pygame.Rect(self._screen_size[0]*0.6,
                                       self._screen_size[1]*0.475, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
-                  for images in graphics('editor').values())
+                  for images in sprites('editor').values())
         )
         self.options = ButtonImage(
             self._screen, pygame.Rect(self._screen_size[0]*0.6,
                                       self._screen_size[1]*0.6, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
-                  for images in graphics('options').values()),
+                  for images in sprites('options').values()),
             on_click=lambda: self.state_manager.append("options"))
         self.quit = ButtonImage(
             self._screen, pygame.Rect(self._screen_size[0]*0.6,
                                       self._screen_size[1]*0.725, 0, 0),
             tuple(pygame.transform.scale_by(images, 3)
-                  for images in graphics('quit').values()),
+                  for images in sprites('quit').values()),
             on_click=self.state_manager.quit)
         for widget in [self.play, self.editor, self.options, self.quit]:
             widgethandler.WidgetHandler.add_widget(widget)
@@ -63,6 +67,9 @@ class Title(State):
         super().cleanup()
         self.input_binder.deregister(('keydown', pygame.K_LEFT))
         self.input_binder.deregister(('keydown', pygame.K_RIGHT))
+        # if button is unrendered before the keyup event triggers,
+        # clicked must be manually reset
+        self.options.clicked = False
 
     @override
     def render(self):
