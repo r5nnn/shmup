@@ -1,4 +1,5 @@
 import random
+from typing import override
 
 import pygame
 
@@ -45,19 +46,25 @@ class Title(State):
         for widget in [self.play, self.editor, self.options, self.quit]:
             widgethandler.WidgetHandler.add_widget(widget)
 
+    @override
     def update_screen(self):
         widgethandler.WidgetHandler.update_screen(self._screen)
 
+    @override
     def startup(self):
-        self.input_binder.bind(('keydown', pygame.K_LEFT),
+        super().startup()
+        self.input_binder.register(('keydown', pygame.K_LEFT),
                                action=lambda: self.switch_splash(-1))
-        self.input_binder.bind(('keydown', pygame.K_RIGHT),
+        self.input_binder.register(('keydown', pygame.K_RIGHT),
                                action=lambda: self.switch_splash(1))
 
+    @override
     def cleanup(self):
-        self.input_binder.unbind(('keydown', pygame.K_LEFT))
-        self.input_binder.unbind(('keydown', pygame.K_RIGHT))
+        super().cleanup()
+        self.input_binder.deregister(('keydown', pygame.K_LEFT))
+        self.input_binder.deregister(('keydown', pygame.K_RIGHT))
 
+    @override
     def render(self):
         super().render()
         widgethandler.WidgetHandler.blit()
@@ -68,6 +75,7 @@ class Title(State):
                           (self._screen_size[0]/2-self.splash.get_width(),
                            self._screen_size[1]*0.275))
 
+    @override
     def update(self):
         widgethandler.WidgetHandler.update()
 
@@ -77,3 +85,7 @@ class Title(State):
                                         direction]
         except IndexError:
             self.splash = self.splashes[0]
+
+    @override
+    def back(self):
+        self.state_manager.append('options')

@@ -16,7 +16,7 @@ class Options(State):
         super().render()
 
     def startup(self):
-        ...
+        super().startup()
 
     def cleanup(self):
-        ...
+        super().cleanup()
