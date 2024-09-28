@@ -26,9 +26,12 @@ class Control:
 
         self.input_manager = InputManager()
         self.input_binder = InputBinder()
+        self.input_binder.register(("keydown", pygame.K_F11),
+                               action=lambda:
+                               self._toggle_tag(pygame.FULLSCREEN))
+        self.input_binder.register(("keydown", pygame.K_END), action=self.quit)
 
-        self.input_binder.bind(("keydown", pygame.K_END), action=self.quit)
-        self.input_binder.bind(("keydown", pygame.K_F11),
+        self.input_binder.register(("keydown", pygame.K_F11),
                                ("key", pygame.K_LSHIFT),
                                action=lambda: self._toggle_tag(pygame.NOFRAME))
 

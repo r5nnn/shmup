@@ -2,8 +2,8 @@ from typing import Callable
 
 import pygame.display
 from .text import Text
-from ..events import Mouse
-from data.utils import CustomTypes
+from data.utils import CustomTypes, Mouse
+from data.components.input import InputManager, InputBinder
 
 
 class _ButtonBase:
@@ -25,6 +25,8 @@ class _ButtonBase:
         and on-click/on-release events. Child classes will add text or
         image-specific logic.
         """
+        self.input_manager = InputManager()
+        self.input_binder = InputBinder()
         self.surface = surface
         self._rect = rect
         self._width = self._rect.width
@@ -125,14 +127,14 @@ class _ButtonBase:
     def update(self):
         """Updates the button based on mouse state."""
         if not self._disabled:
-            mouse_state = Mouse.get_mouse_state()
-            x, y = Mouse.get_mouse_pos()
+            x, y = self.input_manager.get_mouse_pos()
             if self.contains(x, y):
-                if mouse_state == mouse_state.RELEASE and self.clicked:
+                if (self.input_manager.is_mouse_up(Mouse.LEFTCLICK) and
+                    self.clicked):
                     self.clicked = False
                     self.on_release()
 
-                elif mouse_state == mouse_state.CLICK:
+                elif self.input_manager.is_mouse_down(Mouse.LEFTCLICK):
                     self.clicked = True
                     self.on_click()
                     if self.colors is not None:
@@ -140,14 +142,14 @@ class _ButtonBase:
                     if self.border_colors is not None:
                         self._border_color = self.border_colors.get('clicked')
 
-                elif mouse_state in {mouse_state.DRAG,
-                                     mouse_state.HOVER} and self.clicked:
+                elif (self.input_manager.is_key_down(Mouse.LEFTCLICK) and
+                      self.clicked):
                     if self.colors is not None:
                         self._color = self.colors['clicked']
                     if self.border_colors is not None:
                         self._border_color = self.border_colors.get('clicked')
 
-                elif mouse_state == mouse_state.HOVER:
+                else:
                     if self.colors is not None:
                         self._color = self.colors['hovered']
                     if self.border_colors is not None:
@@ -249,7 +251,7 @@ class ButtonText(_ButtonBase):
     def update(self):
         """Updates the button and the text color based on mouse state."""
         super().update()
-        x, y = Mouse.get_mouse_pos()
+        x, y = self.input_manager.get_mouse_pos()
         if self.contains(x, y):
             self._text.color = self.text_colors[
                 'hovered'] if not self.clicked else self.text_colors['clicked']
@@ -321,7 +323,7 @@ class ButtonImage(_ButtonBase):
     def update(self):
         """Updates the button based on mouse state."""
         super().update()
-        x, y = Mouse.get_mouse_pos()
+        x, y = self.input_manager.get_mouse_pos()
         if self.contains(x, y):
             if not self.clicked:
                 self._current_image = self.images[1]  # Hover

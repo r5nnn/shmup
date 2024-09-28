@@ -2,11 +2,7 @@ import weakref
 from collections import OrderedDict
 from collections.abc import MutableSet
 
-import pygame.display
-from pygame.event import Event
-
-from ..events import Mouse
-
+from data.components.input import InputManager
 
 # Implementation of an insertion-ordered set. Necessary to keep track of the 
 # order in which widgets are added.
@@ -55,6 +51,7 @@ class OrderedWeakset(weakref.WeakSet):
 
 class WidgetHandler:
     _widgets: OrderedWeakset[weakref.ref] = OrderedWeakset()
+    input_manager = InputManager()
 
     @staticmethod
     def blit():
@@ -68,19 +65,19 @@ class WidgetHandler:
     @staticmethod
     def update() -> None:
         blocked = False
-        Mouse.update_mouse_state()
 
         # Conversion is used to prevent errors when widgets are added/removed
         # during iteration a.k.a safe iteration
         widgets = list(WidgetHandler._widgets)
 
         for widget in widgets[::-1]:
-            if not blocked or not widget.contains(*Mouse.get_mouse_pos()):
+            if (not blocked or not
+                widget.contains(*WidgetHandler.input_manager.get_mouse_pos())):
                 widget.update()
 
             # Ensure widgets covered by others are not affected 
             # (widgets created later)
-            if widget.contains(*Mouse.get_mouse_pos()):
+            if widget.contains(*WidgetHandler.input_manager.get_mouse_pos()):
                 blocked = True
 
     @staticmethod

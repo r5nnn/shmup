@@ -2,12 +2,12 @@ import json
 import os
 import sys
 from abc import ABC, ABCMeta, abstractmethod
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any, Literal, override
 
 import pygame
 from pygame import freetype
-
 
 @dataclass(frozen=True)
 class CustomTypes:
@@ -15,6 +15,17 @@ class CustomTypes:
                               'midleft', 'center', 'midright',
                               'bottomleft', 'midbottom', 'bottomright']
     alignments = Literal['left', 'right', 'center', 'block']
+    input_types = Literal['key', 'keydown', 'keyup',
+                          'mouse', 'mousedown', 'mouseup',
+                          'quit']
+
+@dataclass(frozen=True)
+class Mouse:
+    LEFTCLICK = 1
+    MIDDLECLICK = 2
+    RIGHTCLICK = 3
+    SCROLLUP = 4
+    SCROLLDOWN = 5
 
 
 def parse_spritesheet(sprite_sheet: str):
@@ -53,7 +64,7 @@ class Singleton(type):
                 *args, **kwargs)
         return cls._instances[cls]
 
-class _Observer(ABC):
+class Observer(ABC):
 
     def __init__(self):
         """
@@ -95,11 +106,11 @@ class _Observer(ABC):
             handler in self._handlers[event]
 
 
-class _SingletonABCMeta(Singleton, ABCMeta):
+class SingletonABCMeta(Singleton, ABCMeta):
     pass
 
 
-class _Load(ABC, metaclass=_SingletonABCMeta):
+class _Load(ABC, metaclass=SingletonABCMeta):
     def __init__(self, directory: str, *accept: str,
                  exclude_dirs: list[str] = None):
         """Loads in files from specified directories. Allows for filtering
@@ -107,7 +118,8 @@ class _Load(ABC, metaclass=_SingletonABCMeta):
 
         :param directory: Directory storing all the files to load.
         :param accept: Tuple of file endings to look for.
-        :param exclude_dirs: List of directory names to exclude from the search.
+        :param exclude_dirs: List of directory names to exclude from the
+            search.
         """
         self.files = {}
         self.exclude_dirs = exclude_dirs if exclude_dirs else []
