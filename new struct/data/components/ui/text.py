@@ -6,7 +6,7 @@ import pygame
 from pygame import freetype
 
 from data.utils import CustomTypes
-from data import fonts
+from data import font_paths
 from .. import ui
 
 
@@ -247,4 +247,4 @@ class WrappedText(_TextBase):
         setattr(rect, align, coords)
 
 
-_TextBase.default_font_dir = fonts('editundo')
+_TextBase.default_font_dir = font_paths('editundo')

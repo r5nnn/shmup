@@ -3,6 +3,7 @@ import warnings
 
 import pygame
 
+from data.components.audio import button_audio
 from data.utils import Singleton
 from data.components import input
 
@@ -61,6 +62,7 @@ class State(ABC):
     def back(self):
         """Default behaviour exits to the previous states, however should be
         overriden in certain cases e.g. for the first state."""
+        button_audio.play_audio('click', override=True)
         self.state_manager.pop()
 
 

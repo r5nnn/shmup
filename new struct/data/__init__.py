@@ -86,5 +86,6 @@ class LoadSprites:
 
 
 image_paths = Load(os.path.join('resources', 'graphics'), '.png')
-fonts = Load(os.path.join('resources', 'fonts'), '.ttf')
+audio_paths = Load(os.path.join('resources', 'audio'), '.wav')
+font_paths = Load(os.path.join('resources', 'fonts'), '.ttf')
 sprites = LoadSprites(os.path.join('resources', 'graphics'))
