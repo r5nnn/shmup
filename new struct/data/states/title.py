@@ -3,8 +3,9 @@ from typing import override
 
 import pygame
 
-from data import image_paths, sprites
+from data import image_paths, audio_paths, sprites
 from . import State
+from ..components.audio import background_audio, button_audio
 from ..components.ui import widgethandler
 from ..components.ui.button import ButtonImage
 
@@ -13,40 +14,29 @@ class Title(State):
     def __init__(self):
         super().__init__()
         self.background = pygame.image.load(image_paths('menu')).convert()
-        self.logo = pygame.transform.scale_by(pygame.image.load(
-            image_paths('logo')), 4)
-        self.splashes = [
-            pygame.transform.scale_by(pygame.image.load(
-                image_paths('gun die')).convert(), 5),
-            pygame.transform.scale_by(pygame.image.load(
-                image_paths('can we get more christof')).convert(), 5),
-            pygame.transform.scale_by(pygame.image.load(
-                image_paths('tiferet')).convert(), 5)
-        ]
+        self.logo = pygame.transform.scale_by(pygame.image.load(image_paths('logo')), 4)
+        self.splashes = [pygame.transform.scale_by(pygame.image.load(image_paths('gun die')).convert(), 5),
+                         pygame.transform.scale_by(pygame.image.load(image_paths('can we get more christof')).convert(),
+                                                   5),
+                         pygame.transform.scale_by(pygame.image.load(image_paths('tiferet')).convert(), 5)]
         self.splash = random.choice(self.splashes)
-        self.play = ButtonImage(
-            self._screen, pygame.Rect(self._screen_size[0]*0.6,
-                                      self._screen_size[1]*0.35, 0, 0),
-            tuple(pygame.transform.scale_by(images, 3)
-                  for images in sprites('play').values()))
-        self.editor = ButtonImage(
-            self._screen, pygame.Rect(self._screen_size[0]*0.6,
-                                      self._screen_size[1]*0.475, 0, 0),
-            tuple(pygame.transform.scale_by(images, 3)
-                  for images in sprites('editor').values())
-        )
-        self.options = ButtonImage(
-            self._screen, pygame.Rect(self._screen_size[0]*0.6,
-                                      self._screen_size[1]*0.6, 0, 0),
-            tuple(pygame.transform.scale_by(images, 3)
-                  for images in sprites('options').values()),
-            on_click=lambda: self.state_manager.append("options"))
-        self.quit = ButtonImage(
-            self._screen, pygame.Rect(self._screen_size[0]*0.6,
-                                      self._screen_size[1]*0.725, 0, 0),
-            tuple(pygame.transform.scale_by(images, 3)
-                  for images in sprites('quit').values()),
-            on_click=self.state_manager.quit)
+
+        background_audio.add_audio(audio_paths('menuloop rmx'))
+
+        self.play = ButtonImage(pygame.Rect(self._screen_size[0] * 0.6, self._screen_size[1] * 0.35, 0, 0),
+                                tuple(pygame.transform.scale_by(images, 3) for images in sprites('play').values()))
+
+        self.editor = ButtonImage(pygame.Rect(self._screen_size[0] * 0.6, self._screen_size[1] * 0.475, 0, 0),
+                                  tuple(pygame.transform.scale_by(images, 3) for images in sprites('editor').values()))
+
+        self.options = ButtonImage(pygame.Rect(self._screen_size[0] * 0.6, self._screen_size[1] * 0.6, 0, 0), tuple(
+            pygame.transform.scale_by(images, 3) for images in sprites('options').values()),
+                                   on_click=lambda: self.state_manager.append("options"))
+
+        self.quit = ButtonImage(pygame.Rect(self._screen_size[0] * 0.6, self._screen_size[1] * 0.725, 0, 0),
+                                tuple(pygame.transform.scale_by(images, 3) for images in sprites('quit').values()),
+                                on_click=self.state_manager.quit)
+
         for widget in [self.play, self.editor, self.options, self.quit]:
             widgethandler.WidgetHandler.add_widget(widget)
 
@@ -57,10 +47,10 @@ class Title(State):
     @override
     def startup(self):
         super().startup()
-        self.input_binder.register(('keydown', pygame.K_LEFT),
-                               action=lambda: self.switch_splash(-1))
-        self.input_binder.register(('keydown', pygame.K_RIGHT),
-                               action=lambda: self.switch_splash(1))
+        self.input_binder.register(('keydown', pygame.K_LEFT), action=lambda: self.switch_splash(-1))
+        self.input_binder.register(('keydown', pygame.K_RIGHT), action=lambda: self.switch_splash(1))
+
+        background_audio.play_audio('menuloop rmx', loops=-1)
 
     @override
     def cleanup(self):
@@ -75,12 +65,9 @@ class Title(State):
     def render(self):
         super().render()
         widgethandler.WidgetHandler.blit()
-        self._screen.blit(self.logo,
-                         (self._screen_size[0] / 2 - self.logo.get_width() / 2,
-                          self._screen_size[1] * 0.1))
+        self._screen.blit(self.logo, (self._screen_size[0] / 2 - self.logo.get_width() / 2, self._screen_size[1] * 0.1))
         self._screen.blit(self.splash,
-                          (self._screen_size[0]/2-self.splash.get_width(),
-                           self._screen_size[1]*0.275))
+                          (self._screen_size[0] / 2 - self.splash.get_width(), self._screen_size[1] * 0.275))
 
     @override
     def update(self):
@@ -88,11 +75,11 @@ class Title(State):
 
     def switch_splash(self, direction):
         try:
-            self.splash = self.splashes[self.splashes.index(self.splash) +
-                                        direction]
+            self.splash = self.splashes[self.splashes.index(self.splash) + direction]
         except IndexError:
             self.splash = self.splashes[0]
 
     @override
     def back(self):
+        button_audio.play_audio('click', override=True)
         self.state_manager.append('options')

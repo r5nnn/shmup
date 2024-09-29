@@ -73,9 +73,7 @@ class Audio:
         tag = self.audio_list[0] if tag is None else tag
         # force stop the currently playing audio if override is True
         self.stop() if override else None
-        print(override)
         if not self.channel.get_busy():
-            print('busy')
             self.current_audio = None
         if self.current_audio != tag:
             self.channel.play(self.audio_list[tag], loops=loops)
