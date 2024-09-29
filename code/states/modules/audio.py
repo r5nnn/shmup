@@ -35,8 +35,7 @@ class Audio:
     def add_audio(self, audio_dir: str, tag: str = None) -> None:
         """
         Load audio from the given path.
-        Avoid calling this method too often, it decreases the performance a lot.
-        
+
         Args:
             tag: The name of the audio to associate with the audio directory,
             if unspecified will use the name of the audio file.
@@ -83,7 +82,8 @@ class Audio:
         self.channel.stop()
 
     def set_volume(self, volume: float):
-        """Set the volume of the audio. Volume should be between 0.0 and 1.0."""
+        """Set the volume of the audio. Volume should be between 0.0 and 1.0.
+        """
         if not 0.0 <= volume <= 1.0:
             raise ValueError("Volume must be between 0.0 and 1.0.")
         self.channel.set_volume(volume)
