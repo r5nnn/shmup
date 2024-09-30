@@ -22,12 +22,12 @@ def parse_spritesheet(sprite_sheet: str):
     with metadata_json:
         data = json.load(metadata_json)
     metadata_json.close()
-    sprites = {}
+    sprite_dict = {}
     for sprite in (frames := data["frames"]):
         res = frames[sprite]["frame"]
-        sprites[sprite] = (
-            spritesheet.subsurface(res['x'], res['y'], res['w'], res['h']))
-    return sprites
+        sprite_dict[sprite] = spritesheet.subsurface(res['x'], res['y'],
+                                                     res['w'], res['h'])
+    return sprite_dict
 
 
 class Load:
@@ -38,8 +38,8 @@ class Load:
         self.exclude_dirs = exclude_dirs if exclude_dirs else []
 
         for path, dirs, files in os.walk(directory):
-            if any(excluded in os.path.relpath(path, directory) for excluded in
-                   self.exclude_dirs):
+            if any(excluded in os.path.relpath(path, directory)
+                   for excluded in self.exclude_dirs):
                 continue
             for file in files:
                 name, ext = os.path.splitext(file)

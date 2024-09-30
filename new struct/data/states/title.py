@@ -38,11 +38,11 @@ class Title(State):
                                 on_click=self.state_manager.quit)
 
         for widget in [self.play, self.editor, self.options, self.quit]:
-            widgethandler.WidgetHandler.add_widget(widget)
+            widgethandler.add_widget(widget)
 
     @override
     def update_screen(self):
-        widgethandler.WidgetHandler.update_screen(self._screen)
+        widgethandler.update_screen(self._screen)
 
     @override
     def startup(self):
@@ -64,14 +64,14 @@ class Title(State):
     @override
     def render(self):
         super().render()
-        widgethandler.WidgetHandler.blit()
+        widgethandler.blit()
         self._screen.blit(self.logo, (self._screen_size[0] / 2 - self.logo.get_width() / 2, self._screen_size[1] * 0.1))
         self._screen.blit(self.splash,
                           (self._screen_size[0] / 2 - self.splash.get_width(), self._screen_size[1] * 0.275))
 
     @override
     def update(self):
-        widgethandler.WidgetHandler.update()
+        widgethandler.update()
 
     def switch_splash(self, direction):
         try:

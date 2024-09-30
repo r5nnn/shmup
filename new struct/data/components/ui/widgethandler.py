@@ -6,7 +6,7 @@ from data.components.input import InputManager
 
 # Implementation of an insertion-ordered set. Necessary to keep track of the 
 # order in which widgets are added.
-class OrderedSet(MutableSet):
+class _OrderedSet(MutableSet):
     def __init__(self, values=()):
         self._od = OrderedDict().fromkeys(values)
 
@@ -32,13 +32,13 @@ class OrderedSet(MutableSet):
         self._od.move_to_end(value, last=False)
 
 
-class OrderedWeakset(weakref.WeakSet):
+class _OrderedWeakset(weakref.WeakSet):
     _remove = ...  # Getting defined after the super().__init__() call
 
     def __init__(self, values=()):
-        super(OrderedWeakset, self).__init__()
+        super(_OrderedWeakset, self).__init__()
 
-        self.data = OrderedSet()
+        self.data = _OrderedSet()
         for elem in values:
             self.add(elem)
 
@@ -49,72 +49,63 @@ class OrderedWeakset(weakref.WeakSet):
         self.data.move_to_start(weakref.ref(item, self._remove))
 
 
-class WidgetHandler:
-    _widgets: OrderedWeakset[weakref.ref] = OrderedWeakset()
-    input_manager = InputManager()
+_widgets: _OrderedWeakset[weakref.ref] = _OrderedWeakset()
+_input_manager = InputManager()
 
-    @staticmethod
-    def blit():
-        # Conversion is used to prevent errors when widgets are added/removed
-        # during iteration a.k.a safe iteration
-        widgets = list(WidgetHandler._widgets)
+def blit():
+    # Conversion is used to prevent errors when widgets are added/removed
+    # during iteration a.k.a safe iteration
+    widgets = list(_widgets)
 
-        for widget in widgets:
-            widget.blit()
+    for widget in widgets:
+        widget.blit()
 
-    @staticmethod
-    def update() -> None:
-        blocked = False
+def update() -> None:
+    blocked = False
 
-        # Conversion is used to prevent errors when widgets are added/removed
-        # during iteration a.k.a safe iteration
-        widgets = list(WidgetHandler._widgets)
+    # Conversion is used to prevent errors when widgets are added/removed
+    # during iteration a.k.a safe iteration
+    widgets = list(_widgets)
 
-        for widget in widgets[::-1]:
-            if (not blocked or not
-                widget.contains(*WidgetHandler.input_manager.get_mouse_pos())):
-                widget.update()
+    for widget in widgets[::-1]:
+        if (not blocked or not
+            widget.contains(*_input_manager.get_mouse_pos())):
+            widget.update()
 
-            # Ensure widgets covered by others are not affected 
-            # (widgets created later)
-            if widget.contains(*WidgetHandler.input_manager.get_mouse_pos()):
-                blocked = True
+        # Ensure widgets covered by others are not affected
+        # (widgets created later)
+        if widget.contains(*_input_manager.get_mouse_pos()):
+            blocked = True
 
-    @staticmethod
-    def add_widget(widget) -> None:
-        if widget not in WidgetHandler._widgets:
-            WidgetHandler._widgets.add(widget)
-            WidgetHandler.move_to_top(widget)
+def add_widget(widget) -> None:
+    if widget not in _widgets:
+        _widgets.add(widget)
+        move_to_top(widget)
 
-    @staticmethod
-    def remove_widget(widget) -> None:
-        try:
-            WidgetHandler._widgets.remove(widget)
-        except ValueError:
-            print(f'Error: Tried to remove {widget} when {widget} '
-                  f'not in WidgetHandler.')
+def remove_widget(widget) -> None:
+    try:
+        _widgets.remove(widget)
+    except ValueError:
+        print(f'Error: Tried to remove {widget} when {widget} '
+              f'not in WidgetHandler.')
 
-    @staticmethod
-    def move_to_top(widget):
-        try:
-            WidgetHandler._widgets.move_to_end(widget)
-        except KeyError:
-            print(f'Error: Tried to move {widget} to top when {widget} '
-                  f'not in WidgetHandler.')
+def move_to_top(widget):
+    try:
+        _widgets.move_to_end(widget)
+    except KeyError:
+        print(f'Error: Tried to move {widget} to top when {widget} '
+              f'not in WidgetHandler.')
 
-    @staticmethod
-    def move_to_bottom(widget):
-        try:
-            WidgetHandler._widgets.move_to_start(widget)
-        except KeyError:
-            print(f'Error: Tried to move {widget} to bottom when {widget} '
-                  f'not in WidgetHandler.')
+def move_to_bottom(widget):
+    try:
+        _widgets.move_to_start(widget)
+    except KeyError:
+        print(f'Error: Tried to move {widget} to bottom when {widget} '
+              f'not in WidgetHandler.')
 
-    @staticmethod
-    def update_screen(screen):
-        for widget in WidgetHandler._widgets:
-            widget.surface = screen
+def update_screen(screen):
+    for widget in _widgets:
+        widget.surface = screen
 
-    @staticmethod
-    def get_widgets():
-        return WidgetHandler._widgets
+def get_widgets():
+    return _widgets

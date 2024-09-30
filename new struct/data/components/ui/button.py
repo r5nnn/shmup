@@ -7,29 +7,21 @@ from data.utils import Mouse
 from data.utils import CustomTypes
 from data.components.input import InputManager, InputBinder
 from data.components.audio import button_audio
+from . import WidgetBase
 
 
-class _ButtonBase(ABC):
-    def __init__(self, rect: pygame.Rect, align: CustomTypes.rect_alignments = 'topleft',
-                 colors: dict[str, tuple] = None, border_colors: dict[str, tuple] = None, border_thickness: int = 0,
-                 radius: int = 0, on_click: Callable = None, on_click_audio_tag: str = 'click',
-                 on_release: Callable = None, on_release_audio_tag: str = 'click'):
-        """
-        Base class for button functionality.
-
-        Handles the basic appearance and interaction such as border, colors,
-        and on-click/on-release events. Child classes will add text or
-        image-specific logic.
-        """
-        self.input_manager = InputManager()
-        self.input_binder = InputBinder()
-        self.surface = pygame.display.get_surface()
-        self._rect = rect
-        self._width = self._rect.width
-        self._height = self._rect.height
-        self._align = align
-        self._align_rect(self._rect, self._align, self._rect.topleft)
-        self._coords = getattr(self._rect, self._align)
+class _ButtonBase(WidgetBase, ABC):
+    """Base class for button functionality."""
+    def __init__(self, x: int, y: int, width: int, height: int,
+                 align: CustomTypes.rect_alignments = 'topleft',
+                 colors: dict[str, tuple] = None,
+                 border_colors: dict[str, tuple] = None,
+                 border_thickness: int = 0, radius: int = 0,
+                 on_click: Callable = None,
+                 on_click_audio_tag: str = 'click',
+                 on_release: Callable = None,
+                 on_release_audio_tag: str = 'click'):
+        WidgetBase.__init__(self, x, y, width, height, align)
 
         # Color management
         self.colors = colors if colors is not None else None
