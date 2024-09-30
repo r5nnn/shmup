@@ -1,0 +1,3 @@
+class Dropdown:
+    def __init__(self, rect, name, choices, colors, direction='down', radius=0):
+        ...
