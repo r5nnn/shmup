@@ -1,18 +1,23 @@
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, Callable
 
 
 @dataclass(frozen=True)
 class CustomTypes:
-    rect_alignments = Literal['topleft', 'midtop', 'topright',
-                              'midleft', 'center', 'midright',
-                              'bottomleft', 'midbottom', 'bottomright']
+    rect_alignments = Literal[
+        'topleft', 'midtop', 'topright',
+        'midleft', 'center', 'midright',
+        'bottomleft', 'midbottom', 'bottomright'
+        ]
     alignments = Literal['left', 'right', 'center', 'block']
-    input_types = Literal['key', 'keydown', 'keyup',
-                          'mouse', 'mousedown', 'mouseup',
-                          'quit']
+    input_types = Literal[
+        'key', 'keydown', 'keyup',
+        'mouse', 'mousedown', 'mouseup',
+        'quit'
+        ]
+
 
 @dataclass(frozen=True)
 class Mouse:
@@ -28,17 +33,15 @@ class Singleton(type):
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(
-                *args, **kwargs)
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 
+
 class Observer(ABC):
+    """Allows you to register an event to a handler so that
+    the handler is called whenever the event is detected."""
 
     def __init__(self):
-        """
-        Allows you to register an event to a handler so that
-        the handler is called whenever the event is detected.
-        """
         self._handlers = defaultdict(list)
 
     @abstractmethod
@@ -46,32 +49,16 @@ class Observer(ABC):
         """Calls the registered handler."""
 
     @abstractmethod
-    def register(self, event, handler):
+    def register(self, event, handler: Callable):
         """Registers the event to a handler."""
 
     @abstractmethod
-    def deregister(self, event, handler):
-        """
-        Deregisters the event from its handler.
+    def deregister(self, event, handler: Callable):
+        """Deregisters the event from its handler."""
 
-        Args:
-            event: Event to bound to handler.
-            handler: Handler to deregister.
-        """
-
-    def is_registered(self, event, handler) -> bool:
-        """
-            Check if handler is bound to an event.
-
-            Args:
-                event: Event to check.
-                handler: Handler bound to event.
-
-            Returns:
-                Bool confirming if handler is registered.
-        """
-        return event in self._handlers and \
-            handler in self._handlers[event]
+    def is_registered(self, event, handler: Callable) -> bool:
+        """Check if handler is bound to an event."""
+        return event in self._handlers and handler in self._handlers[event]
 
 
 class SingletonABCMeta(Singleton, ABCMeta):

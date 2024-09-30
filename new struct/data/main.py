@@ -6,6 +6,6 @@ def main():
     states = {
         "title": title.Title,
         "options": options.Options
-    }
+        }
     game = control.Control(states, "title")
     game.main()

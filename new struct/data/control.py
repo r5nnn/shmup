@@ -1,18 +1,17 @@
 import os
+from typing import Type
 
 import pygame.display
 
 from .components.input import InputManager, InputBinder
-from .states import stateManager
+from .states import stateManager, State
 
 
 class Control:
     """Class that controls the game."""
 
-    def __init__(self, state_dict, start_state):
-        """Adds dictionary to stateManager and defines starting state.
-        Initialises game properties, binds global keybinds.
-        """
+    def __init__(self, state_dict: dict[str, Type[State]], start_state: str):
+        """Initialises game properties, binds global keybinds."""
         stateManager.control = self
         stateManager.state_dict = state_dict
         stateManager.append(start_state)
@@ -27,13 +26,11 @@ class Control:
         self.input_manager = InputManager()
         self.input_binder = InputBinder()
         self.input_binder.register(("keydown", pygame.K_F11),
-                               action=lambda:
-                               self._toggle_tag(pygame.FULLSCREEN))
-        self.input_binder.register(("keydown", pygame.K_END), action=self.quit)
-
-        self.input_binder.register(("keydown", pygame.K_F11),
-                               ("key", pygame.K_LSHIFT),
-                               action=lambda: self._toggle_tag(pygame.NOFRAME))
+                                   action=lambda: self._toggle_tag(pygame.FULLSCREEN))
+        self.input_binder.register(("keydown", pygame.K_END),
+                                   action=self.quit)
+        self.input_binder.register(("keydown", pygame.K_F11), ("key", pygame.K_LSHIFT),
+                                   action=lambda: self._toggle_tag(pygame.NOFRAME))
 
     def update(self):
         """Updates current state, checks for quit requests."""
@@ -45,7 +42,6 @@ class Control:
     def render(self):
         """Renders current state, ticks the clock and flips the display."""
         stateManager.current_state.render()
-
         self.clock.tick(self.refresh_rate)
         pygame.display.flip()
 
@@ -58,8 +54,7 @@ class Control:
         self.running = False
 
     def main(self):
-        """The main loop of the game. Handles events, updates then renders
-        objects."""
+        """Main loop of the game. Handles events, updates then renders objects."""
         while self.running:
             self.event_loop()
             self.update()
