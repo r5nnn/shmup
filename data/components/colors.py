@@ -1,6 +1,5 @@
 import colorsys
 
-
 def shift_rgb(rgb_color, shift_amount):
     """Shifts the color in the RGB spectrum by the specified amount.
 

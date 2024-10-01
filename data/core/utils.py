@@ -3,7 +3,7 @@
 Contains custom type hints, Mouse button references, design pattern base 
 classes, and a descriptor."""
 from abc import ABC, ABCMeta, abstractmethod
-from collections import defaultdictA
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Literal, Callable
 

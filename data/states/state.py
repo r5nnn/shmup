@@ -4,7 +4,7 @@ import warnings
 import pygame
 
 from data.components.audio import button_audio
-from data.utils import Singleton
+from data.core.utils import Singleton
 from data.components import input
 
 

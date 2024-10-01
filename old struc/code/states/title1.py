@@ -1,5 +1,4 @@
-import pygame
-from .. import prepare, tools
+from .. import tools
 
 
 class Title(tools._State):

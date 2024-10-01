@@ -5,9 +5,9 @@ from typing import Literal, override
 import pygame
 from pygame import freetype
 
-from data.utils import CustomTypes
-from data import font_paths
-from .. import ui
+from data.core.utils import CustomTypes
+from data.core.prepare import font_paths
+from .widgetbase import RenderNeeded, RectUpdateNeeded
 
 
 class _TextBase(ABC):
@@ -37,14 +37,14 @@ class _TextBase(ABC):
 
 
 class Text(_TextBase):
-    font = ui.RenderNeeded()
-    font_size = ui.RenderNeeded()
-    text = ui.RenderNeeded()
-    x = ui.RectUpdateNeeded()
-    y = ui.RectUpdateNeeded()
-    coords = ui.RectUpdateNeeded()
-    color = ui.RenderNeeded()
-    text_surface = ui.RenderNeeded()
+    font = RenderNeeded()
+    font_size = RenderNeeded()
+    text = RenderNeeded()
+    x = RectUpdateNeeded()
+    y = RectUpdateNeeded()
+    coords = RectUpdateNeeded()
+    color = RenderNeeded()
+    text_surface = RenderNeeded()
 
     def __init__(self,
                  surface: pygame.Surface,
@@ -128,14 +128,14 @@ class Text(_TextBase):
 class WrappedText(_TextBase):
     default_font_dir = None
 
-    text = ui.RenderNeeded()
-    rect = ui.RectUpdateNeeded()
-    font = ui.RenderNeeded()
-    x = ui.RectUpdateNeeded()
-    y = ui.RectUpdateNeeded()
-    align = ui.RectUpdateNeeded()
-    color = ui.RenderNeeded()
-    line_spacing = ui.RenderNeeded()
+    text = RenderNeeded()
+    rect = RectUpdateNeeded()
+    font = RenderNeeded()
+    x = RectUpdateNeeded()
+    y = RectUpdateNeeded()
+    align = RectUpdateNeeded()
+    color = RenderNeeded()
+    line_spacing = RenderNeeded()
 
     def __init__(self,
                  surface: pygame.Surface,

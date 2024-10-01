@@ -143,7 +143,7 @@ class Game:
 
     def load_assets(self) -> None:
         """create pointers to directories"""
-        os.chdir("..")  # move up a directory
+        os.chdir("../..")  # move up a directory
 
         # ..\shmup\
 

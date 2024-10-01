@@ -4,7 +4,7 @@ import pygame
 import os
 from pathlib import Path
 
-from data import audio_paths
+from data.core.prepare import audio_paths
 
 
 class Audio:

@@ -2,7 +2,7 @@ from typing import Callable, override
 
 import pygame
 
-from data.utils import Singleton, Observer, SingletonABCMeta, CustomTypes
+from data.core.utils import Singleton, Observer, SingletonABCMeta, CustomTypes
 
 
 class InputManager(metaclass=Singleton):

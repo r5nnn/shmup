@@ -3,8 +3,8 @@
 Does not contain logic, this submodule only starts and facilitates running the game.
 Declares the state dictionary with every state in the game, initialises the 
 Control class."""
-from . import control
-from .states import title, options
+from data.core import control
+from data.states import title, options
 
 
 def main():

@@ -3,11 +3,10 @@ from typing import Callable, override
 
 import pygame.display
 from .text import Text
-from data.utils import Mouse
-from data.utils import CustomTypes
-from data.components.input import InputManager, InputBinder
+from data.core.utils import Mouse
+from data.core.utils import CustomTypes
 from data.components.audio import button_audio
-from . import WidgetBase
+from .widgetbase import WidgetBase
 
 
 class _ButtonBase(WidgetBase, ABC):

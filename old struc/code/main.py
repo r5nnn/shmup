@@ -1,4 +1,4 @@
-from . import prepare, tools
+from . import tools
 
 def main():
     run = tools.Control()

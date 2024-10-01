@@ -4,8 +4,8 @@ from typing import Type
 
 import pygame.display
 
-from .components.input import InputManager, InputBinder
-from .states import stateManager, State
+from data.components.input import InputManager, InputBinder
+from data.states.state import State, stateManager
 
 
 class Control:

@@ -3,11 +3,9 @@ from typing import override
 
 import pygame
 
-from data.utils import Validator, CustomTypes
-
-from . import widgethandler
-from ..input import InputManager, InputBinder
-
+from data.components import InputManager, InputBinder
+from data.components.ui import widgethandler
+from data.core.utils import CustomTypes, Validator
 
 class RenderNeeded(Validator):
     @override
@@ -20,6 +18,7 @@ class RectUpdateNeeded(Validator):
     @override
     def _validate(self, instance, value):
         instance._requires_rect_update = True
+
 
 class WidgetBase(ABC):
     """Base class for widgets."""

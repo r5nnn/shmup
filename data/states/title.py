@@ -3,8 +3,8 @@ from typing import override
 
 import pygame
 
-from data import image_paths, audio_paths, sprites
-from . import State
+from data.core.prepare import image_paths, audio_paths, sprites
+from .state import State
 from ..components.audio import background_audio, button_audio
 from ..components.ui import widgethandler
 from ..components.ui.button import ButtonImage
