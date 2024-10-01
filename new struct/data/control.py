@@ -1,3 +1,4 @@
+"""Submodule that controls the execution of the game."""
 import os
 from typing import Type
 
@@ -8,7 +9,10 @@ from .states import stateManager, State
 
 
 class Control:
-    """Class that controls the game."""
+    """Class that controls the game.
+    
+    :param state_dict: Dictionary containing all the states to be used in the game.
+    :param start_state: The name of the state to start the game with."""
 
     def __init__(self, state_dict: dict[str, Type[State]], start_state: str):
         """Initialises game properties, binds global keybinds."""
