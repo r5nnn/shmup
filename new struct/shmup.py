@@ -1,3 +1,4 @@
+"""This script boots the game by loading all the game's modules."""
 import sys
 import pygame
 from data.main import main
