@@ -1,11 +1,16 @@
+"""Global utilities used by other submodules.
+
+Contains custom type hints, Mouse button references, design pattern base 
+classes, and a descriptor."""
 from abc import ABC, ABCMeta, abstractmethod
-from collections import defaultdict
+from collections import defaultdictA
 from dataclasses import dataclass
 from typing import Literal, Callable
 
 
 @dataclass(frozen=True)
 class CustomTypes:
+    """Contains custom game type hints."""
     rect_alignments = Literal[
         'topleft', 'midtop', 'topright',
         'midleft', 'center', 'midright',
@@ -21,6 +26,7 @@ class CustomTypes:
 
 @dataclass(frozen=True)
 class Mouse:
+    """Contains pygame style references to mouse buttons."""
     LEFTCLICK = 1
     MIDDLECLICK = 2
     RIGHTCLICK = 3
@@ -29,6 +35,11 @@ class Mouse:
 
 
 class Singleton(type):
+    """An implementation of the singleton design pattern in python.
+    
+    Makes all classes that inherit from this class only able to have
+    one instance of the class. Subsequent attempts to instantiate a new class
+    just return the first initialised object.""" 
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
@@ -38,7 +49,9 @@ class Singleton(type):
 
 
 class Observer(ABC):
-    """Allows you to register an event to a handler so that
+    """An implementation of the observer design pattern in python.
+    
+    Allows you to register an event to a handler so that
     the handler is called whenever the event is detected."""
 
     def __init__(self):
