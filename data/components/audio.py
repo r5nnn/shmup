@@ -25,8 +25,7 @@ class Audio:
 
         :param audio_dir: Directory of the audio file to add.
         :param tag: The name of the audio to associate with the sound object,
-            defaults to None, in which case the filename will be used as the tag.
-        """
+            defaults to None, in which case the filename will be used as the tag."""
         if not os.path.isfile(audio_dir):
             raise FileNotFoundError(f"File {audio_dir} does not exist.")
         tag = Path(audio_dir).stem if tag is None else None
@@ -35,12 +34,12 @@ class Audio:
     def play_audio(self, tag: str = None, loops: int = 0, override: bool = False) -> None:
         """Plays the audio of the tag specified if the channel is not busy.
 
-        :param tag: The name of the audio to play, defaults to None which will use the first
-            audio file added to that channel (this should only be used if there is only one
-            audio file loaded for clarity).
+        :param tag: The name of the audio to play, defaults to None which will
+            use the first audio file added to that channel (this should only
+            be used if there is only one audio file loaded for clarity).
         :param loops: Amount of times to loop the audio, -1 loops indefinately.
-        :param override: Whether the audio should play even if the channel is busy. 
-            The previously playing audio will stop.
+        :param override: Whether the audio should play even if the channel is
+            busy. The previously playing audio will stop.
 
         :raises KeyError: If no audio has been added to the channel.
         :raises ValueError: If the loops argument is smaller than -1."""

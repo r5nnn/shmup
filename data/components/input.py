@@ -1,5 +1,5 @@
 """Module for getting and handling all forms of user input.
-Also allows for custom events to be detected."""
+Also allows for custom userevents to be detected."""
 from typing import Callable, override
 
 import pygame
@@ -57,7 +57,7 @@ class InputManager(metaclass=Singleton):
 
         self._mouse_pos = pygame.mouse.get_pos()
 
-        def is_key_down(self, key: int) -> bool:
+    def is_key_down(self, key: int) -> bool:
         """Checks if key is currently being pressed down
         (only happens at the very beginning of the keypress).
 
@@ -111,8 +111,7 @@ class InputManager(metaclass=Singleton):
 
 
 class InputBinder(Observer, metaclass=SingletonABCMeta):
-    """Class for binding inputs to execute callables via 
-    the observer algorithm."""
+    """Class for binding inputs to execute callables via the observer algorithm."""
 
     def __init__(self):
         super().__init__()
