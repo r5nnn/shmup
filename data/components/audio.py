@@ -72,15 +72,19 @@ class Audio:
             raise ValueError("Volume must be between 0.0 and 1.0.")
         self.channel.set_volume(volume)
 
-    def increase_volume(self, increment: float = 0.1):
-        """Increase the volume by a specified increment."""
+    def increase_volume(self, increment: float = 0.1) -> None:
+        """Increase the volume by a specified increment.
+        
+        :param increment: The amount to increase the volume by."""
         current_volume = self.channel.get_volume()
         # makes sure volume doesn't increase above 1.0
         new_volume = min(1.0, current_volume + increment)
         self.set_volume(new_volume)
 
-    def decrease_volume(self, decrement: float = 0.1):
-        """Decrease the volume by a specified decrement."""
+    def decrease_volume(self, decrement: float = 0.1) -> None:
+        """Decrease the volume by a specified decrement.
+        
+        :param decrement: The amount to decrease the volume by."""
         current_volume = self.channel.get_volume()
         # makes sure volume doesn't decrease below 0
         new_volume = max(0.0, current_volume - decrement)
