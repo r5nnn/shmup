@@ -1,3 +1,5 @@
+"""Module for getting and handling all forms of user input.
+Also allows for custom events to be detected."""
 from typing import Callable, override
 
 import pygame
@@ -23,11 +25,13 @@ class InputManager(metaclass=Singleton):
     def quit(self):
         return self._quit
 
-    def process_events(self, events: list):
-        """Clears keydown and keyup events, iterates through
-        pygame events and updates the input lists as necessary.
+    def process_events(self, events: list) -> None:
+        """Process events from the pygame events list.
         
-        :param events: pygame.event.get()
+        Clears keydown and keyup events, iterates through and updates the
+        input lists as necessary.
+        
+        :param events: `pygame.event.get()` should be passed in every game tick.
         """
         self._keydown_events.clear()
         self._keyup_events.clear()
@@ -53,76 +57,69 @@ class InputManager(metaclass=Singleton):
 
         self._mouse_pos = pygame.mouse.get_pos()
 
-    def is_key_pressed(self, key: int):
-        """Checks if key is currently being held down.
-        
-        :param key: The key to check for.
-        :returns: True if key is in the held_keys list.
-        """
-        return key in self._held_keys
-
-    def is_key_down(self, key: int):
+        def is_key_down(self, key: int) -> bool:
         """Checks if key is currently being pressed down
         (only happens at the very beginning of the keypress).
 
         :param key: The key to check for.
-        :returns: True if key is in the keydown_events list.
-        """
+        :returns: True if key is being pressed down."""
         return key in self._keydown_events
 
-    def is_key_up(self, key: int):
+    def is_key_up(self, key: int) -> bool:
         """Checks if the key is currently being released
         (only happens at the very end of the keypress).
 
         :param key: The key to check for.
-        :returns: True if key is in the keyup_events list.
-        """
+        :returns: True if key is being released."""
         return key in self._keyup_events
 
-    def is_mouse_down(self, button: int):
+    def is_key_pressed(self, key: int) -> bool:
+        """Checks if key is currently being held down.
+        
+        :param key: The key to check for.
+        :returns: True if key is being held."""
+        return key in self._held_keys
+
+    def is_mouse_down(self, button: int) -> bool:
         """Checks if the mouse button is currently being pressed
         (only happens at the very beginning of the button press).
 
         :param button: The mousebutton to check for.
-        :return: True if mousebutton is in the mousedown_events list.
-        """
+        :returns: True if mousebutton is being pressed down."""
         return button in self._mousedown_events
 
-    def is_mouse_up(self, button: int):
+    def is_mouse_up(self, button: int) -> bool:
         """Checks if the mouse button is currently being released
         (only happens at the very end of the button press).
 
         :param button: The mousebutton to check for.
-        :return: True if the mousebutton is in the mouseup_events list.
-        """
+        :returns: True if the mousebutton is being released."""
         return button in self._mouseup_events
 
-    def is_mouse_pressed(self, button: int):
+    def is_mouse_pressed(self, button: int) -> bool:
         """Checks if the mouse button is being held down.
 
         :param button: The mousebutton to check for.
-        :returns: True if button is in the mouse_buttons list.
-        """
+        :returns: True if button is being held down."""
         return button in self._mouse_buttons
 
     def get_mouse_pos(self) -> tuple[int, int]:
         """Gets the position of the mouse.
 
-        :returns: The coordinates of the mouse.
-        """
+        :returns: The coordinates of the mouse."""
         return self._mouse_pos
 
 
 class InputBinder(Observer, metaclass=SingletonABCMeta):
-    """Class for binding inputs to execute
-    callables via the observer algorithm."""
+    """Class for binding inputs to execute callables via 
+    the observer algorithm."""
 
     def __init__(self):
         super().__init__()
 
     @override
     def register(self, *inputs: tuple[CustomTypes.input_types, int],
-                 action: Callable):
+                 action: Callable) -> None:
         """
         :param inputs: A tuple of the type and input.
         :param action: The action to call upon the input being detected.
@@ -130,7 +127,7 @@ class InputBinder(Observer, metaclass=SingletonABCMeta):
         self._handlers[inputs] = action
 
     @override
-    def deregister(self, *inputs: tuple[CustomTypes.input_types, int]):
+    def deregister(self, *inputs: tuple[CustomTypes.input_types, int]) -> None:
         """
         :param inputs: A tuple of the type and input that the action should be
             unregistered from.
@@ -139,7 +136,10 @@ class InputBinder(Observer, metaclass=SingletonABCMeta):
             self._handlers.pop(inputs)
 
     @override
-    def notify(self, input_manager: InputManager):
+    def notify(self, input_manager: InputManager) -> None:
+        """
+        :param input_manager: Input manager to get status of inputs.
+        """
         # Sort bindings by priority (more inputs = higher priority)
         sorted_bindings = sorted(self._handlers.items(),
             key=lambda binding: len(binding[0]), reverse=True)
