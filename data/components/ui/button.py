@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Callable, override
+from dataclasses import dataclass
+from typing import Callable, override, Optional
 
 import pygame.display
 from .text import Text
@@ -8,39 +9,42 @@ from data.core.utils import CustomTypes
 from data.components.audio import button_audio
 from .widgetbase import WidgetBase
 
+@dataclass
+class ButtonConfig:
+    position: tuple[int, int]
+    size: tuple[int, int]
+    align: CustomTypes.rect_alignments = 'topleft'
+    colors: Optional[dict[str, tuple[int, ...]]] = None
+    border_colors: Optional[dict[str, tuple[int, ...]]] = None
+    border_thickness: int = 0
+    radius: int = 0
+    on_click: Callable = lambda *args: None
+    on_release: Callable = lambda *args: None
+    click_audio: Optional[str] = 'click'
+    release_audio: Optional[str] = 'click'
+
 
 class _ButtonBase(WidgetBase, ABC):
-    """Base class for button functionality."""
-    def __init__(self, x: int, y: int, width: int, height: int,
-                 align: CustomTypes.rect_alignments = 'topleft',
-                 colors: dict[str, tuple] = None,
-                 border_colors: dict[str, tuple] = None,
-                 border_thickness: int = 0, radius: int = 0,
-                 on_click: Callable = None,
-                 on_click_audio_tag: str = 'click',
-                 on_release: Callable = None,
-                 on_release_audio_tag: str = 'click'):
-        WidgetBase.__init__(self, x, y, width, height, align)
+    def __init__(self, config: ButtonConfig):
+        WidgetBase.__init__(self, config.position, config.size, config.align)
 
         # Color management
-        self.colors = colors if colors is not None else None
-        self._color = self.colors['inactive'] if self.colors is not None else None
-
+        self.colors = config.colors
+        self._color = self.colors['default'] if self.colors is not None else None
         # Border management
-        self.border_colors = border_colors if border_colors is not None else None
-        self._border_color = self.border_colors['inactive'] if self.border_colors else None
-        self._border_thickness = border_thickness
+        self.border_colors = config.border_colors
+        self._border_color = self.border_colors['default'] \
+            if self.border_colors is not None else None
+        self._border_thickness = config.border_thickness
         self._border_rect = pygame.Rect(self._rect.left + self._border_thickness,
                                         self._rect.top + self._border_thickness,
                                         self._width - self._border_thickness * 2,
                                         self._height - self._border_thickness * 2)
-
-        self.on_click_call = on_click if on_click is not None else lambda *args: None
-        self.on_release_call = on_release if on_release is not None else lambda *args: None
-        self.on_click_audio_tag = on_click_audio_tag if on_click_audio_tag is not None else None
-        self.on_release_audio_tag = on_release_audio_tag if on_release_audio_tag is not None else None
-
-        self.radius = radius
+        self.on_click_call = config.on_click
+        self.on_release_call = config.on_release
+        self.click_audio_tag = config.click_audio
+        self.release_audio_tag = config.release_audio
+        self.radius = config.radius
         self.clicked = False
 
     @property
@@ -101,8 +105,8 @@ class _ButtonBase(WidgetBase, ABC):
     @abstractmethod
     def on_click(self):
         self.clicked = True
-        if self.on_click_audio_tag is not None:
-            button_audio.play_audio(self.on_click_audio_tag, override=True)
+        if self.click_audio_tag is not None:
+            button_audio.play_audio(self.click_audio_tag, override=True)
         if self.colors is not None:
             self._color = self.colors['clicked']
         if self.border_colors is not None:
@@ -110,8 +114,8 @@ class _ButtonBase(WidgetBase, ABC):
 
     def on_release(self):
         self.clicked = False
-        if self.on_release_audio_tag is not None:
-            button_audio.play_audio(self.on_release_audio_tag, override=True)
+        if self.release_audio_tag is not None:
+            button_audio.play_audio(self.release_audio_tag, override=True)
 
     @abstractmethod
     def on_hover(self):
@@ -130,14 +134,14 @@ class _ButtonBase(WidgetBase, ABC):
 
     @abstractmethod
     def update(self):
-        x, y = self.input_manager.get_mouse_pos()
+        x, y = self._input_manager.get_mouse_pos()
         if self.contains(x, y):
             # button is released
-            if self.input_manager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
+            if self._input_manager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
                 self.on_release()
                 self.on_release_call()
             # button is clicked
-            elif self.input_manager.is_mouse_down(Mouse.LEFTCLICK):
+            elif self._input_manager.is_mouse_down(Mouse.LEFTCLICK):
                 self.on_click()
                 self.on_click_call()
             # button hovered
