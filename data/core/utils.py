@@ -1,7 +1,7 @@
 """Global utilities used by other submodules.
 
-Contains custom type hints, Mouse button references, design pattern base 
-classes, and a descriptor."""
+Contains custom type hints, dataclasses, Mouse button references, design pattern
+base classes, and descriptors."""
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
