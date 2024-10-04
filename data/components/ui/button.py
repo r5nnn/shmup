@@ -155,33 +155,36 @@ class _ButtonBase(WidgetBase, ABC):
         if self.colors is not None:
             pygame.draw.rect(self.surface, self.color, self._rect, border_radius=self.radius)
 
-@dataclass
+
+@dataclass(kw_only=True)
 class TextButtonConfig(_ButtonConfig):
     super().__init__()
     text: str
-    text_colors: optional[dict[str, tuple[int, ...]] = None
-    font: optional[pygame.font.Font] = None
+    text_colors: Optional[dict[str, tuple[int, ...]]] = None
+    font: Optional[pygame.font.Font] = None
     font_size: int = 32
-    text_align: optional[tuple[str, str]] = None
+    text_align: Optional[tuple[str, str]] = None
     margin: int = 20
 
 
 class TextButton(_ButtonBase):
     """Class for creating buttons with text labels."""
-    def __init__(self, rect: pygame.Rect, text: str = "", text_colors: dict[str, tuple] = None,
-                 font: pygame.font.Font = None, font_size: int = 32, text_align: tuple[str, str] = (), margin: int = 20,
-                 **kwargs):
-        super().__init__(rect, **kwargs)
+    def __init__(self, config: TextButtonConfig):
+        super().__init__(super(TextButtonConfig, config))
 
-        self.text_colors = text_colors if text_colors is not None else {'inactive': (255, 255, 255),
-                                                                        'hovered': (255, 255, 255),
-                                                                        'clicked': (255, 255, 255)}
-        self._text_color = self.text_colors['inactive']
+        self.text_colors = config.text_colors \
+            if config.text_colors is not None else {
+                'default': (255, 255, 255),
+                'hovered': (255, 255, 255),
+                'clicked': (255, 255, 255)
+            }
+        self._text_color = self.text_colors['default']
 
         # Text instance
-        self._text = Text(self.surface, text, (0, 0), font_size, font, color=self._text_color)
-        self.text_align = text_align
-        self.margin = margin
+        self._text = Text((0, 0), config.text, config.font, config.font_size,
+                          color=self._text_color)
+        self.text_align = config.text_align
+        self.margin = config.margin
 
         # Align the text inside the button's rect
         self._align_text(self._text)

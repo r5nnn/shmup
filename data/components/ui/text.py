@@ -1,6 +1,6 @@
 import warnings
 from abc import ABC, abstractmethod
-from typing import Literal, override
+from typing import Literal, override, Optional
 
 import pygame
 from pygame import freetype
@@ -13,9 +13,8 @@ from .widgetbase import RenderNeeded, RectUpdateNeeded
 class _TextBase(ABC):
     default_font_dir = None
 
-    def __init__(self,
-                 font: pygame.freetype.Font | int = None,
-                 font_size: int = 32, ):
+    def __init__(self, font: Optional[pygame.freetype.Font] = None,
+                 font_size: int = 32):
         if font and _TextBase.default_font_dir is None:
             raise TypeError("default_font_dir not specified and no font passed "
                             "when creating instance. One or the other must be "
@@ -46,12 +45,10 @@ class Text(_TextBase):
     color = RenderNeeded()
     text_surface = RenderNeeded()
 
-    def __init__(self,
-                 surface: pygame.Surface,
-                 text: str,
-                 coordinates: tuple,
-                 font_size: int,
-                 font: pygame.freetype.Font | int = None,
+    def __init__(self, position: tuple, text: str,
+                 font: Optional[pygame.freetype.Font] = None,
+                 font_size: int = 32,
+                 surface: pygame.Surface = pygame.display.get_surface(),
                  color: pygame.Color | tuple = pygame.Color('white'),
                  align: CustomTypes.rect_alignments = 'topleft',
                  antialias: bool = False):
@@ -63,7 +60,7 @@ class Text(_TextBase):
 
         :param surface: Surface which the text surface will be blit onto.
         :param text: Text to be displayed.
-        :param coordinates: X and Y coordinates of font.
+        :param position: X and Y coordinates of font.
         :param font: The pygame.font.Font object to use.
         :param font_size: The size of the default font (if used).
         :param color: Color of the text.
@@ -81,7 +78,7 @@ class Text(_TextBase):
         self._color = color
         self._text_surface, self._rect = self._render_text(self._text,
                                                            self._color)
-        self._align_rect(self._rect, self._align, coordinates)
+        self._align_rect(self._rect, self._align, position)
 
     @property
     def rect(self):
