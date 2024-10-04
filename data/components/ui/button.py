@@ -10,7 +10,7 @@ from data.components.audio import button_audio
 from .widgetbase import WidgetBase
 
 @dataclass
-class ButtonConfig:
+class _ButtonConfig:
     position: tuple[int, int]
     size: tuple[int, int]
     align: CustomTypes.rect_alignments = 'topleft'
@@ -25,13 +25,11 @@ class ButtonConfig:
 
 
 class _ButtonBase(WidgetBase, ABC):
-    def __init__(self, config: ButtonConfig):
+    def __init__(self, config: _ButtonConfig):
         WidgetBase.__init__(self, config.position, config.size, config.align)
 
-        # Color management
         self.colors = config.colors
         self._color = self.colors['default'] if self.colors is not None else None
-        # Border management
         self.border_colors = config.border_colors
         self._border_color = self.border_colors['default'] \
             if self.border_colors is not None else None
@@ -152,20 +150,27 @@ class _ButtonBase(WidgetBase, ABC):
             self.on_idle()
 
     def blit(self):
-        """Draws the button onto the surface."""
         if self.border_colors is not None:
             pygame.draw.rect(self.surface, self.border_color, self._border_rect, border_radius=self.radius)
         if self.colors is not None:
             pygame.draw.rect(self.surface, self.color, self._rect, border_radius=self.radius)
 
+@dataclass
+class TextButtonConfig(_ButtonConfig):
+    super().__init__()
+    text: str
+    text_colors: optional[dict[str, tuple[int, ...]] = None
+    font: optional[pygame.font.Font] = None
+    font_size: int = 32
+    text_align: optional[tuple[str, str]] = None
+    margin: int = 20
 
-class ButtonText(_ButtonBase):
+
+class TextButton(_ButtonBase):
+    """Class for creating buttons with text labels."""
     def __init__(self, rect: pygame.Rect, text: str = "", text_colors: dict[str, tuple] = None,
                  font: pygame.font.Font = None, font_size: int = 32, text_align: tuple[str, str] = (), margin: int = 20,
                  **kwargs):
-        """
-        Button class that includes text rendering and color management.
-        """
         super().__init__(rect, **kwargs)
 
         self.text_colors = text_colors if text_colors is not None else {'inactive': (255, 255, 255),
