@@ -1,3 +1,7 @@
+"""Module for displaying text on the screen.
+
+Text can be updated at any point and will rerender and update itself accordingly.
+Additionally, the `WrappedText` class can be used when wrapping is needed."""
 import warnings
 from abc import ABC, abstractmethod
 from typing import Literal, override, Optional
@@ -11,7 +15,12 @@ from .widgetbase import RenderNeeded, RectUpdateNeeded
 
 
 class _TextBase(ABC):
-    default_font_dir = None
+    """Base class for creating text.
+
+    Attributes:
+        default_font_dir: Class attribute that stores the directory to the
+            default font to use if no font is passed in."""
+    default_font_dir: Optional[str] = None
 
     def __init__(self, font: Optional[pygame.freetype.Font] = None,
                  font_size: int = 32):
