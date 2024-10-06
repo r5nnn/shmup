@@ -1,13 +1,23 @@
+"""Module for displaying buttons on the screen.
+
+Buttons consist of a base rectangle with a label on top. The label can be text
+or an image. The base rectangle can be hidden to use the image label as the
+button itself. In this case pixel-perfect collision can also be used.
+Buttons can be hovered and interacted with. An attribute of the button can
+change or an action can be executed when the button is pressed down or released."""
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Callable, override, Optional
 
 import pygame.display
-from .text import Text
-from data.core.utils import Mouse
-from data.core.utils import CustomTypes
+
 from data.components.audio import button_audio
+from data.core.utils import CustomTypes
+from data.core.utils import Mouse
+from .text import Text
 from .widgetbase import WidgetBase
+
 
 @dataclass
 class _ButtonConfig:
@@ -25,9 +35,17 @@ class _ButtonConfig:
 
 
 class _ButtonBase(WidgetBase, ABC):
+    """Base class for creating buttons.
+
+    Includes the buttons base rectangle and input detection, but no label.
+    Rectangle can change color depending on the status of the button (default,
+    hovered or clicked).
+
+    Attributes:
+
+    """
     def __init__(self, config: _ButtonConfig):
         WidgetBase.__init__(self, config.position, config.size, config.align)
-
         self.colors = config.colors
         self._color = self.colors['default'] if self.colors is not None else None
         self.border_colors = config.border_colors
