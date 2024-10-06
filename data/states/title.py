@@ -6,7 +6,7 @@ import pygame
 from data.core.prepare import image_paths, audio_paths, sprites
 from .state import State
 from ..components.audio import background_audio, button_audio
-from ..components.ui import widgethandler
+from ..components.ui import widgetutils
 from ..components.ui.button import ButtonImage
 
 

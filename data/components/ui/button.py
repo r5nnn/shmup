@@ -16,7 +16,7 @@ from data.components.audio import button_audio
 from data.core.utils import CustomTypes
 from data.core.utils import Mouse
 from .text import Text
-from .widgetbase import WidgetBase
+from .widgetutils import BaseWidget
 
 
 @dataclass
