@@ -176,3 +176,6 @@ class InputBinder(Observer, metaclass=SingletonABCMeta):
             elif input_type == 'quit' and not input_manager.quit:
                 return False
         return True
+
+inputmanager = InputManager()
+inputbinder = InputBinder()
