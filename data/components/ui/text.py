@@ -56,7 +56,7 @@ class Text:
         antialias: Whether antialiasing should be used when rendering the text
             surface. Defaults to `False`.
         surface: The surface that the text should be rendered to. Defaults
-            to the current display surface: `pygame.display.get_surface`.
+            to `None` to use the current display surface.
     """
     x = RectUpdateNeeded()
     y = RectUpdateNeeded()
