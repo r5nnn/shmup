@@ -14,14 +14,12 @@ import weakref
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from collections.abc import MutableSet
-from tkinter import BaseWidget
-from typing import override, Type
+from typing import override, Optional
 
 import pygame
 
 from data.components import inputmanager
 from data.core.utils import CustomTypes, Validator
-from data.components.ui import Text
 
 
 # Implementation of an insertion-ordered set. Necessary to keep track of the
@@ -76,14 +74,14 @@ class _OrderedWeakset(weakref.WeakSet):
         self.data.move_to_start(weakref.ref(item, self._remove))
 
 
-class RectUpdateNeeded(Validator):
-    """Decorator that updates the `_requires_rect_update` property to `True`."""
+class AlignmentNeeded(Validator):
+    """Decorator that updates the `_requires_alignment` property to `True`."""
     @override
     def _validate(self, instance, value):
-        instance._requires_rect_update = True
+        instance._requires_realignment = True
 
 
-class RenderNeeded(RectUpdateNeeded):
+class RenderNeeded(AlignmentNeeded):
     """Decorator that updates the `_requires_render` property to `True`."""
     @override
     def _validate(self, instance, value):
@@ -127,7 +125,7 @@ def update() -> None:
             blocked = True
 
 
-def add_widget(widget: Type[BaseWidget] | Text) -> None:
+def add_widget(widget: "WidgetBase") -> None:
     """Adds the widget given to an centralised ordered set of widgets.
 
     Widgets must be added so that all the other functions relating to the
@@ -141,7 +139,7 @@ def add_widget(widget: Type[BaseWidget] | Text) -> None:
         move_to_top(widget)
 
 
-def remove_widget(widget: Type[BaseWidget] | Text) -> None:
+def remove_widget(widget: "WidgetBase") -> None:
     """Removes the widget given from the ordered set of widgets.
 
     Args:
@@ -156,7 +154,7 @@ def remove_widget(widget: Type[BaseWidget] | Text) -> None:
               f'not in the set.')
 
 
-def move_to_top(widget: Type[BaseWidget] | Text) -> None:
+def move_to_top(widget: "WidgetBase") -> None:
     """Moves the widget given to the top of the ordered set of widgets.
 
     Args:
@@ -171,7 +169,7 @@ def move_to_top(widget: Type[BaseWidget] | Text) -> None:
               f'not in WidgetHandler.')
 
 
-def move_to_bottom(widget: Type[BaseWidget] | Text) -> None:
+def move_to_bottom(widget: "WidgetBase") -> None:
     """Moves the widget given to the bottom of the ordered set of widgets.
 
     Args:
@@ -216,16 +214,18 @@ class WidgetBase(ABC):
             (given by `self.align`). Updates the rect when changed.
         y: The y coordinate of the rect with reference to the alignment
             (given by `self.align`). Updates the rect when changed.
-        width: The width of the rect. Updates the rect when changed.
-        height: The height of the rect. Updates the rect when changed.
         align: Alignment of the rect coordinates. Updates the rect when
             changed.
         surface: The surface which the widget will be displayed on.
-    
+        is_sub_widget: Boolean indicating if the widget is a subwidget.
+
+            A subwidget is ignored by all widgethandler methods (that would
+            usually affect all widgets). `True` indicates the widget is a sub
+            widget.
+
     Args:
         position: The position of the rect with reference to the `align`
             argument passed.
-        size: The width and height of the rect.
         align: The point of the rect that the `position` argument is
             referencing. Defaults to `'topleft'`.
         surface: The surface that the widget should be rendered to. Defaults
@@ -233,54 +233,67 @@ class WidgetBase(ABC):
         sub_widget: Whether the widget being made is part of another parent
             widget. If it is, it will not be added to the widget handler.
             Defaults to `False`."""
-    x = RectUpdateNeeded()
-    y = RectUpdateNeeded()
-    width = RectUpdateNeeded()
-    height = RectUpdateNeeded()
-    align = RectUpdateNeeded()
+    x = AlignmentNeeded()
+    y = AlignmentNeeded()
+    align = AlignmentNeeded()
     
-    def __init__(self, position: tuple[int, int], size: tuple[int, int],
+    def __init__(self, position: tuple[int, int], 
                  align: CustomTypes.rect_alignments = 'topleft',
                  surface: Optional[pygame.Surface] = None,
                  sub_widget: bool = False):
         self._x, self._y = position
-        self._width, self._height = size
-        self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self._align = align
-        self._align_rect(self._rect, self._align, self._rect.topleft)
-        self.surface = surface if surface is not None else pygame.display.get_surface()
+        self.surface = surface if surface is not None else \
+            pygame.display.get_surface()
+        self.is_sub_widget = sub_widget
+
+        self._hidden = False
+        self._disabled = False
+        self._requires_realignment = False
 
         if not sub_widget:
             add_widget(self)
 
-    @property
-    def rect() -> pygame.Rect:
-        """The base rect of the widget."""
-        return self._rect
-
-    def _align_rect(self, rect, align, coords):
-        setattr(rect, align, coords)
-        self._x, self._y = getattr(rect, align)
-
-    def contains(self, x: int, y: int) -> bool:
-        """Checks for collision between a point and the widget rect.
-        
-        Args:
-            x: The x coordinate of the point to check for collision.
-            y: The y coordinate of the point to check for collision.
-
-        Returns:
-            A boolean indicating if the widget rect has been collided with.
-        """
-        return (self._rect.left < x - self.surface.get_abs_offset()[0] <
-                self._rect.left + self._width) and (
-                self._rect.top < y - self.surface.get_abs_offset()[1] <
-                self._rect.top + self._height)
+    @abstractmethod
+    def update(self) -> None:
+        """Updates the widget with user events."""
 
     @abstractmethod
-    def update(self):
-        ...
+    def blit(self) -> None:
+        """Renders the widget onto the screen."""
 
-    @abstractmethod
-    def blit(self):
-        ...
+    def hide(self) -> None:
+        """Hides the widget from the screen."""
+        self._hidden = True
+        if not self.is_sub_widget:
+            move_to_bottom(self)
+
+    def show(self) -> None:
+        """Displays the widget (if it was hidden previously)."""
+        self._hidden = False
+        if not self.is_sub_widget:
+            move_to_top(self)
+
+    def disable(self) -> None:
+        """Disables the widget from recieving user input."""
+        self._disabled = True
+
+    def enable(self) -> None:
+        """Enables the widget to recieve user input (if it was disabled previously)."""
+        self._disabled = False
+
+    def move_to_top(self) -> None:
+        """Moves the widget to the top.
+
+        A widget at the top will be rendered over all other widgets (if
+        they are overlapping) and will always recieve input even if if there
+        are other widgets below that should recieve input."""
+        move_to_top(self)
+
+    def move_to_bottom(self) -> None:
+        """Moves the widget to the bottom.
+
+        A widget at the bottom will be rendered under all other widgets (if
+        they are overlapping) and will not recieve input if the overlapped part
+        is interacted with."""
+        move_to_bottom(self)
