@@ -1,4 +1,4 @@
-"""Module for initiating and handling the playback of audio from audio files."""
+"""Module for adding and handling the playback of audio from audio files."""
 import warnings
 
 import pygame
@@ -9,27 +9,43 @@ from data.core.prepare import audio_paths
 
 
 class Audio:
-    """Class for creating and managing pygame channel and sound objects.
-    Keeps track of channels used, assigns new channel each time class is called."""
+    """Class for creating and managing audio channels and sound objects.
+    
+    Keeps track of channels used, assigns new channel each time class is 
+    instantiated.
+    
+    Attributes:
+        channel_id: The unique id of the channel used by the class instance.
+        channel: The channel of the class instance.
+        sounds: A dictionary containing a name tag of the sound as a key and
+            the sound object as the value.
+        current_audio: The current audio playing from the channel. 
+            `None` if no audio is playing."""
     _channel_counter = 0  # Class-level counter to assign unique channels to each new instance
 
     def __init__(self):
-        self.channel_id = Audio._channel_counter
+        self.channel_id: int = Audio._channel_counter
         Audio._channel_counter += 1
-        self.channel = pygame.mixer.Channel(self.channel_id)
-        self.audio_list = {}
-        self.current_audio = None
+        self.channel: pygame.mixer.Channel = pygame.mixer.Channel(self.channel_id)
+        self.sounds: dict[str, pygame.mixer.Sound] = {}
+        self.current_audio: Optional[str] = None
 
-    def add_audio(self, audio_dir: str, tag: str = None) -> None:
-        """Load audio from the given path
+    def add_audio(self, audio_dir: str, tag: Optional[str] = None) -> None:
+        """Load audio from the given path.
 
-        :param audio_dir: Directory of the audio file to add.
-        :param tag: The name of the audio to associate with the sound object,
-            defaults to None, in which case the filename will be used as the tag."""
+        Audio is added to the `sounds` dictionary.
+
+        Args:
+            audio_dir: Directory of the audio file to add.
+            tag: The name of the audio to associate with the sound object. 
+                Defaults to `None`, in which case the filename will be used as the tag.
+        
+        Raises:
+            FileNotFoundError: If there is no audio file at the audio directory provided."""
         if not os.path.isfile(audio_dir):
             raise FileNotFoundError(f"File {audio_dir} does not exist.")
         tag = Path(audio_dir).stem if tag is None else None
-        self.audio_list[tag] = pygame.mixer.Sound(audio_dir)
+        self.sounds[tag] = pygame.mixer.Sound(audio_dir)
 
     def play_audio(self, tag: str = None, loops: int = 0, override: bool = False) -> None:
         """Plays the audio of the tag specified if the channel is not busy.
@@ -50,7 +66,7 @@ class Audio:
         if loops < -1:
             raise ValueError("loops argument cannot be smaller than -1.")
 
-        tag = self.audio_list[0] if tag is None else tag
+        tag = self.sounds[0] if tag is None else tag
         self.stop() if override else None
         if not self.channel.get_busy():
             self.current_audio = None
