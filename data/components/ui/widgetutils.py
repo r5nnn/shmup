@@ -3,7 +3,10 @@
 The widget handler is a set of functions that should be used after adding the
 widget to the handler. This allows the managment of all widgets through a set
 number of functions.
-todo: The widget base class does some stuff.
+The widget base class is a base class meant to be inherited by most widgets.
+It automatically adds the widget to the widget handler and defines the widget
+rect. It also contains a method for collision checking the widget rect with a
+point on the screen.
 Also features decorators for widget properties that need to update the
 `_requires_render` and `_requires_rect_update` properties upon being changed."""
 
@@ -195,28 +198,73 @@ def get_widgets() -> _OrderedWeakset[weakref.ref]:
 
 
 class WidgetBase(ABC):
-    """Base class for widgets."""
+    """Base class for widgets.
+    
+    Automatically adds itself to the widget hanlder. Inheritance when
+    making a widget is optional if the widget deviates too much from 
+    the base widget structure.
+    
+    Attributes:
+        x: The x coordinate of the rect with reference to the alignment
+            (given by `self.align`). Updates the rect when changed.
+        y: The y coordinate of the rect with reference to the alignment
+            (given by `self.align`). Updates the rect when changed.
+        width: The width of the rect. Updates the rect when changed.
+        height: The height of the rect. Updates the rect when changed.
+        align: Alignment of the rect coordinates. Updates the rect when
+            changed.
+        surface: The surface which the widget will be displayed on.
+    
+    Args:
+        position: The position of the rect with reference to the `align`
+            argument passed.
+        size: The width and height of the rect.
+        align: The point of the rect that the `position` argument is
+            referencing. Defaults to `'topleft'`.
+        surface: The surface that the widget should be rendered to. Defaults
+            to `None` to use the current display surface.
+        sub_widget: Whether the widget being made is part of another parent
+            widget. If it is, it will not be added to the widget handler.
+            Defaults to `False`."""
+    x = RectUpdateNeeded()
+    y = RectUpdateNeeded()
+    width = RectUpdateNeeded()
+    height = RectUpdateNeeded()
+    align = RectUpdateNeeded()
+    
     def __init__(self, position: tuple[int, int], size: tuple[int, int],
                  align: CustomTypes.rect_alignments = 'topleft',
+                 surface: Optional[pygame.Surface] = None,
                  sub_widget: bool = False):
-        """"""
-        self.surface = pygame.display.get_surface()
         self._x, self._y = position
         self._width, self._height = size
         self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self._align = align
         self._align_rect(self._rect, self._align, self._rect.topleft)
-        self._coords = getattr(self._rect, self._align)
+        self.surface = surface if surface is not None else pygame.display.get_surface()
 
         if not sub_widget:
             add_widget(self)
 
+    @property
+    def rect() -> pygame.Rect:
+        """The base rect of the widget."""
+        return self._rect
+
     def _align_rect(self, rect, align, coords):
         setattr(rect, align, coords)
-        self._coords = self._x, self._y = getattr(rect, align)
+        self._x, self._y = getattr(rect, align)
 
-    def contains(self, x: int, y: int):
-        """Basic collision detection for the widget rectangle."""
+    def contains(self, x: int, y: int) -> bool:
+        """Checks for collision between a point and the widget rect.
+        
+        Args:
+            x: The x coordinate of the point to check for collision.
+            y: The y coordinate of the point to check for collision.
+
+        Returns:
+            A boolean indicating if the widget rect has been collided with.
+        """
         return (self._rect.left < x - self.surface.get_abs_offset()[0] <
                 self._rect.left + self._width) and (
                 self._rect.top < y - self.surface.get_abs_offset()[1] <
