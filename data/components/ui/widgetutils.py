@@ -1,14 +1,13 @@
-"""Module containing a widget handler, the widget base class and other utilities.
+"""Module containing general widget utilities.
 
-The widget handler is a set of functions that should be used after adding the
-widget to the handler. This allows the managment of all widgets through a set
-number of functions.
-The widget base class is a base class meant to be inherited by most widgets.
-It automatically adds the widget to the widget handler and defines the widget
-rect. It also contains a method for collision checking the widget rect with a
-point on the screen.
-Also features decorators for widget properties that need to update the
-`_requires_render` and `_requires_rect_update` properties upon being changed."""
+The widget handler is a set of functions that are used to interact with all
+widgets added to the handler at once.
+The widget base class is a base class meant to be inherited by all widgets. It
+is used to define basic properties such as coordinates and alignment, as well
+as methods for interacting with the widget handler functions.
+There are also two decorators for widget properties that require updating the
+`_requires_rerender` and `_requires_realignment` properties upon being changed.
+"""
 
 import weakref
 from abc import ABC, abstractmethod
