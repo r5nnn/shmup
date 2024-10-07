@@ -69,10 +69,6 @@ class _ButtonBase(WidgetBase, ABC):
         self.clicked = False
 
     @property
-    def rect(self):
-        return self._rect
-
-    @property
     def width(self):
         return self._width
 
