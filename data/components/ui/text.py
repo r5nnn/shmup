@@ -1,26 +1,29 @@
 """Module for displaying text on the screen.
 
 Text can be updated at any point and will rerender and update itself accordingly.
-Additionally, the `WrappedText` class can be used when wrapping is needed."""
+Additionally, the `WrappedText` class can be used when wrapping is needed.
 
+Attributes:
+    text_rect_alignments: Stores the alignment type hints for the bounding rect
+        in the `WrappedText` class.
+    default_font_dir: Stores the directory to the default font to use if no
+        font is passed in.
+"""
 import warnings
-from typing import Literal, Optional
+from typing import Literal, Optional, override, Type
 
 import pygame
 from pygame import freetype
 
-from data.core.utils import CustomTypes
 from data.core.prepare import font_paths
-from .widgetutils import RenderNeeded, RectUpdateNeeded, add_widget
+from data.core.utils import CustomTypes
+from .widgetutils import RenderNeeded, AlignmentNeeded, WidgetBase
 
-text_rect_alignments = Literal['right', 'left', 'center', 'justified']
-"""Stores the alignment type hints for the bounding rect in the `WrappedText` class."""
-
+text_rect_alignments: Type[str] = Literal['right', 'left', 'center', 'justified']
 default_font_dir: str = font_paths('editundo')
-"""Stores the directory to the default font to use if no font is passed in."""
 
 
-class Text:
+class Text(WidgetBase):
     """Class for creating and displaying text on a surface.
 
     Aligns and renders text using `self._align_rect` and `self._render_text`:
@@ -58,13 +61,10 @@ class Text:
         surface: The surface that the text should be rendered to. Defaults
             to `None` to use the current display surface.
     """
-    x = RectUpdateNeeded()
-    y = RectUpdateNeeded()
     text = RenderNeeded()
     font = RenderNeeded()
     font_size = RenderNeeded()
     color = RenderNeeded()
-    align = RectUpdateNeeded()
 
     def __init__(self, position: tuple[int, int], text: str,
                  font: Optional[pygame.freetype.Font] = None,
@@ -73,23 +73,22 @@ class Text:
                  align: CustomTypes.rect_alignments = 'topleft',
                  antialias: bool = False,
                  surface: Optional[pygame.Surface] = None):
+        super().__init__(position, align, surface)
+
         if (font is not None and font_size != 32) and not \
                 isinstance(font, (pygame.freetype.Font, pygame.font.Font)):
             warnings.warn("font_size parameter passed when default font not "
                           "used.")
-        self._x, self._y = position
+
         self._text = text
         self._font = font if font is not None \
             else pygame.freetype.Font(default_font_dir)
         self._font_size = font_size
         self._color = color
-        self._align = align
         self._antialias = antialias
-        self.surface = surface if surface is not None else pygame.display.get_surface()
         self._text_surface, self._rect = self._render_text(self._text, self._color)
         self._align_rect(self._rect, self._align, (self._x, self._y))
-        self._requires_render, self._requires_rect_update = False, False
-        add_widget(self)
+        self._requires_rerender = False
 
     @property
     def antialias(self) -> bool:
@@ -106,23 +105,25 @@ class Text:
         """The rect object of the text."""
         return self._rect
 
+    @override
     def blit(self):
         """Draws the text onto the surface."""
         self.surface.blit(self._text_surface, self._rect)
 
+    @override
     def update(self):
         """Rerenders the text surface and updates the position of the rect."""
-        if self._requires_render:
+        if self._requires_rerender:
             self._text_surface, self._rect = self._render_text(self._text, self._color)
-        if self._requires_rect_update:
+        if self._requires_realignment:
             self._align_rect(self._rect, self._align, self._coords)
 
     def _render_text(self, text, color):
-        self._requires_render = False
+        self._requires_rerender = False
         return self._font.render(text, color, size=self.font_size)
 
     def _align_rect(self, rect, align, position):
-        self._requires_rect_update = False
+        self._requires_realignment = False
         setattr(rect, align, position)
         self._coords = self._x, self._y = getattr(rect, align)
 
@@ -165,11 +166,11 @@ class WrappedText:
         surface: The surface that the text should be rendered to. Defaults
             to the current display surface: `pygame.display.get_surface`.
     """
-    rect = RectUpdateNeeded()
+    rect = AlignmentNeeded()
     text = RenderNeeded()
     font = RenderNeeded()
     color = RenderNeeded()
-    align = RectUpdateNeeded()
+    align = AlignmentNeeded()
     line_spacing = RenderNeeded()
 
     def __init__(self, rect: pygame.Rect, text: str,
@@ -195,7 +196,7 @@ class WrappedText:
         self._line_list = [[]]
         self._align_rect(self._rect, self._align, self._rect.topleft)
         self._render_text(antialias, color)
-        self._requires_render, self._requires_rect_update = False, False
+        self._requires_render, self._requires_realignment = False, False
 
     @property
     def antialias(self) -> bool:
@@ -246,7 +247,7 @@ class WrappedText:
         """Rerenders the text surface and updates the position of the rect."""
         if self._requires_render:
             self._render_text(self._text, self._color)
-        if self._requires_rect_update:
+        if self._requires_realignment:
             self._align_rect(self._rect, self._align, self._rect.topleft)
 
     def _render_text(self, aa, col):
