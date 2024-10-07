@@ -11,7 +11,7 @@ from pygame import freetype
 
 from data.core.utils import CustomTypes
 from data.core.prepare import font_paths
-from .widgetutils import RenderNeeded, RectUpdateNeeded
+from .widgetutils import RenderNeeded, RectUpdateNeeded, add_widget
 
 text_rect_alignments = Literal['right', 'left', 'center', 'justified']
 """Stores the alignment type hints for the bounding rect in the `WrappedText` class."""
@@ -89,7 +89,7 @@ class Text:
         self._text_surface, self._rect = self._render_text(self._text, self._color)
         self._align_rect(self._rect, self._align, (self._x, self._y))
         self._requires_render, self._requires_rect_update = False, False
-        widgetutils.add_widget(self)
+        add_widget(self)
 
     @property
     def antialias(self) -> bool:

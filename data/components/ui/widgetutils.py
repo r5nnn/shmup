@@ -19,8 +19,9 @@ from typing import override, Type
 
 import pygame
 
-from data.components import inputmanager, inputbinder
+from data.components import inputmanager
 from data.core.utils import CustomTypes, Validator
+from data.components.ui import Text
 
 
 # Implementation of an insertion-ordered set. Necessary to keep track of the
@@ -125,7 +126,8 @@ def update() -> None:
         if widget.contains(*inputmanager.get_mouse_pos()):
             blocked = True
 
-def add_widget(widget: Type[BaseWidget]) -> None:
+
+def add_widget(widget: Type[BaseWidget] | Text) -> None:
     """Adds the widget given to an centralised ordered set of widgets.
 
     Widgets must be added so that all the other functions relating to the
@@ -138,7 +140,8 @@ def add_widget(widget: Type[BaseWidget]) -> None:
         _widgets.add(widget)
         move_to_top(widget)
 
-def remove_widget(widget: Type[BaseWidget]) -> None:
+
+def remove_widget(widget: Type[BaseWidget] | Text) -> None:
     """Removes the widget given from the ordered set of widgets.
 
     Args:
@@ -152,7 +155,8 @@ def remove_widget(widget: Type[BaseWidget]) -> None:
         print(f'Error: Tried to remove {widget} when {widget} '
               f'not in the set.')
 
-def move_to_top(widget: Type[BaseWidget]) -> None:
+
+def move_to_top(widget: Type[BaseWidget] | Text) -> None:
     """Moves the widget given to the top of the ordered set of widgets.
 
     Args:
@@ -166,7 +170,8 @@ def move_to_top(widget: Type[BaseWidget]) -> None:
         print(f'Error: Tried to move {widget} to top when {widget} '
               f'not in WidgetHandler.')
 
-def move_to_bottom(widget: Type[BaseWidget]) -> None:
+
+def move_to_bottom(widget: Type[BaseWidget] | Text) -> None:
     """Moves the widget given to the bottom of the ordered set of widgets.
 
     Args:
@@ -180,6 +185,7 @@ def move_to_bottom(widget: Type[BaseWidget]) -> None:
         print(f'Error: Tried to move {widget} to bottom when {widget} '
               f'not in WidgetHandler.')
 
+
 def update_screen(screen: pygame.Surface) -> None:
     """Updates the surface value for all of the widgets in the widget set.
 
@@ -188,6 +194,7 @@ def update_screen(screen: pygame.Surface) -> None:
     """
     for widget in _widgets:
         widget.surface = screen
+
 
 def get_widgets() -> _OrderedWeakset[weakref.ref]:
     """Getter function for the insertion-ordered set of widgets.

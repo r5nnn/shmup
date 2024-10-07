@@ -16,7 +16,7 @@ from data.components.audio import button_audio
 from data.core.utils import CustomTypes
 from data.core.utils import Mouse
 from .text import Text
-from .widgetutils import BaseWidget
+from .widgetutils import WidgetBase
 
 
 @dataclass
@@ -46,8 +46,6 @@ class _ButtonBase(WidgetBase, ABC):
             when default, hovered or clicked.
         border_colors: Dictionary of colors that correspond to the state of the
             button border when default, hovered or clicked.
-        rect: The base rectangle of the button.
-        
     """
     def __init__(self, config: _ButtonConfig):
         WidgetBase.__init__(self, config.position, config.size, config.align)
@@ -242,7 +240,7 @@ class TextButton(_ButtonBase):
             elif self.text_align[1] == 'bottom':
                 self.text_rect.bottom = self._rect.bottom - self.margin
 
-        surface.coords = self.text_rect.left, self.text_rect.top
+        surface.x, surface.y = self.text_rect.left, self.text_rect.top
 
     @override
     def on_click(self):

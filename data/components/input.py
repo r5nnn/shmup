@@ -1,5 +1,6 @@
 """Module for getting and handling all forms of user input.
 Also allows for custom userevents to be detected."""
+
 from typing import Callable, override
 
 import pygame
