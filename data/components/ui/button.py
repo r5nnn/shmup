@@ -6,13 +6,13 @@ button itself. In this case pixel-perfect collision can also be used.
 Buttons can be hovered and interacted with. An attribute of the button can
 change or an action can be executed when the button is pressed down or released."""
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Callable, override, Optional
 
 import pygame.display
 
 from data.components.audio import button_audio
+from data.components.input import inputmanager
 from data.core.utils import CustomTypes
 from data.core.utils import Mouse
 from .text import Text
@@ -32,12 +32,13 @@ class _ButtonConfig:
     on_release: Callable = lambda *args: None
     click_audio: Optional[str] = 'click'
     release_audio: Optional[str] = 'click'
+    surface: Optional[pygame.Surface] = None
 
 
-class _ButtonBase(WidgetBase, ABC):
+class _ButtonBase(WidgetBase):
     """Base class for creating buttons.
 
-    Includes the buttons base rectangle and input detection, but no label.
+    Includes the button base rectangle and input detection, but no label.
     Rectangle can change color depending on the status of the button (default,
     hovered or clicked).
 
@@ -47,8 +48,11 @@ class _ButtonBase(WidgetBase, ABC):
         border_colors: Dictionary of colors that correspond to the state of the
             button border when default, hovered or clicked.
     """
+
     def __init__(self, config: _ButtonConfig):
-        WidgetBase.__init__(self, config.position, config.size, config.align)
+        WidgetBase.__init__(self, config.position, config.align, config.surface)
+        self._width, self._height = config.size
+        self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self.colors = config.colors
         self._color = self.colors['default'] if self.colors is not None else None
         self.border_colors = config.border_colors
@@ -67,7 +71,13 @@ class _ButtonBase(WidgetBase, ABC):
         self.clicked = False
 
     @property
-    def width(self):
+    def rect(self) -> pygame.Rect:
+        """The base button rectangle."""
+        return self._rect
+
+    @property
+    def width(self) -> int:
+        """The width of the button base rectangle."""
         return self._width
 
     @width.setter
@@ -79,7 +89,8 @@ class _ButtonBase(WidgetBase, ABC):
         self._align_rect(self._rect, self._align, self._coords)
 
     @property
-    def height(self):
+    def height(self) -> int:
+        """The height of the button base rectangle."""
         return self._height
 
     @height.setter
@@ -91,34 +102,33 @@ class _ButtonBase(WidgetBase, ABC):
         self._align_rect(self._rect, self._align, self._coords)
 
     @property
-    def color(self):
-        return self._color
-
-    @property
-    def border_color(self):
-        return self._border_color
-
-    @property
-    def border_thickness(self):
+    def border_thickness(self) -> int:
+        """The thickness of the border around the button rectangle, in pixels."""
         return self._border_thickness
 
     @border_thickness.setter
     def border_thickness(self, value):
         self._border_thickness = value
-        self._border_rect.size = (self._width - self._border_thickness * 2, self._height - self._border_thickness * 2)
-        self._border_rect.topleft = (self._rect.left + self._border_thickness, self._rect.top + self._border_thickness)
+        self._border_rect.size = (self._width - self._border_thickness * 2,
+                                  self._height - self._border_thickness * 2)
+        self._border_rect.topleft = (self._rect.left + self._border_thickness,
+                                     self._rect.top + self._border_thickness)
 
     def _align_rect(self, rect, align, coords):
         setattr(rect, align, coords)
         self._coords = self._x, self._y = getattr(rect, align)
 
-    def contains(self, x, y):
+    def contains(self, x: int, y: int) -> bool:
         """Basic collision detection for the button rectangle."""
-        return (self._rect.left < x - self.surface.get_abs_offset()[0] < self._rect.left + self._width) and (
-                self._rect.top < y - self.surface.get_abs_offset()[1] < self._rect.top + self._height)
+        return (self._rect.left < x - self.surface.get_abs_offset()[0] <
+                self._rect.left + self._width) and \
+               (self._rect.top < y - self.surface.get_abs_offset()[1] <
+                self._rect.top + self._height)
 
-    @abstractmethod
-    def on_click(self):
+    def on_click(self) -> None:
+        """Method that is called when the button is clicked.
+
+        Plays audio if set, updates the color and border colors."""
         self.clicked = True
         if self.click_audio_tag is not None:
             button_audio.play_audio(self.click_audio_tag, override=True)
@@ -127,36 +137,43 @@ class _ButtonBase(WidgetBase, ABC):
         if self.border_colors is not None:
             self._border_color = self.border_colors.get('clicked')
 
-    def on_release(self):
+    def on_release(self) -> None:
+        """Method that is called when the button is released.
+
+        Plays audio if set."""
         self.clicked = False
         if self.release_audio_tag is not None:
             button_audio.play_audio(self.release_audio_tag, override=True)
 
-    @abstractmethod
-    def on_hover(self):
+    def on_hover(self) -> None:
+        """Method that is called when the button is hovered.
+
+        Updates the color and border colors."""
         if self.colors is not None:
             self._color = self.colors['hovered']
         if self.border_colors is not None:
             self._border_color = self.border_colors.get('hovered')
 
-    @abstractmethod
     def on_idle(self):
+        """Method that is called when the button is idle (i.e. not clicked or hovered)
+
+        Updates the color and border colors."""
         self.clicked = False
         if self.colors is not None:
-            self._color = self.colors['inactive']
+            self._color = self.colors['default']
         if self.border_colors is not None:
-            self._border_color = self.border_colors.get('inactive')
+            self._border_color = self.border_colors.get('default')
 
-    @abstractmethod
+    @override
     def update(self):
-        x, y = self._input_manager.get_mouse_pos()
+        x, y = inputmanager.get_mouse_pos()
         if self.contains(x, y):
             # button is released
-            if self._input_manager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
+            if inputmanager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
                 self.on_release()
                 self.on_release_call()
             # button is clicked
-            elif self._input_manager.is_mouse_down(Mouse.LEFTCLICK):
+            elif inputmanager.is_mouse_down(Mouse.LEFTCLICK):
                 self.on_click()
                 self.on_click_call()
             # button hovered
@@ -166,11 +183,14 @@ class _ButtonBase(WidgetBase, ABC):
         else:
             self.on_idle()
 
+    @override
     def blit(self):
         if self.border_colors is not None:
-            pygame.draw.rect(self.surface, self.border_color, self._border_rect, border_radius=self.radius)
+            pygame.draw.rect(self.surface, self._border_color,
+                             self._border_rect, border_radius=self.radius)
         if self.colors is not None:
-            pygame.draw.rect(self.surface, self.color, self._rect, border_radius=self.radius)
+            pygame.draw.rect(self.surface, self._color,
+                             self._rect, border_radius=self.radius)
 
 
 @dataclass(kw_only=True)
