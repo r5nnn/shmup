@@ -42,7 +42,12 @@ class _ButtonBase(WidgetBase, ABC):
     hovered or clicked).
 
     Attributes:
-
+        colors: Dictionary of colors that correspond to the state of the button
+            when default, hovered or clicked.
+        border_colors: Dictionary of colors that correspond to the state of the
+            button border when default, hovered or clicked.
+        rect: The base rectangle of the button.
+        
     """
     def __init__(self, config: _ButtonConfig):
         WidgetBase.__init__(self, config.position, config.size, config.align)
