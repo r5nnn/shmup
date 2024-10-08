@@ -21,6 +21,33 @@ from .widgetutils import WidgetBase
 
 @dataclass
 class _ButtonConfig:
+    """Dataclass containing arguments to be passed to the `_ButtonBase` class.
+    
+    Args:
+        position: The position of the widget with reference to the `align`
+            argument passed.
+        size: The width and height of the button rect.
+        align: The point of the widget that the `position` argument is
+            referencing. Defaults to `'topleft'`.
+        colors: A dict of the colors that correspond to the state of the
+            button when default, hovered or clicked. Defaults to `None`
+            to not display the rect.        
+        border_colors: A dict of the colors that correspond to the state
+            of the button border when default, hovered or clicked.
+            Defaults to `None` to not display the border rect.
+        border_thickness: The thickness of the border. Defaults to `0`.
+        radius: The curvature of the corners of the button rect. Defaults
+            to `0`.
+        on_click: The action to call when the button is clicked. Defaults to
+            `lambda *args: None` to not have an action.
+        on_release: The action to call when the button is released. Defaults to
+            `lambda *args: None` to not have an action.
+        click_audio: The tag of the audio to play when the button is clicked.
+            Defaults to `'click'`.
+        release_audio: The tag of the audio to play when the button is released.
+            Defaults to `'click'`.
+        surface: The surface that the widget should be rendered to. Defaults
+            to `None` to use the current display surface."""
     position: tuple[int, int]
     size: tuple[int, int]
     align: CustomTypes.rect_alignments = 'topleft'
@@ -47,6 +74,9 @@ class _ButtonBase(WidgetBase):
             when default, hovered or clicked.
         border_colors: Dictionary of colors that correspond to the state of the
             button border when default, hovered or clicked.
+
+    Args:
+        config: A `_ButtonConfig` class containing the properties of the button. 
     """
 
     def __init__(self, config: _ButtonConfig):
