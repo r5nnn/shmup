@@ -1,0 +1,1 @@
+"""Package containing all the games source code."""
