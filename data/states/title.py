@@ -6,8 +6,8 @@ import pygame
 from data.core.prepare import image_paths, audio_paths, sprites
 from .state import State
 from ..components.audio import background_audio, button_audio
-from ..components.ui import widgetutils
-from ..components.ui.button import ButtonImage
+from ..components.ui import widgethandler
+from ..components.ui.button import ImageButton, ImageButtonConfig
 
 
 class Title(State):
@@ -23,19 +23,29 @@ class Title(State):
 
         background_audio.add_audio(audio_paths('menuloop rmx'))
 
-        self.play = ButtonImage(pygame.Rect(self._screen_size[0] * 0.6, self._screen_size[1] * 0.35, 0, 0),
-                                tuple(pygame.transform.scale_by(images, 3) for images in sprites('play').values()))
+        play_config = ImageButtonConfig(
+            position=(self._screen_size[0] * 0.6, self._screen_size[1] * 0.35),
+            size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
+                                      for images in sprites('play').values()))
+        self.play = ImageButton(play_config)
+        editor_config = ImageButtonConfig(
+            position=(self._screen_size[0] * 0.6, self._screen_size[1] * 0.475),
+            size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
+                                      for images in sprites('editor').values()))
+        self.editor = ImageButton(editor_config)
+        options_config = ImageButtonConfig(
+            position=(self._screen_size[0] * 0.6, self._screen_size[1] * 0.6),
+            size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
+                                      for images in sprites('options').values()),
+            on_click=lambda: self.state_manager.append("options"))
+        self.options = ImageButton(options_config)
 
-        self.editor = ButtonImage(pygame.Rect(self._screen_size[0] * 0.6, self._screen_size[1] * 0.475, 0, 0),
-                                  tuple(pygame.transform.scale_by(images, 3) for images in sprites('editor').values()))
-
-        self.options = ButtonImage(pygame.Rect(self._screen_size[0] * 0.6, self._screen_size[1] * 0.6, 0, 0), tuple(
-            pygame.transform.scale_by(images, 3) for images in sprites('options').values()),
-                                   on_click=lambda: self.state_manager.append("options"))
-
-        self.quit = ButtonImage(pygame.Rect(self._screen_size[0] * 0.6, self._screen_size[1] * 0.725, 0, 0),
-                                tuple(pygame.transform.scale_by(images, 3) for images in sprites('quit').values()),
-                                on_click=self.state_manager.quit)
+        quit_config = ImageButtonConfig(
+            position=(self._screen_size[0] * 0.6, self._screen_size[1] * 0.725),
+            size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
+                                      for images in sprites('quit').values()),
+            on_click=self.state_manager.quit)
+        self.quit = ImageButton(quit_config)
 
         for widget in [self.play, self.editor, self.options, self.quit]:
             widgethandler.add_widget(widget)

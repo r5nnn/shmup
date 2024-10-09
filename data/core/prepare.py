@@ -11,6 +11,8 @@ pygame.init()
 pygame.display.set_caption("shmup")
 pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN | pygame.SCALED)
 
+sources_root = os.path.abspath('..')
+
 def parse_spritesheet(sprite_sheet: str) -> dict[str, pygame.Surface]:
     """Parses a spritesheet using its associated json file.
 
@@ -47,7 +49,6 @@ class Load:
     def __init__(self, directory: str, *accept: str, exclude_dirs: list[str] = None):
         self.files = {}
         self.exclude_dirs = exclude_dirs if exclude_dirs else []
-
         for path, dirs, files in os.walk(directory):
             if any(excluded in os.path.relpath(path, directory) for excluded in
                    self.exclude_dirs):
@@ -83,8 +84,7 @@ class LoadSprites:
         """Returns a dictionary of file names pointing to their directories."""
         return self.files[name]
 
-
-image_paths = Load(os.path.join('resources', 'graphics'), '.png')
-audio_paths = Load(os.path.join('resources', 'audio'), '.wav')
-font_paths = Load(os.path.join('resources', 'fonts'), '.ttf')
-sprites = LoadSprites(os.path.join('resources', 'graphics'))
+image_paths = Load(os.path.join(sources_root, 'resources', 'graphics'), '.png')
+audio_paths = Load(os.path.join(sources_root, 'resources', 'audio'), '.wav')
+font_paths = Load(os.path.join(sources_root, 'resources', 'fonts'), '.ttf')
+sprites = LoadSprites(os.path.join(sources_root, 'resources', 'graphics'))

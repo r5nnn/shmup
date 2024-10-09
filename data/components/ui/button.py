@@ -225,7 +225,6 @@ class _ButtonBase(WidgetBase):
 
 @dataclass(kw_only=True)
 class TextButtonConfig(_ButtonConfig):
-    super().__init__()
     text: str
     text_colors: Optional[dict[str, tuple[int, ...]]] = None
     font: Optional[pygame.font.Font] = None
@@ -317,19 +316,25 @@ class TextButton(_ButtonBase):
         self._text.blit()
 
 
-class ButtonImage(_ButtonBase):
-    def __init__(self, rect: pygame.Rect, images: tuple, use_rect_collision: bool = False,
-                 image_align: tuple[str, str] = (), **kwargs):
+@dataclass(kw_only=True)
+class ImageButtonConfig(_ButtonConfig):
+    images: tuple
+    use_rect_collisions: bool = False
+    image_align: tuple[str, str] = ()
+
+
+class ImageButton(_ButtonBase):
+    def __init__(self, config: ImageButtonConfig):
         """
         Button class that includes image rendering and allows for toggling
         between rect-based and pixel-perfect collision detection.
         """
-        super().__init__(rect, **kwargs)
+        super().__init__(config)
 
-        self.images = images
+        self.images = config.images
         self._current_image = self.images[0]
-        self.use_rect_collision = use_rect_collision
-        self.image_align = image_align
+        self.use_rect_collision = config.use_rect_collisions
+        self.image_align = config.image_align
 
         self._align_image()
 

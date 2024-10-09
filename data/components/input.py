@@ -31,8 +31,9 @@ class InputManager(metaclass=Singleton):
         
         Clears keydown and keyup events, iterates through and updates the
         input lists as necessary.
-        
-        :param events: `pygame.event.get()` should be passed in every game tick.
+
+        Args:
+            events: `pygame.event.get()` should be passed in every game tick.
         """
         self._keydown_events.clear()
         self._keyup_events.clear()

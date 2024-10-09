@@ -11,7 +11,7 @@ from typing import override, TYPE_CHECKING
 
 import pygame
 
-from data.components import inputmanager
+from data.components.input import inputmanager
 
 if TYPE_CHECKING:
     from data.components.ui.widgetutils import WidgetBase
