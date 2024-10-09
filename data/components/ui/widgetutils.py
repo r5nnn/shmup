@@ -18,14 +18,14 @@ from data.components.ui import widgethandler
 
 
 class AlignmentNeeded(Validator):
-    """Decorator that updates the `_requires_alignment` property to `True`."""
+    """Used when properties changed require a realignment of the widget."""
     @override
     def _validate(self, instance, value):
         instance._requires_realignment = True
 
 
 class RenderNeeded(AlignmentNeeded):
-    """Decorator that updates the `_requires_render` property to `True`."""
+    """Used when properties changed require a rerender of the widget."""
     @override
     def _validate(self, instance, value):
         super()._validate(instance, value)
@@ -34,33 +34,15 @@ class RenderNeeded(AlignmentNeeded):
 
 class WidgetBase(ABC):
     """Base class for widgets.
-    
-    Automatically adds itself to the widget hanlder. 
-    
-    Attributes:
-        x: The x coordinate of the widget with reference to the alignment
-            (given by `self.align`). Aligns the widget when changed.
-        y: The y coordinate of the widget with reference to the alignment
-            (given by `self.align`). Aligns the widget when changed.
-        align: Alignment of the rect coordinates. Aligns the widget when
-            changed.
-        surface: The surface which the widget will be displayed on.
-        is_sub_widget: Boolean indicating if the widget is a subwidget.
 
-            A subwidget is ignored by all widgethandler methods (that would
-            usually affect all widgets). `True` indicates the widget is a sub
-            widget.
-
-    Args:
-        position: The position of the widget with reference to the `align`
+    :param position: The position of the widget with reference to the `align`
             argument passed.
-        align: The point of the widget that the `position` argument is
-            referencing. Defaults to `'topleft'`.
-        surface: The surface that the widget should be rendered to. Defaults
+    :param align: The point of the widget that the `position` argument is
+            referencing.
+    :param surface: The surface that the widget should be rendered to. Defaults
             to `None` to use the current display surface.
-        sub_widget: Whether the widget being made is part of another parent
-            widget. If it is, it will not be added to the widget handler.
-            Defaults to `False`."""
+    :param sub_widget: Whether the widget being made is part of another parent
+            widget. If it is, it will not be added to the widget handler."""
     x = AlignmentNeeded()
     y = AlignmentNeeded()
     align = AlignmentNeeded()
@@ -107,5 +89,6 @@ class WidgetBase(ABC):
         self._disabled = True
 
     def enable(self) -> None:
-        """Enables the widget to recieve user input (if it was disabled previously)."""
+        """Enables the widget to recieve user input (if it was disabled
+        previously)."""
         self._disabled = False

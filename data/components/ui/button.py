@@ -4,8 +4,8 @@ Buttons consist of a base rectangle with a label on top. The label can be text
 or an image. The base rectangle can be hidden to use the image label as the
 button itself. In this case pixel-perfect collision can also be used.
 Buttons can be hovered and interacted with. An attribute of the button can
-change or an action can be executed when the button is pressed down or released."""
-
+change or an action can be executed when the button is pressed down or released.
+"""
 from dataclasses import dataclass
 from typing import Callable, override, Optional
 
@@ -20,34 +20,34 @@ from .widgetutils import WidgetBase
 
 
 @dataclass
-class _ButtonConfig:
-    """Dataclass containing arguments to be passed to the `_ButtonBase` class.
-    
-    Args:
-        position: The position of the widget with reference to the `align`
+class ButtonConfig:
+    """Dataclass containing arguments to be passed to the `ButtonBase` class.
+
+    :param position: The position of the widget with reference to the `align`
             argument passed.
-        size: The width and height of the button rect.
-        align: The point of the widget that the `position` argument is
+    :param size: The width and height of the button rect.
+    :param align: The point of the widget that the `position` argument is
             referencing. Defaults to `'topleft'`.
-        colors: A dict of the colors that correspond to the state of the
+    :param colors: A dict of the colors that correspond to the state of the
             button when default, hovered or clicked. Defaults to `None`
-            to not display the rect.        
-        border_colors: A dict of the colors that correspond to the state
+            to not display the rect.
+    :param border_colors: A dict of the colors that correspond to the state
             of the button border when default, hovered or clicked.
             Defaults to `None` to not display the border rect.
-        border_thickness: The thickness of the border. Defaults to `0`.
-        radius: The curvature of the corners of the button rect. Defaults
+    :param border_thickness: The thickness of the border. Defaults to `0`.
+    :param radius: The curvature of the corners of the button rect. Defaults
             to `0`.
-        on_click: The action to call when the button is clicked. Defaults to
+    :param on_click: The action to call when the button is clicked. Defaults to
             `lambda *args: None` to not have an action.
-        on_release: The action to call when the button is released. Defaults to
+    :param on_release: The action to call when the button is released. Defaults to
             `lambda *args: None` to not have an action.
-        click_audio: The tag of the audio to play when the button is clicked.
+    :param click_audio: The tag of the audio to play when the button is clicked.
             Defaults to `'click'`.
-        release_audio: The tag of the audio to play when the button is released.
+    :param release_audio: The tag of the audio to play when the button is released.
             Defaults to `'click'`.
-        surface: The surface that the widget should be rendered to. Defaults
-            to `None` to use the current display surface."""
+    :param surface: The surface that the widget should be rendered to. Defaults
+            to `None` to use the current display surface.
+    """
     position: tuple[int, int]
     size: tuple[int, int]
     align: CustomTypes.rect_alignments = 'topleft'
@@ -62,24 +62,10 @@ class _ButtonConfig:
     surface: Optional[pygame.Surface] = None
 
 
-class _ButtonBase(WidgetBase):
-    """Base class for creating buttons.
+class ButtonBase(WidgetBase):
+    """Base class for creating buttons."""
 
-    Includes the button base rectangle and input detection, but no label.
-    Rectangle can change color depending on the status of the button (default,
-    hovered or clicked).
-
-    Attributes:
-        colors: Dictionary of colors that correspond to the state of the button
-            when default, hovered or clicked.
-        border_colors: Dictionary of colors that correspond to the state of the
-            button border when default, hovered or clicked.
-
-    Args:
-        config: A `_ButtonConfig` class containing the properties of the button. 
-    """
-
-    def __init__(self, config: _ButtonConfig):
+    def __init__(self, config: ButtonConfig):
         WidgetBase.__init__(self, config.position, config.align, config.surface)
         self._width, self._height = config.size
         self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
@@ -102,12 +88,10 @@ class _ButtonBase(WidgetBase):
 
     @property
     def rect(self) -> pygame.Rect:
-        """The base button rectangle."""
         return self._rect
 
     @property
     def width(self) -> int:
-        """The width of the button base rectangle."""
         return self._width
 
     @width.setter
@@ -120,7 +104,6 @@ class _ButtonBase(WidgetBase):
 
     @property
     def height(self) -> int:
-        """The height of the button base rectangle."""
         return self._height
 
     @height.setter
@@ -133,7 +116,7 @@ class _ButtonBase(WidgetBase):
 
     @property
     def border_thickness(self) -> int:
-        """The thickness of the border around the button rectangle, in pixels."""
+        """How wide the border should be, in pixels."""
         return self._border_thickness
 
     @border_thickness.setter
@@ -149,16 +132,15 @@ class _ButtonBase(WidgetBase):
         self._coords = self._x, self._y = getattr(rect, align)
 
     def contains(self, x: int, y: int) -> bool:
-        """Basic collision detection for the button rectangle."""
+        """Used to check if a point (usually position of the mouse) is inside
+        the button."""
         return (self._rect.left < x - self.surface.get_abs_offset()[0] <
                 self._rect.left + self._width) and \
                (self._rect.top < y - self.surface.get_abs_offset()[1] <
                 self._rect.top + self._height)
 
     def on_click(self) -> None:
-        """Method that is called when the button is clicked.
-
-        Plays audio if set, updates the color and border colors."""
+        """Method that is called when the button is clicked."""
         self.clicked = True
         if self.click_audio_tag is not None:
             button_audio.play_audio(self.click_audio_tag, override=True)
@@ -168,26 +150,21 @@ class _ButtonBase(WidgetBase):
             self._border_color = self.border_colors.get('clicked')
 
     def on_release(self) -> None:
-        """Method that is called when the button is released.
-
-        Plays audio if set."""
+        """Method that is called when the button is released."""
         self.clicked = False
         if self.release_audio_tag is not None:
             button_audio.play_audio(self.release_audio_tag, override=True)
 
     def on_hover(self) -> None:
-        """Method that is called when the button is hovered.
-
-        Updates the color and border colors."""
+        """Method that is called when the button is hovered."""
         if self.colors is not None:
             self._color = self.colors['hovered']
         if self.border_colors is not None:
             self._border_color = self.border_colors.get('hovered')
 
     def on_idle(self):
-        """Method that is called when the button is idle (i.e. not clicked or hovered)
-
-        Updates the color and border colors."""
+        """Method that is called when the button is idle (i.e. not clicked or
+        hovered)"""
         self.clicked = False
         if self.colors is not None:
             self._color = self.colors['default']
@@ -224,7 +201,16 @@ class _ButtonBase(WidgetBase):
 
 
 @dataclass(kw_only=True)
-class TextButtonConfig(_ButtonConfig):
+class TextButtonConfig(ButtonConfig):
+    """Dataclass containing arguments to be passed to the `TextButton` class.
+
+    :param text_colors: A dict of the colors that correspond to the colors
+        of the button text when it is default, hovered or clicked.
+    :param text_align: Alignment of the text inside the button. Defaults
+        to `()` in order to use center alignment.
+    :param margin: The offset of the text in the button (when not using center
+        alignment)
+    """
     text: str
     text_colors: Optional[dict[str, tuple[int, ...]]] = None
     font: Optional[pygame.font.Font] = None
@@ -233,11 +219,11 @@ class TextButtonConfig(_ButtonConfig):
     margin: int = 20
 
 
-class TextButton(_ButtonBase):
+class TextButton(ButtonBase):
     """Class for creating buttons with text labels."""
+
     def __init__(self, config: TextButtonConfig):
         super().__init__(super(TextButtonConfig, config))
-
         self.text_colors = config.text_colors \
             if config.text_colors is not None else {
                 'default': (255, 255, 255),
@@ -245,14 +231,10 @@ class TextButton(_ButtonBase):
                 'clicked': (255, 255, 255)
             }
         self._text_color = self.text_colors['default']
-
-        # Text instance
         self._text = Text((0, 0), config.text, config.font, config.font_size,
                           color=self._text_color)
         self.text_align = config.text_align
         self.margin = config.margin
-
-        # Align the text inside the button's rect
         self._align_text(self._text)
 
     @property
@@ -274,7 +256,6 @@ class TextButton(_ButtonBase):
         self._align_text(self._text) if self._text is not None else None
 
     def _align_text(self, surface):
-        """Aligns the text relative to the button rect."""
         self.text_rect = surface.rect
         self.text_rect.center = self._rect.center
 
@@ -283,7 +264,6 @@ class TextButton(_ButtonBase):
                 self.text_rect.left = self._rect.left + self.margin
             elif self.text_align[0] == 'right':
                 self.text_rect.right = self._rect.right - self.margin
-
             if self.text_align[1] == 'top':
                 self.text_rect.top = self._rect.top + self.margin
             elif self.text_align[1] == 'bottom':
@@ -310,6 +290,7 @@ class TextButton(_ButtonBase):
         super().update()
         self._text.update()
 
+    @override
     def blit(self):
         """Draw the button and its text onto the surface."""
         super().blit()
@@ -317,24 +298,35 @@ class TextButton(_ButtonBase):
 
 
 @dataclass(kw_only=True)
-class ImageButtonConfig(_ButtonConfig):
+class ImageButtonConfig(ButtonConfig):
+    """Dataclass containing arguments to be passed to the `ImageButton` class.
+    :param images: A tuple of images that correspond to the state of the button
+        when default, hovered or clicked.
+    :param use_rect_collisions: Whether to use the base rectangle for collision
+        or if `False` will use the image to perform pixel-perfect collision
+        checking.
+    :param image_align: The alignment of the image inside the button. Defaults
+        to `()` in order to use center alignment.
+    :param margin: The offset of the image in the button (when not using center
+        alignment)"""
     images: tuple
     use_rect_collisions: bool = False
     image_align: tuple[str, str] = ()
+    margin: int = 20
 
 
-class ImageButton(_ButtonBase):
+class ImageButton(ButtonBase):
+    """Button class that includes image rendering and allows for toggling
+    between rect-based and pixel-perfect collision detection."""
+
     def __init__(self, config: ImageButtonConfig):
-        """
-        Button class that includes image rendering and allows for toggling
-        between rect-based and pixel-perfect collision detection.
-        """
         super().__init__(config)
 
         self.images = config.images
         self._current_image = self.images[0]
         self.use_rect_collision = config.use_rect_collisions
         self.image_align = config.image_align
+        self.margin = config.margin
 
         self._align_image()
 
@@ -348,25 +340,22 @@ class ImageButton(_ButtonBase):
         self._align_image()
 
     def _align_image(self):
-        """Aligns the image relative to the button's rect."""
         self.image_rect = self._current_image.get_rect()
         self.image_rect.center = self._rect.center
 
         if len(self.image_align) == 2:
             if self.image_align[0] == 'left':
-                self.image_rect.left = self._rect.left
+                self.image_rect.left = self._rect.left + self.margin
             elif self.image_align[0] == 'right':
-                self.image_rect.right = self._rect.right
+                self.image_rect.right = self._rect.right - self.margin
 
             if self.image_align[1] == 'top':
-                self.image_rect.top = self._rect.top
+                self.image_rect.top = self._rect.top + self.margin
             elif self.image_align[1] == 'bottom':
-                self.image_rect.bottom = self._rect.bottom
+                self.image_rect.bottom = self._rect.bottom - self.margin
 
     @override
     def contains(self, x, y):
-        """Check if the mouse is over the image or rect, depending on collision
-        mode."""
         if self.use_rect_collision:
             return super().contains(x, y)  # Use rect-based collision
         else:
@@ -398,9 +387,9 @@ class ImageButton(_ButtonBase):
         """Updates the button based on mouse state."""
         super().update()
 
+    @override
     def blit(self):
-        """Draw the image onto the surface. Optionally draw the button rect if
-        using rect collision."""
+        """Optionally draw the button rect if using rect collision."""
         if self.use_rect_collision:
             pygame.draw.rect(self.surface, self._color, self._rect, border_radius=self.radius)
 

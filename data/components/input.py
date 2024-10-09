@@ -12,7 +12,6 @@ class InputManager(metaclass=Singleton):
     """Class that stores all the input states."""
 
     def __init__(self):
-        """Creates all the lists for storing inputs."""
         self._keydown_events = []
         self._keyup_events = []
         self._held_keys = []
@@ -24,16 +23,15 @@ class InputManager(metaclass=Singleton):
 
     @property
     def quit(self):
+        """ """
         return self._quit
 
     def process_events(self, events: list) -> None:
         """Process events from the pygame events list.
-        
         Clears keydown and keyup events, iterates through and updates the
         input lists as necessary.
 
-        Args:
-            events: `pygame.event.get()` should be passed in every game tick.
+        :param events: `pygame.event.get()` should be passed in every game tick.
         """
         self._keydown_events.clear()
         self._keyup_events.clear()
@@ -64,7 +62,8 @@ class InputManager(metaclass=Singleton):
         (only happens at the very beginning of the keypress).
 
         :param key: The key to check for.
-        :returns: True if key is being pressed down."""
+        :returns: `True` if key is being pressed down.
+        """
         return key in self._keydown_events
 
     def is_key_up(self, key: int) -> bool:
@@ -72,14 +71,16 @@ class InputManager(metaclass=Singleton):
         (only happens at the very end of the keypress).
 
         :param key: The key to check for.
-        :returns: True if key is being released."""
+        :returns: `True` if key is being released.
+        """
         return key in self._keyup_events
 
     def is_key_pressed(self, key: int) -> bool:
         """Checks if key is currently being held down.
-        
+
         :param key: The key to check for.
-        :returns: True if key is being held."""
+        :returns: `True` if key is being held.
+        """
         return key in self._held_keys
 
     def is_mouse_down(self, button: int) -> bool:
@@ -87,7 +88,8 @@ class InputManager(metaclass=Singleton):
         (only happens at the very beginning of the button press).
 
         :param button: The mousebutton to check for.
-        :returns: True if mousebutton is being pressed down."""
+        :returns: `True` if mousebutton is being pressed down.
+        """
         return button in self._mousedown_events
 
     def is_mouse_up(self, button: int) -> bool:
@@ -95,25 +97,29 @@ class InputManager(metaclass=Singleton):
         (only happens at the very end of the button press).
 
         :param button: The mousebutton to check for.
-        :returns: True if the mousebutton is being released."""
+        :returns: `True` if the mousebutton is being released.
+        """
         return button in self._mouseup_events
 
     def is_mouse_pressed(self, button: int) -> bool:
         """Checks if the mouse button is being held down.
 
         :param button: The mousebutton to check for.
-        :returns: True if button is being held down."""
+        :returns: `True` if button is being held down.
+        """
         return button in self._mouse_buttons
 
     def get_mouse_pos(self) -> tuple[int, int]:
         """Gets the position of the mouse.
 
-        :returns: The coordinates of the mouse."""
+        :returns: The coordinates of the mouse.
+        """
         return self._mouse_pos
 
 
 class InputBinder(Observer, metaclass=SingletonABCMeta):
-    """Class for binding inputs to execute callables via the observer algorithm."""
+    """Class for binding inputs to execute callables via the observer
+    algorithm."""
 
     def __init__(self):
         super().__init__()
