@@ -20,6 +20,14 @@ data.components.audio module
    :undoc-members:
    :show-inheritance:
 
+data.components.colors module
+-----------------------------
+
+.. automodule:: data.components.colors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 data.components.input module
 ----------------------------
 

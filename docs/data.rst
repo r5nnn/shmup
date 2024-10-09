@@ -8,34 +8,8 @@ Subpackages
    :maxdepth: 4
 
    data.components
+   data.core
    data.states
-
-Submodules
-----------
-
-data.control module
--------------------
-
-.. automodule:: data.control
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-data.main module
-----------------
-
-.. automodule:: data.main
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-data.utils module
------------------
-
-.. automodule:: data.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 Module contents
 ---------------

@@ -12,6 +12,14 @@ data.states.options module
    :undoc-members:
    :show-inheritance:
 
+data.states.state module
+------------------------
+
+.. automodule:: data.states.state
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 data.states.title module
 ------------------------
 

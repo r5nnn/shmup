@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
@@ -5,18 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>data.components.ui.widgethandler &mdash; Shmup 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=7ab3649f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=47de8214"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=47de8214"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -43,7 +41,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">new struct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">shmup</a></li>
 </ul>
 
         </div>
@@ -61,9 +59,6 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
-          <li class="breadcrumb-item"><a href="../../../data.html">data</a></li>
-          <li class="breadcrumb-item"><a href="../../components.html">data.components</a></li>
-          <li class="breadcrumb-item"><a href="../ui.html">data.components.ui</a></li>
       <li class="breadcrumb-item active">data.components.ui.widgethandler</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -74,30 +69,49 @@
            <div itemprop="articleBody">
              
   <h1>Source code for data.components.ui.widgethandler</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">weakref</span>
+<span></span><span class="sd">&quot;&quot;&quot;Module containing a set of functions that are used to interact with all</span>
+<span class="sd">widgets added to the handler at once from a centralized location.</span>
+
+<span class="sd">Attributes:</span>
+<span class="sd">    widgets: An insertion-ordered set of widgets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableSet</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">override</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">from</span> <span class="nn">data.components.input</span> <span class="kn">import</span> <span class="n">InputManager</span>
+<span class="kn">import</span> <span class="nn">pygame</span>
 
-<span class="c1"># Implementation of an insertion-ordered set. Necessary to keep track of the </span>
+<span class="kn">from</span> <span class="nn">data.components.input</span> <span class="kn">import</span> <span class="n">inputmanager</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">data.components.ui.widgetutils</span> <span class="kn">import</span> <span class="n">WidgetBase</span>
+
+
+<span class="c1"># Implementation of an insertion-ordered set. Necessary to keep track of the</span>
 <span class="c1"># order in which widgets are added.</span>
+<span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
 <span class="k">class</span> <span class="nc">_OrderedSet</span><span class="p">(</span><span class="n">MutableSet</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">()):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_od</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_od</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
+    <span class="nd">@override</span>
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_od</span><span class="p">)</span>
 
+    <span class="nd">@override</span>
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_od</span><span class="p">)</span>
 
+    <span class="nd">@override</span>
     <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_od</span>
 
+    <span class="nd">@override</span>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_od</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="nd">@override</span>
     <span class="k">def</span> <span class="nf">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_od</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
@@ -108,6 +122,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_od</span><span class="o">.</span><span class="n">move_to_end</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 
+<span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
 <span class="k">class</span> <span class="nc">_OrderedWeakset</span><span class="p">(</span><span class="n">weakref</span><span class="o">.</span><span class="n">WeakSet</span><span class="p">):</span>
     <span class="n">_remove</span> <span class="o">=</span> <span class="o">...</span>  <span class="c1"># Getting defined after the super().__init__() call</span>
 
@@ -125,89 +140,134 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">move_to_start</span><span class="p">(</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">))</span>
 
 
-<span class="n">_widgets</span><span class="p">:</span> <span class="n">_OrderedWeakset</span><span class="p">[</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">_OrderedWeakset</span><span class="p">()</span>
-<span class="n">_input_manager</span> <span class="o">=</span> <span class="n">InputManager</span><span class="p">()</span>
+<span class="n">widgets</span><span class="p">:</span> <span class="n">_OrderedWeakset</span><span class="p">[</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">_OrderedWeakset</span><span class="p">()</span>
+
 
 <div class="viewcode-block" id="blit">
 <a class="viewcode-back" href="../../../../data.components.ui.html#data.components.ui.widgethandler.blit">[docs]</a>
-<span class="k">def</span> <span class="nf">blit</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">blit</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls all the widgets&#39; `blit()` methods to render them onto the screen.</span>
+
+<span class="sd">    Widgets are rendered in the order they were added. Must be called once</span>
+<span class="sd">    every game tick.&quot;&quot;&quot;</span>
     <span class="c1"># Conversion is used to prevent errors when widgets are added/removed</span>
     <span class="c1"># during iteration a.k.a safe iteration</span>
-    <span class="n">widgets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_widgets</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">widgets</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">widgets</span><span class="p">):</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">blit</span><span class="p">()</span></div>
+
 
 
 <div class="viewcode-block" id="update">
 <a class="viewcode-back" href="../../../../data.components.ui.html#data.components.ui.widgethandler.update">[docs]</a>
 <span class="k">def</span> <span class="nf">update</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">blocked</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls all the widgets&#39; `update()` methods. Update done varies by widget.</span>
 
+<span class="sd">    Widgets are updated in the order they were added. If widgets are</span>
+<span class="sd">    overlapping, only the topmost widget will be updated. Must be called once</span>
+<span class="sd">    every game tick.&quot;&quot;&quot;</span>
+    <span class="n">blocked</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="c1"># Conversion is used to prevent errors when widgets are added/removed</span>
     <span class="c1"># during iteration a.k.a safe iteration</span>
-    <span class="n">widgets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_widgets</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">widgets</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">blocked</span> <span class="ow">or</span> <span class="ow">not</span>
-            <span class="n">widget</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="o">*</span><span class="n">_input_manager</span><span class="o">.</span><span class="n">get_mouse_pos</span><span class="p">())):</span>
+    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">widgets</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">blocked</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">widget</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="o">*</span><span class="n">inputmanager</span><span class="o">.</span><span class="n">get_mouse_pos</span><span class="p">()):</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
         <span class="c1"># Ensure widgets covered by others are not affected</span>
         <span class="c1"># (widgets created later)</span>
-        <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="o">*</span><span class="n">_input_manager</span><span class="o">.</span><span class="n">get_mouse_pos</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="o">*</span><span class="n">inputmanager</span><span class="o">.</span><span class="n">get_mouse_pos</span><span class="p">()):</span>
             <span class="n">blocked</span> <span class="o">=</span> <span class="kc">True</span></div>
+
 
 
 <div class="viewcode-block" id="add_widget">
 <a class="viewcode-back" href="../../../../data.components.ui.html#data.components.ui.widgethandler.add_widget">[docs]</a>
-<span class="k">def</span> <span class="nf">add_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">widget</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_widgets</span><span class="p">:</span>
-        <span class="n">_widgets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">add_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">:</span> <span class="s2">&quot;WidgetBase&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the widget given to an centralised ordered set of widgets.</span>
+
+<span class="sd">    Widgets must be added so that all the other functions relating to the</span>
+<span class="sd">    widgets can work.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        widget: The widget to add to the set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">widget</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">widgets</span><span class="p">:</span>
+        <span class="n">widgets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
         <span class="n">move_to_top</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="remove_widget">
 <a class="viewcode-back" href="../../../../data.components.ui.html#data.components.ui.widgethandler.remove_widget">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">remove_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">:</span> <span class="s2">&quot;WidgetBase&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes the widget given from the ordered set of widgets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        widget: The widget to remove from the set.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the widget is not in the set.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">_widgets</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="n">widgets</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error: Tried to remove </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s1"> when </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s1"> &#39;</span>
-              <span class="sa">f</span><span class="s1">&#39;not in WidgetHandler.&#39;</span><span class="p">)</span></div>
+              <span class="sa">f</span><span class="s1">&#39;not in the set.&#39;</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="move_to_top">
 <a class="viewcode-back" href="../../../../data.components.ui.html#data.components.ui.widgethandler.move_to_top">[docs]</a>
-<span class="k">def</span> <span class="nf">move_to_top</span><span class="p">(</span><span class="n">widget</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">move_to_top</span><span class="p">(</span><span class="n">widget</span><span class="p">:</span> <span class="s2">&quot;WidgetBase&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Moves the widget given to the top of the ordered set of widgets.</span>
+
+<span class="sd">    A widget at the top will be rendered over all other widgets (if</span>
+<span class="sd">    they are overlapping) and will always recieve input even if if there</span>
+<span class="sd">    are other widgets below that should recieve input.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        widget: The widget to move to the top of the set.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        KeyError: If the widget is not in the set.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">_widgets</span><span class="o">.</span><span class="n">move_to_end</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="n">widgets</span><span class="o">.</span><span class="n">move_to_end</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error: Tried to move </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s1"> to top when </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s1"> &#39;</span>
               <span class="sa">f</span><span class="s1">&#39;not in WidgetHandler.&#39;</span><span class="p">)</span></div>
 
 
+
 <div class="viewcode-block" id="move_to_bottom">
 <a class="viewcode-back" href="../../../../data.components.ui.html#data.components.ui.widgethandler.move_to_bottom">[docs]</a>
-<span class="k">def</span> <span class="nf">move_to_bottom</span><span class="p">(</span><span class="n">widget</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">move_to_bottom</span><span class="p">(</span><span class="n">widget</span><span class="p">:</span> <span class="s2">&quot;WidgetBase&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Moves the widget given to the bottom of the ordered set of widgets.</span>
+
+<span class="sd">    A widget at the bottom will be rendered under all other widgets (if</span>
+<span class="sd">    they are overlapping) and will not recieve input if the overlapped part</span>
+<span class="sd">    is interacted with.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        widget: The widget to move to the bottom of the set.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        KeyError: If the widget is not in the set.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">_widgets</span><span class="o">.</span><span class="n">move_to_start</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="n">widgets</span><span class="o">.</span><span class="n">move_to_start</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error: Tried to move </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s1"> to bottom when </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s1"> &#39;</span>
               <span class="sa">f</span><span class="s1">&#39;not in WidgetHandler.&#39;</span><span class="p">)</span></div>
 
 
+
 <div class="viewcode-block" id="update_screen">
 <a class="viewcode-back" href="../../../../data.components.ui.html#data.components.ui.widgethandler.update_screen">[docs]</a>
-<span class="k">def</span> <span class="nf">update_screen</span><span class="p">(</span><span class="n">screen</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">_widgets</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">update_screen</span><span class="p">(</span><span class="n">screen</span><span class="p">:</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Updates the surface value for all of the widgets in the widget set.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        screen: The new surface that the widgets should render to.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">widgets</span><span class="p">:</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">surface</span> <span class="o">=</span> <span class="n">screen</span></div>
-
-
-<div class="viewcode-block" id="get_widgets">
-<a class="viewcode-back" href="../../../../data.components.ui.html#data.components.ui.widgethandler.get_widgets">[docs]</a>
-<span class="k">def</span> <span class="nf">get_widgets</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">_widgets</span></div>
 
 </pre></div>
 
@@ -218,7 +278,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Rene Tmnsv.</p>
+    <p>&#169; Copyright 2024, Rene Timantsev.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

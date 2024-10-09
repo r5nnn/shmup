@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -6,23 +8,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>data package &mdash; Shmup 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=7ab3649f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=47de8214"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=47de8214"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="data.components package" href="data.components.html" />
-    <link rel="prev" title="new struct" href="modules.html" /> 
+    <link rel="prev" title="shmup" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,31 +44,15 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">new struct</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">shmup</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">data package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="data.components.html">data.components package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html">data.core package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="data.states.html">data.states package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#data-control-module">data.control module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#data-main-module">data.main module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-data.utils">data.utils module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#data.utils.CustomTypes"><code class="docutils literal notranslate"><span class="pre">CustomTypes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#data.utils.Mouse"><code class="docutils literal notranslate"><span class="pre">Mouse</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#data.utils.Observer"><code class="docutils literal notranslate"><span class="pre">Observer</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#data.utils.Singleton"><code class="docutils literal notranslate"><span class="pre">Singleton</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#data.utils.SingletonABCMeta"><code class="docutils literal notranslate"><span class="pre">SingletonABCMeta</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#data.utils.Validator"><code class="docutils literal notranslate"><span class="pre">Validator</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-data">Module contents</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#data.Load"><code class="docutils literal notranslate"><span class="pre">Load</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#data.LoadSprites"><code class="docutils literal notranslate"><span class="pre">LoadSprites</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#data.parse_spritesheet"><code class="docutils literal notranslate"><span class="pre">parse_spritesheet()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-data">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="shmup.html">shmup module</a></li>
@@ -92,7 +74,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">new struct</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">shmup</a></li>
       <li class="breadcrumb-item active">data package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/data.rst.txt" rel="nofollow"> View page source</a>
@@ -113,17 +95,39 @@
 <li class="toctree-l2"><a class="reference internal" href="data.components.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="data.components.ui.html">data.components.ui package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data-components-ui-button-module">data.components.ui.button module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.dropdown">data.components.ui.dropdown module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data-components-ui-text-module">data.components.ui.text module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.button">data.components.ui.button module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.text">data.components.ui.text module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.widgethandler">data.components.ui.widgethandler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.widgetutils">data.components.ui.widgetutils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#module-data.components.ui">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="data.components.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data.components.html#data-components-audio-module">data.components.audio module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.components.html#module-data.components.audio">data.components.audio module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.components.html#data.components.audio.Audio"><code class="docutils literal notranslate"><span class="pre">Audio</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.audio.Audio.add_audio"><code class="docutils literal notranslate"><span class="pre">Audio.add_audio()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.audio.Audio.decrease_volume"><code class="docutils literal notranslate"><span class="pre">Audio.decrease_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.audio.Audio.increase_volume"><code class="docutils literal notranslate"><span class="pre">Audio.increase_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.audio.Audio.play_audio"><code class="docutils literal notranslate"><span class="pre">Audio.play_audio()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.audio.Audio.set_volume"><code class="docutils literal notranslate"><span class="pre">Audio.set_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.audio.Audio.stop"><code class="docutils literal notranslate"><span class="pre">Audio.stop()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.html#data.components.audio.background_audio"><code class="docutils literal notranslate"><span class="pre">background_audio</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.html#data.components.audio.button_audio"><code class="docutils literal notranslate"><span class="pre">button_audio</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.components.html#module-data.components.colors">data.components.colors module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.components.html#data.components.colors.ColorGradient"><code class="docutils literal notranslate"><span class="pre">ColorGradient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.colors.ColorGradient.next_color"><code class="docutils literal notranslate"><span class="pre">ColorGradient.next_color()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.colors.ColorGradient.reset"><code class="docutils literal notranslate"><span class="pre">ColorGradient.reset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.html#data.components.colors.shift_rgb"><code class="docutils literal notranslate"><span class="pre">shift_rgb()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="data.components.html#module-data.components.input">data.components.input module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="data.components.html#data.components.input.InputBinder"><code class="docutils literal notranslate"><span class="pre">InputBinder</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.input.InputBinder.deregister"><code class="docutils literal notranslate"><span class="pre">InputBinder.deregister()</span></code></a></li>
@@ -145,167 +149,122 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="data.components.html#module-data.components">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="data.components.html#data.components.ColorGradient"><code class="docutils literal notranslate"><span class="pre">ColorGradient</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.ColorGradient.next_color"><code class="docutils literal notranslate"><span class="pre">ColorGradient.next_color()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="data.components.html#data.components.ColorGradient.reset"><code class="docutils literal notranslate"><span class="pre">ColorGradient.reset()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.components.html#module-data.components">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="data.components.html#data.components.shift_rgb"><code class="docutils literal notranslate"><span class="pre">shift_rgb()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.core.html">data.core package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data.core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.core.html#module-data.core.control">data.core.control module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.control.Control"><code class="docutils literal notranslate"><span class="pre">Control</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.control.Control.event_loop"><code class="docutils literal notranslate"><span class="pre">Control.event_loop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.control.Control.main"><code class="docutils literal notranslate"><span class="pre">Control.main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.control.Control.quit"><code class="docutils literal notranslate"><span class="pre">Control.quit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.control.Control.render"><code class="docutils literal notranslate"><span class="pre">Control.render()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.control.Control.update"><code class="docutils literal notranslate"><span class="pre">Control.update()</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.core.html#module-data.core.main">data.core.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.core.html#module-data.core.prepare">data.core.prepare module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.prepare.Load"><code class="docutils literal notranslate"><span class="pre">Load</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.prepare.LoadSprites"><code class="docutils literal notranslate"><span class="pre">LoadSprites</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.prepare.parse_spritesheet"><code class="docutils literal notranslate"><span class="pre">parse_spritesheet()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.core.html#module-data.core.utils">data.core.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.utils.CustomTypes"><code class="docutils literal notranslate"><span class="pre">CustomTypes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.CustomTypes.alignments"><code class="docutils literal notranslate"><span class="pre">CustomTypes.alignments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.CustomTypes.input_types"><code class="docutils literal notranslate"><span class="pre">CustomTypes.input_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.CustomTypes.rect_alignments"><code class="docutils literal notranslate"><span class="pre">CustomTypes.rect_alignments</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.utils.Mouse"><code class="docutils literal notranslate"><span class="pre">Mouse</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.Mouse.LEFTCLICK"><code class="docutils literal notranslate"><span class="pre">Mouse.LEFTCLICK</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.Mouse.MIDDLECLICK"><code class="docutils literal notranslate"><span class="pre">Mouse.MIDDLECLICK</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.Mouse.RIGHTCLICK"><code class="docutils literal notranslate"><span class="pre">Mouse.RIGHTCLICK</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.Mouse.SCROLLDOWN"><code class="docutils literal notranslate"><span class="pre">Mouse.SCROLLDOWN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.Mouse.SCROLLUP"><code class="docutils literal notranslate"><span class="pre">Mouse.SCROLLUP</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.utils.Observer"><code class="docutils literal notranslate"><span class="pre">Observer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.Observer.deregister"><code class="docutils literal notranslate"><span class="pre">Observer.deregister()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.Observer.is_registered"><code class="docutils literal notranslate"><span class="pre">Observer.is_registered()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.Observer.notify"><code class="docutils literal notranslate"><span class="pre">Observer.notify()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html#data.core.utils.Observer.register"><code class="docutils literal notranslate"><span class="pre">Observer.register()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.utils.Singleton"><code class="docutils literal notranslate"><span class="pre">Singleton</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.utils.SingletonABCMeta"><code class="docutils literal notranslate"><span class="pre">SingletonABCMeta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.core.html#data.core.utils.Validator"><code class="docutils literal notranslate"><span class="pre">Validator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.core.html#module-data.core">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data.states.html">data.states package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="data.states.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data.states.html#data-states-options-module">data.states.options module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data.states.html#data-states-title-module">data.states.title module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data.states.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.states.html#module-data.states.options">data.states.options module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.states.html#data.states.options.Options"><code class="docutils literal notranslate"><span class="pre">Options</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.options.Options.cleanup"><code class="docutils literal notranslate"><span class="pre">Options.cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.options.Options.render"><code class="docutils literal notranslate"><span class="pre">Options.render()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.options.Options.startup"><code class="docutils literal notranslate"><span class="pre">Options.startup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.options.Options.update"><code class="docutils literal notranslate"><span class="pre">Options.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.options.Options.update_screen"><code class="docutils literal notranslate"><span class="pre">Options.update_screen()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.states.html#module-data.states.state">data.states.state module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.states.html#data.states.state.State"><code class="docutils literal notranslate"><span class="pre">State</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.State.back"><code class="docutils literal notranslate"><span class="pre">State.back()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.State.cleanup"><code class="docutils literal notranslate"><span class="pre">State.cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.State.render"><code class="docutils literal notranslate"><span class="pre">State.render()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.State.screen"><code class="docutils literal notranslate"><span class="pre">State.screen</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.State.screen_size"><code class="docutils literal notranslate"><span class="pre">State.screen_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.State.startup"><code class="docutils literal notranslate"><span class="pre">State.startup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.State.update"><code class="docutils literal notranslate"><span class="pre">State.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.State.update_screen"><code class="docutils literal notranslate"><span class="pre">State.update_screen()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data.states.html#data.states.state.StateManager"><code class="docutils literal notranslate"><span class="pre">StateManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.StateManager.append"><code class="docutils literal notranslate"><span class="pre">StateManager.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.StateManager.back_to"><code class="docutils literal notranslate"><span class="pre">StateManager.back_to()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.StateManager.current_state"><code class="docutils literal notranslate"><span class="pre">StateManager.current_state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.StateManager.input_binder"><code class="docutils literal notranslate"><span class="pre">StateManager.input_binder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.StateManager.input_manager"><code class="docutils literal notranslate"><span class="pre">StateManager.input_manager</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.StateManager.pop"><code class="docutils literal notranslate"><span class="pre">StateManager.pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.StateManager.quit"><code class="docutils literal notranslate"><span class="pre">StateManager.quit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.StateManager.state_stack"><code class="docutils literal notranslate"><span class="pre">StateManager.state_stack</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.state.StateManager.switch"><code class="docutils literal notranslate"><span class="pre">StateManager.switch()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.states.html#module-data.states.title">data.states.title module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.states.html#data.states.title.Title"><code class="docutils literal notranslate"><span class="pre">Title</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.title.Title.back"><code class="docutils literal notranslate"><span class="pre">Title.back()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.title.Title.cleanup"><code class="docutils literal notranslate"><span class="pre">Title.cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.title.Title.render"><code class="docutils literal notranslate"><span class="pre">Title.render()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.title.Title.startup"><code class="docutils literal notranslate"><span class="pre">Title.startup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.title.Title.switch_splash"><code class="docutils literal notranslate"><span class="pre">Title.switch_splash()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.title.Title.update"><code class="docutils literal notranslate"><span class="pre">Title.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.states.html#data.states.title.Title.update_screen"><code class="docutils literal notranslate"><span class="pre">Title.update_screen()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.states.html#module-data.states">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </section>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
-</section>
-<section id="data-control-module">
-<h2>data.control module<a class="headerlink" href="#data-control-module" title="Link to this heading"></a></h2>
-</section>
-<section id="data-main-module">
-<h2>data.main module<a class="headerlink" href="#data-main-module" title="Link to this heading"></a></h2>
-</section>
-<section id="module-data.utils">
-<span id="data-utils-module"></span><h2>data.utils module<a class="headerlink" href="#module-data.utils" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="data.utils.CustomTypes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.utils.</span></span><span class="sig-name descname"><span class="pre">CustomTypes</span></span><a class="reference internal" href="_modules/data/utils.html#CustomTypes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.CustomTypes" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="data.utils.CustomTypes.alignments">
-<span class="sig-name descname"><span class="pre">alignments</span></span><a class="headerlink" href="#data.utils.CustomTypes.alignments" title="Link to this definition"></a></dt>
-<dd><p>alias of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code>[‘left’, ‘right’, ‘center’, ‘block’]</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="data.utils.CustomTypes.input_types">
-<span class="sig-name descname"><span class="pre">input_types</span></span><a class="headerlink" href="#data.utils.CustomTypes.input_types" title="Link to this definition"></a></dt>
-<dd><p>alias of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code>[‘key’, ‘keydown’, ‘keyup’, ‘mouse’, ‘mousedown’, ‘mouseup’, ‘quit’]</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="data.utils.CustomTypes.rect_alignments">
-<span class="sig-name descname"><span class="pre">rect_alignments</span></span><a class="headerlink" href="#data.utils.CustomTypes.rect_alignments" title="Link to this definition"></a></dt>
-<dd><p>alias of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code>[‘topleft’, ‘midtop’, ‘topright’, ‘midleft’, ‘center’, ‘midright’, ‘bottomleft’, ‘midbottom’, ‘bottomright’]</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="data.utils.Mouse">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.utils.</span></span><span class="sig-name descname"><span class="pre">Mouse</span></span><a class="reference internal" href="_modules/data/utils.html#Mouse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.Mouse" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="data.utils.Mouse.LEFTCLICK">
-<span class="sig-name descname"><span class="pre">LEFTCLICK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#data.utils.Mouse.LEFTCLICK" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="data.utils.Mouse.MIDDLECLICK">
-<span class="sig-name descname"><span class="pre">MIDDLECLICK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#data.utils.Mouse.MIDDLECLICK" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="data.utils.Mouse.RIGHTCLICK">
-<span class="sig-name descname"><span class="pre">RIGHTCLICK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#data.utils.Mouse.RIGHTCLICK" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="data.utils.Mouse.SCROLLDOWN">
-<span class="sig-name descname"><span class="pre">SCROLLDOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#data.utils.Mouse.SCROLLDOWN" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="data.utils.Mouse.SCROLLUP">
-<span class="sig-name descname"><span class="pre">SCROLLUP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#data.utils.Mouse.SCROLLUP" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="data.utils.Observer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.utils.</span></span><span class="sig-name descname"><span class="pre">Observer</span></span><a class="reference internal" href="_modules/data/utils.html#Observer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.Observer" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Allows you to register an event to a handler so that
-the handler is called whenever the event is detected.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="data.utils.Observer.deregister">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deregister</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/utils.html#Observer.deregister"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.Observer.deregister" title="Link to this definition"></a></dt>
-<dd><p>Deregisters the event from its handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data.utils.Observer.is_registered">
-<span class="sig-name descname"><span class="pre">is_registered</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/data/utils.html#Observer.is_registered"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.Observer.is_registered" title="Link to this definition"></a></dt>
-<dd><p>Check if handler is bound to an event.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data.utils.Observer.notify">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">notify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/utils.html#Observer.notify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.Observer.notify" title="Link to this definition"></a></dt>
-<dd><p>Calls the registered handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data.utils.Observer.register">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/utils.html#Observer.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.Observer.register" title="Link to this definition"></a></dt>
-<dd><p>Registers the event to a handler.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="data.utils.Singleton">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.utils.</span></span><span class="sig-name descname"><span class="pre">Singleton</span></span><a class="reference internal" href="_modules/data/utils.html#Singleton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.Singleton" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="data.utils.SingletonABCMeta">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.utils.</span></span><span class="sig-name descname"><span class="pre">SingletonABCMeta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/utils.html#SingletonABCMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.SingletonABCMeta" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#data.utils.Singleton" title="data.utils.Singleton"><code class="xref py py-class docutils literal notranslate"><span class="pre">Singleton</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABCMeta</span></code></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="data.utils.Validator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.utils.</span></span><span class="sig-name descname"><span class="pre">Validator</span></span><a class="reference internal" href="_modules/data/utils.html#Validator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.utils.Validator" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Descriptor parent class for validating a property in various ways.</p>
-</dd></dl>
-
-</section>
 <section id="module-data">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-data" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="data.Load">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.</span></span><span class="sig-name descname"><span class="pre">Load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">accept</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_dirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.Load" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Loads in files from specified directories.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="data.LoadSprites">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.</span></span><span class="sig-name descname"><span class="pre">LoadSprites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#LoadSprites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.LoadSprites" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Loads in spritesheets from specified directories.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data.parse_spritesheet">
-<span class="sig-prename descclassname"><span class="pre">data.</span></span><span class="sig-name descname"><span class="pre">parse_spritesheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sprite_sheet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#parse_spritesheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.parse_spritesheet" title="Link to this definition"></a></dt>
-<dd><p>Parses a spritesheet using its associated json file.</p>
-</dd></dl>
-
 </section>
 </section>
 
@@ -313,14 +272,14 @@ the handler is called whenever the event is detected.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modules.html" class="btn btn-neutral float-left" title="new struct" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-left" title="shmup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="data.components.html" class="btn btn-neutral float-right" title="data.components package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Rene Tmnsv.</p>
+    <p>&#169; Copyright 2024, Rene Timantsev.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -6,18 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>data.components package &mdash; Shmup 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=7ab3649f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=47de8214"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=47de8214"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -46,17 +44,14 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">new struct</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">shmup</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="data.html">data package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="data.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">data.components package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html">data.core package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="data.states.html">data.states package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="data.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="data.html#data-control-module">data.control module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="data.html#data-main-module">data.main module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="data.html#module-data.utils">data.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="data.html#module-data">Module contents</a></li>
 </ul>
 </li>
@@ -79,7 +74,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">new struct</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">shmup</a></li>
           <li class="breadcrumb-item"><a href="data.html">data package</a></li>
       <li class="breadcrumb-item active">data.components package</li>
       <li class="wy-breadcrumbs-aside">
@@ -99,16 +94,91 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="data.components.ui.html">data.components.ui package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#data-components-ui-button-module">data.components.ui.button module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.dropdown">data.components.ui.dropdown module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.dropdown.Dropdown"><code class="docutils literal notranslate"><span class="pre">Dropdown</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.button">data.components.ui.button module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButton"><code class="docutils literal notranslate"><span class="pre">ImageButton</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButton.blit"><code class="docutils literal notranslate"><span class="pre">ImageButton.blit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButton.contains"><code class="docutils literal notranslate"><span class="pre">ImageButton.contains()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButton.image_align"><code class="docutils literal notranslate"><span class="pre">ImageButton.image_align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButton.on_click"><code class="docutils literal notranslate"><span class="pre">ImageButton.on_click()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButton.on_hover"><code class="docutils literal notranslate"><span class="pre">ImageButton.on_hover()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButton.on_idle"><code class="docutils literal notranslate"><span class="pre">ImageButton.on_idle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButton.update"><code class="docutils literal notranslate"><span class="pre">ImageButton.update()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#data-components-ui-text-module">data.components.ui.text module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButtonConfig"><code class="docutils literal notranslate"><span class="pre">ImageButtonConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButtonConfig.image_align"><code class="docutils literal notranslate"><span class="pre">ImageButtonConfig.image_align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButtonConfig.images"><code class="docutils literal notranslate"><span class="pre">ImageButtonConfig.images</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.ImageButtonConfig.use_rect_collisions"><code class="docutils literal notranslate"><span class="pre">ImageButtonConfig.use_rect_collisions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButton"><code class="docutils literal notranslate"><span class="pre">TextButton</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButton.blit"><code class="docutils literal notranslate"><span class="pre">TextButton.blit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButton.on_click"><code class="docutils literal notranslate"><span class="pre">TextButton.on_click()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButton.on_hover"><code class="docutils literal notranslate"><span class="pre">TextButton.on_hover()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButton.on_idle"><code class="docutils literal notranslate"><span class="pre">TextButton.on_idle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButton.surface"><code class="docutils literal notranslate"><span class="pre">TextButton.surface</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButton.text_align"><code class="docutils literal notranslate"><span class="pre">TextButton.text_align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButton.update"><code class="docutils literal notranslate"><span class="pre">TextButton.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButtonConfig"><code class="docutils literal notranslate"><span class="pre">TextButtonConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButtonConfig.font"><code class="docutils literal notranslate"><span class="pre">TextButtonConfig.font</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButtonConfig.font_size"><code class="docutils literal notranslate"><span class="pre">TextButtonConfig.font_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButtonConfig.margin"><code class="docutils literal notranslate"><span class="pre">TextButtonConfig.margin</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButtonConfig.text"><code class="docutils literal notranslate"><span class="pre">TextButtonConfig.text</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButtonConfig.text_align"><code class="docutils literal notranslate"><span class="pre">TextButtonConfig.text_align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.button.TextButtonConfig.text_colors"><code class="docutils literal notranslate"><span class="pre">TextButtonConfig.text_colors</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.text">data.components.ui.text module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.text_rect_alignments"><code class="docutils literal notranslate"><span class="pre">text_rect_alignments</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.default_font_dir"><code class="docutils literal notranslate"><span class="pre">default_font_dir</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text"><code class="docutils literal notranslate"><span class="pre">Text</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.x"><code class="docutils literal notranslate"><span class="pre">Text.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.y"><code class="docutils literal notranslate"><span class="pre">Text.y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.text"><code class="docutils literal notranslate"><span class="pre">Text.text</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.font"><code class="docutils literal notranslate"><span class="pre">Text.font</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.font_size"><code class="docutils literal notranslate"><span class="pre">Text.font_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.color"><code class="docutils literal notranslate"><span class="pre">Text.color</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.align"><code class="docutils literal notranslate"><span class="pre">Text.align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.surface"><code class="docutils literal notranslate"><span class="pre">Text.surface</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.antialias"><code class="docutils literal notranslate"><span class="pre">Text.antialias</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.blit"><code class="docutils literal notranslate"><span class="pre">Text.blit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id0"><code class="docutils literal notranslate"><span class="pre">Text.color</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id1"><code class="docutils literal notranslate"><span class="pre">Text.font</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id2"><code class="docutils literal notranslate"><span class="pre">Text.font_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.rect"><code class="docutils literal notranslate"><span class="pre">Text.rect</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id3"><code class="docutils literal notranslate"><span class="pre">Text.text</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.Text.update"><code class="docutils literal notranslate"><span class="pre">Text.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText"><code class="docutils literal notranslate"><span class="pre">WrappedText</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.rect"><code class="docutils literal notranslate"><span class="pre">WrappedText.rect</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.text"><code class="docutils literal notranslate"><span class="pre">WrappedText.text</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.font"><code class="docutils literal notranslate"><span class="pre">WrappedText.font</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.color"><code class="docutils literal notranslate"><span class="pre">WrappedText.color</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.align"><code class="docutils literal notranslate"><span class="pre">WrappedText.align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.text_align"><code class="docutils literal notranslate"><span class="pre">WrappedText.text_align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.surface"><code class="docutils literal notranslate"><span class="pre">WrappedText.surface</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id4"><code class="docutils literal notranslate"><span class="pre">WrappedText.align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.antialias"><code class="docutils literal notranslate"><span class="pre">WrappedText.antialias</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.blit"><code class="docutils literal notranslate"><span class="pre">WrappedText.blit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id5"><code class="docutils literal notranslate"><span class="pre">WrappedText.color</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id6"><code class="docutils literal notranslate"><span class="pre">WrappedText.font</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.line_spacing"><code class="docutils literal notranslate"><span class="pre">WrappedText.line_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id7"><code class="docutils literal notranslate"><span class="pre">WrappedText.rect</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id8"><code class="docutils literal notranslate"><span class="pre">WrappedText.text</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.text.WrappedText.update"><code class="docutils literal notranslate"><span class="pre">WrappedText.update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.widgethandler">data.components.ui.widgethandler module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgethandler.widgets"><code class="docutils literal notranslate"><span class="pre">widgets</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgethandler.add_widget"><code class="docutils literal notranslate"><span class="pre">add_widget()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgethandler.blit"><code class="docutils literal notranslate"><span class="pre">blit()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgethandler.get_widgets"><code class="docutils literal notranslate"><span class="pre">get_widgets()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgethandler.move_to_bottom"><code class="docutils literal notranslate"><span class="pre">move_to_bottom()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgethandler.move_to_top"><code class="docutils literal notranslate"><span class="pre">move_to_top()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgethandler.remove_widget"><code class="docutils literal notranslate"><span class="pre">remove_widget()</span></code></a></li>
@@ -116,17 +186,29 @@
 <li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgethandler.update_screen"><code class="docutils literal notranslate"><span class="pre">update_screen()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#module-data.components.ui">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.RectUpdateNeeded"><code class="docutils literal notranslate"><span class="pre">RectUpdateNeeded</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.RenderNeeded"><code class="docutils literal notranslate"><span class="pre">RenderNeeded</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.WidgetBase"><code class="docutils literal notranslate"><span class="pre">WidgetBase</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.WidgetBase.blit"><code class="docutils literal notranslate"><span class="pre">WidgetBase.blit()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.WidgetBase.contains"><code class="docutils literal notranslate"><span class="pre">WidgetBase.contains()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.WidgetBase.update"><code class="docutils literal notranslate"><span class="pre">WidgetBase.update()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#module-data.components.ui.widgetutils">data.components.ui.widgetutils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.AlignmentNeeded"><code class="docutils literal notranslate"><span class="pre">AlignmentNeeded</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.RenderNeeded"><code class="docutils literal notranslate"><span class="pre">RenderNeeded</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase"><code class="docutils literal notranslate"><span class="pre">WidgetBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.x"><code class="docutils literal notranslate"><span class="pre">WidgetBase.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.y"><code class="docutils literal notranslate"><span class="pre">WidgetBase.y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.align"><code class="docutils literal notranslate"><span class="pre">WidgetBase.align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.surface"><code class="docutils literal notranslate"><span class="pre">WidgetBase.surface</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.is_sub_widget"><code class="docutils literal notranslate"><span class="pre">WidgetBase.is_sub_widget</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id9"><code class="docutils literal notranslate"><span class="pre">WidgetBase.align</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.blit"><code class="docutils literal notranslate"><span class="pre">WidgetBase.blit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.disable"><code class="docutils literal notranslate"><span class="pre">WidgetBase.disable()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.enable"><code class="docutils literal notranslate"><span class="pre">WidgetBase.enable()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.hide"><code class="docutils literal notranslate"><span class="pre">WidgetBase.hide()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.show"><code class="docutils literal notranslate"><span class="pre">WidgetBase.show()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#data.components.ui.widgetutils.WidgetBase.update"><code class="docutils literal notranslate"><span class="pre">WidgetBase.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id10"><code class="docutils literal notranslate"><span class="pre">WidgetBase.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.components.ui.html#id11"><code class="docutils literal notranslate"><span class="pre">WidgetBase.y</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="data.components.ui.html#module-data.components.ui">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -135,196 +217,163 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="data-components-audio-module">
-<h2>data.components.audio module<a class="headerlink" href="#data-components-audio-module" title="Link to this heading"></a></h2>
-</section>
-<section id="module-data.components.input">
-<span id="data-components-input-module"></span><h2>data.components.input module<a class="headerlink" href="#module-data.components.input" title="Link to this heading"></a></h2>
+<section id="module-data.components.audio">
+<span id="data-components-audio-module"></span><h2>data.components.audio module<a class="headerlink" href="#module-data.components.audio" title="Link to this heading"></a></h2>
+<p>Module for adding and handling the playback of audio from audio files.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="data.components.input.InputBinder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.components.input.</span></span><span class="sig-name descname"><span class="pre">InputBinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputBinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputBinder" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="data.html#data.utils.Observer" title="data.utils.Observer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observer</span></code></a></p>
-<p>Class for binding inputs to execute
-callables via the observer algorithm.</p>
+<dt class="sig sig-object py" id="data.components.audio.Audio">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.components.audio.</span></span><span class="sig-name descname"><span class="pre">Audio</span></span><a class="reference internal" href="_modules/data/components/audio.html#Audio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.audio.Audio" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for creating and managing audio channels and sound objects.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputBinder.deregister">
-<span class="sig-name descname"><span class="pre">deregister</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'key'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'keydown'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'keyup'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'mouse'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'mousedown'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'mouseup'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'quit'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputBinder.deregister"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputBinder.deregister" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>inputs</strong> – A tuple of the type and input that the action should be
-unregistered from.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputBinder.notify">
-<span class="sig-name descname"><span class="pre">notify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data.components.input.InputManager" title="data.components.input.InputManager"><span class="pre">InputManager</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputBinder.notify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputBinder.notify" title="Link to this definition"></a></dt>
-<dd><p>Calls the registered handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputBinder.register">
-<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'key'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'keydown'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'keyup'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'mouse'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'mousedown'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'mouseup'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'quit'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputBinder.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputBinder.register" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="data.components.audio.Audio.add_audio">
+<span class="sig-name descname"><span class="pre">add_audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/audio.html#Audio.add_audio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.audio.Audio.add_audio" title="Link to this definition"></a></dt>
+<dd><p>Load audio from the given path.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inputs</strong> – A tuple of the type and input.</p></li>
-<li><p><strong>action</strong> – The action to call upon the input being detected.</p></li>
+<li><p><strong>audio_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Directory of the audio file to add.</p></li>
+<li><p><strong>tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the audio to associate with the sound object.
+Defaults to <cite>None</cite>, in which case the filename will be used as the
+tag.</p></li>
 </ul>
 </dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="data.components.input.InputManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.components.input.</span></span><span class="sig-name descname"><span class="pre">InputManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class that stores all the input states.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputManager.get_mouse_pos">
-<span class="sig-name descname"><span class="pre">get_mouse_pos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/data/components/input.html#InputManager.get_mouse_pos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.get_mouse_pos" title="Link to this definition"></a></dt>
-<dd><p>Gets the position of the mouse.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The coordinates of the mouse.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If there is no audio file at the audio
+directory provided.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputManager.is_key_down">
-<span class="sig-name descname"><span class="pre">is_key_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_key_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_key_down" title="Link to this definition"></a></dt>
-<dd><p>Checks if key is currently being pressed down
-(only happens at the very beginning of the keypress).</p>
+<dt class="sig sig-object py" id="data.components.audio.Audio.decrease_volume">
+<span class="sig-name descname"><span class="pre">decrease_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decrement</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/audio.html#Audio.decrease_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.audio.Audio.decrease_volume" title="Link to this definition"></a></dt>
+<dd><p>Decrease the volume by a specified decrement.
+Volume can’t decrease below minimum even if attempted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key</strong> – The key to check for.</p>
+<dd class="field-odd"><p><strong>decrement</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – The amount to decrease the volume by.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if key is in the keydown_events list.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputManager.is_key_pressed">
-<span class="sig-name descname"><span class="pre">is_key_pressed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_key_pressed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_key_pressed" title="Link to this definition"></a></dt>
-<dd><p>Checks if key is currently being held down.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key</strong> – The key to check for.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if key is in the held_keys list.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputManager.is_key_up">
-<span class="sig-name descname"><span class="pre">is_key_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_key_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_key_up" title="Link to this definition"></a></dt>
-<dd><p>Checks if the key is currently being released
-(only happens at the very end of the keypress).</p>
+<dt class="sig sig-object py" id="data.components.audio.Audio.increase_volume">
+<span class="sig-name descname"><span class="pre">increase_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">increment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/audio.html#Audio.increase_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.audio.Audio.increase_volume" title="Link to this definition"></a></dt>
+<dd><p>Increase the volume by a specified increment.
+Volume can’t exceed max even if attempted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key</strong> – The key to check for.</p>
+<dd class="field-odd"><p><strong>increment</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – The amount to increase the volume by.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if key is in the keyup_events list.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputManager.is_mouse_down">
-<span class="sig-name descname"><span class="pre">is_mouse_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_mouse_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_mouse_down" title="Link to this definition"></a></dt>
-<dd><p>Checks if the mouse button is currently being pressed
-(only happens at the very beginning of the button press).</p>
+<dt class="sig sig-object py" id="data.components.audio.Audio.play_audio">
+<span class="sig-name descname"><span class="pre">play_audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/audio.html#Audio.play_audio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.audio.Audio.play_audio" title="Link to this definition"></a></dt>
+<dd><p>Plays the audio of the tag specified.
+If tag is unspecified the first audio file added to the <cite>sounds</cite> dict
+is played. Audio doesn’t play if there is audio currently playing in
+the channel unless the parameter <cite>override</cite> is <cite>True</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>button</strong> – The mousebutton to check for.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The name of the audio to play. Defaults to <cite>None</cite> which
+will use the first audio file added to that channel (this should
+only be used if there is only one audio file loaded for clarity).</p></li>
+<li><p><strong>loops</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Amount of times to loop the audio, -1 loops indefinately.</p></li>
+<li><p><strong>override</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether the audio should play even if the channel is
+busy. The previously playing audio will stop.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if mousebutton is in the mousedown_events list.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>KeyError</strong> – If no audio has been added to the channel.</p></li>
+<li><p><strong>ValueError</strong> – If the loops argument is smaller than -1.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputManager.is_mouse_pressed">
-<span class="sig-name descname"><span class="pre">is_mouse_pressed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_mouse_pressed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_mouse_pressed" title="Link to this definition"></a></dt>
-<dd><p>Checks if the mouse button is being held down.</p>
+<dt class="sig sig-object py" id="data.components.audio.Audio.set_volume">
+<span class="sig-name descname"><span class="pre">set_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/audio.html#Audio.set_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.audio.Audio.set_volume" title="Link to this definition"></a></dt>
+<dd><p>Set the volume of the audio.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>button</strong> – The mousebutton to check for.</p>
+<dd class="field-odd"><p><strong>volume</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – The volume to set the channel to.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if button is in the mouse_buttons list.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the volume is not between 0.0 or 1.0</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputManager.is_mouse_up">
-<span class="sig-name descname"><span class="pre">is_mouse_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_mouse_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_mouse_up" title="Link to this definition"></a></dt>
-<dd><p>Checks if the mouse button is currently being released
-(only happens at the very end of the button press).</p>
+<dt class="sig sig-object py" id="data.components.audio.Audio.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/audio.html#Audio.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.audio.Audio.stop" title="Link to this definition"></a></dt>
+<dd><p>Stop the currently playing audio.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>button</strong> – The mousebutton to check for.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the mousebutton is in the mouseup_events list.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="data.components.input.InputManager.process_events">
-<span class="sig-name descname"><span class="pre">process_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.process_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.process_events" title="Link to this definition"></a></dt>
-<dd><p>Clears keydown and keyup events, iterates through
-pygame events and updates the input lists as necessary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>events</strong> – pygame.event.get()</p>
-</dd>
-</dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="data.components.input.InputManager.quit">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quit</span></span><a class="headerlink" href="#data.components.input.InputManager.quit" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dl class="py data">
+<dt class="sig sig-object py" id="data.components.audio.background_audio">
+<span class="sig-prename descclassname"><span class="pre">data.components.audio.</span></span><span class="sig-name descname"><span class="pre">background_audio</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;data.components.audio.Audio</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#data.components.audio.background_audio" title="Link to this definition"></a></dt>
+<dd><p><cite>Audio</cite> instance for playing background music.</p>
+</dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="data.components.audio.button_audio">
+<span class="sig-prename descclassname"><span class="pre">data.components.audio.</span></span><span class="sig-name descname"><span class="pre">button_audio</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;data.components.audio.Audio</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#data.components.audio.button_audio" title="Link to this definition"></a></dt>
+<dd><p><cite>Audio</cite> instance for playing button sound effects.</p>
 </dd></dl>
 
 </section>
-<section id="module-data.components">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-data.components" title="Link to this heading"></a></h2>
+<section id="module-data.components.colors">
+<span id="data-components-colors-module"></span><h2>data.components.colors module<a class="headerlink" href="#module-data.components.colors" title="Link to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="data.components.ColorGradient">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.components.</span></span><span class="sig-name descname"><span class="pre">ColorGradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps_per_segment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_longest_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components.html#ColorGradient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.ColorGradient" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="data.components.colors.ColorGradient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.components.colors.</span></span><span class="sig-name descname"><span class="pre">ColorGradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps_per_segment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_longest_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/colors.html#ColorGradient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.colors.ColorGradient" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="data.components.ColorGradient.next_color">
-<span class="sig-name descname"><span class="pre">next_color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components.html#ColorGradient.next_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.ColorGradient.next_color" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="data.components.colors.ColorGradient.next_color">
+<span class="sig-name descname"><span class="pre">next_color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/colors.html#ColorGradient.next_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.colors.ColorGradient.next_color" title="Link to this definition"></a></dt>
 <dd><p>Generate the next RGB color in the gradient.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="data.components.ColorGradient.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components.html#ColorGradient.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.ColorGradient.reset" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="data.components.colors.ColorGradient.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/colors.html#ColorGradient.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.colors.ColorGradient.reset" title="Link to this definition"></a></dt>
 <dd><p>Reset the gradient to the beginning.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="data.components.shift_rgb">
-<span class="sig-prename descclassname"><span class="pre">data.components.</span></span><span class="sig-name descname"><span class="pre">shift_rgb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift_amount</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components.html#shift_rgb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.shift_rgb" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="data.components.colors.shift_rgb">
+<span class="sig-prename descclassname"><span class="pre">data.components.colors.</span></span><span class="sig-name descname"><span class="pre">shift_rgb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift_amount</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/colors.html#shift_rgb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.colors.shift_rgb" title="Link to this definition"></a></dt>
 <dd><p>Shifts the color in the RGB spectrum by the specified amount.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -341,6 +390,212 @@ pygame events and updates the input lists as necessary.</p>
 </dd></dl>
 
 </section>
+<section id="module-data.components.input">
+<span id="data-components-input-module"></span><h2>data.components.input module<a class="headerlink" href="#module-data.components.input" title="Link to this heading"></a></h2>
+<p>Module for getting and handling all forms of user input.
+Also allows for custom userevents to be detected.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="data.components.input.InputBinder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.components.input.</span></span><span class="sig-name descname"><span class="pre">InputBinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputBinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputBinder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="data.core.html#data.core.utils.Observer" title="data.core.utils.Observer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observer</span></code></a></p>
+<p>Class for binding inputs to execute callables via the observer algorithm.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputBinder.deregister">
+<span class="sig-name descname"><span class="pre">deregister</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputBinder.deregister"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputBinder.deregister" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'key'</span></code>, <code class="docutils literal notranslate"><span class="pre">'keydown'</span></code>, <code class="docutils literal notranslate"><span class="pre">'keyup'</span></code>, <code class="docutils literal notranslate"><span class="pre">'mouse'</span></code>, <code class="docutils literal notranslate"><span class="pre">'mousedown'</span></code>, <code class="docutils literal notranslate"><span class="pre">'mouseup'</span></code>, <code class="docutils literal notranslate"><span class="pre">'quit'</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – A tuple of the type and input that the action should be
+unregistered from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputBinder.notify">
+<span class="sig-name descname"><span class="pre">notify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputBinder.notify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputBinder.notify" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_manager</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#data.components.input.InputManager" title="data.components.input.InputManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputManager</span></code></a></span>) – Input manager to get status of inputs.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputBinder.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputBinder.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputBinder.register" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'key'</span></code>, <code class="docutils literal notranslate"><span class="pre">'keydown'</span></code>, <code class="docutils literal notranslate"><span class="pre">'keyup'</span></code>, <code class="docutils literal notranslate"><span class="pre">'mouse'</span></code>, <code class="docutils literal notranslate"><span class="pre">'mousedown'</span></code>, <code class="docutils literal notranslate"><span class="pre">'mouseup'</span></code>, <code class="docutils literal notranslate"><span class="pre">'quit'</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – A tuple of the type and input.</p></li>
+<li><p><strong>action</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span>) – The action to call upon the input being detected.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data.components.input.InputManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.components.input.</span></span><span class="sig-name descname"><span class="pre">InputManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that stores all the input states.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputManager.get_mouse_pos">
+<span class="sig-name descname"><span class="pre">get_mouse_pos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.get_mouse_pos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.get_mouse_pos" title="Link to this definition"></a></dt>
+<dd><p>Gets the position of the mouse.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The coordinates of the mouse.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputManager.is_key_down">
+<span class="sig-name descname"><span class="pre">is_key_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_key_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_key_down" title="Link to this definition"></a></dt>
+<dd><p>Checks if key is currently being pressed down
+(only happens at the very beginning of the keypress).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The key to check for.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if key is being pressed down.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputManager.is_key_pressed">
+<span class="sig-name descname"><span class="pre">is_key_pressed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_key_pressed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_key_pressed" title="Link to this definition"></a></dt>
+<dd><p>Checks if key is currently being held down.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The key to check for.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if key is being held.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputManager.is_key_up">
+<span class="sig-name descname"><span class="pre">is_key_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_key_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_key_up" title="Link to this definition"></a></dt>
+<dd><p>Checks if the key is currently being released
+(only happens at the very end of the keypress).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The key to check for.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if key is being released.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputManager.is_mouse_down">
+<span class="sig-name descname"><span class="pre">is_mouse_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_mouse_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_mouse_down" title="Link to this definition"></a></dt>
+<dd><p>Checks if the mouse button is currently being pressed
+(only happens at the very beginning of the button press).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>button</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The mousebutton to check for.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if mousebutton is being pressed down.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputManager.is_mouse_pressed">
+<span class="sig-name descname"><span class="pre">is_mouse_pressed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_mouse_pressed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_mouse_pressed" title="Link to this definition"></a></dt>
+<dd><p>Checks if the mouse button is being held down.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>button</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The mousebutton to check for.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if button is being held down.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputManager.is_mouse_up">
+<span class="sig-name descname"><span class="pre">is_mouse_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.is_mouse_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.is_mouse_up" title="Link to this definition"></a></dt>
+<dd><p>Checks if the mouse button is currently being released
+(only happens at the very end of the button press).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>button</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The mousebutton to check for.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the mousebutton is being released.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.components.input.InputManager.process_events">
+<span class="sig-name descname"><span class="pre">process_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/components/input.html#InputManager.process_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.components.input.InputManager.process_events" title="Link to this definition"></a></dt>
+<dd><p>Process events from the pygame events list.</p>
+<p>Clears keydown and keyup events, iterates through and updates the
+input lists as necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>events</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span>) – <cite>pygame.event.get()</cite> should be passed in every game tick.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data.components.input.InputManager.quit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quit</span></span><a class="headerlink" href="#data.components.input.InputManager.quit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-data.components">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-data.components" title="Link to this heading"></a></h2>
+</section>
 </section>
 
 
@@ -354,7 +609,7 @@ pygame events and updates the input lists as necessary.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Rene Tmnsv.</p>
+    <p>&#169; Copyright 2024, Rene Timantsev.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

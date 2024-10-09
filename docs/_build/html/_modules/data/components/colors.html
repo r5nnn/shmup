@@ -1,25 +1,23 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>data.components &mdash; Shmup 0.0.3 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+  <title>data.components.colors &mdash; Shmup 0.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=7ab3649f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=47de8214"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=47de8214"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -30,11 +28,11 @@
 
           
           
-          <a href="../../index.html" class="icon icon-home">
+          <a href="../../../index.html" class="icon icon-home">
             Shmup
           </a>
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -43,7 +41,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">new struct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">shmup</a></li>
 </ul>
 
         </div>
@@ -52,17 +50,16 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Shmup</a>
+          <a href="../../../index.html">Shmup</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-          <li class="breadcrumb-item"><a href="../data.html">data</a></li>
-      <li class="breadcrumb-item active">data.components</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">data.components.colors</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -71,12 +68,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for data.components</h1><div class="highlight"><pre>
+  <h1>Source code for data.components.colors</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">colorsys</span>
 
-
 <div class="viewcode-block" id="shift_rgb">
-<a class="viewcode-back" href="../../data.components.html#data.components.shift_rgb">[docs]</a>
+<a class="viewcode-back" href="../../../data.components.html#data.components.colors.shift_rgb">[docs]</a>
 <span class="k">def</span> <span class="nf">shift_rgb</span><span class="p">(</span><span class="n">rgb_color</span><span class="p">,</span> <span class="n">shift_amount</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Shifts the color in the RGB spectrum by the specified amount.</span>
 
@@ -96,7 +92,7 @@
 
 
 <div class="viewcode-block" id="ColorGradient">
-<a class="viewcode-back" href="../../data.components.html#data.components.ColorGradient">[docs]</a>
+<a class="viewcode-back" href="../../../data.components.html#data.components.colors.ColorGradient">[docs]</a>
 <span class="k">class</span> <span class="nc">ColorGradient</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color_dict</span><span class="p">,</span> <span class="n">steps_per_segment</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                  <span class="n">use_longest_path</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -142,7 +138,7 @@
         <span class="k">return</span> <span class="n">h</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span>
 
 <div class="viewcode-block" id="ColorGradient.next_color">
-<a class="viewcode-back" href="../../data.components.html#data.components.ColorGradient.next_color">[docs]</a>
+<a class="viewcode-back" href="../../../data.components.html#data.components.colors.ColorGradient.next_color">[docs]</a>
     <span class="k">def</span> <span class="nf">next_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the next RGB color in the gradient.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -175,7 +171,7 @@
 
 
 <div class="viewcode-block" id="ColorGradient.reset">
-<a class="viewcode-back" href="../../data.components.html#data.components.ColorGradient.reset">[docs]</a>
+<a class="viewcode-back" href="../../../data.components.html#data.components.colors.ColorGradient.reset">[docs]</a>
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the gradient to the beginning.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gradient_index</span> <span class="o">=</span> <span class="mi">0</span>
@@ -207,7 +203,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Rene Tmnsv.</p>
+    <p>&#169; Copyright 2024, Rene Timantsev.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

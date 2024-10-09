@@ -1,0 +1,220 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>data.states.title &mdash; Shmup 0.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=7ab3649f" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=47de8214"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Shmup
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">shmup</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Shmup</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">data.states.title</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for data.states.title</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">override</span>
+
+<span class="kn">import</span> <span class="nn">pygame</span>
+
+<span class="kn">from</span> <span class="nn">data.core.prepare</span> <span class="kn">import</span> <span class="n">image_paths</span><span class="p">,</span> <span class="n">audio_paths</span><span class="p">,</span> <span class="n">sprites</span>
+<span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">State</span>
+<span class="kn">from</span> <span class="nn">..components.audio</span> <span class="kn">import</span> <span class="n">background_audio</span><span class="p">,</span> <span class="n">button_audio</span>
+<span class="kn">from</span> <span class="nn">..components.ui</span> <span class="kn">import</span> <span class="n">widgethandler</span>
+<span class="kn">from</span> <span class="nn">..components.ui.button</span> <span class="kn">import</span> <span class="n">ImageButton</span><span class="p">,</span> <span class="n">ImageButtonConfig</span>
+
+
+<div class="viewcode-block" id="Title">
+<a class="viewcode-back" href="../../../data.states.html#data.states.title.Title">[docs]</a>
+<span class="k">class</span> <span class="nc">Title</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">image_paths</span><span class="p">(</span><span class="s1">&#39;menu&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logo</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale_by</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">image_paths</span><span class="p">(</span><span class="s1">&#39;logo&#39;</span><span class="p">)),</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">splashes</span> <span class="o">=</span> <span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale_by</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">image_paths</span><span class="p">(</span><span class="s1">&#39;gun die&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(),</span> <span class="mi">5</span><span class="p">),</span>
+                         <span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale_by</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">image_paths</span><span class="p">(</span><span class="s1">&#39;can we get more christof&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(),</span>
+                                                   <span class="mi">5</span><span class="p">),</span>
+                         <span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale_by</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">image_paths</span><span class="p">(</span><span class="s1">&#39;tiferet&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(),</span> <span class="mi">5</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">splash</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">splashes</span><span class="p">)</span>
+
+        <span class="n">background_audio</span><span class="o">.</span><span class="n">add_audio</span><span class="p">(</span><span class="n">audio_paths</span><span class="p">(</span><span class="s1">&#39;menuloop rmx&#39;</span><span class="p">))</span>
+
+        <span class="n">play_config</span> <span class="o">=</span> <span class="n">ImageButtonConfig</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.6</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.35</span><span class="p">),</span>
+            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">images</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale_by</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                                      <span class="k">for</span> <span class="n">images</span> <span class="ow">in</span> <span class="n">sprites</span><span class="p">(</span><span class="s1">&#39;play&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">play</span> <span class="o">=</span> <span class="n">ImageButton</span><span class="p">(</span><span class="n">play_config</span><span class="p">)</span>
+        <span class="n">editor_config</span> <span class="o">=</span> <span class="n">ImageButtonConfig</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.6</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.475</span><span class="p">),</span>
+            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">images</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale_by</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                                      <span class="k">for</span> <span class="n">images</span> <span class="ow">in</span> <span class="n">sprites</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="n">ImageButton</span><span class="p">(</span><span class="n">editor_config</span><span class="p">)</span>
+        <span class="n">options_config</span> <span class="o">=</span> <span class="n">ImageButtonConfig</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.6</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.6</span><span class="p">),</span>
+            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">images</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale_by</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                                      <span class="k">for</span> <span class="n">images</span> <span class="ow">in</span> <span class="n">sprites</span><span class="p">(</span><span class="s1">&#39;options&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_manager</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">ImageButton</span><span class="p">(</span><span class="n">options_config</span><span class="p">)</span>
+
+        <span class="n">quit_config</span> <span class="o">=</span> <span class="n">ImageButtonConfig</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.6</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.725</span><span class="p">),</span>
+            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">images</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale_by</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                                      <span class="k">for</span> <span class="n">images</span> <span class="ow">in</span> <span class="n">sprites</span><span class="p">(</span><span class="s1">&#39;quit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="n">on_click</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state_manager</span><span class="o">.</span><span class="n">quit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quit</span> <span class="o">=</span> <span class="n">ImageButton</span><span class="p">(</span><span class="n">quit_config</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">play</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quit</span><span class="p">]:</span>
+            <span class="n">widgethandler</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Title.update_screen">
+<a class="viewcode-back" href="../../../data.states.html#data.states.title.Title.update_screen">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span> <span class="nf">update_screen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">widgethandler</span><span class="o">.</span><span class="n">update_screen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Title.startup">
+<a class="viewcode-back" href="../../../data.states.html#data.states.title.Title.startup">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">startup</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_binder</span><span class="o">.</span><span class="n">register</span><span class="p">((</span><span class="s1">&#39;keydown&#39;</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">),</span> <span class="n">action</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">switch_splash</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_binder</span><span class="o">.</span><span class="n">register</span><span class="p">((</span><span class="s1">&#39;keydown&#39;</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_RIGHT</span><span class="p">),</span> <span class="n">action</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">switch_splash</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">background_audio</span><span class="o">.</span><span class="n">play_audio</span><span class="p">(</span><span class="s1">&#39;menuloop rmx&#39;</span><span class="p">,</span> <span class="n">loops</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Title.cleanup">
+<a class="viewcode-back" href="../../../data.states.html#data.states.title.Title.cleanup">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_binder</span><span class="o">.</span><span class="n">deregister</span><span class="p">((</span><span class="s1">&#39;keydown&#39;</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_binder</span><span class="o">.</span><span class="n">deregister</span><span class="p">((</span><span class="s1">&#39;keydown&#39;</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_RIGHT</span><span class="p">))</span>
+        <span class="c1"># if button is unrendered before the keyup event triggers,</span>
+        <span class="c1"># clicked must be manually reset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">clicked</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Title.render">
+<a class="viewcode-back" href="../../../data.states.html#data.states.title.Title.render">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+        <span class="n">widgethandler</span><span class="o">.</span><span class="n">blit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logo</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">logo</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">splash</span><span class="p">,</span>
+                          <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">splash</span><span class="o">.</span><span class="n">get_width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_screen_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.275</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Title.update">
+<a class="viewcode-back" href="../../../data.states.html#data.states.title.Title.update">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">widgethandler</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Title.switch_splash">
+<a class="viewcode-back" href="../../../data.states.html#data.states.title.Title.switch_splash">[docs]</a>
+    <span class="k">def</span> <span class="nf">switch_splash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">splash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splashes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">splashes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">splash</span><span class="p">)</span> <span class="o">+</span> <span class="n">direction</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">splash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splashes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Title.back">
+<a class="viewcode-back" href="../../../data.states.html#data.states.title.Title.back">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span> <span class="nf">back</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">button_audio</span><span class="o">.</span><span class="n">play_audio</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_manager</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;options&#39;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rene Timantsev.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

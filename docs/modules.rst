@@ -1,5 +1,5 @@
-new struct
-==========
+shmup
+=====
 
 .. toctree::
    :maxdepth: 4

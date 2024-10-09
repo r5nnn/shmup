@@ -12,14 +12,6 @@ data.components.ui.button module
    :undoc-members:
    :show-inheritance:
 
-data.components.ui.dropdown module
-----------------------------------
-
-.. automodule:: data.components.ui.dropdown
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 data.components.ui.text module
 ------------------------------
 
@@ -32,6 +24,14 @@ data.components.ui.widgethandler module
 ---------------------------------------
 
 .. automodule:: data.components.ui.widgethandler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+data.components.ui.widgetutils module
+-------------------------------------
+
+.. automodule:: data.components.ui.widgetutils
    :members:
    :undoc-members:
    :show-inheritance:

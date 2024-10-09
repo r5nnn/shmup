@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -6,23 +8,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>data.states package &mdash; Shmup 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=7ab3649f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=47de8214"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=47de8214"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="shmup module" href="shmup.html" />
-    <link rel="prev" title="data.components.ui package" href="data.components.ui.html" /> 
+    <link rel="prev" title="data.core package" href="data.core.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,17 +44,14 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">new struct</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">shmup</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="data.html">data package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="data.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="data.components.html">data.components package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="data.core.html">data.core package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">data.states package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="data.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="data.html#data-control-module">data.control module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="data.html#data-main-module">data.main module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="data.html#module-data.utils">data.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="data.html#module-data">Module contents</a></li>
 </ul>
 </li>
@@ -79,7 +74,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">new struct</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">shmup</a></li>
           <li class="breadcrumb-item"><a href="data.html">data package</a></li>
       <li class="breadcrumb-item active">data.states package</li>
       <li class="wy-breadcrumbs-aside">
@@ -96,14 +91,254 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="data-states-options-module">
-<h2>data.states.options module<a class="headerlink" href="#data-states-options-module" title="Link to this heading"></a></h2>
+<section id="module-data.states.options">
+<span id="data-states-options-module"></span><h2>data.states.options module<a class="headerlink" href="#module-data.states.options" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="data.states.options.Options">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.states.options.</span></span><span class="sig-name descname"><span class="pre">Options</span></span><a class="reference internal" href="_modules/data/states/options.html#Options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.options.Options" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#data.states.state.State" title="data.states.state.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.options.Options.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/options.html#Options.cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.options.Options.cleanup" title="Link to this definition"></a></dt>
+<dd><p>Called when the state leaves the top of the state stack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.options.Options.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/options.html#Options.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.options.Options.render" title="Link to this definition"></a></dt>
+<dd><p>Meant to render all the state’s elements to the screen.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.options.Options.startup">
+<span class="sig-name descname"><span class="pre">startup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/options.html#Options.startup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.options.Options.startup" title="Link to this definition"></a></dt>
+<dd><p>Called when the state enters the top of the state stack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.options.Options.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/options.html#Options.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.options.Options.update" title="Link to this definition"></a></dt>
+<dd><p>Called before self.render, meant to update all the state elements.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.options.Options.update_screen">
+<span class="sig-name descname"><span class="pre">update_screen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/options.html#Options.update_screen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.options.Options.update_screen" title="Link to this definition"></a></dt>
+<dd><p>Method meant to update the screen variables of all elements
+in the state using it.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="data-states-title-module">
-<h2>data.states.title module<a class="headerlink" href="#data-states-title-module" title="Link to this heading"></a></h2>
+<section id="module-data.states.state">
+<span id="data-states-state-module"></span><h2>data.states.state module<a class="headerlink" href="#module-data.states.state" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="data.states.state.State">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.states.state.</span></span><span class="sig-name descname"><span class="pre">State</span></span><a class="reference internal" href="_modules/data/states/state.html#State"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.State" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Parent class for creating _states.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.State.back">
+<span class="sig-name descname"><span class="pre">back</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#State.back"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.State.back" title="Link to this definition"></a></dt>
+<dd><p>Default behaviour exits to the previous states, however should be
+overriden in certain cases e.g. for the first state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.State.cleanup">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#State.cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.State.cleanup" title="Link to this definition"></a></dt>
+<dd><p>Called when the state leaves the top of the state stack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.State.render">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#State.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.State.render" title="Link to this definition"></a></dt>
+<dd><p>Meant to render all the state’s elements to the screen.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data.states.state.State.screen">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">screen</span></span><a class="headerlink" href="#data.states.state.State.screen" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data.states.state.State.screen_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">screen_size</span></span><a class="headerlink" href="#data.states.state.State.screen_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.State.startup">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">startup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#State.startup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.State.startup" title="Link to this definition"></a></dt>
+<dd><p>Called when the state enters the top of the state stack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.State.update">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#State.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.State.update" title="Link to this definition"></a></dt>
+<dd><p>Called before self.render, meant to update all the state elements.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.State.update_screen">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_screen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#State.update_screen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.State.update_screen" title="Link to this definition"></a></dt>
+<dd><p>Method meant to update the screen variables of all elements
+in the state using it.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data.states.state.StateManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.states.state.</span></span><span class="sig-name descname"><span class="pre">StateManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#StateManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.StateManager" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for interacting with the state stack.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.StateManager.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#StateManager.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.StateManager.append" title="Link to this definition"></a></dt>
+<dd><p>Gets the state object from the name passed and appends the state
+name to the end of the state stack. Calls relevant startup and cleanup
+methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The name of the state to append as stored in the</p>
+</dd>
+</dl>
+<p>_states property dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>KeyError</strong> – When state_name is not present in the _states</p>
+</dd>
+</dl>
+<p>property dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.StateManager.back_to">
+<span class="sig-name descname"><span class="pre">back_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#StateManager.back_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.StateManager.back_to" title="Link to this definition"></a></dt>
+<dd><p>Removes every state on top of the state to go back to, and calls the
+relevant startup and cleanup methods (only of the top state and state
+moving back to, _states inbetween are ignored).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The name of the state to go back to as stored in the
+_states property dictionary.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – When state_name is not present in the _states
+property dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data.states.state.StateManager.current_state">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_state</span></span><a class="headerlink" href="#data.states.state.StateManager.current_state" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data.states.state.StateManager.input_binder">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_binder</span></span><a class="headerlink" href="#data.states.state.StateManager.input_binder" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data.states.state.StateManager.input_manager">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_manager</span></span><a class="headerlink" href="#data.states.state.StateManager.input_manager" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.StateManager.pop">
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#StateManager.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.StateManager.pop" title="Link to this definition"></a></dt>
+<dd><p>Removes the last state from the state stack, calls relevant startup
+and cleanup methods.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.StateManager.quit">
+<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#StateManager.quit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.StateManager.quit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data.states.state.StateManager.state_stack">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_stack</span></span><a class="headerlink" href="#data.states.state.StateManager.state_stack" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.state.StateManager.switch">
+<span class="sig-name descname"><span class="pre">switch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/state.html#StateManager.switch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.state.StateManager.switch" title="Link to this definition"></a></dt>
+<dd><p>Removes the last state from the state stack, gets the state object
+from the name passed and appends the state name to the end of the state
+stack. Calls relevant startup and cleanup.
+methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The name of the state to switch as stored in the
+_states property dictionary.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – When state_name is not present in the _states
+property dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-data.states.title">
+<span id="data-states-title-module"></span><h2>data.states.title module<a class="headerlink" href="#module-data.states.title" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="data.states.title.Title">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data.states.title.</span></span><span class="sig-name descname"><span class="pre">Title</span></span><a class="reference internal" href="_modules/data/states/title.html#Title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.title.Title" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#data.states.state.State" title="data.states.state.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.title.Title.back">
+<span class="sig-name descname"><span class="pre">back</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/title.html#Title.back"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.title.Title.back" title="Link to this definition"></a></dt>
+<dd><p>Default behaviour exits to the previous states, however should be
+overriden in certain cases e.g. for the first state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.title.Title.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/title.html#Title.cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.title.Title.cleanup" title="Link to this definition"></a></dt>
+<dd><p>Called when the state leaves the top of the state stack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.title.Title.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/title.html#Title.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.title.Title.render" title="Link to this definition"></a></dt>
+<dd><p>Meant to render all the state’s elements to the screen.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.title.Title.startup">
+<span class="sig-name descname"><span class="pre">startup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/title.html#Title.startup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.title.Title.startup" title="Link to this definition"></a></dt>
+<dd><p>Called when the state enters the top of the state stack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.title.Title.switch_splash">
+<span class="sig-name descname"><span class="pre">switch_splash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/title.html#Title.switch_splash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.title.Title.switch_splash" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.title.Title.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/title.html#Title.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.title.Title.update" title="Link to this definition"></a></dt>
+<dd><p>Called before self.render, meant to update all the state elements.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.states.title.Title.update_screen">
+<span class="sig-name descname"><span class="pre">update_screen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/states/title.html#Title.update_screen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.states.title.Title.update_screen" title="Link to this definition"></a></dt>
+<dd><p>Method meant to update the screen variables of all elements
+in the state using it.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-data.states">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-data.states" title="Link to this heading"></a></h2>
 </section>
 </section>
 
@@ -111,14 +346,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="data.components.ui.html" class="btn btn-neutral float-left" title="data.components.ui package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data.core.html" class="btn btn-neutral float-left" title="data.core package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="shmup.html" class="btn btn-neutral float-right" title="shmup module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Rene Tmnsv.</p>
+    <p>&#169; Copyright 2024, Rene Timantsev.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

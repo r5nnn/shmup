@@ -1,25 +1,23 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>data &mdash; Shmup 0.0.3 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+  <title>data.core.prepare &mdash; Shmup 0.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=7ab3649f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=47de8214"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=47de8214"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -30,11 +28,11 @@
 
           
           
-          <a href="../index.html" class="icon icon-home">
+          <a href="../../../index.html" class="icon icon-home">
             Shmup
           </a>
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -43,7 +41,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">new struct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">shmup</a></li>
 </ul>
 
         </div>
@@ -52,16 +50,16 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">Shmup</a>
+          <a href="../../../index.html">Shmup</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
-      <li class="breadcrumb-item active">data</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">data.core.prepare</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -70,10 +68,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for data</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
+  <h1>Source code for data.core.prepare</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Prepares pygame by initializing all its modules and creating the display.</span>
+
+<span class="sd">Additionally searches directories and identifies the paths to all the assets</span>
+<span class="sd">to be used in the game. Loads in fonts and spritesheets.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">import</span> <span class="nn">pygame</span>
 
@@ -81,11 +82,16 @@
 <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_caption</span><span class="p">(</span><span class="s2">&quot;shmup&quot;</span><span class="p">)</span>
 <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">((</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">),</span> <span class="n">pygame</span><span class="o">.</span><span class="n">FULLSCREEN</span> <span class="o">|</span> <span class="n">pygame</span><span class="o">.</span><span class="n">SCALED</span><span class="p">)</span>
 
+<span class="n">sources_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="parse_spritesheet">
-<a class="viewcode-back" href="../data.html#data.parse_spritesheet">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_spritesheet</span><span class="p">(</span><span class="n">sprite_sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a spritesheet using its associated json file.&quot;&quot;&quot;</span>
+<a class="viewcode-back" href="../../../data.core.html#data.core.prepare.parse_spritesheet">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_spritesheet</span><span class="p">(</span><span class="n">sprite_sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a spritesheet using its associated json file.</span>
+
+<span class="sd">    :param sprite_sheet: The sprite sheet file to get sprites from.</span>
+<span class="sd">    :returns: A dictionary containing the name of the sprite pointing to</span>
+<span class="sd">        a subsurface of the spritesheet with the specific sprite on it.&quot;&quot;&quot;</span>
     <span class="n">spritesheet</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">sprite_sheet</span><span class="p">)</span><span class="o">.</span><span class="n">convert_alpha</span><span class="p">()</span>
     <span class="n">sprite_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">sprite_sheet</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">metadata</span> <span class="o">=</span> <span class="n">sprite_name</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span>
@@ -93,7 +99,7 @@
         <span class="n">metadata_json</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not open/read file: </span><span class="si">{</span><span class="n">metadata</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">OSError</span>
     <span class="k">with</span> <span class="n">metadata_json</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">)</span>
     <span class="n">metadata_json</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -107,17 +113,21 @@
 
 
 <div class="viewcode-block" id="Load">
-<a class="viewcode-back" href="../data.html#data.Load">[docs]</a>
+<a class="viewcode-back" href="../../../data.core.html#data.core.prepare.Load">[docs]</a>
 <span class="k">class</span> <span class="nc">Load</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads in files from specified directories.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads in files from specified directories.</span>
+
+<span class="sd">    :param directory: The parent directory to start searching from.</span>
+<span class="sd">        Subdirectories are also searched.</span>
+<span class="sd">    :param accept: The file endings to search for.</span>
+<span class="sd">    :param exclude_dirs: Subdirectories to skip when searching for files.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">accept</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exclude_dirs</span> <span class="o">=</span> <span class="n">exclude_dirs</span> <span class="k">if</span> <span class="n">exclude_dirs</span> <span class="k">else</span> <span class="p">[]</span>
-
         <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">excluded</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">directory</span><span class="p">)</span>
-                   <span class="k">for</span> <span class="n">excluded</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_dirs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">excluded</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">directory</span><span class="p">)</span> <span class="k">for</span> <span class="n">excluded</span> <span class="ow">in</span>
+                   <span class="bp">self</span><span class="o">.</span><span class="n">exclude_dirs</span><span class="p">):</span>
                 <span class="k">continue</span>
             <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
                 <span class="n">name</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
@@ -131,9 +141,13 @@
 
 
 <div class="viewcode-block" id="LoadSprites">
-<a class="viewcode-back" href="../data.html#data.LoadSprites">[docs]</a>
+<a class="viewcode-back" href="../../../data.core.html#data.core.prepare.LoadSprites">[docs]</a>
 <span class="k">class</span> <span class="nc">LoadSprites</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads in spritesheets from specified directories.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads in spritesheets from specified directories.</span>
+
+<span class="sd">    :param directory: The directory to start searching from. Subdirectories are</span>
+<span class="sd">        also searched.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
@@ -146,16 +160,14 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :returns: A dictionary of file names pointing to their directories.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a dictionary of file names pointing to their directories.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
 
 
-
-<span class="n">image_paths</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;resources&#39;</span><span class="p">,</span> <span class="s1">&#39;graphics&#39;</span><span class="p">),</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
-<span class="n">audio_paths</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;resources&#39;</span><span class="p">,</span> <span class="s1">&#39;audio&#39;</span><span class="p">),</span> <span class="s1">&#39;.wav&#39;</span><span class="p">)</span>
-<span class="n">font_paths</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;resources&#39;</span><span class="p">,</span> <span class="s1">&#39;fonts&#39;</span><span class="p">),</span> <span class="s1">&#39;.ttf&#39;</span><span class="p">)</span>
-<span class="n">sprites</span> <span class="o">=</span> <span class="n">LoadSprites</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;resources&#39;</span><span class="p">,</span> <span class="s1">&#39;graphics&#39;</span><span class="p">))</span>
+<span class="n">image_paths</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_root</span><span class="p">,</span> <span class="s1">&#39;resources&#39;</span><span class="p">,</span> <span class="s1">&#39;graphics&#39;</span><span class="p">),</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+<span class="n">audio_paths</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_root</span><span class="p">,</span> <span class="s1">&#39;resources&#39;</span><span class="p">,</span> <span class="s1">&#39;audio&#39;</span><span class="p">),</span> <span class="s1">&#39;.wav&#39;</span><span class="p">)</span>
+<span class="n">font_paths</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_root</span><span class="p">,</span> <span class="s1">&#39;resources&#39;</span><span class="p">,</span> <span class="s1">&#39;fonts&#39;</span><span class="p">),</span> <span class="s1">&#39;.ttf&#39;</span><span class="p">)</span>
+<span class="n">sprites</span> <span class="o">=</span> <span class="n">LoadSprites</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_root</span><span class="p">,</span> <span class="s1">&#39;resources&#39;</span><span class="p">,</span> <span class="s1">&#39;graphics&#39;</span><span class="p">))</span>
 </pre></div>
 
            </div>
@@ -165,7 +177,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Rene Tmnsv.</p>
+    <p>&#169; Copyright 2024, Rene Timantsev.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
