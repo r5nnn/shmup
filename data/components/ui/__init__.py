@@ -1,4 +1,4 @@
 """Subpackage containing modules relating to ui."""
-from button import ButtonConfig, ButtonBase, TextButtonConfig, TextButton, \
-    ImageButtonConfig, ImageButton
-from text import Text, WrappedText
+from data.components.ui.button import ButtonConfig, ButtonBase, \
+    TextButtonConfig, TextButton, ImageButtonConfig, ImageButton
+from data.components.ui.text import Text, WrappedText

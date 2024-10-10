@@ -1,3 +1,3 @@
 """Subpackage containing all of the games states."""
-from options import Options
-from title import Title
+from data.states.options import Options
+from data.states.title import Title

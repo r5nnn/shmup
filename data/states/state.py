@@ -3,9 +3,9 @@ import warnings
 
 import pygame
 
-from data.components.audio import button_audio
+from data.components import button_audio
 from data.core.utils import Singleton
-from data.components import input
+from data.components import inputmanager, inputbinder
 
 
 class State(ABC):
@@ -183,4 +183,4 @@ class StateManager(metaclass=Singleton):
         self.control.quit()
 
 
-stateManager = StateManager(input.InputManager(), input.InputBinder())
+stateManager = StateManager(inputmanager, inputbinder)

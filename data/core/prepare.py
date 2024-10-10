@@ -11,7 +11,7 @@ pygame.init()
 pygame.display.set_caption("shmup")
 pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN | pygame.SCALED)
 
-sources_root = os.path.abspath('..')
+sources_root = os.path.abspath('.')
 
 def parse_spritesheet(sprite_sheet: str) -> dict[str, pygame.Surface]:
     """Parses a spritesheet using its associated json file.
