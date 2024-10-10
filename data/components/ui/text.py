@@ -1,14 +1,4 @@
-"""Module for displaying text on the screen.
-
-Text can be updated at any point and will rerender and update itself accordingly.
-Additionally, the `WrappedText` class can be used when wrapping is needed.
-
-Attributes:
-    text_rect_alignments: Stores the alignment type hints for the bounding rect
-        in the `WrappedText` class.
-    default_font_dir: Stores the directory to the default font to use if no
-        font is passed in.
-"""
+"""Module for displaying text on the screen."""
 import warnings
 from typing import Literal, Optional, override, Type
 
@@ -25,41 +15,25 @@ default_font_dir: str = font_paths('editundo')
 
 class Text(WidgetBase):
     """Class for creating and displaying text on a surface.
-
+    
     Aligns and renders text using `self._align_rect` and `self._render_text`:
     can be updated in real time and will update the rect and re-render itself
     as needed. Only to be used when the text is non interactable and doesn't
     need wrapping. Allows alligning the text to the coordinates provided.
 
-    Attributes:
-        x: The x coordinate of the text with reference to the alignment
-            (given by `self.align`). Updates the rect of the Font when changed.
-        y: The y coordinate of the text with reference to the alignment
-            (given by `self.align`). Updates the rect of the Font when changed.
-        text: The text to display. Text surface is re-rendered upon being set.
-        font: The font of the text. Text surface is re-rendered upon being set.
-        font_size: The size of the font. Text surface is re-rendered upon being set.
-        color: The color of the text. Text surface is re-rendered upon being set.
-        align: Alignment of the text coordinates. Updates the rect of the Font
-            when changed.
-        surface: The surface that the text should be rendered to. Text surface
-            is re-rendered upon being set.
-
-    Args:
-        position: The position of the text with reference to the `align`
-            argument passed.
-        text: The text to display.
-        font: The font of the text. Defaults to `None` in order to use the
-            `default_font_dir`.
-        font_size: The size of the font, should only be used when the default
-            font is used. Defaults to `32`.
-        color: The color of the text. Defaults to white.
-        align: The point of the text rect that the `position` argument is
-            referencing. Defaults to `'topleft'`.
-        antialias: Whether antialiasing should be used when rendering the text
-            surface. Defaults to `False`.
-        surface: The surface that the text should be rendered to. Defaults
-            to `None` to use the current display surface.
+    :param position: The position of the text with reference to the `align`
+        argument passed.
+    :param font: The font of the text. Defaults to `None` in order to use the
+        `default_font_dir`.
+    :param font_size: The size of the font, should only be used when the default
+        font is used.
+    :param color: The color of the text. Defaults to white.
+    :param align: The point of the text rect that the `position` argument is
+        referencing.
+    :param antialias: Whether antialiasing should be used when rendering the text
+        surface.
+    :param surface: The surface that the text should be rendered to. Defaults
+        to `None` to use the current display surface.
     """
     text = RenderNeeded()
     font = RenderNeeded()
@@ -92,7 +66,6 @@ class Text(WidgetBase):
 
     @property
     def antialias(self) -> bool:
-        """Whether antialiasing should be used when rendering text."""
         return self._antialias
 
     @antialias.setter
@@ -102,12 +75,10 @@ class Text(WidgetBase):
 
     @property
     def rect(self) -> pygame.Rect:
-        """The rect object of the text."""
         return self._rect
 
     @override
     def blit(self):
-        """Draws the text onto the surface."""
         self.surface.blit(self._text_surface, self._rect)
 
     @override
@@ -130,41 +101,26 @@ class Text(WidgetBase):
 
 class WrappedText:
     """Class for creating and displaying wrapped text on a surface.
-
+    
     Text wraps according to the bounding rect argument passed. Text can be
     aligned to the left, right, center or justified in the bounding rect. Text
     that cannot fit inside the rect is not displayed. Changing font size
     after an object has been instantiated is not supported yet.
 
-    Attributes:
-        rect: The bounding rectangle that the text wraps with reference to.
-        text: The text to display. Text surface is re-rendered upon being set.
-        font: The font of the text. Text surface is re-rendered upon being set.
-        color: The color of the text. Text surface is re-rendered upon being set.
-        align: Alignment of the text coordinates. Updates the rect of the Font
-            when changed.
-        text_align: The alignment of the text inside the rect.
-        surface: The surface that the text should be rendered to. Text surface
-            is re-rendered upon being set.
-
-    Args:
-        rect: The bounding rectangle that the text should fit in and wrap in
-            accordance with.
-        text: The text to display.
-        font: The font of the text. Defaults to `None` in order to use the
-            `default_font_dir`.
-        font_size: The size of the font, should only be used when the default
-            font is used. Defaults to `32`.
-        color: The color of the text. Defaults to white.
-        align: The point of the text rect that the `position` argument is
-            referencing. Defaults to `'topleft'`.
-        text_align: The alignment of the text inside the bounding rect provided.
-            Can be left, right, center or justified.
-        antialias: Whether antialiasing should be used when rendering the text
-            surface. Defaults to `False`.
-        line_spacing: The distance between new lines. Defaults to `0`.
-        surface: The surface that the text should be rendered to. Defaults
-            to the current display surface: `pygame.display.get_surface`.
+    :param rect: The bounding rectangle that the text should fit in and wrap in
+        accordance with.
+    :param font: The font of the text. Defaults to `None` in order to use the
+        `default_font_dir`.
+    :param font_size: The size of the font, should only be used when the default
+        font is used. Defaults to `32`.
+    :param align: The point of the text rect that the `position` argument is
+        referencing. Defaults to `'topleft'`.
+    :param text_align: The alignment of the text inside the bounding rect provided.
+        Can be left, right, center or justified.
+    :param antialias: Whether antialiasing should be used when rendering the text
+        surface. Defaults to `False`.
+    :param surface: The surface that the text should be rendered to. Defaults
+        to the current display surface: `pygame.display.get_surface`.
     """
     rect = AlignmentNeeded()
     text = RenderNeeded()
@@ -200,7 +156,6 @@ class WrappedText:
 
     @property
     def antialias(self) -> bool:
-        """Whether antialiasing should be used when rendering text."""
         return self._antialias
 
     @antialias.setter
@@ -209,7 +164,6 @@ class WrappedText:
         self._font.antialiased = value
 
     def blit(self):
-        """Draws the text onto the surface."""
         font_height = self._font.size("Tg")[1]
         line_bottom = self._rect[1]
         last_line = 0

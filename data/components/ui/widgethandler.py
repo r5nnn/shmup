@@ -1,9 +1,6 @@
 """Module containing a set of functions that are used to interact with all
 widgets added to the handler at once from a centralized location.
-
-Attributes:
-    widgets: An insertion-ordered set of widgets.
-    """
+"""
 import weakref
 from collections import OrderedDict
 from collections.abc import MutableSet
@@ -74,7 +71,7 @@ widgets: _OrderedWeakset[weakref.ref] = _OrderedWeakset()
 
 def blit() -> None:
     """Calls all the widgets' `blit()` methods to render them onto the screen.
-
+    
     Widgets are rendered in the order they were added. Must be called once
     every game tick."""
     # Conversion is used to prevent errors when widgets are added/removed
@@ -85,7 +82,7 @@ def blit() -> None:
 
 def update() -> None:
     """Calls all the widgets' `update()` methods. Update done varies by widget.
-
+    
     Widgets are updated in the order they were added. If widgets are
     overlapping, only the topmost widget will be updated. Must be called once
     every game tick."""
@@ -104,13 +101,9 @@ def update() -> None:
 
 def add_widget(widget: "WidgetBase") -> None:
     """Adds the widget given to an centralised ordered set of widgets.
-
+    
     Widgets must be added so that all the other functions relating to the
-    widgets can work.
-
-    Args:
-        widget: The widget to add to the set.
-    """
+    widgets can work."""
     if widget not in widgets:
         widgets.add(widget)
         move_to_top(widget)
@@ -119,11 +112,8 @@ def add_widget(widget: "WidgetBase") -> None:
 def remove_widget(widget: "WidgetBase") -> None:
     """Removes the widget given from the ordered set of widgets.
 
-    Args:
-        widget: The widget to remove from the set.
-
-    Raises:
-        ValueError: If the widget is not in the set."""
+    :raises ValueError: If the widget is not in the set.
+    """
     try:
         widgets.remove(widget)
     except ValueError:
@@ -133,16 +123,13 @@ def remove_widget(widget: "WidgetBase") -> None:
 
 def move_to_top(widget: "WidgetBase") -> None:
     """Moves the widget given to the top of the ordered set of widgets.
-
+    
     A widget at the top will be rendered over all other widgets (if
     they are overlapping) and will always recieve input even if if there
     are other widgets below that should recieve input.
 
-    Args:
-        widget: The widget to move to the top of the set.
-
-    Raises:
-        KeyError: If the widget is not in the set."""
+    :raises KeyError: If the widget is not in the set.
+    """
     try:
         widgets.move_to_end(widget)
     except KeyError:
@@ -152,16 +139,13 @@ def move_to_top(widget: "WidgetBase") -> None:
 
 def move_to_bottom(widget: "WidgetBase") -> None:
     """Moves the widget given to the bottom of the ordered set of widgets.
-
+    
     A widget at the bottom will be rendered under all other widgets (if
     they are overlapping) and will not recieve input if the overlapped part
     is interacted with.
 
-    Args:
-        widget: The widget to move to the bottom of the set.
-
-    Raises:
-        KeyError: If the widget is not in the set."""
+    :raises KeyError: If the widget is not in the set.
+    """
     try:
         widgets.move_to_start(widget)
     except KeyError:
@@ -169,11 +153,7 @@ def move_to_bottom(widget: "WidgetBase") -> None:
               f'not in WidgetHandler.')
 
 
-def update_screen(screen: pygame.Surface) -> None:
-    """Updates the surface value for all of the widgets in the widget set.
-
-    Args:
-        screen: The new surface that the widgets should render to.
-    """
+def set_widget_screen(screen: pygame.Surface) -> None:
+    """Updates the surface value for all of the widgets in the widget set."""
     for widget in widgets:
         widget.surface = screen

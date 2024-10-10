@@ -384,12 +384,10 @@ class ImageButton(ButtonBase):
 
     @override
     def update(self):
-        """Updates the button based on mouse state."""
         super().update()
 
     @override
     def blit(self):
-        """Optionally draw the button rect if using rect collision."""
         if self.use_rect_collision:
             pygame.draw.rect(self.surface, self._color, self._rect, border_radius=self.radius)
 

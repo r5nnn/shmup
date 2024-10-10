@@ -4,18 +4,14 @@ from typing import Type
 
 import pygame.display
 
-from data.components.input import InputManager, InputBinder
+from data.components.input import inputmanager, inputbinder
 from data.states.state import State, stateManager
 
 
 class Control:
-    """Class that controls the game.
-    
-    :param state_dict: Dictionary containing all the states to be used in the game.
-    :param start_state: The name of the state to start the game with."""
+    """Class that controls the game."""
 
     def __init__(self, state_dict: dict[str, Type[State]], start_state: str):
-        """Initialises game properties, binds global keybinds."""
         stateManager.control = self
         stateManager.state_dict = state_dict
         stateManager.append(start_state)
@@ -27,21 +23,19 @@ class Control:
         self.clock = pygame.time.Clock()
         self.refresh_rate = 165
 
-        self.input_manager = InputManager()
-        self.input_binder = InputBinder()
-        self.input_binder.register(("keydown", pygame.K_F11),
+        inputbinder.register(("keydown", pygame.K_F11),
                                    action=lambda: self._toggle_tag(pygame.FULLSCREEN))
-        self.input_binder.register(("keydown", pygame.K_END),
+        inputbinder.register(("keydown", pygame.K_END),
                                    action=self.quit)
-        self.input_binder.register(("keydown", pygame.K_F11), ("key", pygame.K_LSHIFT),
+        inputbinder.register(("keydown", pygame.K_F11), ("key", pygame.K_LSHIFT),
                                    action=lambda: self._toggle_tag(pygame.NOFRAME))
 
     def update(self):
         """Updates current state, checks for quit requests."""
-        if self.input_manager.quit:
+        if inputmanager.quit:
             self.quit()
         stateManager.current_state.update()
-        self.input_binder.notify(self.input_manager)
+        inputbinder.notify(inputmanager)
 
     def render(self):
         """Renders current state, ticks the clock and flips the display."""
@@ -49,9 +43,10 @@ class Control:
         self.clock.tick(self.refresh_rate)
         pygame.display.flip()
 
-    def event_loop(self):
+    @staticmethod
+    def event_loop():
         """Passes events to the event manager."""
-        self.input_manager.process_events(pygame.event.get())
+        inputmanager.process_events(pygame.event.get())
 
     def quit(self):
         """Sets running to False."""
