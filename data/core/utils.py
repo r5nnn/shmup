@@ -34,6 +34,15 @@ class Mouse:
     SCROLLDOWN = 5
 
 
+@dataclass(frozen=True)
+class Popups:
+    ANY = 0
+    INFO = 1
+    INPUT = 3
+    OK_CANCEL = 4
+    YES_NO  = 5
+
+
 class Singleton(type):
     """An implementation of the singleton design pattern in python.
     
