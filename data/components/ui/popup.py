@@ -17,5 +17,19 @@ class Popup(WidgetBase):
                  popup_type: Popups = 0,
                  surface: pygame.Surface = pygame.display.get_surface()):
         super().__init__(position, align, surface)
-        self.size = size
-        self.popup_type = popup_type
+        self._width, self._height = size
+        self._popup_type = popup_type
+        self._buttons = buttons
+        for button in self._buttons:
+            total_button_width += button.width
+            total_button_height += button.height
+        if total_button_width >= self._width:
+            raise ValueError(f"Total width of buttons ({total_button_width}) is more"
+                f" than width of popup given ({self._width})")
+        if total_button_height >= self._height:
+            raise ValueError(f"Total height of buttons ({total_button_height}) is more"
+                f" than height of popup given ({self._height})")
+        self.rect = pygame.Rect(self._x, self._y, self._width, self.height)
+
+    def _align_popup(self):
+        ...
