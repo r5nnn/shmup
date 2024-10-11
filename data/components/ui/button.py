@@ -60,13 +60,15 @@ class ButtonConfig:
     click_audio: Optional[str] = 'click'
     release_audio: Optional[str] = 'click'
     surface: Optional[pygame.Surface] = None
+    is_sub_widget: bool = False
 
 
 class ButtonBase(WidgetBase):
     """Base class for creating buttons."""
 
     def __init__(self, config: ButtonConfig):
-        WidgetBase.__init__(self, config.position, config.align, config.surface)
+        WidgetBase.__init__(self, config.position, config.align, config.surface, 
+                            config.is_sub_widget)
         self._width, self._height = config.size
         self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self.colors = config.colors
