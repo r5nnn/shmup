@@ -71,6 +71,7 @@ class ButtonBase(WidgetBase):
                             config.is_sub_widget)
         self._width, self._height = config.size
         self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
+        self._align_rect(self._rect, self._align, (self._x, self._y))
         self.colors = config.colors
         self._color = self.colors['default'] if self.colors is not None else None
         self.border_colors = config.border_colors
@@ -102,7 +103,7 @@ class ButtonBase(WidgetBase):
         self._rect.width = self._width
         if self.border_colors is not None:
             self._border_rect.width = self._width - self._border_thickness * 2
-        self._align_rect(self._rect, self._align, self._coords)
+        self._align_rect(self._rect, self._align, (self._x, self._y))
 
     @property
     def height(self) -> int:
@@ -114,7 +115,7 @@ class ButtonBase(WidgetBase):
         self._rect.height = self._height
         if self.border_colors is not None:
             self._border_rect.height = (self._height - self._border_thickness * 2)
-        self._align_rect(self._rect, self._align, self._coords)
+        self._align_rect(self._rect, self._align, (self._x, self._y))
 
     @property
     def border_thickness(self) -> int:
@@ -131,7 +132,7 @@ class ButtonBase(WidgetBase):
 
     def _align_rect(self, rect, align, coords):
         setattr(rect, align, coords)
-        self._coords = self._x, self._y = getattr(rect, align)
+        self._x, self._y = getattr(rect, align)
 
     def contains(self, x: int, y: int) -> bool:
         """Used to check if a point (usually position of the mouse) is inside
