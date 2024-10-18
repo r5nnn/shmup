@@ -9,14 +9,16 @@ from data.core.utils import Popups
 
 
 class Popup(WidgetBase):
-    def __init__(self, position: tuple[int, int], size: tuple[int, int],
-                 align: CustomTypes.rect_alignments,
-                 text: str, text_color: pygame.Color | tuple = pygame.Color("white"),
+    def __init__(self, size: tuple[int, int], position: tuple[int, int] = None,
+                 align: CustomTypes.rect_alignments = 'center',
+                 text: str = "",
+                 text_color: pygame.Color | tuple = pygame.Color("white"),
                  font: Optional[pygame.font.Font] = None, font_size: int = 32,
                  padding: int = 10,
                  *buttons: ButtonBase,
                  popup_type: Popups = 0,
                  surface: pygame.Surface = pygame.display.get_surface()):
+        position = tuple(int(coord/2) for coord in pygame.display.get_surface().get_size())
         super().__init__(position, align, surface)
         self._width, self._height = size
         self._popup_type = popup_type
