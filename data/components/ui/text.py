@@ -46,8 +46,9 @@ class Text(WidgetBase):
                  color: pygame.Color | tuple = pygame.Color('white'),
                  align: CustomTypes.rect_alignments = 'topleft',
                  antialias: bool = False,
-                 surface: Optional[pygame.Surface] = None):
-        super().__init__(position, align, surface)
+                 surface: Optional[pygame.Surface] = None,
+                 sub_widget: bool = False):
+        super().__init__(position, align, surface, sub_widget)
 
         if (font is not None and font_size != 32) and not \
                 isinstance(font, (pygame.freetype.Font, pygame.font.Font)):
@@ -88,6 +89,11 @@ class Text(WidgetBase):
             self._text_surface, self._rect = self._render_text(self._text, self._color)
         if self._requires_realignment:
             self._align_rect(self._rect, self._align, self._coords)
+
+    @override
+    def contains(self, x, y):
+        return (self._x < x - self._surface.get_abs_offset()[0] < self._x + self._rect.width) and \
+               (self._y < y - self._surface.get_abs_offset()[1] < self._y + self._rect.height)
 
     def _render_text(self, text, color):
         self._requires_rerender = False

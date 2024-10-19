@@ -60,15 +60,15 @@ class ButtonConfig:
     click_audio: Optional[str] = 'click'
     release_audio: Optional[str] = 'click'
     surface: Optional[pygame.Surface] = None
-    is_sub_widget: bool = False
+    sub_widget: bool = False
 
 
 class ButtonBase(WidgetBase):
     """Base class for creating buttons."""
 
     def __init__(self, config: ButtonConfig):
-        WidgetBase.__init__(self, config.position, config.align, config.surface, 
-                            config.is_sub_widget)
+        super().__init__(config.position, config.align, config.surface,
+                         config.sub_widget)
         self._width, self._height = config.size
         self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self._align_rect(self._rect, self._align, (self._x, self._y))
@@ -218,7 +218,7 @@ class TextButtonConfig(ButtonConfig):
     text_colors: Optional[dict[str, tuple[int, ...]]] = None
     font: Optional[pygame.font.Font] = None
     font_size: int = 32
-    text_align: Optional[tuple[str, str]] = None
+    text_align: Optional[tuple[str, str]] = 'center'
     margin: int = 20
 
 
@@ -226,7 +226,7 @@ class TextButton(ButtonBase):
     """Class for creating buttons with text labels."""
 
     def __init__(self, config: TextButtonConfig):
-        super().__init__(super(TextButtonConfig, config))
+        super().__init__(config)
         self.text_colors = config.text_colors \
             if config.text_colors is not None else {
                 'default': (255, 255, 255),
@@ -235,15 +235,17 @@ class TextButton(ButtonBase):
             }
         self._text_color = self.text_colors['default']
         self._text = Text((0, 0), config.text, config.font, config.font_size,
-                          color=self._text_color)
+                          color=self._text_color, sub_widget=True)
         self.text_align = config.text_align
         self.margin = config.margin
         self._align_text(self._text)
 
+    @override
     @property
     def surface(self):
-        return self.surface
+        return self._surface
 
+    @override
     @surface.setter
     def surface(self, value):
         self.surface = value
@@ -285,7 +287,7 @@ class TextButton(ButtonBase):
 
     @override
     def on_idle(self):
-        self._text.color = self.text_colors['inactive']
+        self._text.color = self.text_colors['default']
 
     @override
     def update(self):
