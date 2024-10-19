@@ -5,6 +5,7 @@ import weakref
 from collections import OrderedDict
 from collections.abc import MutableSet
 from typing import override, TYPE_CHECKING
+from xml.sax.handler import property_xml_string
 
 import pygame
 
@@ -152,8 +153,14 @@ def move_to_bottom(widget: "WidgetBase") -> None:
         print(f'Error: Tried to move {widget} to bottom when {widget} '
               f'not in WidgetHandler.')
 
+    @property
+    def screen():
+        """Updates the surface value for all of the widgets in the widget set."""
+        return _screen
 
-def set_widget_screen(screen: pygame.Surface) -> None:
-    """Updates the surface value for all of the widgets in the widget set."""
-    for widget in widgets:
-        widget.surface = screen
+    @screen.setter
+    def screen(value):
+        for widget in widgets:
+            widget.surface = value
+
+_screen = pygame.display.get_surface()
