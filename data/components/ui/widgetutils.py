@@ -53,9 +53,9 @@ class WidgetBase(ABC):
                  sub_widget: bool = False):
         self._x, self._y = position
         self._align = align
-        self.surface = surface if surface is not None else \
+        self._surface = surface if surface is not None else \
             pygame.display.get_surface()
-        self.is_sub_widget = sub_widget
+        self.sub_widget = sub_widget
 
         self._hidden = False
         self._disabled = False
@@ -63,6 +63,14 @@ class WidgetBase(ABC):
 
         if not sub_widget:
             widgethandler.add_widget(self)
+
+    @property
+    def surface(self):
+        return self._surface
+
+    @surface.setter
+    def surface(self, value):
+        self._surface = value
 
     @abstractmethod
     def update(self) -> None:
@@ -72,16 +80,20 @@ class WidgetBase(ABC):
     def blit(self) -> None:
         """Renders the widget onto the screen."""
 
+    @abstractmethod
+    def contains(self, x, y):
+        ...
+
     def hide(self) -> None:
         """Hides the widget from the screen."""
         self._hidden = True
-        if not self.is_sub_widget:
+        if not self.sub_widget:
             widgethandler.move_to_bottom(self)
 
     def show(self) -> None:
         """Displays the widget (if it was hidden previously)."""
         self._hidden = False
-        if not self.is_sub_widget:
+        if not self.sub_widget:
             widgethandler.move_to_top(self)
 
     def disable(self) -> None:
