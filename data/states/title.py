@@ -6,9 +6,7 @@ import pygame
 from data.core.prepare import image_paths, audio_paths, sprites
 from .state import State
 from ..components.audio import background_audio, button_audio
-from ..components.ui import widgethandler, TextButton, TextButtonConfig
-from ..components.ui.button import ImageButton, ImageButtonConfig
-from ..components.ui.popup import Popup
+from ..components.ui import widgethandler, TextButton, TextButtonConfig, ImageButton, ImageButtonConfig, Popup, PopupConfig
 
 
 class Title(State):
@@ -48,9 +46,11 @@ class Title(State):
             on_click=self.state_manager.quit)
         self.quit = ImageButton(quit_config)
 
-        textconfig = TextButtonConfig(position=(0, 0), size=(100, 50), text='click')
+        textconfig = TextButtonConfig(position=(0, 0), size=(100, 50), text='click', sub_widget=True)
         self.button = TextButton(textconfig)
-        self.popup = Popup((0, 0), (500, 500), 'topleft', self.button, text='hi')
+        popupconfig = PopupConfig(position=(0, 0), size=(300, 300), align='topleft',
+                                  text='hi', buttons=(self.button,))
+        self.popup = Popup(popupconfig)
 
     @override
     def update_screen(self):
