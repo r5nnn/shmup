@@ -3,7 +3,7 @@ from typing import Type
 import pygame.display
 
 import data.core.utils
-from data.components.input import inputmanager, inputbinder
+from data.components.input import InputManager, InputBinder
 from data.states.state import State, state_manager
 
 
@@ -20,17 +20,17 @@ class Control:
         self.clock = pygame.time.Clock()
         self.refresh_rate = 165
 
-        inputbinder.register(("keydown", pygame.K_F11), action=lambda:
+        InputBinder.register(("keydown", pygame.K_F11), action=lambda:
         self._toggle_tag(pygame.FULLSCREEN))
-        inputbinder.register(("keydown", pygame.K_END), action=self.quit)
-        inputbinder.register(("key", pygame.K_LSHIFT),
+        InputBinder.register(("keydown", pygame.K_END), action=self.quit)
+        InputBinder.register(("key", pygame.K_LSHIFT),
                              ("keydown", pygame.K_F11),
                              action=lambda: self._toggle_tag(pygame.NOFRAME))
 
     def update(self):
-        if inputmanager.quit:
+        if InputManager.quit:
             self.quit()
-        inputbinder.notify()
+        InputBinder.notify()
         state_manager.current_state.update()
 
     def render(self):
@@ -40,7 +40,7 @@ class Control:
 
     @staticmethod
     def event_loop():
-        inputmanager.process_events(pygame.event.get())
+        InputManager.process_events(pygame.event.get())
 
     def quit(self):
         """Sets running to False."""

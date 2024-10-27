@@ -3,7 +3,7 @@ from collections import OrderedDict
 from collections.abc import MutableSet
 from typing import override, TYPE_CHECKING
 
-from data.components.input import inputmanager
+from data.components.input import InputManager
 
 if TYPE_CHECKING:
     from data.components.ui.widgetutils import WidgetBase
@@ -74,13 +74,13 @@ def update() -> None:
     # Conversion is used to prevent errors when widgets are added/removed
     # during iteration a.k.a safe iteration
     for widget in list(widgets)[::-1]:
-        if not blocked or not widget.contains(*inputmanager.get_mouse_pos()):
+        if not blocked or not widget.contains(*InputManager.get_mouse_pos()):
             widget.update()
 
         # Ensure widgets covered by others are not affected
         # (widgets created later)
-        # if widget.contains(*inputmanager.get_mouse_pos()):
-        #     blocked = True
+        if widget.contains(*InputManager.get_mouse_pos()):
+            blocked = True
 
 
 def add_widget(widget: "WidgetBase") -> None:

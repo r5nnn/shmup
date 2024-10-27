@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import override
 
-from data.components.ui import widgethandler
-from data.core.utils import CustomTypes, Validator
+from data.components.ui import widgethandler, RectAlignments
+from data.core.utils import Validator
 
 
 class AlignmentNeeded(Validator):
@@ -24,7 +24,7 @@ class WidgetBase(ABC):
     align = AlignmentNeeded()
 
     def __init__(self, position: tuple[int, int],
-                 align: CustomTypes.rect_alignments = 'topleft',
+                 align: RectAlignments = 'topleft',
                  sub_widget: bool = False):
         self._x, self._y = position
         self._align = align

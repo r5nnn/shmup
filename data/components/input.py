@@ -1,8 +1,14 @@
-from typing import Callable, override
+from typing import Callable, override, Literal
 
 import pygame
 
-from data.core.utils import Singleton, Observer, SingletonABCMeta, CustomTypes
+from data.core.utils import Singleton, Observer, SingletonABCMeta
+
+input_types = Literal[
+    'key', 'keydown', 'keyup',
+    'mouse', 'mousedown', 'mouseup',
+    'quit'
+]
 
 
 class _InputManager(metaclass=Singleton):
@@ -81,12 +87,12 @@ class _InputBinder(Observer, metaclass=SingletonABCMeta):
         }
 
     @override
-    def register(self, *inputs: tuple[CustomTypes.input_types, int],
+    def register(self, *inputs: tuple[input_types, int],
                  action: Callable) -> None:
         self._handlers[inputs] = action
 
     @override
-    def deregister(self, *inputs: tuple[CustomTypes.input_types, int]) -> None:
+    def deregister(self, *inputs: tuple[input_types, int]) -> None:
         if inputs in self._handlers:
             self._handlers.pop(inputs)
 
@@ -115,5 +121,5 @@ class _InputBinder(Observer, metaclass=SingletonABCMeta):
         return True
 
 
-inputmanager = _InputManager()
-inputbinder = _InputBinder(inputmanager)
+InputManager = _InputManager()
+InputBinder = _InputBinder(InputManager)

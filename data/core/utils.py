@@ -1,25 +1,9 @@
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Literal, Callable
-
+from typing import Callable
 
 dt = 1
-
-
-@dataclass(frozen=True)
-class CustomTypes:
-    rect_alignments = Literal[
-        'topleft', 'midtop', 'topright',
-        'midleft', 'center', 'midright',
-        'bottomleft', 'midbottom', 'bottomright'
-    ]
-    alignments = Literal['left', 'right', 'center', 'block']
-    input_types = Literal[
-        'key', 'keydown', 'keyup',
-        'mouse', 'mousedown', 'mouseup',
-        'quit'
-    ]
 
 
 @dataclass(frozen=True)

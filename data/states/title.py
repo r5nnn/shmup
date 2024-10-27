@@ -6,7 +6,7 @@ import pygame
 from data.core import screen, screen_size
 from data.core.prepare import image_paths, audio_paths, sprites
 from .state import State
-from ..components import inputbinder
+from ..components import InputBinder
 from ..components.audio import background_audio, button_audio
 from ..components.ui import widgethandler
 from ..components.ui.button import ImageButton, ImageButtonConfig
@@ -59,9 +59,9 @@ class Title(State):
     @override
     def startup(self):
         super().startup()
-        inputbinder.register(('keydown', pygame.K_LEFT),
+        InputBinder.register(('keydown', pygame.K_LEFT),
                              action=lambda: self.switch_splash(-1))
-        inputbinder.register(('keydown', pygame.K_RIGHT),
+        InputBinder.register(('keydown', pygame.K_RIGHT),
                              action=lambda: self.switch_splash(1))
 
         background_audio.play_audio('menuloop rmx', loops=-1)
@@ -69,8 +69,8 @@ class Title(State):
     @override
     def cleanup(self):
         super().cleanup()
-        inputbinder.deregister(('keydown', pygame.K_LEFT))
-        inputbinder.deregister(('keydown', pygame.K_RIGHT))
+        InputBinder.deregister(('keydown', pygame.K_LEFT))
+        InputBinder.deregister(('keydown', pygame.K_RIGHT))
         # if button is unrendered before the keyup event triggers,
         # clicked must be manually reset
         self.options.clicked = False

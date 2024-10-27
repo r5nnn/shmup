@@ -5,9 +5,9 @@ import pygame
 from pygame import freetype
 
 from data.core.prepare import font_paths
-from data.core.utils import CustomTypes
+from data.components.ui import RectAlignments
 from .widgetutils import RenderNeeded, AlignmentNeeded, WidgetBase
-from ...core import screen
+from data.core import screen
 
 text_rect_alignments: Type[str] = Literal[
     'right', 'left', 'center', 'justified']
@@ -24,7 +24,7 @@ class Text(WidgetBase):
                  font: Optional[pygame.freetype.Font] = None,
                  font_size: int = 32,
                  color: pygame.Color | tuple = pygame.Color('white'),
-                 align: CustomTypes.rect_alignments = 'topleft',
+                 align: RectAlignments = 'topleft',
                  antialias: bool = False):
         super().__init__(position, align)
 
@@ -96,7 +96,7 @@ class WrappedText:
     def __init__(self, rect: pygame.Rect, text: str,
                  font: Optional[pygame.font.Font] = None, font_size: int = 32,
                  color: pygame.Color | tuple = pygame.Color('white'),
-                 align: CustomTypes.rect_alignments = 'topleft',
+                 align: RectAlignments = 'topleft',
                  text_align: text_rect_alignments = 'left',
                  antialias: bool = False, line_spacing: int = 0,
                  surface: Optional[pygame.Surface] = None):

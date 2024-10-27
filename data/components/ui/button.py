@@ -4,19 +4,19 @@ from typing import Callable, override, Optional
 import pygame.display
 
 from data.components.audio import button_audio
-from data.components.input import inputmanager
-from data.core.utils import CustomTypes
+from data.components.input import InputManager
 from data.core.utils import Mouse
+from . import RectAlignments
 from .text import Text
 from .widgetutils import WidgetBase
-from ...core import screen
+from data.core import screen
 
 
 @dataclass
 class ButtonConfig:
     position: tuple[int, int]
     size: tuple[int, int]
-    align: CustomTypes.rect_alignments = 'topleft'
+    align: RectAlignments = 'topleft'
     colors: Optional[dict[str, tuple[int, ...]]] = None
     border_colors: Optional[dict[str, tuple[int, ...]]] = None
     border_thickness: int = 0
@@ -134,14 +134,14 @@ class ButtonBase(WidgetBase):
 
     @override
     def update(self):
-        x, y = inputmanager.get_mouse_pos()
+        x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
             # button is released
-            if inputmanager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
+            if InputManager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
                 self.on_release()
                 self.on_release_call()
             # button is clicked
-            elif inputmanager.is_mouse_down(Mouse.LEFTCLICK):
+            elif InputManager.is_mouse_down(Mouse.LEFTCLICK):
                 self.on_click()
                 self.on_click_call()
             # button hovered

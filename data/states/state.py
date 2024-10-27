@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import pygame
 
 from data.components import button_audio
-from data.components import inputbinder
+from data.components import InputBinder
 from data.core import screen, screen_size
 from data.core.utils import Singleton
 
@@ -16,16 +16,16 @@ class State(ABC):
 
     @abstractmethod
     def startup(self):
-        inputbinder.register(('keydown', pygame.K_ESCAPE),
+        InputBinder.register(('keydown', pygame.K_ESCAPE),
                              action=self.back)
 
     @abstractmethod
     def cleanup(self):
-        inputbinder.deregister(('keydown', pygame.K_ESCAPE))
+        InputBinder.deregister(('keydown', pygame.K_ESCAPE))
 
     @abstractmethod
     def update(self, *args):
-        """Called before rendering"""
+        ...
 
     @abstractmethod
     def render(self):
