@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import override
 
 import pygame.display
@@ -12,9 +12,11 @@ class Entity(ABC, Sprite):
         self.sprite = sprite
         self.spawn = spawn
 
+    @abstractmethod
     @override
     def update(self):
         ...
 
+    @abstractmethod
     def blit(self):
         ...
