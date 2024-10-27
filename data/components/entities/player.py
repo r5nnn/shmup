@@ -1,24 +1,28 @@
 from collections import deque
-from typing import override
+from typing import override, TypedDict
 
 import pygame
 
 from .entity import Entity
-from .. import inputmanager
+from .. import InputManager
 from data.core import screen, screen_rect
 import data.core.utils
+
+PlayerStats = TypedDict('PlayerStats',
+                        {'health': int, 'speed': int, 'spells': int})
 
 
 class Player(Entity):
     def __init__(self, spawn: tuple[int, int],
                  sprite: pygame.Surface | dict[str, pygame.Surface],
-                 speed: int):
-        super().__init__(spawn,
-                         sprite if isinstance(sprite, pygame.Surface) else \
-                             next(iter(sprite.values())))
+                 stats: PlayerStats):
+        super().__init__(spawn, sprite if isinstance(sprite, pygame.Surface) \
+            else next(iter(sprite.values())))
         self.keys = deque()
         self.dx, self.dy = 0.0, 0.0
-        self.speed = speed
+        self.health = stats.get('health', 1)
+        self.speed = stats.get('speed', 250)
+        self.spells = stats.get('spells', 3)
         self.x, self.y = float(self.rect.x), float(self.rect.y)
         self.rect.move_ip(self.spawn)
 
@@ -38,12 +42,11 @@ class Player(Entity):
 
     @override
     def update(self):
-        # Update keys based on input manager
         for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT):
-            if inputmanager.is_key_down(key):
+            if InputManager.is_key_down(key):
                 if key not in self.keys:
                     self.keys.append(key)
-            elif inputmanager.is_key_up(key):
+            elif InputManager.is_key_up(key):
                 if key in self.keys:
                     self.keys.remove(key)
         self._set_direction()

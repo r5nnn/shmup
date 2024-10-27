@@ -12,8 +12,10 @@ class Game(State):
         super().__init__()
         ing = pygame.Surface((20, 20))
         ing.fill(pygame.Color('white'))
+        # noinspection PyTypeChecker
         self.thing = Player(
-            tuple(round(coord / 2) for coord in screen_size), ing, 250)
+            tuple(round(coord / 2) for coord in screen_size), ing,
+            {'speed': 250})
 
     @override
     def update(self):
