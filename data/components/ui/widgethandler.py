@@ -1,12 +1,7 @@
-"""Module containing a set of functions that are used to interact with all
-widgets added to the handler at once from a centralized location.
-"""
 import weakref
 from collections import OrderedDict
 from collections.abc import MutableSet
 from typing import override, TYPE_CHECKING
-
-import pygame
 
 from data.components.input import inputmanager
 
@@ -16,7 +11,6 @@ if TYPE_CHECKING:
 
 # Implementation of an insertion-ordered set. Necessary to keep track of the
 # order in which widgets are added.
-# noinspection PyMissingOrEmptyDocstring
 class _OrderedSet(MutableSet):
     def __init__(self, values=()):
         self._od = OrderedDict.fromkeys(values)
@@ -48,7 +42,6 @@ class _OrderedSet(MutableSet):
         self._od.move_to_end(value, last=False)
 
 
-# noinspection PyMissingOrEmptyDocstring
 class _OrderedWeakset(weakref.WeakSet):
     _remove = ...  # Getting defined after the super().__init__() call
 
@@ -70,10 +63,6 @@ widgets: _OrderedWeakset[weakref.ref] = _OrderedWeakset()
 
 
 def blit() -> None:
-    """Calls all the widgets' `blit()` methods to render them onto the screen.
-    
-    Widgets are rendered in the order they were added. Must be called once
-    every game tick."""
     # Conversion is used to prevent errors when widgets are added/removed
     # during iteration a.k.a safe iteration
     for widget in list(widgets):
@@ -81,11 +70,6 @@ def blit() -> None:
 
 
 def update() -> None:
-    """Calls all the widgets' `update()` methods. Update done varies by widget.
-    
-    Widgets are updated in the order they were added. If widgets are
-    overlapping, only the topmost widget will be updated. Must be called once
-    every game tick."""
     blocked = False
     # Conversion is used to prevent errors when widgets are added/removed
     # during iteration a.k.a safe iteration
@@ -95,25 +79,17 @@ def update() -> None:
 
         # Ensure widgets covered by others are not affected
         # (widgets created later)
-        if widget.contains(*inputmanager.get_mouse_pos()):
-            blocked = True
+        # if widget.contains(*inputmanager.get_mouse_pos()):
+        #     blocked = True
 
 
 def add_widget(widget: "WidgetBase") -> None:
-    """Adds the widget given to an centralised ordered set of widgets.
-    
-    Widgets must be added so that all the other functions relating to the
-    widgets can work."""
     if widget not in widgets:
         widgets.add(widget)
         move_to_top(widget)
 
 
 def remove_widget(widget: "WidgetBase") -> None:
-    """Removes the widget given from the ordered set of widgets.
-
-    :raises ValueError: If the widget is not in the set.
-    """
     try:
         widgets.remove(widget)
     except ValueError:
@@ -122,14 +98,6 @@ def remove_widget(widget: "WidgetBase") -> None:
 
 
 def move_to_top(widget: "WidgetBase") -> None:
-    """Moves the widget given to the top of the ordered set of widgets.
-    
-    A widget at the top will be rendered over all other widgets (if
-    they are overlapping) and will always recieve input even if if there
-    are other widgets below that should recieve input.
-
-    :raises KeyError: If the widget is not in the set.
-    """
     try:
         widgets.move_to_end(widget)
     except KeyError:
@@ -138,22 +106,8 @@ def move_to_top(widget: "WidgetBase") -> None:
 
 
 def move_to_bottom(widget: "WidgetBase") -> None:
-    """Moves the widget given to the bottom of the ordered set of widgets.
-    
-    A widget at the bottom will be rendered under all other widgets (if
-    they are overlapping) and will not recieve input if the overlapped part
-    is interacted with.
-
-    :raises KeyError: If the widget is not in the set.
-    """
     try:
         widgets.move_to_start(widget)
     except KeyError:
         print(f'Error: Tried to move {widget} to bottom when {widget} '
               f'not in WidgetHandler.')
-
-
-def set_widget_screen(screen: pygame.Surface) -> None:
-    """Updates the surface value for all of the widgets in the widget set."""
-    for widget in widgets:
-        widget.surface = screen
