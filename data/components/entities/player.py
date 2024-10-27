@@ -28,13 +28,13 @@ class Player(Entity):
         for key in self.keys:
             match key:
                 case pygame.K_UP:
-                    self.dy -= self.speed
+                    self.dy = -self.speed
                 case pygame.K_DOWN:
-                    self.dy += self.speed
+                    self.dy = self.speed
                 case pygame.K_LEFT:
-                    self.dx -= self.speed
+                    self.dx = -self.speed
                 case pygame.K_RIGHT:
-                    self.dx += self.speed
+                    self.dx = self.speed
 
     @override
     def update(self):
