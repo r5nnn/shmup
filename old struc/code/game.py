@@ -112,10 +112,9 @@ class Game:
             self.render()
         self.on_quit()
 
+
     def get_events(self) -> None:
         """handles user input"""
-        self.pos = pygame.mouse.get_pos()
-
         for event in pygame.event.get():
             generalEventManager.notify(event)
 
@@ -141,6 +140,7 @@ class Game:
         self.dt = round(now - self.prev_time, self.dt_res)
         self.prev_time = now
 
+    # noinspection PyAttributeOutsideInit
     def load_assets(self) -> None:
         """create pointers to directories"""
         os.chdir("../..")  # move up a directory
@@ -174,6 +174,7 @@ class Game:
         self.player_die_sfx_dir = os.path.join(self.sfx_dir, "player_die.wav")
         self.enemy_die_sfx = os.path.join(self.sfx_dir, "enemy_die.wav")
 
+    # noinspection PyAttributeOutsideInit
     def load_states(self) -> None:
         """loads first state"""
         self.title_screen = Title(self)
