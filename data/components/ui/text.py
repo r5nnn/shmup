@@ -5,7 +5,7 @@ import pygame
 from pygame import freetype
 
 from data.core.prepare import font_paths
-from data.components.ui import RectAlignments
+from data.components import RectAlignments
 from .widgetutils import RenderNeeded, AlignmentNeeded, WidgetBase
 from data.core import screen
 

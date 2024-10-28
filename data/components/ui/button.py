@@ -6,7 +6,7 @@ import pygame.display
 from data.components.audio import button_audio
 from data.components.input import InputManager
 from data.core.utils import Mouse
-from . import RectAlignments
+from data.components import RectAlignments
 from .text import Text
 from .widgetutils import WidgetBase
 from data.core import screen

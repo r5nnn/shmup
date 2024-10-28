@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import override
 
-from data.components.ui import widgethandler, RectAlignments
+from data.components import RectAlignments
 from data.core.utils import Validator
+from . import widgethandler
 
 
 class AlignmentNeeded(Validator):
