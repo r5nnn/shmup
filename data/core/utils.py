@@ -43,6 +43,13 @@ class Popups:
     YES_NO  = 5
 
 
+@dataclass(frozen=True)
+class ColorPalette:
+    PRIMARY = (30, 30, 30)
+    SECONDARY = (35, 35, 35)
+    ACCENT = (85, 85, 85)
+
+
 class Singleton(type):
     """An implementation of the singleton design pattern in python.
     

@@ -13,7 +13,7 @@ import pygame.display
 
 from data.components.audio import button_audio
 from data.components.input import inputmanager
-from data.core.utils import CustomTypes
+from data.core.utils import CustomTypes, ColorPalette
 from data.core.utils import Mouse
 from .text import Text
 from .widgetutils import WidgetBase
@@ -226,6 +226,11 @@ class TextButton(ButtonBase):
     """Class for creating buttons with text labels."""
 
     def __init__(self, config: TextButtonConfig):
+        config.colors = {
+            'default': ColorPalette.PRIMARY,
+            'hovered': ColorPalette.SECONDARY,
+            'clicked': ColorPalette.ACCENT,
+        }
         super().__init__(config)
         self.text_colors = config.text_colors \
             if config.text_colors is not None else {
