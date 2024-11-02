@@ -12,7 +12,7 @@ class Game(State):
     def __init__(self):
         super().__init__()
         self.collision_manager = CollisionManager(self)
-        ing = pygame.Surface((100, 100))
+        ing = pygame.Surface((20, 20))
         ing.fill(pygame.Color('white'))
         # noinspection PyTypeChecker
         self.player = Player(

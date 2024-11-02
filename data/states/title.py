@@ -74,6 +74,7 @@ class Title(State):
         # if button is unrendered before the keyup event triggers,
         # clicked must be manually reset
         self.options.clicked = False
+        self.play.clicked = False
 
     @override
     def render(self):

@@ -40,6 +40,9 @@ class Player(Entity):
                     self.dx = -self.speed
                 case pygame.K_RIGHT:
                     self.dx = self.speed
+        if InputManager.is_key_pressed(pygame.K_LSHIFT):
+            self.dx /= 2
+            self.dy /= 2
 
     @override
     def update(self):
