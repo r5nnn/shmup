@@ -1,32 +1,13 @@
-"""Global utilities used by other submodules.
-
-Contains custom type hints, dataclasses, Mouse button references, design pattern
-base classes, and descriptors."""
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Literal, Callable
+from typing import Callable
 
-
-@dataclass(frozen=True)
-class CustomTypes:
-    """Contains custom game type hints."""
-    rect_alignments = Literal[
-        'topleft', 'midtop', 'topright',
-        'midleft', 'center', 'midright',
-        'bottomleft', 'midbottom', 'bottomright'
-        ]
-    alignments = Literal['left', 'right', 'center', 'block']
-    input_types = Literal[
-        'key', 'keydown', 'keyup',
-        'mouse', 'mousedown', 'mouseup',
-        'quit'
-        ]
+dt = 1
 
 
 @dataclass(frozen=True)
 class Mouse:
-    """Contains pygame style references to mouse buttons."""
     LEFTCLICK = 1
     MIDDLECLICK = 2
     RIGHTCLICK = 3
@@ -40,7 +21,14 @@ class Popups:
     INFO = 1
     INPUT = 3
     OK_CANCEL = 4
-    YES_NO  = 5
+    YES_NO = 5
+
+
+@dataclass(frozen=True)
+class Colors:
+    BACKGROUND = (30, 30, 30)
+    FOREGROUND = (35, 35, 35)
+    ACCENT = (85, 85, 85)
 
 
 @dataclass(frozen=True)
@@ -51,25 +39,16 @@ class ColorPalette:
 
 
 class Singleton(type):
-    """An implementation of the singleton design pattern in python.
-    
-    Makes all classes that inherit from this class only able to have
-    one instance of the class. Subsequent attempts to instantiate a new class
-    just return the first initialised object.""" 
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = super(Singleton, cls).__call__(*args,
+                                                                 **kwargs)
         return cls._instances[cls]
 
 
 class Observer(ABC):
-    """An implementation of the observer design pattern in python.
-    
-    Allows you to register an event to a handler so that
-    the handler is called whenever the event is detected."""
-
     def __init__(self):
         self._handlers = defaultdict(list)
 
@@ -79,14 +58,13 @@ class Observer(ABC):
 
     @abstractmethod
     def register(self, event, handler: Callable):
-        """Registers the event to a handler."""
+        """Registers the event to its handler."""
 
     @abstractmethod
     def deregister(self, event, handler: Callable):
         """Deregisters the event from its handler."""
 
     def is_registered(self, event, handler: Callable) -> bool:
-        """Check if handler is bound to an event."""
         return event in self._handlers and handler in self._handlers[event]
 
 
@@ -95,7 +73,6 @@ class SingletonABCMeta(Singleton, ABCMeta):
 
 
 class Validator(ABC):
-    """Descriptor parent class for validating a property in various ways."""
     def __set_name__(self, owner, name):
         self.private_name = '_' + name
 

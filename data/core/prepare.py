@@ -1,7 +1,3 @@
-"""Prepares pygame by initializing all its modules and creating the display.
-
-Additionally searches directories and identifies the paths to all the assets
-to be used in the game. Loads in fonts and spritesheets."""
 import json
 import os
 
@@ -13,12 +9,12 @@ pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN | pygame.SCALED)
 
 sources_root = os.path.abspath('.')
 
-def parse_spritesheet(sprite_sheet: str) -> dict[str, pygame.Surface]:
-    """Parses a spritesheet using its associated json file.
+screen = pygame.display.get_surface()
+screen_size = screen.get_size()
+screen_rect = screen.get_rect()
 
-    :param sprite_sheet: The sprite sheet file to get sprites from.
-    :returns: A dictionary containing the name of the sprite pointing to
-        a subsurface of the spritesheet with the specific sprite on it."""
+
+def parse_spritesheet(sprite_sheet: str) -> dict[str, pygame.Surface]:
     spritesheet = pygame.image.load(sprite_sheet).convert_alpha()
     sprite_name = os.path.splitext(sprite_sheet)[0]
     metadata = sprite_name + '.json'
@@ -39,14 +35,8 @@ def parse_spritesheet(sprite_sheet: str) -> dict[str, pygame.Surface]:
 
 
 class Load:
-    """Loads in files from specified directories.
-
-    :param directory: The parent directory to start searching from.
-        Subdirectories are also searched.
-    :param accept: The file endings to search for.
-    :param exclude_dirs: Subdirectories to skip when searching for files."""
-
-    def __init__(self, directory: str, *accept: str, exclude_dirs: list[str] = None):
+    def __init__(self, directory: str, *accept: str,
+                 exclude_dirs: list[str] = None):
         self.files = {}
         self.exclude_dirs = exclude_dirs if exclude_dirs else []
         for path, dirs, files in os.walk(directory):
@@ -59,16 +49,10 @@ class Load:
                     self.files[name] = os.path.join(path, file)
 
     def __call__(self, name: str) -> str:
-        """Returns a dictionary of file names pointing to their directories."""
         return self.files[name]
 
 
 class LoadSprites:
-    """Loads in spritesheets from specified directories.
-
-    :param directory: The directory to start searching from. Subdirectories are
-        also searched."""
-
     def __init__(self, directory: str):
         self.files = {}
         for path, dirs, files in os.walk(directory):
@@ -81,8 +65,8 @@ class LoadSprites:
                     self.files[name] = image
 
     def __call__(self, name: str) -> dict:
-        """Returns a dictionary of file names pointing to their directories."""
         return self.files[name]
+
 
 image_paths = Load(os.path.join(sources_root, 'resources', 'graphics'), '.png')
 audio_paths = Load(os.path.join(sources_root, 'resources', 'audio'), '.wav')

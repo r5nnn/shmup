@@ -12,8 +12,8 @@ from typing import Callable, override, Optional
 import pygame.display
 
 from data.components.audio import button_audio
-from data.components.input import inputmanager
-from data.core.utils import CustomTypes, ColorPalette
+from data.components.input import InputManager
+from data.core import screen
 from data.core.utils import Mouse
 from .text import Text
 from .widgetutils import WidgetBase
@@ -50,7 +50,7 @@ class ButtonConfig:
     """
     position: tuple[int, int]
     size: tuple[int, int]
-    align: CustomTypes.rect_alignments = 'topleft'
+    align: RectAlignments = 'topleft'
     colors: Optional[dict[str, tuple[int, ...]]] = None
     border_colors: Optional[dict[str, tuple[int, ...]]] = None
     border_thickness: int = 0
@@ -59,7 +59,6 @@ class ButtonConfig:
     on_release: Callable = lambda *args: None
     click_audio: Optional[str] = 'click'
     release_audio: Optional[str] = 'click'
-    surface: Optional[pygame.Surface] = None
     sub_widget: bool = False
 
 
@@ -67,8 +66,8 @@ class ButtonBase(WidgetBase):
     """Base class for creating buttons."""
 
     def __init__(self, config: ButtonConfig):
-        super().__init__(config.position, config.align, config.surface,
-                         config.sub_widget)
+        WidgetBase.__init__(self, config.position, config.align,
+                            config.sub_widget)
         self._width, self._height = config.size
         self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self._align_rect(self._rect, self._align, (self._x, self._y))
@@ -135,11 +134,9 @@ class ButtonBase(WidgetBase):
         self._x, self._y = getattr(rect, align)
 
     def contains(self, x: int, y: int) -> bool:
-        """Used to check if a point (usually position of the mouse) is inside
-        the button."""
-        return (self._rect.left < x - self.surface.get_abs_offset()[0] <
+        return (self._rect.left < x - screen.get_abs_offset()[0] <
                 self._rect.left + self._width) and \
-               (self._rect.top < y - self.surface.get_abs_offset()[1] <
+               (self._rect.top < y - screen.get_abs_offset()[1] <
                 self._rect.top + self._height)
 
     def on_click(self) -> None:
@@ -174,16 +171,15 @@ class ButtonBase(WidgetBase):
         if self.border_colors is not None:
             self._border_color = self.border_colors.get('default')
 
-    @override
     def update(self):
-        x, y = inputmanager.get_mouse_pos()
+        x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
             # button is released
-            if inputmanager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
+            if InputManager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
                 self.on_release()
                 self.on_release_call()
             # button is clicked
-            elif inputmanager.is_mouse_down(Mouse.LEFTCLICK):
+            elif InputManager.is_mouse_down(Mouse.LEFTCLICK):
                 self.on_click()
                 self.on_click_call()
             # button hovered
@@ -193,7 +189,6 @@ class ButtonBase(WidgetBase):
         else:
             self.on_idle()
 
-    @override
     def blit(self):
         if self.border_colors is not None:
             pygame.draw.rect(self.surface, self._border_color,
@@ -218,7 +213,7 @@ class TextButtonConfig(ButtonConfig):
     text_colors: Optional[dict[str, tuple[int, ...]]] = None
     font: Optional[pygame.font.Font] = None
     font_size: int = 32
-    text_align: Optional[tuple[str, str]] = 'center'
+    text_align: Optional[tuple[str, str]] = None
     margin: int = 20
 
 
@@ -226,11 +221,6 @@ class TextButton(ButtonBase):
     """Class for creating buttons with text labels."""
 
     def __init__(self, config: TextButtonConfig):
-        config.colors = {
-            'default': ColorPalette.PRIMARY,
-            'hovered': ColorPalette.SECONDARY,
-            'clicked': ColorPalette.ACCENT,
-        }
         super().__init__(config)
         self.text_colors = config.text_colors \
             if config.text_colors is not None else {
@@ -244,17 +234,6 @@ class TextButton(ButtonBase):
         self.text_align = config.text_align
         self.margin = config.margin
         self._align_text(self._text)
-
-    @override
-    @property
-    def surface(self):
-        return self._surface
-
-    @override
-    @surface.setter
-    def surface(self, value):
-        self.surface = value
-        self._text.surface = value
 
     @property
     def text_align(self):
@@ -296,13 +275,11 @@ class TextButton(ButtonBase):
 
     @override
     def update(self):
-        """Updates the button and the text color based on mouse state."""
         super().update()
         self._text.update()
 
     @override
     def blit(self):
-        """Draw the button and its text onto the surface."""
         super().blit()
         self._text.blit()
 
@@ -367,12 +344,11 @@ class ImageButton(ButtonBase):
     @override
     def contains(self, x, y):
         if self.use_rect_collision:
-            return super().contains(x, y)  # Use rect-based collision
+            return super().contains(x, y)
         else:
             local_x = x - self.image_rect.left
             local_y = y - self.image_rect.top
             try:
-                # Pixel-perfect collision
                 return self._current_image.get_at((local_x, local_y)).a != 0
             except IndexError:
                 return False
@@ -399,6 +375,6 @@ class ImageButton(ButtonBase):
     @override
     def blit(self):
         if self.use_rect_collision:
-            pygame.draw.rect(self.surface, self._color, self._rect, border_radius=self.radius)
+            pygame.draw.rect(screen, self._color, self._rect, border_radius=self.radius)
 
-        self.surface.blit(self._current_image, self.image_rect.topleft)
+        screen.blit(self._current_image, self.image_rect.topleft)

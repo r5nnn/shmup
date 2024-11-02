@@ -3,83 +3,89 @@ from typing import override
 
 import pygame
 
+from data.core import screen, screen_size
 from data.core.prepare import image_paths, audio_paths, sprites
 from .state import State
+from ..components import InputBinder
 from ..components.audio import background_audio, button_audio
-from ..components.ui import widgethandler, TextButton, TextButtonConfig, ImageButton, ImageButtonConfig, Popup, PopupConfig
+from ..components.ui import widgethandler
+from ..components.ui.button import ImageButton, ImageButtonConfig
 
 
 class Title(State):
     def __init__(self):
         super().__init__()
         self.background = pygame.image.load(image_paths('menu')).convert()
-        self.logo = pygame.transform.scale_by(pygame.image.load(image_paths('logo')), 4)
-        self.splashes = [pygame.transform.scale_by(pygame.image.load(image_paths('gun die')).convert(), 5),
-                         pygame.transform.scale_by(pygame.image.load(image_paths('can we get more christof')).convert(),
-                                                   5),
-                         pygame.transform.scale_by(pygame.image.load(image_paths('tiferet')).convert(), 5)]
+        self.logo = pygame.transform.scale_by(
+            pygame.image.load(image_paths('logo')), 4)
+        self.splashes = [
+            pygame.transform.scale_by(pygame.image.load(
+                image_paths('gun die')).convert(), 5),
+            pygame.transform.scale_by(pygame.image.load(
+                image_paths('can we get more christof')).convert(), 5),
+            pygame.transform.scale_by(pygame.image.load(
+                image_paths('tiferet')).convert(), 5),
+        ]
         self.splash = random.choice(self.splashes)
 
         background_audio.add_audio(audio_paths('menuloop rmx'))
 
         play_config = ImageButtonConfig(
-            position=(self._screen_size[0] * 0.6, self._screen_size[1] * 0.35),
+            position=(screen_size[0] * 0.6, screen_size[1] * 0.35),
             size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
-                                      for images in sprites('play').values()))
+                                      for images in sprites('play').values()),
+            on_click=lambda: self.state_manager.append('game'))
         self.play = ImageButton(play_config)
         editor_config = ImageButtonConfig(
-            position=(self._screen_size[0] * 0.6, self._screen_size[1] * 0.475),
+            position=(screen_size[0] * 0.6, screen_size[1] * 0.475),
             size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
-                                      for images in sprites('editor').values()))
+                                      for images in sprites('editor').values())
+        )
         self.editor = ImageButton(editor_config)
         options_config = ImageButtonConfig(
-            position=(self._screen_size[0] * 0.6, self._screen_size[1] * 0.6),
-            size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
-                                      for images in sprites('options').values()),
-            on_click=lambda: self.state_manager.append("options"))
+            position=(screen_size[0] * 0.6, screen_size[1] * 0.6),
+            size=(0, 0), images=tuple(
+                pygame.transform.scale_by(images, 3)
+                for images in sprites('options').values()),
+            on_click=lambda: self.state_manager.append('options'))
         self.options = ImageButton(options_config)
-
         quit_config = ImageButtonConfig(
-            position=(self._screen_size[0] * 0.6, self._screen_size[1] * 0.725),
+            position=(screen_size[0] * 0.6, screen_size[1] * 0.725),
             size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
                                       for images in sprites('quit').values()),
             on_click=self.state_manager.quit)
         self.quit = ImageButton(quit_config)
 
-        textconfig = TextButtonConfig(position=(0, 0), size=(100, 50), text='click', sub_widget=True)
-        self.button = TextButton(textconfig)
-        popupconfig = PopupConfig(position=(0, 0), size=(300, 300), align='topleft',
-                                  text='hi', buttons=(self.button,))
-        self.popup = Popup(popupconfig)
-
-    @override
-    def update_screen(self):
-        widgethandler.screen = self._screen
-
     @override
     def startup(self):
         super().startup()
-        self.input_binder.register(('keydown', pygame.K_LEFT), action=lambda: self.switch_splash(-1))
-        self.input_binder.register(('keydown', pygame.K_RIGHT), action=lambda: self.switch_splash(1))
+        InputBinder.register(('keydown', pygame.K_LEFT),
+                             action=lambda: self.switch_splash(-1))
+        InputBinder.register(('keydown', pygame.K_RIGHT),
+                             action=lambda: self.switch_splash(1))
 
         background_audio.play_audio('menuloop rmx', loops=-1)
 
     @override
     def cleanup(self):
         super().cleanup()
-        self.input_binder.deregister(('keydown', pygame.K_LEFT))
-        self.input_binder.deregister(('keydown', pygame.K_RIGHT))
+        InputBinder.deregister(('keydown', pygame.K_LEFT))
+        InputBinder.deregister(('keydown', pygame.K_RIGHT))
         # if button is unrendered before the keyup event triggers,
         # clicked must be manually reset
         self.options.clicked = False
+        self.play.clicked = False
 
     @override
     def render(self):
         super().render()
         widgethandler.blit()
-        self._screen.blit(self.logo, (self._screen_size[0] / 2 - self.logo.get_width() / 2, self._screen_size[1] * 0.1))
-        self._screen.blit(self.splash,
-                          (self._screen_size[0] / 2 - self.splash.get_width(), self._screen_size[1] * 0.275))
+        screen.blit(self.logo,
+                    (screen_size[0] / 2 - self.logo.get_width() / 2,
+                     screen_size[1] * 0.1))
+        screen.blit(self.splash,
+                    (screen_size[0] / 2 - self.splash.get_width(),
+                     screen_size[1] * 0.275))
 
     @override
     def update(self):
@@ -87,7 +93,8 @@ class Title(State):
 
     def switch_splash(self, direction):
         try:
-            self.splash = self.splashes[self.splashes.index(self.splash) + direction]
+            self.splash = self.splashes[
+                self.splashes.index(self.splash) + direction]
         except IndexError:
             self.splash = self.splashes[0]
 
