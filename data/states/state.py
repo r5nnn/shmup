@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 
 import pygame
 
-from data.components import button_audio
 from data.components import InputBinder
 from data.core import screen, screen_size
 from data.core.utils import Singleton
@@ -32,7 +31,6 @@ class State(ABC):
         screen.blit(self.background, (0, 0))
 
     def back(self):
-        button_audio.play_audio('click', override=True)
         self.state_manager.pop()
 
 
@@ -49,18 +47,20 @@ class StateManager(metaclass=Singleton):
 
     @property
     def current_state(self):
-        try:
+        """Use this property to check if the state stack is empty.
+        Can be used by checking the boolean value:
+        if self.current_state: pass
+        if not self.current_state: pass"""
+        if self._state_stack:
             return self._state_stack[-1]
-        except IndexError:
+        else:
             return None
 
     def _validate(self, state_name):
-        try:
-            self.state_dict[state_name.lower()]
-        except KeyError:
-            print(f'No such state {state_name} in state dictionary: '
-                  f'{self.state_dict}')
-            raise
+        if state_name.lower() not in self.state_dict:
+            raise KeyError(
+                f"No such state {state_name} in state dictionary: "
+                f"{self.state_dict}")
 
     def _initialise_state(self, state_name):
         self._validate(state_name.lower())
@@ -74,33 +74,37 @@ class StateManager(metaclass=Singleton):
         self.current_state.startup()
 
     def pop(self):
-        try:
-            self.current_state.cleanup()
-            self._state_stack.pop()
+        if not self.current_state:
+            raise AttributeError("No states to pop.")
+        self.current_state.cleanup()
+        self._state_stack.pop()
+        if self.current_state:
             self.current_state.startup()
-        except AttributeError:
-            warnings.warn("Attempted to pop top level state when no states in"
-                          "the state stack.")
 
     def switch(self, state_name: str):
-        try:
+        if self.current_state:
             self.current_state.cleanup()
             self._state_stack.pop()
-        except AttributeError:
+        else:
             warnings.warn("Attempted to switch state while no state was "
                           "present in the state stack.")
         self._state_stack.append(self._initialise_state(state_name))
         self.current_state.startup()
 
     def back_to(self, state_name: str):
-        try:
+        if self.current_state:
             self.current_state.cleanup()
-        except AttributeError:
-            warnings.warn("Attempted to go back to state when no state was "
+        else:
+            warnings.warn("Attempted to go back to a state when no state was "
                           "present in the state stack.")
-        index = self._state_stack.index(state_name)
-        self._state_stack = self._state_stack[:index + 1]
-        self.current_state.startup()
+
+        while self._state_stack and self.current_state != state_name:
+            self._state_stack.pop()
+
+        if self.current_state:
+            self.current_state.startup()
+        else:
+            warnings.warn(f"State {state_name} not found in the state stack.")
 
     def quit(self):
         self.current_state.cleanup()
