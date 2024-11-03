@@ -1,3 +1,4 @@
+import warnings
 import weakref
 from collections import OrderedDict
 from collections.abc import MutableSet
@@ -63,22 +64,21 @@ widgets: _OrderedWeakset[weakref.ref] = _OrderedWeakset()
 
 
 def blit() -> None:
-    # Conversion is used to prevent errors when widgets are added/removed
-    # during iteration a.k.a safe iteration
+    # Conversion is used to prevent errors when widgets are added/removed during iteration a.k.a safe iteration
     for widget in list(widgets):
         widget.blit()
 
 
 def update() -> None:
     blocked = False
-    # Conversion is used to prevent errors when widgets are added/removed
-    # during iteration a.k.a safe iteration
     for widget in list(widgets)[::-1]:
+        if not widget.interactable:
+            widget.update()
+            continue
+
         if not blocked or not widget.contains(*InputManager.get_mouse_pos()):
             widget.update()
-
-        # Ensure widgets covered by others are not affected
-        # (widgets created later)
+        # Ensure widgets covered by others are not affected (widgets created later)
         if widget.contains(*InputManager.get_mouse_pos()):
             blocked = True
 
@@ -87,27 +87,30 @@ def add_widget(widget: "WidgetBase") -> None:
     if widget not in widgets:
         widgets.add(widget)
         move_to_top(widget)
+    else:
+        warnings.warn(f'Attempted to add widget: {widget} which already '
+                      f'existed in the widgethandler: {widgets}.')
 
 
 def remove_widget(widget: "WidgetBase") -> None:
     try:
         widgets.remove(widget)
     except ValueError:
-        print(f'Error: Tried to remove {widget} when {widget} '
-              f'not in the set.')
+        warnings.warn(f'Attempted to remove widget: {widget} when widget not '
+                      f'in the widgethandler: {widgets}.')
 
 
 def move_to_top(widget: "WidgetBase") -> None:
     try:
         widgets.move_to_end(widget)
     except KeyError:
-        print(f'Error: Tried to move {widget} to top when {widget} '
-              f'not in WidgetHandler.')
+        warnings.warn(f'Attempted to move widget: {widget} to the top when '
+                      f'widget not in widgethandler: {widgets}.')
 
 
 def move_to_bottom(widget: "WidgetBase") -> None:
     try:
         widgets.move_to_start(widget)
     except KeyError:
-        print(f'Error: Tried to move {widget} to bottom when {widget} '
-              f'not in WidgetHandler.')
+        warnings.warn(f'Error: Tried to move {widget} to bottom when {widget} not in '
+                      f'WidgetHandler.')
