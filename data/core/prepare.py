@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 import pygame
@@ -13,6 +14,9 @@ screen = pygame.display.get_surface()
 screen_size = screen.get_size()
 screen_rect = screen.get_rect()
 
+logging.basicConfig(level=logging.WARNING,
+                    format="%(asctime)s %(levelname)s %(message)s",
+                    datefmt="%d/%m/%Y %H:%M:%S",)
 
 def parse_spritesheet(sprite_sheet: str) -> dict[str, pygame.Surface]:
     spritesheet = pygame.image.load(sprite_sheet).convert_alpha()
@@ -21,14 +25,14 @@ def parse_spritesheet(sprite_sheet: str) -> dict[str, pygame.Surface]:
     try:
         metadata_json = open(metadata, encoding='UTF-8')
     except OSError:
-        print(f'Could not open/read file: {metadata}')
-        raise OSError
+        raise OSError(f'Could not open/read file: {metadata}')
     with metadata_json:
         data = json.load(metadata_json)
     metadata_json.close()
     sprite_dict = {}
     for sprite in (frames := data["frames"]):
         res = frames[sprite]["frame"]
+
         sprite_dict[sprite] = spritesheet.subsurface(res['x'], res['y'],
                                                      res['w'], res['h'])
     return sprite_dict
@@ -58,8 +62,8 @@ class LoadSprites:
         for path, dirs, files in os.walk(directory):
             for file in files:
                 name, ext = os.path.splitext(file)
-                if ext.lower() == '.png' and os.path.isfile(
-                        os.path.join(path, name + ".json")):
+                if ext.lower() == '.png' and os.path.isfile(os.path.join(
+                        path, name + ".json")):
                     path1 = os.path.join(path, file)
                     image = parse_spritesheet(path1)
                     self.files[name] = image
