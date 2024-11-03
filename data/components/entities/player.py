@@ -1,12 +1,12 @@
-from collections import deque
+import logging
 from typing import override, TypedDict
 
 import pygame
 
-from .entity import Entity
-from .. import InputManager
-from data.core import screen, screen_rect
 import data.core.utils
+from data.components.entities.entity import Entity
+from data.components.input import InputManager
+from data.core import screen, screen_rect
 
 PlayerStats = TypedDict('PlayerStats',
                         {'health': int, 'speed': int, 'spells': int})
@@ -18,7 +18,7 @@ class Player(Entity):
                  stats: PlayerStats = None):
         super().__init__(spawn, sprite if isinstance(sprite, pygame.Surface) \
             else next(iter(sprite.values())))
-        self.keys = deque()
+        self.keys = []
         self.dx, self.dy = 0.0, 0.0
         stats = {} if stats is None else stats
         self.health = stats.get('health', 1)
@@ -26,6 +26,7 @@ class Player(Entity):
         self.spells = stats.get('spells', 3)
         self.x, self.y = float(self.rect.x), float(self.rect.y)
         self.rect.move_ip(self.spawn)
+        logging.info(f'Created {repr(self)}.')
 
     def _set_direction(self):
         self.dx, self.dy = 0.0, 0.0
@@ -43,10 +44,10 @@ class Player(Entity):
         if InputManager.is_key_pressed(pygame.K_LSHIFT):
             self.dx /= 2
             self.dy /= 2
+        logging.debug(f'Direction of player set as x: {self.dx}, y: {self.dy}.')
 
     @override
     def update(self):
-        self.sprite.fill(pygame.Color('white'))
         for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT):
             if InputManager.is_key_down(key):
                 if key not in self.keys:
@@ -70,7 +71,3 @@ class Player(Entity):
     @override
     def blit(self):
         screen.blit(self.sprite, self.rect)
-
-    @override
-    def on_collide(self, sprite):
-        ...

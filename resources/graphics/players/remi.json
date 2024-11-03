@@ -1,0 +1,50 @@
+{ "frames": {
+   "remi0": {
+    "frame": { "x": 0, "y": 0, "w": 29, "h": 22 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 29, "h": 22 },
+    "sourceSize": { "w": 29, "h": 22 },
+    "duration": 100
+   },
+   "remi1": {
+    "frame": { "x": 29, "y": 0, "w": 29, "h": 22 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 29, "h": 22 },
+    "sourceSize": { "w": 29, "h": 22 },
+    "duration": 100
+   },
+   "remi2": {
+    "frame": { "x": 58, "y": 0, "w": 29, "h": 22 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 29, "h": 22 },
+    "sourceSize": { "w": 29, "h": 22 },
+    "duration": 100
+   },
+   "remi3": {
+    "frame": { "x": 87, "y": 0, "w": 29, "h": 22 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 29, "h": 22 },
+    "sourceSize": { "w": 29, "h": 22 },
+    "duration": 100
+   },
+   "remi4": {
+    "frame": { "x": 116, "y": 0, "w": 29, "h": 22 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 29, "h": 22 },
+    "sourceSize": { "w": 29, "h": 22 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.x-dev",
+  "format": "RGBA8888",
+  "size": { "w": 145, "h": 22 },
+  "scale": "1"
+ }
+}
