@@ -1,3 +1,3 @@
-from .player import Player
-from .collisions import CollisionManager
-from .entity import EntityGroup
+from data.components.entities.player import Player
+from data.components.entities.entity import EntityGroup
+from data.components.entities.collisionmanager import update

@@ -25,8 +25,9 @@ class Text(WidgetBase):
                  font_size: int = 32,
                  color: pygame.Color | tuple = pygame.Color('white'),
                  align: RectAlignments = 'topleft',
-                 antialias: bool = False):
-        super().__init__(position, align)
+                 antialias: bool = False,
+                 sub_widget: bool = False):
+        super().__init__(position, align, sub_widget)
 
         if (font is not None and font_size != 32) and not \
                 isinstance(font, (pygame.freetype.Font, pygame.font.Font)):

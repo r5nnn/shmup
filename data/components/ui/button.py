@@ -6,48 +6,23 @@ button itself. In this case pixel-perfect collision can also be used.
 Buttons can be hovered and interacted with. An attribute of the button can
 change or an action can be executed when the button is pressed down or released.
 """
+import logging
 from dataclasses import dataclass
 from typing import Callable, override, Optional
 
 import pygame.display
 
+from data.components import RectAlignments
 from data.components.audio import button_audio
 from data.components.input import InputManager
+from data.components.ui.text import Text
+from data.components.ui.widgetutils import WidgetBase
 from data.core import screen
 from data.core.utils import Mouse
-from .text import Text
-from .widgetutils import WidgetBase
 
 
 @dataclass
 class ButtonConfig:
-    """Dataclass containing arguments to be passed to the `ButtonBase` class.
-
-    :param position: The position of the widget with reference to the `align`
-            argument passed.
-    :param size: The width and height of the button rect.
-    :param align: The point of the widget that the `position` argument is
-            referencing. Defaults to `'topleft'`.
-    :param colors: A dict of the colors that correspond to the state of the
-            button when default, hovered or clicked. Defaults to `None`
-            to not display the rect.
-    :param border_colors: A dict of the colors that correspond to the state
-            of the button border when default, hovered or clicked.
-            Defaults to `None` to not display the border rect.
-    :param border_thickness: The thickness of the border. Defaults to `0`.
-    :param radius: The curvature of the corners of the button rect. Defaults
-            to `0`.
-    :param on_click: The action to call when the button is clicked. Defaults to
-            `lambda *args: None` to not have an action.
-    :param on_release: The action to call when the button is released. Defaults to
-            `lambda *args: None` to not have an action.
-    :param click_audio: The tag of the audio to play when the button is clicked.
-            Defaults to `'click'`.
-    :param release_audio: The tag of the audio to play when the button is released.
-            Defaults to `'click'`.
-    :param surface: The surface that the widget should be rendered to. Defaults
-            to `None` to use the current display surface.
-    """
     position: tuple[int, int]
     size: tuple[int, int]
     align: RectAlignments = 'topleft'
@@ -191,10 +166,10 @@ class ButtonBase(WidgetBase):
 
     def blit(self):
         if self.border_colors is not None:
-            pygame.draw.rect(self.surface, self._border_color,
+            pygame.draw.rect(screen, self._border_color,
                              self._border_rect, border_radius=self.radius)
         if self.colors is not None:
-            pygame.draw.rect(self.surface, self._color,
+            pygame.draw.rect(screen, self._color,
                              self._rect, border_radius=self.radius)
 
 
@@ -234,6 +209,7 @@ class TextButton(ButtonBase):
         self.text_align = config.text_align
         self.margin = config.margin
         self._align_text(self._text)
+        logging.info(f'Created {repr(self)}.')
 
     @property
     def text_align(self):
@@ -308,14 +284,13 @@ class ImageButton(ButtonBase):
 
     def __init__(self, config: ImageButtonConfig):
         super().__init__(config)
-
         self.images = config.images
         self._current_image = self.images[0]
         self.use_rect_collision = config.use_rect_collisions
         self.image_align = config.image_align
         self.margin = config.margin
-
         self._align_image()
+        logging.info(f'Created {repr(self)}.')
 
     @property
     def image_align(self):

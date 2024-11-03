@@ -1,20 +1,22 @@
-import warnings
+import logging
 from dataclasses import dataclass
 from typing import Optional, override
 
 import pygame
 from pygame import freetype
 
+from data.components import RectAlignments
 from data.components.ui import ButtonBase, Text
 from data.components.ui.widgetutils import WidgetBase
-from data.core.utils import Popups, CustomTypes, ColorPalette
+from data.core import screen
+from data.core.utils import Popups, ColorPalette
 
 
 @dataclass(kw_only=True)
 class PopupConfig:
     position: tuple[int, int] = None
     size: tuple[int, int]
-    align: CustomTypes.rect_alignments = 'center'
+    align: RectAlignments = 'center'
     color: Optional[pygame.Color | tuple] = None
     text: str = ''
     text_color: Optional[pygame.Color | tuple] = None
@@ -31,7 +33,7 @@ class Popup(WidgetBase):
         position = tuple(round(coord/2) for coord in
                          pygame.display.get_surface().get_size()) \
             if config.position is None else config.position
-        super().__init__(position, config.align, config.surface)
+        super().__init__(position, config.align)
         self._width, self._height = config.size
         self._color = config.color if config.color is not None else \
             ColorPalette.PRIMARY
@@ -48,6 +50,7 @@ class Popup(WidgetBase):
             'midtop', sub_widget=True)
         self._text.x -= self._text.rect.height
         self.padding = config.padding
+        logging.info(f'Created {repr(self)}.')
 
     def _get_button_sizes(self) -> tuple[int, int]:
         total_button_width, total_button_height = 0, 0
@@ -86,12 +89,7 @@ class Popup(WidgetBase):
 
     @override
     def blit(self) -> None:
-        pygame.draw.rect(self._surface, self._color, self._rect)
+        pygame.draw.rect(screen, self._color, self._rect)
         self._text.blit()
         for button in self._buttons:
             button.blit()
-
-    @override
-    def contains(self, x, y):
-        return (self._x < x - self._surface.get_abs_offset()[0] < self._x + self._rect.width) and \
-            (self._y < y - self._surface.get_abs_offset()[1] < self._y + self._rect.height)

@@ -29,8 +29,9 @@ class WidgetBase(ABC):
                  sub_widget: bool = False):
         self._x, self._y = position
         self._align = align
-        self.is_sub_widget = sub_widget
+        self.sub_widget = sub_widget
 
+        self.interactable = True
         self._hidden = False
         self._disabled = False
         self._requires_realignment = False
@@ -46,14 +47,18 @@ class WidgetBase(ABC):
     def blit(self) -> None:
         ...
 
+    def contains(self, x, y):
+        if not self.interactable:
+            return False
+
     def hide(self) -> None:
         self._hidden = True
-        if not self.is_sub_widget:
+        if not self.sub_widget:
             widgethandler.move_to_bottom(self)
 
     def show(self) -> None:
         self._hidden = False
-        if not self.is_sub_widget:
+        if not self.sub_widget:
             widgethandler.move_to_top(self)
 
     def disable(self) -> None:

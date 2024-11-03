@@ -2,21 +2,18 @@ from typing import override
 
 import pygame
 
+from data.components import entities
 from data.components.entities import Player, EntityGroup
-from .state import State
 from data.core.prepare import screen_size
-from data.components.entities import CollisionManager
+from .state import State
+from ..core import sprites
 
 
 class Game(State):
     def __init__(self):
         super().__init__()
-        self.collision_manager = CollisionManager(self)
-        ing = pygame.Surface((20, 20))
-        ing.fill(pygame.Color('white'))
         # noinspection PyTypeChecker
-        self.player = Player(
-            tuple(round(coord / 2) for coord in screen_size), ing)
+        self.player = Player(tuple(round(coord / 2) for coord in screen_size), sprites('remi'))
         self.enemies = EntityGroup()
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
@@ -27,7 +24,7 @@ class Game(State):
         self.enemies.update()
         self.player_bullets.update()
         self.enemy_bullets.update()
-        self.collision_manager.update()
+        entities.update(self)
 
     @override
     def render(self):

@@ -16,7 +16,6 @@ class Entity(ABC, Sprite):
         setattr(self.rect, spawn_alignments, spawn)
         self.sprite = sprite
 
-    @abstractmethod
     @override
     def update(self):
         ...
@@ -25,7 +24,6 @@ class Entity(ABC, Sprite):
     def blit(self):
         ...
 
-    @abstractmethod
     def on_collide(self, sprite):
         ...
 
