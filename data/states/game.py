@@ -13,7 +13,10 @@ class Game(State):
     def __init__(self):
         super().__init__()
         # noinspection PyTypeChecker
-        self.player = Player(tuple(round(coord / 2) for coord in screen_size), sprites('remi'))
+        self.player = Player(tuple(round(coord / 2) for coord in screen_size),
+                             spritesheet=[pygame.transform.scale_by(image, 2) \
+                                          for image in sprites('remi')],
+                             hitbox=pygame.Rect(0, 0, 20, 20), hitbox_offset=(1, -7))
         self.enemies = EntityGroup()
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()

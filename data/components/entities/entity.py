@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import override
+from typing import override, Optional
 
 import pygame.display
 from pygame.sprite import Sprite
@@ -9,10 +9,11 @@ from data.components import RectAlignments
 
 class Entity(ABC, Sprite):
     def __init__(self, spawn: tuple[int, int], sprite: pygame.Surface,
+                 sprite_rect: Optional[pygame.Rect] = None,
                  spawn_alignments: RectAlignments = 'center'):
         Sprite.__init__(self)
         self.spawn = spawn
-        self.rect = sprite.get_rect()
+        self.rect = sprite_rect if sprite_rect is not None else sprite.get_rect()
         setattr(self.rect, spawn_alignments, spawn)
         self.sprite = sprite
 
