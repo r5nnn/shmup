@@ -272,7 +272,7 @@ class ImageButtonConfig(ButtonConfig):
         to `()` in order to use center alignment.
     :param margin: The offset of the image in the button (when not using center
         alignment)"""
-    images: tuple
+    images: list
     use_rect_collisions: bool = False
     image_align: tuple[str, str] = ()
     margin: int = 20

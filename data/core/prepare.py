@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.WARNING,
                     format="%(asctime)s %(levelname)s %(message)s",
                     datefmt="%d/%m/%Y %H:%M:%S",)
 
-def parse_spritesheet(sprite_sheet: str) -> dict[str, pygame.Surface]:
+def parse_spritesheet(sprite_sheet: str) -> list[pygame.Surface]:
     spritesheet = pygame.image.load(sprite_sheet).convert_alpha()
     sprite_name = os.path.splitext(sprite_sheet)[0]
     metadata = sprite_name + '.json'
@@ -29,13 +29,12 @@ def parse_spritesheet(sprite_sheet: str) -> dict[str, pygame.Surface]:
     with metadata_json:
         data = json.load(metadata_json)
     metadata_json.close()
-    sprite_dict = {}
+    sprite_list = []
     for sprite in (frames := data["frames"]):
         res = frames[sprite]["frame"]
-
-        sprite_dict[sprite] = spritesheet.subsurface(res['x'], res['y'],
-                                                     res['w'], res['h'])
-    return sprite_dict
+        sprite_list.append(spritesheet.subsurface(res['x'], res['y'],
+                                                  res['w'], res['h']))
+    return sprite_list
 
 
 class Load:
@@ -68,7 +67,7 @@ class LoadSprites:
                     image = parse_spritesheet(path1)
                     self.files[name] = image
 
-    def __call__(self, name: str) -> dict:
+    def __call__(self, name: str) -> list[pygame.Surface]:
         return self.files[name]
 
 

@@ -32,27 +32,25 @@ class Title(State):
 
         play_config = ImageButtonConfig(
             position=(screen_size[0] * 0.6, screen_size[1] * 0.35),
-            size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
-                                      for images in sprites('play').values()),
+            size=(0, 0), images=[pygame.transform.scale_by(images, 3) \
+                                 for images in sprites('play')],
             on_click=lambda: self.state_manager.append('game'))
         self.play = ImageButton(play_config)
         editor_config = ImageButtonConfig(
             position=(screen_size[0] * 0.6, screen_size[1] * 0.475),
-            size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
-                                      for images in sprites('editor').values())
-        )
+            size=(0, 0), images=[pygame.transform.scale_by(images, 3) \
+                                 for images in sprites('editor')])
         self.editor = ImageButton(editor_config)
         options_config = ImageButtonConfig(
             position=(screen_size[0] * 0.6, screen_size[1] * 0.6),
-            size=(0, 0), images=tuple(
-                pygame.transform.scale_by(images, 3)
-                for images in sprites('options').values()),
+            size=(0, 0), images=[pygame.transform.scale_by(images, 3) \
+                                 for images in sprites('options')],
             on_click=lambda: self.state_manager.append('options'))
         self.options = ImageButton(options_config)
         quit_config = ImageButtonConfig(
             position=(screen_size[0] * 0.6, screen_size[1] * 0.725),
-            size=(0, 0), images=tuple(pygame.transform.scale_by(images, 3)
-                                      for images in sprites('quit').values()),
+            size=(0, 0), images=[pygame.transform.scale_by(images, 3) \
+                                 for images in sprites('quit')],
             on_click=self.state_manager.quit)
         self.quit = ImageButton(quit_config)
 
