@@ -1,3 +1,4 @@
+"""Top level module that initialisesthe game."""
 import sys
 import pygame
 from data import main
