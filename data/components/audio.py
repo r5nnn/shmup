@@ -1,3 +1,5 @@
+"""Module containing audio channel manager class and module level 
+global instances of all channels to be used in the game."""
 import warnings
 from typing import Optional
 
