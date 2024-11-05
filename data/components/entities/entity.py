@@ -25,6 +25,7 @@ class Entity(ABC, Sprite):
     def blit(self):
         ...
 
+    @abstractmethod
     def on_collide(self, sprite):
         ...
 

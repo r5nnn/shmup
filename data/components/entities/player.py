@@ -35,8 +35,12 @@ class Player(Entity):
         self.spells = stats.get('spells', 3)
 
         self.x, self.y = float(spawn[0]), float(spawn[1])
-        self.rect.center = (self.x + self.hitbox_offset_x, self.y + self.hitbox_offset_y)
+        self._spawn()
         logging.info(f'Created {repr(self)}.')
+
+    def _spawn(self):
+        self.rect.center = (self.spawn[0] + self.hitbox_offset_x,
+                            self.spawn[1] + self.hitbox_offset_y)
 
     def _set_direction(self):
         self.dx, self.dy = 0.0, 0.0
@@ -73,7 +77,7 @@ class Player(Entity):
     def _set_direction_sprite(self, direction: str):
         if self.spritesheet:
             direction_map = {'default': self.spritesheet[0], 'up': self.spritesheet[1], 'down': self.spritesheet[2],
-                'left': self.spritesheet[3], 'right': self.spritesheet[4]}
+                             'left': self.spritesheet[3], 'right': self.spritesheet[4]}
             self.sprite = direction_map.get(direction, self.spritesheet[0])
 
     @override
@@ -111,3 +115,8 @@ class Player(Entity):
             pygame.draw.rect(screen, pygame.Color('white'), self.rect)
         else:
             screen.blit(self.sprite, sprite_position)
+
+    @override
+    def on_collide(self, sprite):
+        self.health -= 1
+        self._spawn()
