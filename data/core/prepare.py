@@ -12,6 +12,7 @@ sources_root = os.path.abspath('.')
 
 screen = pygame.display.get_surface()
 screen_size = screen.get_size()
+screen_center = tuple(round(coordinate / 2) for coordinate in screen_size)
 screen_rect = screen.get_rect()
 
 logging.basicConfig(level=logging.WARNING,

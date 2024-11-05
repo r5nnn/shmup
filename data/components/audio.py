@@ -15,11 +15,10 @@ def checkaudio(method):
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         if not self.no_audio:
-            method(self, args, kwargs)
+            method(self, *args, **kwargs)
     return wrapper
 
 
-# noinspection PyTypeChecker, PyArgumentList
 class Audio:
     _channel_counter = 0
 
@@ -82,10 +81,8 @@ class Audio:
 
 
 background_audio = Audio()
-# noinspection PyTypeChecker
 background_audio.set_volume(0.2)
 
 button_audio = Audio()
-# noinspection PyTypeChecker
 button_audio.set_volume(0.2)
 button_audio.add_audio(audio_paths('click'))
