@@ -1,34 +1,36 @@
 import warnings
-from abc import ABC, abstractmethod
 
 import pygame
 
 from data.components import InputBinder
+from data.components.ui import widgethandler
 from data.core import screen, screen_size
 from data.core.utils import Singleton
 
 
-class State(ABC):
+class State:
     def __init__(self):
         self.state_manager = state_manager
         self.background = pygame.Surface(screen_size)
+        self.widgets = ()
 
-    @abstractmethod
     def startup(self):
         InputBinder.register(('keydown', pygame.K_ESCAPE),
                              action=self.back)
+        for widget in self.widgets:
+            widgethandler.add_widget(widget)
 
-    @abstractmethod
     def cleanup(self):
         InputBinder.deregister(('keydown', pygame.K_ESCAPE))
+        for widget in self.widgets:
+            widgethandler.remove_widget(widget)
 
-    @abstractmethod
     def update(self, *args):
-        ...
+        widgethandler.update()
 
-    @abstractmethod
     def render(self):
         screen.blit(self.background, (0, 0))
+        widgethandler.blit()
 
     def back(self):
         self.state_manager.pop()

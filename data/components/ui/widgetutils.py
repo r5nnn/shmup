@@ -36,9 +36,6 @@ class WidgetBase(ABC):
         self._disabled = False
         self._requires_realignment = False
 
-        if not sub_widget:
-            widgethandler.add_widget(self)
-
     @abstractmethod
     def update(self) -> None:
         ...
