@@ -1,3 +1,4 @@
+"""Package containing components that help run the game."""
 from typing import Literal
 
 RectAlignments = Literal[
