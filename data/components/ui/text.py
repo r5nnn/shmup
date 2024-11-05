@@ -1,6 +1,6 @@
 """Module for displaying text on the screen."""
 import warnings
-from typing import Literal, Optional, override, Type
+from typing import Literal, Optional, Type
 
 import pygame
 from pygame import freetype
@@ -64,7 +64,7 @@ class Text(WidgetBase):
         if self._requires_rerender:
             self._text_surface, self._rect = self._render_text(self._text, self._color)
         if self._requires_realignment:
-            self._align_rect(self._rect, self._align, self._coords)
+            self._align_rect(self._rect, self._align, (self._x, self._y))
 
     def contains(self, x, y):
         return (self._x < x - screen.get_abs_offset()[0] < self._x + self._rect.width) and \
@@ -77,7 +77,7 @@ class Text(WidgetBase):
     def _align_rect(self, rect, align, position):
         self._requires_realignment = False
         setattr(rect, align, position)
-        self._coords = self._x, self._y = getattr(rect, align)
+        self._x, self._y = getattr(rect, align)
 
 
 class WrappedText:
@@ -103,7 +103,6 @@ class WrappedText:
         self._align = align
         self.text_align = text_align
         self._antialias = antialias
-        self.surface = surface
         self._line_spacing = line_spacing
         self._space_width = None
         self._line_len_list = [0]
@@ -142,7 +141,7 @@ class WrappedText:
             last_line += 1
             for i, image in enumerate(line_surfaces):
                 x, y = line_left + i * self._space_width, line_bottom
-                self.surface.blit(image, (round(x), y))
+                screen.blit(image, (round(x), y))
                 line_left += image.get_width()
             line_bottom += font_height + self._line_spacing
 
