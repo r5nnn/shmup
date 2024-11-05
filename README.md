@@ -48,7 +48,7 @@ Stage 1 - [Chris Christodoulou - Moisture Deficit | Risk of Rain (2013)](https:/
 - fixed audio bugs and made new audio class for handling future audio better [#30]
 - optimised stage transition logic by removing redundant code [#31]
 ### v0.0.3 prototype
-- #### file structure rework - small file loads in rest of the modules. All modules rewritten and optimised Lazy loading implemented.
+- #### file structure rework - top level file loads in rest of the modules. All modules rewritten and optimised Lazy loading implemented.
 - screen now works with any 16:9 resolution. All graphics are scaled appropriately [#32]
 - event manager implemented that tracks all user input [#33]
 - event handler reworked to use event manager and optimised [#34]
