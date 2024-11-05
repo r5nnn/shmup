@@ -34,7 +34,6 @@ class Player(Entity):
         self.speed = stats.get('speed', 250)
         self.spells = stats.get('spells', 3)
 
-        # Center player based on the spawn point plus any hitbox offset
         self.x, self.y = float(spawn[0]), float(spawn[1])
         self.rect.center = (self.x + self.hitbox_offset_x, self.y + self.hitbox_offset_y)
         logging.info(f'Created {repr(self)}.')
@@ -62,7 +61,7 @@ class Player(Entity):
         if direction:
             self._set_direction_sprite(direction)
         elif self.spritesheet:
-            self.sprite = self.spritesheet[0]  # Reset to default sprite when idle
+            self.sprite = self.spritesheet[0]
 
         if InputManager.is_key_pressed(pygame.K_LSHIFT):
             self.dx /= 2
@@ -109,6 +108,6 @@ class Player(Entity):
             faded_sprite = self.sprite.copy()
             faded_sprite.set_alpha(128)
             screen.blit(faded_sprite, sprite_position)
-            pygame.draw.rect(screen, pygame.Color('white'), self.rect)  # Outline for hitbox visibility
+            pygame.draw.rect(screen, pygame.Color('white'), self.rect)
         else:
             screen.blit(self.sprite, sprite_position)

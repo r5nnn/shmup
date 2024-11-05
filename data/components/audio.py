@@ -1,32 +1,47 @@
-"""Module containing audio channel manager class and module level 
-global instances of all channels to be used in the game."""
+"""Module containing audio channel manager class and module level global
+instances of all channels to be used in the game."""
+import os
 import warnings
+from functools import wraps
+from pathlib import Path
 from typing import Optional
 
 import pygame
-import os
-from pathlib import Path
 
 from data.core.prepare import audio_paths
 
 
+def checkaudio(method):
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        if not self.no_audio:
+            method(self, args, kwargs)
+    return wrapper
+
+
+# noinspection PyTypeChecker, PyArgumentList
 class Audio:
     _channel_counter = 0
 
     def __init__(self):
         self.channel_id = Audio._channel_counter
         Audio._channel_counter += 1
-        self.channel = pygame.mixer.Channel(
-            self.channel_id)
+        try:
+            self.channel = pygame.mixer.Channel(self.channel_id)
+            self.no_audio = False
+        except pygame.error:
+            self.no_audio = True
         self.sounds = {}
         self.current_audio = None
 
+    @checkaudio
     def add_audio(self, audio_dir: str, tag: Optional[str] = None) -> None:
         if not os.path.isfile(audio_dir):
             raise FileNotFoundError(f"File {audio_dir} does not exist.")
         tag = Path(audio_dir).stem if tag is None else None
         self.sounds[tag] = pygame.mixer.Sound(audio_dir)
 
+    @checkaudio
     def play_audio(self, tag: str = None, loops: int = 0,
                    override: bool = False) -> None:
         if len(self.sounds) == 0:
@@ -43,19 +58,23 @@ class Audio:
             self.channel.play(self.sounds[tag], loops=loops)
             self.current_audio = tag
 
+    @checkaudio
     def stop(self) -> None:
         self.channel.stop()
 
+    @checkaudio
     def set_volume(self, volume: float) -> None:
         if not 0.0 <= volume <= 1.0:
             raise ValueError("Volume must be between 0.0 and 1.0.")
         self.channel.set_volume(volume)
 
+    @checkaudio
     def increase_volume(self, increment: float = 0.1) -> None:
         current_volume = self.channel.get_volume()
         new_volume = min(1.0, current_volume + increment)
         self.set_volume(new_volume)
 
+    @checkaudio
     def decrease_volume(self, decrement: float = 0.1) -> None:
         current_volume = self.channel.get_volume()
         new_volume = max(0.0, current_volume - decrement)
@@ -63,8 +82,10 @@ class Audio:
 
 
 background_audio = Audio()
+# noinspection PyTypeChecker
 background_audio.set_volume(0.2)
 
 button_audio = Audio()
+# noinspection PyTypeChecker
 button_audio.set_volume(0.2)
 button_audio.add_audio(audio_paths('click'))
