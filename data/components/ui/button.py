@@ -8,7 +8,7 @@ change or an action can be executed when the button is pressed down or released.
 """
 import logging
 from dataclasses import dataclass
-from typing import Callable, override, Optional
+from typing import Callable, override, Optional, TypedDict
 
 import pygame.display
 
@@ -17,8 +17,24 @@ from data.components.audio import button_audio
 from data.components.input import InputManager
 from data.components.ui.text import Text
 from data.components.ui.widgetutils import WidgetBase
-from data.core import screen
+from data.core import screen, sprites
 from data.core.utils import Mouse
+
+
+def button_from_images(name: str, position: tuple[int, int],
+                            on_click: Callable = lambda *args: None,
+                            on_release: Callable = lambda *args: None):
+    config = ImageButtonConfig(
+        position=position, size=(0, 0),
+        images=[pygame.transform.scale_by(images, 3) for images in
+                sprites(name)],
+        on_click=on_click, on_release=on_release)
+    return ImageButton(config)
+
+
+Colors = TypedDict('Colors', {'default': tuple,
+                              'hovered': tuple,
+                              'clicked': tuple})
 
 
 @dataclass
@@ -26,8 +42,8 @@ class ButtonConfig:
     position: tuple[int, int]
     size: tuple[int, int]
     align: RectAlignments = 'topleft'
-    colors: Optional[dict[str, tuple[int, ...]]] = None
-    border_colors: Optional[dict[str, tuple[int, ...]]] = None
+    colors: Optional[Colors] = None
+    border_colors: Optional[Colors] = None
     border_thickness: int = 0
     radius: int = 0
     on_click: Callable = lambda *args: None
@@ -147,6 +163,8 @@ class ButtonBase(WidgetBase):
             self._border_color = self.border_colors.get('default')
 
     def update(self):
+        if self._requires_realignment:
+            self._align_rect(self._rect, self._align, (self._x, self._y))
         x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
             # button is released
@@ -185,10 +203,10 @@ class TextButtonConfig(ButtonConfig):
         alignment)
     """
     text: str
-    text_colors: Optional[dict[str, tuple[int, ...]]] = None
+    text_colors: Optional[Colors] = None
     font: Optional[pygame.font.Font] = None
     font_size: int = 32
-    text_align: Optional[tuple[str, str]] = None
+    text_align: tuple[str, str] = 'center'
     margin: int = 20
 
 
@@ -196,34 +214,23 @@ class TextButton(ButtonBase):
     """Class for creating buttons with text labels."""
 
     def __init__(self, config: TextButtonConfig):
-        super().__init__(config)
-        self.text_colors = config.text_colors \
-            if config.text_colors is not None else {
-                'default': (255, 255, 255),
-                'hovered': (255, 255, 255),
-                'clicked': (255, 255, 255)
-            }
+        self.text_colors = config.text_colors or {'default': (255, 255, 255), 'hovered': (255, 255, 255),
+            'clicked': (255, 255, 255)}
         self._text_color = self.text_colors['default']
-        self._text = Text((0, 0), config.text, config.font, config.font_size,
-                          color=self._text_color, sub_widget=True)
+        self._text = Text((0, 0), config.text, config.font, config.font_size, color=self._text_color, sub_widget=True)
+
+        # Store alignment configuration and margin
         self.text_align = config.text_align
         self.margin = config.margin
-        self._align_text(self._text)
+        super().__init__(config)
         logging.info(f'Created {repr(self)}.')
 
-    @property
-    def text_align(self):
-        return self._text_align
+    def _align_text(self, text_surface):
+        """Align the text within the button's rect based on the specified text alignment."""
+        self.text_rect = text_surface.rect
+        self.text_rect.center = self._rect.center  # Start with centered alignment
 
-    @text_align.setter
-    def text_align(self, value):
-        self._text_align = value
-        self._align_text(self._text) if self._text is not None else None
-
-    def _align_text(self, surface):
-        self.text_rect = surface.rect
-        self.text_rect.center = self._rect.center
-
+        # Adjust alignment based on text_align tuple values
         if len(self.text_align) == 2:
             if self.text_align[0] == 'left':
                 self.text_rect.left = self._rect.left + self.margin
@@ -234,7 +241,13 @@ class TextButton(ButtonBase):
             elif self.text_align[1] == 'bottom':
                 self.text_rect.bottom = self._rect.bottom - self.margin
 
-        surface.x, surface.y = self.text_rect.left, self.text_rect.top
+        # Update text surface position
+        text_surface.x, text_surface.y = self.text_rect.topleft
+
+    @override
+    def _align_rect(self, rect, align, coords):
+        super()._align_rect(rect, align, coords)
+        self._align_text(self._text)
 
     @override
     def on_click(self):
@@ -243,10 +256,12 @@ class TextButton(ButtonBase):
 
     @override
     def on_hover(self):
+        super().on_hover()
         self._text.color = self.text_colors['hovered']
 
     @override
     def on_idle(self):
+        super().on_idle()
         self._text.color = self.text_colors['default']
 
     @override
