@@ -32,9 +32,9 @@ def button_from_images(name: str, position: tuple[int, int],
     return ImageButton(config)
 
 
-Colors = TypedDict('Colors', {'default': tuple,
-                              'hovered': tuple,
-                              'clicked': tuple})
+Colors = TypedDict('Colors', {'default': tuple | pygame.Color,
+                              'hovered': tuple | pygame.Color,
+                              'clicked': tuple | pygame.Color})
 
 
 @dataclass
@@ -273,6 +273,67 @@ class TextButton(ButtonBase):
     def blit(self):
         super().blit()
         self._text.blit()
+
+
+
+class ToggleButton(TextButton):
+    def __init__(self, config: TextButtonConfig):
+        super().__init__(config)
+        self.toggled = False  # Track toggle state (on/off)
+
+    def toggle_on(self):
+        """Force button to toggle on."""
+        if not self.toggled:
+            self.toggled = True
+            self.on_click()
+            self.on_click_call()
+
+    def toggle_off(self):
+        """Force button to toggle off."""
+        if self.toggled:
+            self.toggled = False
+            self.on_release()
+            self.on_release_call()
+
+    @override
+    def update(self):
+        if self._requires_realignment:
+            self._align_rect(self._rect, self._align, (self._x, self._y))
+
+        # Check if the button should toggle only when it's clicked and not already toggled
+        x, y = InputManager.get_mouse_pos()
+        if self.contains(x, y) and InputManager.is_mouse_down(Mouse.LEFTCLICK):
+            if not self.toggled:  # Only toggle if not currently active
+                self.toggle_on()
+        elif not self.contains(x, y) and not self.toggled:
+            self.on_idle()
+
+        self._text.update()
+
+
+class ToggleGroup:
+    def __init__(self, *buttons: ToggleButton):
+        self.buttons = list(buttons)
+        if self.buttons:
+            # Automatically toggle on the first button
+            self.buttons[0].toggle_on()
+
+    def update(self):
+        for button in self.buttons:
+            button.update()
+
+            # If a button is toggled on, ensure others are toggled off
+            if button.toggled:
+                for other_button in self.buttons:
+                    if other_button != button and other_button.toggled:
+                        other_button.toggle_off()
+
+    def add_button(self, button: ToggleButton):
+        """Add more buttons to the group if needed."""
+        self.buttons.append(button)
+        if len(self.buttons) == 1:
+            # Toggle the first button if it's the only one
+            button.toggle_on()
 
 
 @dataclass(kw_only=True)
