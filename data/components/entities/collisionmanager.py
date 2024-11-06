@@ -1,3 +1,4 @@
+"""Handles collisions with entities."""
 import logging
 from typing import TYPE_CHECKING
 

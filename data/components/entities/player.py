@@ -1,3 +1,4 @@
+"""Contains the base class for all the game's players."""
 import logging
 from typing import Optional, TypedDict, override
 
@@ -12,6 +13,7 @@ PlayerStats = TypedDict('PlayerStats', {'health': int, 'speed': int, 'spells': i
 
 
 class Player(Entity):
+    """Base class for all the game's players."""
     def __init__(self, spawn: tuple[int, int],
                  sprite: Optional[pygame.Surface] = None,
                  spritesheet: Optional[list[pygame.Surface]] = None,
@@ -22,9 +24,9 @@ class Player(Entity):
             raise ValueError("Provide either a single sprite or a spritesheet,"
                              " not both.")
         initial_sprite = sprite or spritesheet[0]
+        self.hitbox_offset_x, self.hitbox_offset_y = hitbox_offset
         super().__init__(spawn, initial_sprite, hitbox)
 
-        self.hitbox_offset_x, self.hitbox_offset_y = hitbox_offset
         self.spritesheet = spritesheet
         self.keys = []
         self.show_hitbox = False
@@ -41,6 +43,7 @@ class Player(Entity):
     def _spawn(self):
         self.rect.center = (self.spawn[0] + self.hitbox_offset_x,
                             self.spawn[1] + self.hitbox_offset_y)
+        logging.info(f'{repr(self)} moved to spawnpoint: {self.rect.center}')
 
     def _set_direction(self):
         self.dx, self.dy = 0.0, 0.0
@@ -76,8 +79,13 @@ class Player(Entity):
 
     def _set_direction_sprite(self, direction: str):
         if self.spritesheet:
-            direction_map = {'default': self.spritesheet[0], 'up': self.spritesheet[1], 'down': self.spritesheet[2],
-                             'left': self.spritesheet[3], 'right': self.spritesheet[4]}
+            direction_map = {
+                'default': self.spritesheet[0],
+                'up': self.spritesheet[1],
+                'down': self.spritesheet[2],
+                'left': self.spritesheet[3],
+                'right': self.spritesheet[4]
+            }
             self.sprite = direction_map.get(direction, self.spritesheet[0])
 
     @override
@@ -119,4 +127,6 @@ class Player(Entity):
     @override
     def on_collide(self, sprite):
         self.health -= 1
+        logging.info(f'{repr(self)} collided with {sprite}. Health is now at'
+                     f'{self.health}.')
         self._spawn()
