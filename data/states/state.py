@@ -14,16 +14,20 @@ class State:
         self.background = pygame.Surface(screen_size)
         self.widgets = ()
 
-    def startup(self):
-        InputBinder.register(('keydown', pygame.K_ESCAPE),
-                             action=self.back)
+    def add_widgets(self):
         for widget in self.widgets:
             widgethandler.add_widget(widget)
 
-    def cleanup(self):
-        InputBinder.deregister(('keydown', pygame.K_ESCAPE))
+    def startup(self):
+        InputBinder.register(('keydown', pygame.K_ESCAPE),
+                             action=self.back)
+
+    def clear_widgets(self):
         for widget in self.widgets:
             widgethandler.remove_widget(widget)
+
+    def cleanup(self):
+        InputBinder.deregister(('keydown', pygame.K_ESCAPE))
 
     def update(self, *args):
         widgethandler.update()
@@ -71,20 +75,25 @@ class StateManager(metaclass=Singleton):
 
     def append(self, state_name: str):
         if self.current_state:
+            self.current_state.clear_widgets()
             self.current_state.cleanup()
         self._state_stack.append(self._initialise_state(state_name))
         self.current_state.startup()
+        self.current_state.add_widgets()
 
     def pop(self):
         if not self.current_state:
             raise AttributeError("No states to pop.")
+        self.current_state.clear_widgets()
         self.current_state.cleanup()
         self._state_stack.pop()
         if self.current_state:
             self.current_state.startup()
+            self.current_state.add_widgets()
 
     def switch(self, state_name: str):
         if self.current_state:
+            self.current_state.clear_widgets()
             self.current_state.cleanup()
             self._state_stack.pop()
         else:
@@ -92,9 +101,11 @@ class StateManager(metaclass=Singleton):
                           "present in the state stack.")
         self._state_stack.append(self._initialise_state(state_name))
         self.current_state.startup()
+        self.current_state.add_widgets()
 
     def back_to(self, state_name: str):
         if self.current_state:
+            self.current_state.clear_widgets()
             self.current_state.cleanup()
         else:
             warnings.warn("Attempted to go back to a state when no state was "
@@ -105,12 +116,34 @@ class StateManager(metaclass=Singleton):
 
         if self.current_state:
             self.current_state.startup()
+            self.current_state.add_widgets()
         else:
             warnings.warn(f"State {state_name} not found in the state stack.")
 
     def quit(self):
+        self.current_state.clear_widgets()
         self.current_state.cleanup()
         self.control.quit()
+
+    def append_overlay(self, state: State):
+        """Append a temporary overlay state (like a popup) that can be easily dismissed."""
+        if not self.current_state:
+            raise ValueError("Overlay must be added on top of existing state.")
+        self.current_state.cleanup()
+        self._state_stack.append(state)
+        self.current_state.startup()
+        self.current_state.add_widgets()
+
+    def pop_overlay(self):
+        """Remove the overlay without affecting the underlying state."""
+        if not self.current_state:
+            raise AttributeError("No overlay to pop.")
+        self.current_state.clear_widgets()
+        self.current_state.cleanup()
+        self._state_stack.pop()
+
+        if self.current_state:  # Restart the underlying state’s handling
+            self.current_state.startup()
 
 
 state_manager = StateManager()

@@ -1,13 +1,16 @@
 from dataclasses import dataclass
 from typing import Optional, override
+
 import pygame
 from pygame import freetype
-from data.components import RectAlignments
-from data.components.ui import ButtonBase, Text
+
+from data.components import RectAlignments, InputBinder
+from data.components.ui import ButtonBase, Text, widgethandler
 from data.components.ui.widgetutils import WidgetBase
 from data.core import screen
 from data.core.prepare import screen_center
 from data.core.utils import Popups, ColorPalette
+from data.states.state import State
 
 
 @dataclass(kw_only=True)
@@ -16,53 +19,54 @@ class PopupConfig:
     size: tuple[int, int]
     align: RectAlignments = 'center'
     color: Optional[pygame.Color | tuple] = None
-    text: str = ''
+    text: str = None
     text_color: Optional[pygame.Color | tuple] = None
     font: Optional[pygame.freetype.Font] = None
     font_size: int = 32
     buttons: tuple[ButtonBase, ...] = ()
-    padding: int = 0
     popup_type: Popups = 0
 
 
-class Popup(WidgetBase):
+class Popup(WidgetBase, State):
     def __init__(self, config: PopupConfig):
-        position = screen_center if config.position is None else config.position
-        super().__init__(position, config.align)
+        position = screen_center if config.position is None else \
+            config.position
+        WidgetBase.__init__(self, position, config.align)
+        State.__init__(self)
+
         self._width, self._height = config.size
-        self._color = config.color or ColorPalette.PRIMARY
+        self._color = config.color if config.color is not None else \
+            ColorPalette.PRIMARY
         self._rect = pygame.Rect(0, 0, self._width, self._height)
         self._align_rect(self._rect, self.align, (self._x, self._y))
-        self._text = None
-        if config.text:
-            self._text = Text(
-                (self._rect.centerx, (self._rect.top + int(self._height * 0.2)) \
+
+        self._text = config.text if config.text is None else \
+            Text(
+                (self._rect.centerx, (self._rect.top + int(self._height * 0.2))
                     if config.buttons else self._rect.centery),
                 config.text, config.font, config.font_size,
-                config.text_color if config.text_color is True else \
+                config.text_color if config.text_color is True else
                     pygame.Color('white'),
                 'midtop' if config.buttons else 'center',
                 sub_widget=True)
 
-        # Buttons setup
         self._buttons = config.buttons
         if self._buttons:
-            self._align_buttons(self._buttons, self._rect, config.padding)
+            self._align_buttons(self._buttons, self._rect)
 
     def _align_rect(self, rect, align, coords):
         setattr(rect, align, coords)
         self._x, self._y = getattr(rect, align)
 
-    def _align_buttons(self, buttons: tuple[ButtonBase, ...], rect: pygame.Rect, padding: int):
-        # Calculate button positioning based on rect
+    def _align_buttons(self, buttons: tuple[ButtonBase, ...],
+                       rect: pygame.Rect):
         total_button_width = sum(button.width for button in buttons)
         gaps = len(buttons) + 1
         button_padding_x = round((rect.width - total_button_width) / gaps)
-
-        # Position each button within the rect
-        y_position = rect.centery if not self._text else rect.bottom - int(self._height * 0.1)
-        print(y_position, rect.bottom)
+        y_position = rect.centery if not self._text else rect.bottom - int(
+            self._height * 0.1)
         left = rect.left + button_padding_x
+
         for button in buttons:
             button.align = 'bottomleft' if self._text else 'midleft'
             button.x = left
@@ -71,20 +75,35 @@ class Popup(WidgetBase):
 
     @override
     def update(self):
-        if self._text:
-            self._text.update()
+        self._text.update() if self._text is not None else None
         for button in self._buttons:
             button.update()
 
     @override
-    def blit(self):
-        # Draw background
+    def render(self):
+        self.state_manager.state_stack[-2].render()
         pygame.draw.rect(screen, self._color, self._rect)
-
-        # Draw text if available
-        if self._text:
-            self._text.blit()
-
-        # Draw each button
+        self._text.blit() if self._text is not None else None
         for button in self._buttons:
             button.blit()
+
+    def blit(self) -> None:
+        ...
+
+    def startup(self):
+        InputBinder.register(('keydown', pygame.K_ESCAPE), action=self.state_manager.pop_overlay)
+
+    def add_widgets(self):
+        for button in self._buttons:
+            widgethandler.add_widget(button)
+        if self._text:
+            widgethandler.add_widget(self._text)
+
+    def cleanup(self):
+        InputBinder.deregister(('keydown', pygame.K_ESCAPE))
+
+    def clear_widgets(self):
+        for button in self._buttons:
+            widgethandler.remove_widget(button)
+        if self._text:
+            widgethandler.remove_widget(self._text)

@@ -1,7 +1,7 @@
 from data.components.ui import Popup, PopupConfig, TextButton, TextButtonConfig
 from data.core import Colors
 from data.core.prepare import screen_center
-from data.states.state import State
+from data.states.state import State, state_manager
 
 
 class Options(State):
@@ -20,9 +20,14 @@ class Options(State):
         text_btn_config.text = '~'
         x2=TextButton(text_btn_config)
         popup_config = PopupConfig(position=screen_center, size=(400, 100), buttons=(x,x1, x2), text='HELLO BRO',
-                                   padding=20, color=(14, 14, 14))
+                                   color=(14, 14, 14))
         self.popup = Popup(popup_config)
-        self.widgets = (self.popup,)
+        self.button = TextButton(TextButtonConfig(position=(0, 0), size=(100, 30), colors={
+                                               'default': Colors.BACKGROUND,
+                                               'hovered': Colors.FOREGROUND,
+                                               'clicked': Colors.ACCENT},
+                                                text='pop it up', on_click=lambda: state_manager.append_overlay(self.popup)))
+        self.widgets = (self.button,)
 
     def update_screen(self):
         ...
@@ -38,3 +43,4 @@ class Options(State):
 
     def cleanup(self):
         super().cleanup()
+        print('asdfasdf NOOO')
