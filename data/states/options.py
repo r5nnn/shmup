@@ -1,46 +1,59 @@
-from data.components.ui import Popup, PopupConfig, TextButton, TextButtonConfig
+import pygame
+
+from data.components.ui import ToggleButton, TextButtonConfig, ToggleGroup
 from data.core import Colors
-from data.core.prepare import screen_center
-from data.states.state import State, state_manager
+from data.core.prepare import image_paths, screen, screen_size, screen_center
+from data.states.state import State
 
 
 class Options(State):
     def __init__(self):
         super().__init__()
-        text_btn_config = TextButtonConfig(position=screen_center, size=(100, 30),
-                                           text='click', align='midleft',
-                                           colors={
-                                               'default': Colors.BACKGROUND,
-                                               'hovered': Colors.FOREGROUND,
-                                               'clicked': Colors.ACCENT
-                                           })
-        x= TextButton(text_btn_config)
-        text_btn_config.text = 'bye'
-        x1=TextButton(text_btn_config)
-        text_btn_config.text = '~'
-        x2=TextButton(text_btn_config)
-        popup_config = PopupConfig(position=screen_center, size=(400, 100), buttons=(x,x1, x2), text='HELLO BRO',
-                                   color=(14, 14, 14))
-        self.popup = Popup(popup_config)
-        self.button = TextButton(TextButtonConfig(position=(0, 0), size=(100, 30), colors={
-                                               'default': Colors.BACKGROUND,
-                                               'hovered': Colors.FOREGROUND,
-                                               'clicked': Colors.ACCENT},
-                                                text='pop it up', on_click=lambda: state_manager.append_overlay(self.popup)))
-        self.widgets = (self.button,)
+        self.background = pygame.image.load(image_paths('menu')).convert()
+        self.title = pygame.transform.scale_by(
+            pygame.image.load(image_paths('title options')), 4)
+        self.bg_rect = pygame.Rect(
+            0, screen_size[1] * 0.1 + 20 + self.title.get_height(),
+            screen_size[0] * 0.8, (screen_size[1] - self.title.get_height()) * 0.8)
+        self.bg_rect.centerx = screen_center[0]
+        self.bg_surf = pygame.Surface(self.bg_rect.size)
+        self.bg_surf.fill(Colors.BACKGROUND)
+        self.bg_surf.set_alpha(96)
+        config = TextButtonConfig(position=self.bg_rect.topleft,
+                                           size=(round(self.bg_rect.width/3), 30),
+                                           colors={'default': Colors.BACKGROUND,
+                                                   'hovered': Colors.FOREGROUND,
+                                                   'clicked': Colors.ACCENT},
+                                           on_click=self.graphics_options,
+                                           text='Graphics')
+        self.graphics = ToggleButton(config)
+        config.position = self.graphics.rect.topright
+        config.text = 'Keybinds'
+        config.on_click = self.keybinds_options
+        self.keybinds = ToggleButton(config)
+        self.options = ToggleGroup(self.keybinds, self.graphics)
 
-    def update_screen(self):
+    def graphics_options(self):
+        ...
+
+    def keybinds_options(self):
         ...
 
     def update(self):
         super().update()
+        self.options.update()
 
     def render(self):
-        super().render()
+        screen.blit(self.background, (0, 0))
+        screen.blit(self.bg_surf, self.bg_rect)
+        screen.blit(self.title,
+                    (screen_size[0] / 2 - self.title.get_width() / 2,
+                     screen_size[1] * 0.1))
+        self.graphics.blit()
+        self.keybinds.blit()
 
     def startup(self):
         super().startup()
 
     def cleanup(self):
         super().cleanup()
-        print('asdfasdf NOOO')
