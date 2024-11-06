@@ -4,7 +4,7 @@ from typing import override
 import pygame
 
 from data.components import InputBinder
-from data.components.audio import background_audio, button_audio
+from data.components.audio import background_audio
 from data.components.ui import widgethandler, button_from_images
 from data.core import screen, screen_size
 from data.core.prepare import image_paths, audio_paths
@@ -16,9 +16,9 @@ class Title(State):
         super().__init__()
 
         # images
-        self.background = pygame.image.load(image_paths('menu')).convert()
-        self.logo = pygame.transform.scale_by(
-            pygame.image.load(image_paths('logo')), 4)
+        self.background = pygame.image.load(image_paths('titlescreen')).convert()
+        self.title = pygame.transform.scale_by(
+            pygame.image.load(image_paths('title main')), 4)
         self.splashes = tuple(pygame.transform.scale_by(
             pygame.image.load(image_paths(name)).convert(), 5) for name in
             ('gun die', 'can we get more christof', 'tiferet'))
@@ -61,8 +61,8 @@ class Title(State):
     def render(self):
         super().render()
         widgethandler.blit()
-        screen.blit(self.logo,
-                    (screen_size[0] / 2 - self.logo.get_width() / 2,
+        screen.blit(self.title,
+                    (screen_size[0] / 2 - self.title.get_width() / 2,
                      screen_size[1] * 0.1))
         screen.blit(self.splash,
                     (screen_size[0] / 2 - self.splash.get_width(),
@@ -77,5 +77,4 @@ class Title(State):
 
     @override
     def back(self):
-        button_audio.play_audio('click', override=True)
         self.state_manager.append('options')

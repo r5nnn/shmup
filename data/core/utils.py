@@ -18,10 +18,9 @@ class Mouse:
 @dataclass(frozen=True)
 class Popups:
     ANY = 0
-    INFO = 1
-    INPUT = 3
-    OK_CANCEL = 4
-    YES_NO = 5
+    INPUT = 1
+    OK_CANCEL = 2
+    YES_NO = 3
 
 
 @dataclass(frozen=True)
