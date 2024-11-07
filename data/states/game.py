@@ -1,3 +1,4 @@
+import random
 from typing import override
 
 import pygame
@@ -20,7 +21,11 @@ class Game(State):
         self.enemies = EntityGroup()
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
-
+        for i in range(1000):
+            y = pygame.Surface((10, 10))
+            y.fill(pygame.Color('white'))
+            x = Player(((random.randint(0, screen_size[0])), (random.randint(0, screen_size[1]))), y)
+            self.enemy_bullets.add(x)
     @override
     def update(self):
         self.player.update()

@@ -125,11 +125,12 @@ class StateManager(metaclass=Singleton):
         self.current_state.cleanup()
         self.control.quit()
 
-    def append_overlay(self, state: State):
+    def append_overlay(self, state: State, *args):
         """Append a temporary overlay state (like a popup) that can be easily dismissed."""
         if not self.current_state:
             raise ValueError("Overlay must be added on top of existing state.")
         self.current_state.cleanup()
+        print(state.options)
         self._state_stack.append(state)
         self.current_state.startup()
         self.current_state.add_widgets()

@@ -43,10 +43,10 @@ class Popup(WidgetBase, State):
         self._text = config.text if config.text is None else \
             Text(
                 (self._rect.centerx, (self._rect.top + int(self._height * 0.2))
-                    if config.buttons else self._rect.centery),
+                if config.buttons else self._rect.centery),
                 config.text, config.font, config.font_size,
                 config.text_color if config.text_color is True else
-                    pygame.Color('white'),
+                pygame.Color('white'),
                 'midtop' if config.buttons else 'center',
                 sub_widget=True)
 
