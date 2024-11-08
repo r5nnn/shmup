@@ -5,6 +5,7 @@ from typing import Optional, TypedDict, override
 import pygame
 
 import data.core.utils
+from data.components import RectAlignments
 from data.components.entities.entity import Entity
 from data.components.input import InputManager
 from data.core import screen, screen_rect
@@ -15,17 +16,19 @@ PlayerStats = TypedDict('PlayerStats', {'health': int, 'speed': int, 'spells': i
 class Player(Entity):
     """Base class for all the game's players."""
     def __init__(self, spawn: tuple[int, int],
+                 spawn_alignment: RectAlignments = 'center',
                  sprite: Optional[pygame.Surface] = None,
                  spritesheet: Optional[list[pygame.Surface]] = None,
-                 hitbox: Optional[pygame.Rect] = None,
-                 hitbox_offset: tuple[int, int] = (0, 0),
+                 sprite_rect: Optional[pygame.Rect] = None,
+                 rect_offset: tuple[int, int] = (0, 0),
                  stats: Optional[PlayerStats] = None):
         if (sprite is None) == (spritesheet is None):  # if both None or both provided
             raise ValueError("Provide either a single sprite or a spritesheet,"
-                             " not both.")
-        initial_sprite = sprite or spritesheet[0]
-        self.hitbox_offset_x, self.hitbox_offset_y = hitbox_offset
-        super().__init__(spawn, initial_sprite, hitbox)
+                             " not both or neither.")
+        self.hitbox_offset_x, self.hitbox_offset_y = rect_offset
+        super().__init__(
+            (spawn[0] + rect_offset[0], spawn[1] + rect_offset[1]),
+            sprite or spritesheet[0], sprite_rect, spawn_alignment)
 
         self.spritesheet = spritesheet
         self.keys = []
@@ -37,13 +40,23 @@ class Player(Entity):
         self.spells = stats.get('spells', 3)
 
         self.x, self.y = float(spawn[0]), float(spawn[1])
-        self._spawn()
-        logging.info(f'Created {repr(self)}.')
+        logging.info(f'Created {self!r}.')
 
-    def _spawn(self):
-        self.rect.center = (self.spawn[0] + self.hitbox_offset_x,
-                            self.spawn[1] + self.hitbox_offset_y)
-        logging.info(f'{repr(self)} moved to spawnpoint: {self.rect.center}')
+    @property
+    def spawn(self):
+        return (self._spawn[0] - self.hitbox_offset_x,
+                self._spawn[1] - self.hitbox_offset_y)
+
+    @spawn.setter
+    def spawn(self, value):
+        self._spawn = (value[0] + self.hitbox_offset_x,
+                       value[1] + self.hitbox_offset_y)
+
+    @override
+    def move_to_spawn(self):
+        super().move_to_spawn()
+        logging.info(f'{self!r} moved to spawnpoint: '
+                     f'{getattr(self.rect, self.spawn_alignment)}')
 
     def _set_direction(self):
         self.dx, self.dy = 0.0, 0.0
@@ -127,6 +140,5 @@ class Player(Entity):
     @override
     def on_collide(self, sprite):
         self.health -= 1
-        logging.info(f'{repr(self)} collided with {sprite}. Health is now at'
-                     f'{self.health}.')
-        self._spawn()
+        logging.info(f'{self!r} collided with {sprite!r}')
+        self.move_to_spawn()

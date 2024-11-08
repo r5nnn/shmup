@@ -17,14 +17,14 @@ class Game(State):
         self.player = Player(tuple(round(coord / 2) for coord in screen_size),
                              spritesheet=[pygame.transform.scale_by(image, 2) \
                                           for image in sprites('remi')],
-                             hitbox=pygame.Rect(0, 0, 20, 20), hitbox_offset=(1, -7))
+                             sprite_rect=pygame.Rect(0, 0, 20, 20), rect_offset=(1, -7))
         self.enemies = EntityGroup()
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
         for i in range(1000):
             y = pygame.Surface((10, 10))
             y.fill(pygame.Color('white'))
-            x = Player(((random.randint(0, screen_size[0])), (random.randint(0, screen_size[1]))), y)
+            x = Player(((random.randint(0, screen_size[0])), (random.randint(0, screen_size[1]))), sprite=y)
             self.enemy_bullets.add(x)
     @override
     def update(self):

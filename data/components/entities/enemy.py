@@ -15,20 +15,31 @@ class Enemy(Entity):
     """Base class for all the game's enemies."""
     def __init__(self, spawn: tuple[int, int], sprite: pygame.Surface,
                  spawn_alignment: RectAlignments = 'center',
-                 hitbox: Optional[pygame.Rect] = None,
-                 hitbox_offset: tuple[int, int] = (0, 0),
+                 sprite_rect: Optional[pygame.Rect] = None,
+                 rect_offset: tuple[int, int] = (0, 0),
                  stats: Optional[EnemyStats] = None):
-        self.hitbox_offset_x, self.hitbox_offset_y = hitbox_offset
-        super().__init__(spawn, sprite, hitbox, spawn_alignment)
+        self.hitbox_offset_x, self.hitbox_offset_y = rect_offset
+        super().__init__(
+            (spawn[0] + rect_offset[0], spawn[1] + rect_offset[1]),
+            sprite, sprite_rect, spawn_alignment)
         self.health = stats.get('health', 1)
         self.x, self.y = float(spawn[0]), float(spawn[1])
+        logging.info(f'Spawned {self!r}.')
+
+    @property
+    def spawn(self):
+        return (self._spawn[0] - self.hitbox_offset_x,
+                self._spawn[1] - self.hitbox_offset_y)
+
+    @spawn.setter
+    def spawn(self, value):
+        self._spawn = (value[0] + self.hitbox_offset_x,
+                       value[1] + self.hitbox_offset_y)
 
     @override
-    def _spawn(self):
-        spawn = (self.spawn[0] + self.hitbox_offset_x,
-                 self.spawn[1] + self.hitbox_offset_y)
-        setattr(self.rect, self.spawn_alignment, spawn)
-        logging.info(f'{repr(self)} moved to spawnpoint: '
+    def move_to_spawn(self):
+        super().move_to_spawn()
+        logging.info(f'{self!r} moved to spawnpoint: '
                      f'{getattr(self.rect, self.spawn_alignment)}')
 
     @override
@@ -42,4 +53,11 @@ class Enemy(Entity):
     @override
     def on_collide(self, sprite) -> None:
         self.kill()
-        logging.info(f'{repr(self)} collided with {sprite} and killed.')
+        logging.info(f'{self!r} collided with {sprite!r} and killed.')
+
+    @override
+    def __repr__(self):
+        parent_repr = super().__repr__()
+        return (f"{parent_repr}, Enemy(rect_offset="
+                f"{(self.hitbox_offset_x, self.hitbox_offset_y)!r}, "
+                f"stats={self.health!r})")
