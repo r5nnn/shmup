@@ -11,13 +11,13 @@ if TYPE_CHECKING:
 
 
 def update(game: "Game"):
+    """Checks for collisions and notifies collided sprites."""
     player_enemy_collisions = pygame.sprite.spritecollide(
         game.player, game.enemies, False)
     _handle_sprite_collisions(game.player, player_enemy_collisions)
 
     player_bullet_enemy_collisions = pygame.sprite.groupcollide(
-        game.player_bullets, game.enemies, True, True
-    )
+        game.player_bullets, game.enemies, True, True)
     _handle_group_collisions(player_bullet_enemy_collisions)
 
     enemy_bullet_player_collisions = pygame.sprite.spritecollide(

@@ -63,9 +63,9 @@ class ButtonBase(WidgetBase):
         self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self._align_rect(self._rect, self._align, (self._x, self._y))
         self.colors = config.colors
-        self._color = self.colors['default'] if self.colors is not None else None
+        self.color = self.colors['default'] if self.colors is not None else None
         self.border_colors = config.border_colors
-        self._border_color = self.border_colors['default'] \
+        self.border_color = self.border_colors['default'] \
             if self.border_colors is not None else None
         self._border_thickness = config.border_thickness
         self._border_rect = pygame.Rect(self._rect.left + self._border_thickness,
@@ -136,9 +136,9 @@ class ButtonBase(WidgetBase):
         if self.click_audio_tag is not None:
             button_audio.play_audio(self.click_audio_tag, override=True)
         if self.colors is not None:
-            self._color = self.colors['clicked']
+            self.color = self.colors['clicked']
         if self.border_colors is not None:
-            self._border_color = self.border_colors.get('clicked')
+            self.border_color = self.border_colors.get('clicked')
 
     def on_release(self) -> None:
         """Method that is called when the button is released."""
@@ -149,18 +149,18 @@ class ButtonBase(WidgetBase):
     def on_hover(self) -> None:
         """Method that is called when the button is hovered."""
         if self.colors is not None:
-            self._color = self.colors['hovered']
+            self.color = self.colors['hovered']
         if self.border_colors is not None:
-            self._border_color = self.border_colors.get('hovered')
+            self.border_color = self.border_colors.get('hovered')
 
     def on_idle(self):
         """Method that is called when the button is idle (i.e. not clicked or
         hovered)"""
         self.clicked = False
         if self.colors is not None:
-            self._color = self.colors['default']
+            self.color = self.colors['default']
         if self.border_colors is not None:
-            self._border_color = self.border_colors.get('default')
+            self.border_color = self.border_colors.get('default')
 
     def update(self):
         if self._requires_realignment:
@@ -184,10 +184,10 @@ class ButtonBase(WidgetBase):
 
     def blit(self):
         if self.border_colors is not None:
-            pygame.draw.rect(screen, self._border_color,
+            pygame.draw.rect(screen, self.border_color,
                              self._border_rect, border_radius=self.radius)
         if self.colors is not None:
-            pygame.draw.rect(screen, self._color,
+            pygame.draw.rect(screen, self.color,
                              self._rect, border_radius=self.radius)
 
 
@@ -243,6 +243,10 @@ class TextButton(ButtonBase):
 
         # Update text surface position
         text_surface.x, text_surface.y = self.text_rect.topleft
+
+    @property
+    def text(self):
+        return self._text
 
     @override
     def _align_rect(self, rect, align, coords):
@@ -316,7 +320,13 @@ class ToggleGroup:
         self.buttons = list(buttons)
         if self.buttons:
             # Automatically toggle on the first button
-            self.buttons[0].toggle_on()
+            self.buttons[0].toggled = True
+            self.buttons[0].clicked = True
+            if self.buttons[0].colors is not None:
+                self.buttons[0].color = self.buttons[0].colors['clicked']
+            if self.buttons[0].border_colors is not None:
+                self.buttons[0].border_color = self.buttons[0].border_colors.get('clicked')
+            self.buttons[0].text.color = self.buttons[0].text_colors['clicked']
 
     def update(self):
         for button in self.buttons:
@@ -426,6 +436,6 @@ class ImageButton(ButtonBase):
     @override
     def blit(self):
         if self.use_rect_collision:
-            pygame.draw.rect(screen, self._color, self._rect, border_radius=self.radius)
+            pygame.draw.rect(screen, self.color, self._rect, border_radius=self.radius)
 
         screen.blit(self._current_image, self.image_rect.topleft)
