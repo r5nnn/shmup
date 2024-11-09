@@ -24,8 +24,8 @@ class Player(Entity):
                  stats: Optional[PlayerStats] = None):
         if (sprite is None) == (spritesheet is None):  # if both None or both provided
             raise ValueError("Provide either a single sprite or a spritesheet,"
-                             " not both or neither.")
-        self.hitbox_offset_x, self.hitbox_offset_y = rect_offset
+                             " not both.")
+        self.rect_offset_x, self.rect_offset_y = rect_offset
         super().__init__(
             (spawn[0] + rect_offset[0], spawn[1] + rect_offset[1]),
             sprite or spritesheet[0], sprite_rect, spawn_alignment)
@@ -44,19 +44,19 @@ class Player(Entity):
 
     @property
     def spawn(self):
-        return (self._spawn[0] - self.hitbox_offset_x,
-                self._spawn[1] - self.hitbox_offset_y)
+        return (self._spawn[0] - self.rect_offset_x,
+                self._spawn[1] - self.rect_offset_y)
 
     @spawn.setter
     def spawn(self, value):
-        self._spawn = (value[0] + self.hitbox_offset_x,
-                       value[1] + self.hitbox_offset_y)
+        self._spawn = (value[0] + self.rect_offset_x,
+                       value[1] + self.rect_offset_y)
 
     @override
     def move_to_spawn(self):
         super().move_to_spawn()
         logging.info(f'{self!r} moved to spawnpoint: '
-                     f'{getattr(self.rect, self.spawn_alignment)}')
+                     f'{getattr(self.sprite, self.spawn_alignment)}')
 
     def _set_direction(self):
         self.dx, self.dy = 0.0, 0.0
@@ -116,13 +116,13 @@ class Player(Entity):
         self.x += self.dx * dt
         self.y += self.dy * dt
 
-        self.rect.center = (round(self.x) + self.hitbox_offset_x,
-                            round(self.y) + self.hitbox_offset_y)
+        self.rect.center = (round(self.x) + self.rect_offset_x,
+                            round(self.y) + self.rect_offset_y)
         if not screen_rect.contains(self.rect):
             self.rect.clamp_ip(screen_rect)
 
-            self.x = float(self.rect.centerx - self.hitbox_offset_x)
-            self.y = float(self.rect.centery - self.hitbox_offset_y)
+            self.x = float(self.rect.centerx - self.rect_offset_x)
+            self.y = float(self.rect.centery - self.rect_offset_y)
 
     @override
     def blit(self):
@@ -142,3 +142,10 @@ class Player(Entity):
         self.health -= 1
         logging.info(f'{self!r} collided with {sprite!r}')
         self.move_to_spawn()
+
+    def __repr__(self):
+        parent_repr = super().__repr__()
+        return (f"{parent_repr}, Player(spritesheet={self.spritesheet!r}, "
+                f"rect_offset=({self.rect_offset_x!r}, {self.rect_offset_y!r}),"
+                f" stats={{'health': {self.health!r},'speed': {self.speed!r}, "
+                f"'spells': {self.spells!r}}})")

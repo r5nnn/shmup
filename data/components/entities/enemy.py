@@ -18,7 +18,7 @@ class Enemy(Entity):
                  sprite_rect: Optional[pygame.Rect] = None,
                  rect_offset: tuple[int, int] = (0, 0),
                  stats: Optional[EnemyStats] = None):
-        self.hitbox_offset_x, self.hitbox_offset_y = rect_offset
+        self.rect_offset_x, self.rect_offset_y = rect_offset
         super().__init__(
             (spawn[0] + rect_offset[0], spawn[1] + rect_offset[1]),
             sprite, sprite_rect, spawn_alignment)
@@ -28,13 +28,13 @@ class Enemy(Entity):
 
     @property
     def spawn(self):
-        return (self._spawn[0] - self.hitbox_offset_x,
-                self._spawn[1] - self.hitbox_offset_y)
+        return (self._spawn[0] - self.rect_offset_x,
+                self._spawn[1] - self.rect_offset_y)
 
     @spawn.setter
     def spawn(self, value):
-        self._spawn = (value[0] + self.hitbox_offset_x,
-                       value[1] + self.hitbox_offset_y)
+        self._spawn = (value[0] + self.rect_offset_x,
+                       value[1] + self.rect_offset_y)
 
     @override
     def move_to_spawn(self):
@@ -58,6 +58,6 @@ class Enemy(Entity):
     @override
     def __repr__(self):
         parent_repr = super().__repr__()
-        return (f"{parent_repr}, Enemy(rect_offset="
-                f"{(self.hitbox_offset_x, self.hitbox_offset_y)!r}, "
-                f"stats={self.health!r})")
+        return (f"{parent_repr}, Enemy("
+                f"rect_offset={(self.rect_offset_x, self.rect_offset_y)!r}, "
+                f"stats={{'health': {self.health!r}}})")
