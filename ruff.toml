@@ -1,0 +1,7 @@
+[lint]
+select = ["ALL"]
+ignore = [
+    # general error types
+    "ANN", "D", "FA",
+    # specific errors
+    "PLW0603", "N812", "I001", "E402", "EXE002", "PLR0913"]
