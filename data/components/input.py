@@ -2,88 +2,86 @@ from typing import Callable, override, Literal
 
 import pygame
 
-from data.core.utils import Singleton, Observer, SingletonABCMeta
+from data.core.utils import Observer, SingletonABCMeta
 
 input_types = Literal[
-    'key', 'keydown', 'keyup',
-    'mouse', 'mousedown', 'mouseup',
-    'quit'
+    "key", "keydown", "keyup",
+    "mouse", "mousedown", "mouseup",
+    "quit"
 ]
 
 
-class _InputManager(metaclass=Singleton):
-    def __init__(self):
-        self._keydown_events = []
-        self._keyup_events = []
-        self._held_keys = []
-        self._mousedown_events = []
-        self._mouseup_events = []
-        self._mouse_buttons = []
-        self._mouse_pos = (0, 0)
-        self._quit = False
+_keydown_events = []
+_keyup_events = []
+_held_keys = []
+_mousedown_events = []
+_mouseup_events = []
+_mouse_buttons = []
+_mouse_pos = (0, 0)
+_quit = False
 
-    @property
-    def quit(self):
-        return self._quit
+def get_quit() -> bool:
+    return _quit
 
-    def process_events(self, events: list) -> None:
-        self._keydown_events.clear()
-        self._keyup_events.clear()
-        self._mousedown_events.clear()
-        self._mouseup_events.clear()
+def process_events(events: list) -> None:
+    global _quit, _mouse_pos
+    _keydown_events.clear()
+    _keyup_events.clear()
+    _mousedown_events.clear()
+    _mouseup_events.clear()
 
-        for event in events:
-            match event.type:
-                case pygame.KEYDOWN:
-                    self._keydown_events.append(event.key)
-                    self._held_keys.append(event.key)
-                case pygame.KEYUP:
-                    self._keyup_events.append(event.key)
-                    self._held_keys.remove(event.key)
-                case pygame.MOUSEBUTTONDOWN:
-                    self._mousedown_events.append(event.button)
-                    self._mouse_buttons.append(event.button)
-                case pygame.MOUSEBUTTONUP:
-                    self._mouseup_events.append(event.button)
-                    self._mouse_buttons.remove(event.button)
-                case pygame.QUIT:
-                    self._quit = True
+    for event in events:
+        match event.type:
+            case pygame.KEYDOWN:
+                _keydown_events.append(event.key)
+                _held_keys.append(event.key)
+            case pygame.KEYUP:
+                _keyup_events.append(event.key)
+                _held_keys.remove(event.key)
+            case pygame.MOUSEBUTTONDOWN:
+                _mousedown_events.append(event.button)
+                _mouse_buttons.append(event.button)
+            case pygame.MOUSEBUTTONUP:
+                _mouseup_events.append(event.button)
+                _mouse_buttons.remove(event.button)
+            case pygame.QUIT:
+                _quit = True
 
-        self._mouse_pos = pygame.mouse.get_pos()
+    _mouse_pos = pygame.mouse.get_pos()
 
-    def is_key_down(self, key: int) -> bool:
-        return key in self._keydown_events
+def is_key_down(key: int) -> bool:
+    return key in _keydown_events
 
-    def is_key_up(self, key: int) -> bool:
-        return key in self._keyup_events
+def is_key_up(key: int) -> bool:
+    return key in _keyup_events
 
-    def is_key_pressed(self, key: int) -> bool:
-        return key in self._held_keys
+def is_key_pressed(key: int) -> bool:
+    return key in _held_keys
 
-    def is_mouse_down(self, button: int) -> bool:
-        return button in self._mousedown_events
+def is_mouse_down(button: int) -> bool:
+    return button in _mousedown_events
 
-    def is_mouse_up(self, button: int) -> bool:
-        return button in self._mouseup_events
+def is_mouse_up(button: int) -> bool:
+    return button in _mouseup_events
 
-    def is_mouse_pressed(self, button: int) -> bool:
-        return button in self._mouse_buttons
+def is_mouse_pressed(button: int) -> bool:
+    return button in _mouse_buttons
 
-    def get_mouse_pos(self) -> tuple[int, int]:
-        return self._mouse_pos
+def get_mouse_pos() -> tuple[int, int]:
+    return _mouse_pos
 
 
 class _InputBinder(Observer, metaclass=SingletonABCMeta):
-    def __init__(self, input_manager):
+    def __init__(self):
         super().__init__()
         self._input_checks = {
-            'key': input_manager.is_key_pressed,
-            'keydown': input_manager.is_key_down,
-            'keyup': input_manager.is_key_up,
-            'mouse': input_manager.is_mouse_pressed,
-            'mousedown': input_manager.is_mouse_down,
-            'mouseup': input_manager.is_mouse_up,
-            'quit': lambda _: input_manager.quit
+            "key": is_key_pressed,
+            "keydown": is_key_down,
+            "keyup": is_key_up,
+            "mouse": is_mouse_pressed,
+            "mousedown": is_mouse_down,
+            "mouseup": is_mouse_up,
+            "quit": lambda _: check_for_quit
         }
 
     @override
@@ -98,11 +96,9 @@ class _InputBinder(Observer, metaclass=SingletonABCMeta):
 
     @override
     def notify(self) -> None:
-        # Sort bindings by priority (more inputs = higher priority)
         sorted_bindings = sorted(self._handlers.items(),
                                  key=lambda binding: len(binding[0]),
                                  reverse=True)
-        # Track which inputs have already been used to prevent double execution
         used_inputs = set()
 
         for inputs, action in sorted_bindings:
@@ -121,5 +117,4 @@ class _InputBinder(Observer, metaclass=SingletonABCMeta):
         return True
 
 
-InputManager = _InputManager()
-InputBinder = _InputBinder(InputManager)
+InputBinder = _InputBinder()
