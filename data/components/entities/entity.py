@@ -5,18 +5,20 @@ import pygame.display
 from pygame.sprite import Sprite
 
 from data.components import RectAlignments
+from data.core import screen
 
 
 class Entity(Sprite):
     """Base class for all the game's entities."""
     def __init__(self, spawn: tuple[int, int], sprite: pygame.Surface,
                  sprite_rect: Optional[pygame.Rect] = None,
-                 spawn_alignment: RectAlignments = 'center'):
+                 spawn_alignment: RectAlignments = "center"):
         Sprite.__init__(self)
         self._spawn = spawn
         self.spawn_alignment = spawn_alignment
         self.sprite = sprite
         self._rect = sprite_rect if sprite_rect is not None else sprite.get_rect()
+        self._abs_rect = self.sprite.get_rect().copy()
         self.move_to_spawn()
 
     @property
@@ -27,6 +29,10 @@ class Entity(Sprite):
     def rect(self):
         return self._rect
 
+    @property
+    def abs_rect(self):
+        return self._abs_rect
+
     def move_to_spawn(self):
         setattr(self._rect, self.spawn_alignment, self._spawn)
 
@@ -35,7 +41,7 @@ class Entity(Sprite):
         ...
 
     def blit(self):
-        ...
+        screen.blit(self.sprite, self._rect)
 
     def on_collide(self, collided_sprite):
         ...

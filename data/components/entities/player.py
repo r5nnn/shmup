@@ -1,47 +1,58 @@
 """Contains the base class for all the game's players."""
 import logging
-from typing import Optional, TypedDict, override
+from typing import Optional, TypedDict, override, TYPE_CHECKING
 
 import pygame
 
-import data.core.utils
+from data.core.prepare import screen_center, sprites
+from data.core.utils import Singleton, dt
 from data.components import RectAlignments
 from data.components.entities.entity import Entity
-from data.components.input import InputManager
+from data.components.entities.projectile import SimpleBullet
+import data.components.input as InputManager
 from data.core import screen, screen_rect
 
-PlayerStats = TypedDict('PlayerStats', {'health': int, 'speed': int, 'spells': int})
+if TYPE_CHECKING:
+    from data.states.game import Game
+
+PlayerStats = TypedDict("PlayerStats", {"health": int, "speed": int, "spells": int,
+                                        "atk delay": int})
 
 
 class Player(Entity):
     """Base class for all the game's players."""
-    def __init__(self, spawn: tuple[int, int],
-                 spawn_alignment: RectAlignments = 'center',
+    def __init__(self, game :"Game",
+                 spawn: tuple[int, int],
+                 spawn_alignment: RectAlignments = "center",
                  sprite: Optional[pygame.Surface] = None,
                  spritesheet: Optional[list[pygame.Surface]] = None,
                  sprite_rect: Optional[pygame.Rect] = None,
                  rect_offset: tuple[int, int] = (0, 0),
                  stats: Optional[PlayerStats] = None):
         if (sprite is None) == (spritesheet is None):  # if both None or both provided
-            raise ValueError("Provide either a single sprite or a spritesheet,"
-                             " not both.")
+            msg = "Provide either a single sprite or a spritesheet, not both."
+            raise ValueError(msg)
+        self.game = game
         self.rect_offset_x, self.rect_offset_y = rect_offset
+        self.spritesheet = spritesheet
+        stats = {} if stats is None else stats
+        self.health = stats.get("health", 1)
+        self.speed = stats.get("speed", 2)
         super().__init__(
             (spawn[0] + rect_offset[0], spawn[1] + rect_offset[1]),
             sprite or spritesheet[0], sprite_rect, spawn_alignment)
 
-        self.spritesheet = spritesheet
         self.keys = []
         self.show_hitbox = False
         self.dx, self.dy = 0.0, 0.0
-        stats = {} if stats is None else stats
-        self.health = stats.get('health', 1)
-        self.speed = stats.get('speed', 250)
-        self.spells = stats.get('spells', 3)
-
         self.x, self.y = float(spawn[0]), float(spawn[1])
-        logging.info(f'Created {self!r}.')
+        self._abs_rect.center = round(self.x), round(self.y)
 
+        self.fire_rate = 100
+        self.last_shot_time = 0  # Tracks the last time a bullet was shot
+        logging.info("Created %r.", self)
+
+    @override
     @property
     def spawn(self):
         return (self._spawn[0] - self.rect_offset_x,
@@ -55,8 +66,9 @@ class Player(Entity):
     @override
     def move_to_spawn(self):
         super().move_to_spawn()
-        logging.info(f'{self!r} moved to spawnpoint: '
-                     f'{getattr(self.sprite, self.spawn_alignment)}')
+        logging.info("%r moved to spawnpoint: %d", self,
+                     getattr(self.rect, self.spawn_alignment))
+
 
     def _set_direction(self):
         self.dx, self.dy = 0.0, 0.0
@@ -67,16 +79,16 @@ class Player(Entity):
             match key:
                 case pygame.K_UP:
                     self.dy = -self.speed
-                    direction = 'up'
+                    direction = "up"
                 case pygame.K_DOWN:
                     self.dy = self.speed
-                    direction = 'down'
+                    direction = "down"
                 case pygame.K_LEFT:
                     self.dx = -self.speed
-                    direction = 'left'
+                    direction = "left"
                 case pygame.K_RIGHT:
                     self.dx = self.speed
-                    direction = 'right'
+                    direction = "right"
 
         if direction:
             self._set_direction_sprite(direction)
@@ -88,31 +100,31 @@ class Player(Entity):
             self.dy /= 2
             self.show_hitbox = True
 
-        logging.debug(f'Direction of player set as x: {self.dx}, y: {self.dy}.')
+        logging.debug("Direction of player set as x: %f, y: %f.", self.dx, self.dy)
 
     def _set_direction_sprite(self, direction: str):
         if self.spritesheet:
             direction_map = {
-                'default': self.spritesheet[0],
-                'up': self.spritesheet[1],
-                'down': self.spritesheet[2],
-                'left': self.spritesheet[3],
-                'right': self.spritesheet[4]
+                "default": self.spritesheet[0],
+                "up": self.spritesheet[1],
+                "down": self.spritesheet[2],
+                "left": self.spritesheet[3],
+                "right": self.spritesheet[4],
             }
             self.sprite = direction_map.get(direction, self.spritesheet[0])
+
+    def attack(self):
+        ...
 
     @override
     def update(self):
         for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT):
-            if InputManager.is_key_down(key):
-                if key not in self.keys:
-                    self.keys.append(key)
-            elif InputManager.is_key_up(key):
-                if key in self.keys:
-                    self.keys.remove(key)
+            if InputManager.is_key_down(key) and key not in self.keys:
+                self.keys.append(key)
+            elif InputManager.is_key_up(key) and key in self.keys:
+                self.keys.remove(key)
 
         self._set_direction()
-        dt = data.core.utils.dt
         self.x += self.dx * dt
         self.y += self.dy * dt
 
@@ -120,9 +132,16 @@ class Player(Entity):
                             round(self.y) + self.rect_offset_y)
         if not screen_rect.contains(self.rect):
             self.rect.clamp_ip(screen_rect)
-
             self.x = float(self.rect.centerx - self.rect_offset_x)
             self.y = float(self.rect.centery - self.rect_offset_y)
+
+        self._abs_rect.center = (round(self.x), round(self.y))
+
+        if InputManager.is_key_pressed(pygame.K_z):
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_shot_time >= self.fire_rate:
+                self.attack()
+                self.last_shot_time = current_time
 
     @override
     def blit(self):
@@ -133,19 +152,32 @@ class Player(Entity):
             faded_sprite = self.sprite.copy()
             faded_sprite.set_alpha(128)
             screen.blit(faded_sprite, sprite_position)
-            pygame.draw.rect(screen, pygame.Color('white'), self.rect)
+            pygame.draw.rect(screen, pygame.Color("white"), self.rect)
         else:
             screen.blit(self.sprite, sprite_position)
 
     @override
     def on_collide(self, sprite):
         self.health -= 1
-        logging.info(f'{self!r} collided with {sprite!r}')
+        logging.info("%r collided with %r", self, sprite)
         self.move_to_spawn()
 
     def __repr__(self):
         parent_repr = super().__repr__()
         return (f"{parent_repr}, Player(spritesheet={self.spritesheet!r}, "
                 f"rect_offset=({self.rect_offset_x!r}, {self.rect_offset_y!r}),"
-                f" stats={{'health': {self.health!r},'speed': {self.speed!r}, "
-                f"'spells': {self.spells!r}}})")
+                f" stats={{'health': {self.health!r},'speed': {self.speed!r}}})")
+
+
+class Remi(Player, metaclass=Singleton):
+    def __init__(self, game: "Game"):
+        super().__init__(game, spawn=screen_center,
+                         spritesheet=[pygame.transform.scale_by(image, 2)
+                                      for image in sprites("remi")],
+                         sprite_rect=pygame.Rect(0, 0, 20, 20), rect_offset=(1, -7),
+                         stats={"Health": 4, "speed": 2, "spells": 3, "atk delay": 100})
+
+    @override
+    def attack(self):
+        bullet = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4))
+        self.game.player_bullets.add(bullet)
