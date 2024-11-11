@@ -1,13 +1,20 @@
+"""Module that contains constants and utilities used globally across the game.
+
+Stores a module level global `dt` variable to avoid any relative imports.
+Stores many constants in frozen dataclass namespaces.
+Stores common design pattern abstract base classes like the singleton and observer.
+Stores a descriptor validator abstract base class."""
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, ClassVar
 
-dt = 1
+dt = 1.0
 
 
 @dataclass(frozen=True)
 class Mouse:
+    """Pygame style references to mouse buttons."""
     LEFTCLICK = 1
     MIDDLECLICK = 2
     RIGHTCLICK = 3
@@ -17,50 +24,45 @@ class Mouse:
 
 @dataclass(frozen=True)
 class Popups:
+    """Pygame style references to popup styles."""
     ANY = 0
-    INPUT = 1
-    OK_CANCEL = 2
-    YES_NO = 3
+    OK_CANCEL = 1
+    YES_NO = 2
 
 
 @dataclass(frozen=True)
 class Colors:
-    BACKGROUND = (30, 30, 30)
-    FOREGROUND = (35, 35, 35)
-    ACCENT = (85, 85, 85)
-
-
-@dataclass(frozen=True)
-class ColorPalette:
+    """Pygame style references to shmup's color palette."""
     PRIMARY = (30, 30, 30)
     SECONDARY = (35, 35, 35)
     ACCENT = (85, 85, 85)
 
 
 class Singleton(type):
-    _instances = {}
+    """Implementation of the singleton design pattern."""
+    _instances: ClassVar[dict["Singleton", object]] = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args,
-                                                                 **kwargs)
+            cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
 
 
 class Observer(ABC):
+    """Implementation of the observer design pattern."""
     def __init__(self):
         self._handlers = defaultdict(list)
 
     @abstractmethod
-    def notify(self, *args):
+    def notify(self, *args) -> None:
         """Calls the registered handler."""
 
     @abstractmethod
-    def register(self, event, handler: Callable):
+    def register(self, event, handler: Callable) -> None:
         """Registers the event to its handler."""
 
     @abstractmethod
-    def deregister(self, event, handler: Callable):
+    def deregister(self, event, handler: Callable) -> None:
         """Deregisters the event from its handler."""
 
     def is_registered(self, event, handler: Callable) -> bool:
@@ -68,12 +70,13 @@ class Observer(ABC):
 
 
 class SingletonABCMeta(Singleton, ABCMeta):
-    pass
+    """Class used to combine a Singleton and ABC for use as a metaclass."""
 
 
 class Validator(ABC):
+    """Descriptor abstract base class for validating when a property is set."""
     def __set_name__(self, owner, name):
-        self.private_name = '_' + name
+        self.private_name = "_" + name
 
     def __get__(self, instance, owner=None):
         if instance is None:

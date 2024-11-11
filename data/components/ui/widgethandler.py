@@ -4,7 +4,7 @@ from collections import OrderedDict
 from collections.abc import MutableSet
 from typing import override, TYPE_CHECKING
 
-from data.components.input import InputManager
+import data.components.input as InputManager
 
 if TYPE_CHECKING:
     from data.components.ui.widgetutils import WidgetBase
@@ -88,29 +88,29 @@ def add_widget(widget: "WidgetBase") -> None:
         widgets.add(widget)
         move_to_top(widget)
     else:
-        warnings.warn(f'Attempted to add widget: {widget} which already '
-                      f'existed in the widgethandler: {widgets}.')
+        warnings.warn(f"Attempted to add widget: {widget} which already "
+                      f"existed in the widgethandler: {widgets}.")
 
 
 def remove_widget(widget: "WidgetBase") -> None:
     try:
         widgets.remove(widget)
     except ValueError:
-        warnings.warn(f'Attempted to remove widget: {widget} when widget not '
-                      f'in the widgethandler: {widgets}.')
+        warnings.warn(f"Attempted to remove widget: {widget} when widget not "
+                      f"in the widgethandler: {widgets}.")
 
 
 def move_to_top(widget: "WidgetBase") -> None:
     try:
         widgets.move_to_end(widget)
     except KeyError:
-        warnings.warn(f'Attempted to move widget: {widget} to the top when '
-                      f'widget not in widgethandler: {widgets}.')
+        warnings.warn(f"Attempted to move widget: {widget} to the top when "
+                      f"widget not in widgethandler: {widgets}.")
 
 
 def move_to_bottom(widget: "WidgetBase") -> None:
     try:
         widgets.move_to_start(widget)
     except KeyError:
-        warnings.warn(f'Error: Tried to move {widget} to bottom when {widget} not in '
-                      f'WidgetHandler.')
+        warnings.warn(f"Error: Tried to move {widget} to bottom when {widget} not in "
+                      f"WidgetHandler.")

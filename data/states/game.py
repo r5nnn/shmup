@@ -1,38 +1,25 @@
-import random
 from typing import override
 
-import pygame
-
 from data.components import entities
-from data.components.entities import Player, EntityGroup
-from data.core.prepare import screen_size
+from data.components.entities import EntityGroup, Remi
 from .state import State
-from ..core import sprites
 
 
 class Game(State):
     def __init__(self):
         super().__init__()
-        # noinspection PyTypeChecker
-        self.player = Player(tuple(round(coord / 2) for coord in screen_size),
-                             spritesheet=[pygame.transform.scale_by(image, 2) \
-                                          for image in sprites('remi')],
-                             sprite_rect=pygame.Rect(0, 0, 20, 20), rect_offset=(1, -7))
+        self.player = Remi(self)
         self.enemies = EntityGroup()
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
-        for i in range(1000):
-            y = pygame.Surface((10, 10))
-            y.fill(pygame.Color('white'))
-            x = Player(((random.randint(0, screen_size[0])), (random.randint(0, screen_size[1]))), sprite=y)
-            self.enemy_bullets.add(x)
+
     @override
     def update(self):
         self.player.update()
         self.enemies.update()
         self.player_bullets.update()
         self.enemy_bullets.update()
-        entities.update(self)
+        entities.update_collisions(self)
 
     @override
     def render(self):

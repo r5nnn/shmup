@@ -10,33 +10,32 @@ if TYPE_CHECKING:
     from data.states.game import Game
 
 
-def update(game: "Game"):
+def update_collisions(game: "Game") -> None:
     """Checks for collisions and notifies collided sprites."""
     player_enemy_collisions = pygame.sprite.spritecollide(
-        game.player, game.enemies, False)
+        game.player, game.enemies, dokill=False)
     _handle_sprite_collisions(game.player, player_enemy_collisions)
 
     player_bullet_enemy_collisions = pygame.sprite.groupcollide(
-        game.player_bullets, game.enemies, True, True)
+        game.player_bullets, game.enemies, dokilla=True, dokillb=True)
     _handle_group_collisions(player_bullet_enemy_collisions)
 
     enemy_bullet_player_collisions = pygame.sprite.spritecollide(
-        game.player, game.enemy_bullets, True)
+        game.player, game.enemy_bullets, dokill=True)
     _handle_sprite_collisions(game.player, enemy_bullet_player_collisions)
 
 
-def _handle_group_collisions(collisions: dict):
+def _handle_group_collisions(collisions: dict) -> None:
     for sprite, collided_sprites in collisions.items():
         for other_sprite in collided_sprites:
             sprite.on_collide(other_sprite)
             other_sprite.on_collide(sprite)
-            logging.debug(f'Collided {repr(sprite)} with {repr(other_sprite)} '
-                          f'in group collision.')
+            logging.debug("Collided %r with %r in group collision.", sprite,
+                          other_sprite)
 
 
-def _handle_sprite_collisions(sprite: Entity, collisions: list):
+def _handle_sprite_collisions(sprite: Entity, collisions: list) -> None:
     for other_sprite in collisions:
         sprite.on_collide(other_sprite)
         other_sprite.on_collide(sprite)
-        logging.debug(f'Collided {repr(sprite)} with {repr(other_sprite)} in '
-                      f'sprite collision.')
+        logging.debug("Collided %r with %r in sprite collision.", sprite, other_sprite)

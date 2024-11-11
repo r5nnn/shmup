@@ -14,7 +14,7 @@ import pygame.display
 
 from data.components import RectAlignments
 from data.components.audio import button_audio
-from data.components.input import InputManager
+import data.components.input as InputManager
 from data.components.ui.text import Text
 from data.components.ui.widgetutils import WidgetBase
 from data.core import screen, sprites
@@ -22,34 +22,34 @@ from data.core.utils import Mouse
 
 
 def button_from_images(name: str, position: tuple[int, int],
-                            on_click: Callable = lambda *args: None,
-                            on_release: Callable = lambda *args: None):
+                       on_click: Optional[Callable] = None,
+                       on_release: Optional[Callable] = None):
     config = ImageButtonConfig(
         position=position, size=(0, 0),
-        images=[pygame.transform.scale_by(images, 3) for images in
-                sprites(name)],
+        images=[pygame.transform.scale_by(images, 3) for images in sprites(name)],
         on_click=on_click, on_release=on_release)
     return ImageButton(config)
 
 
-Colors = TypedDict('Colors', {'default': tuple | pygame.Color,
-                              'hovered': tuple | pygame.Color,
-                              'clicked': tuple | pygame.Color})
+class Colors(TypedDict):
+    default: tuple | pygame.Color
+    hovered: tuple | pygame.Color
+    clicked: tuple | pygame.Color
 
 
 @dataclass
 class ButtonConfig:
     position: tuple[int, int]
     size: tuple[int, int]
-    align: RectAlignments = 'topleft'
+    align: RectAlignments = "topleft"
     colors: Optional[Colors] = None
     border_colors: Optional[Colors] = None
     border_thickness: int = 0
     radius: int = 0
-    on_click: Callable = lambda *args: None
-    on_release: Callable = lambda *args: None
-    click_audio: Optional[str] = 'click'
-    release_audio: Optional[str] = 'click'
+    on_click: Optional[Callable] = None
+    on_release: Optional[Callable] = None
+    click_audio: Optional[str] = "click"
+    release_audio: Optional[str] = "click"
     sub_widget: bool = False
 
 
@@ -57,21 +57,21 @@ class ButtonBase(WidgetBase):
     """Base class for creating buttons."""
 
     def __init__(self, config: ButtonConfig):
-        WidgetBase.__init__(self, config.position, config.align,
-                            config.sub_widget)
+        WidgetBase.__init__(self, config.position, config.align, config.sub_widget)
         self._width, self._height = config.size
         self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self._align_rect(self._rect, self._align, (self._x, self._y))
         self.colors = config.colors
-        self.color = self.colors['default'] if self.colors is not None else None
+        self.color = self.colors["default"] if self.colors is not None else None
         self.border_colors = config.border_colors
-        self.border_color = self.border_colors['default'] \
+        self.border_color = self.border_colors["default"] \
             if self.border_colors is not None else None
         self._border_thickness = config.border_thickness
-        self._border_rect = pygame.Rect(self._rect.left + self._border_thickness,
-                                        self._rect.top + self._border_thickness,
-                                        self._width - self._border_thickness * 2,
-                                        self._height - self._border_thickness * 2)
+        self._border_rect = pygame.Rect(
+            self._rect.left + self._border_thickness,
+            self._rect.top + self._border_thickness,
+            self._width - self._border_thickness * 2,
+            self._height - self._border_thickness * 2)
         self.on_click_call = config.on_click
         self.on_release_call = config.on_release
         self.click_audio_tag = config.click_audio
@@ -115,12 +115,15 @@ class ButtonBase(WidgetBase):
     @border_thickness.setter
     def border_thickness(self, value):
         self._border_thickness = value
-        self._border_rect.size = (self._width - self._border_thickness * 2,
-                                  self._height - self._border_thickness * 2)
-        self._border_rect.topleft = (self._rect.left + self._border_thickness,
-                                     self._rect.top + self._border_thickness)
+        self._border_rect.size = (
+            self._width - self._border_thickness * 2,
+            self._height - self._border_thickness * 2)
+        self._border_rect.topleft = (
+            self._rect.left + self._border_thickness,
+            self._rect.top + self._border_thickness)
 
-    def _align_rect(self, rect, align, coords):
+    def _align_rect(self, rect: pygame.Rect, align: RectAlignments,
+                    coords: tuple[int, int]):
         setattr(rect, align, coords)
         self._x, self._y = getattr(rect, align)
 
@@ -136,9 +139,9 @@ class ButtonBase(WidgetBase):
         if self.click_audio_tag is not None:
             button_audio.play_audio(self.click_audio_tag, override=True)
         if self.colors is not None:
-            self.color = self.colors['clicked']
+            self.color = self.colors["clicked"]
         if self.border_colors is not None:
-            self.border_color = self.border_colors.get('clicked')
+            self.border_color = self.border_colors.get("clicked")
 
     def on_release(self) -> None:
         """Method that is called when the button is released."""
@@ -149,18 +152,17 @@ class ButtonBase(WidgetBase):
     def on_hover(self) -> None:
         """Method that is called when the button is hovered."""
         if self.colors is not None:
-            self.color = self.colors['hovered']
+            self.color = self.colors["hovered"]
         if self.border_colors is not None:
-            self.border_color = self.border_colors.get('hovered')
+            self.border_color = self.border_colors.get("hovered")
 
     def on_idle(self):
-        """Method that is called when the button is idle (i.e. not clicked or
-        hovered)"""
+        """Method that is called when the button is idle."""
         self.clicked = False
         if self.colors is not None:
-            self.color = self.colors['default']
+            self.color = self.colors["default"]
         if self.border_colors is not None:
-            self.border_color = self.border_colors.get('default')
+            self.border_color = self.border_colors.get("default")
 
     def update(self):
         if self._requires_realignment:
@@ -170,11 +172,11 @@ class ButtonBase(WidgetBase):
             # button is released
             if InputManager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
                 self.on_release()
-                self.on_release_call()
+                self.on_release_call() if self.on_release_call is not None else None
             # button is clicked
             elif InputManager.is_mouse_down(Mouse.LEFTCLICK):
                 self.on_click()
-                self.on_click_call()
+                self.on_click_call() if self.on_click_call is not None else None
             # button hovered
             elif not self.clicked:
                 self.on_hover()
@@ -184,11 +186,11 @@ class ButtonBase(WidgetBase):
 
     def blit(self):
         if self.border_colors is not None:
-            pygame.draw.rect(screen, self.border_color,
-                             self._border_rect, border_radius=self.radius)
+            pygame.draw.rect(screen, self.border_color, self._border_rect,
+                             border_radius=self.radius)
         if self.colors is not None:
-            pygame.draw.rect(screen, self.color,
-                             self._rect, border_radius=self.radius)
+            pygame.draw.rect(screen, self.color, self._rect,
+                             border_radius=self.radius)
 
 
 @dataclass(kw_only=True)
@@ -206,7 +208,7 @@ class TextButtonConfig(ButtonConfig):
     text_colors: Optional[Colors] = None
     font: Optional[pygame.font.Font] = None
     font_size: int = 32
-    text_align: tuple[str, str] = 'center'
+    text_align: tuple[str, str] = "center"
     margin: int = 20
 
 
@@ -214,16 +216,18 @@ class TextButton(ButtonBase):
     """Class for creating buttons with text labels."""
 
     def __init__(self, config: TextButtonConfig):
-        self.text_colors = config.text_colors or {'default': (255, 255, 255), 'hovered': (255, 255, 255),
-            'clicked': (255, 255, 255)}
-        self._text_color = self.text_colors['default']
+        self.text_colors = (config.text_colors or
+                            {"default": pygame.Color("White"),
+                             "hovered": (255, 255, 255),
+                             "clicked": (255, 255, 255)})
+        self._text_color = self.text_colors["default"]
         self._text = Text((0, 0), config.text, config.font, config.font_size, color=self._text_color, sub_widget=True)
 
         # Store alignment configuration and margin
         self.text_align = config.text_align
         self.margin = config.margin
         super().__init__(config)
-        logging.info(f'Created {repr(self)}.')
+        logging.info(f"Created {self!r}.")
 
     def _align_text(self, text_surface):
         """Align the text within the button's rect based on the specified text alignment."""
@@ -232,13 +236,13 @@ class TextButton(ButtonBase):
 
         # Adjust alignment based on text_align tuple values
         if len(self.text_align) == 2:
-            if self.text_align[0] == 'left':
+            if self.text_align[0] == "left":
                 self.text_rect.left = self._rect.left + self.margin
-            elif self.text_align[0] == 'right':
+            elif self.text_align[0] == "right":
                 self.text_rect.right = self._rect.right - self.margin
-            if self.text_align[1] == 'top':
+            if self.text_align[1] == "top":
                 self.text_rect.top = self._rect.top + self.margin
-            elif self.text_align[1] == 'bottom':
+            elif self.text_align[1] == "bottom":
                 self.text_rect.bottom = self._rect.bottom - self.margin
 
         # Update text surface position
@@ -256,17 +260,17 @@ class TextButton(ButtonBase):
     @override
     def on_click(self):
         super().on_click()
-        self._text.color = self.text_colors['clicked']
+        self._text.color = self.text_colors["clicked"]
 
     @override
     def on_hover(self):
         super().on_hover()
-        self._text.color = self.text_colors['hovered']
+        self._text.color = self.text_colors["hovered"]
 
     @override
     def on_idle(self):
         super().on_idle()
-        self._text.color = self.text_colors['default']
+        self._text.color = self.text_colors["default"]
 
     @override
     def update(self):
@@ -290,14 +294,14 @@ class ToggleButton(TextButton):
         if not self.toggled:
             self.toggled = True
             self.on_click()
-            self.on_click_call()
+            self.on_click_call() if self.on_click_call is not None else None
 
     def toggle_off(self):
         """Force button to toggle off."""
         if self.toggled:
             self.toggled = False
             self.on_release()
-            self.on_release_call()
+            self.on_release_call() if self.on_release_call is not None else None
 
     @override
     def update(self):
@@ -323,10 +327,10 @@ class ToggleGroup:
             self.buttons[0].toggled = True
             self.buttons[0].clicked = True
             if self.buttons[0].colors is not None:
-                self.buttons[0].color = self.buttons[0].colors['clicked']
+                self.buttons[0].color = self.buttons[0].colors["clicked"]
             if self.buttons[0].border_colors is not None:
-                self.buttons[0].border_color = self.buttons[0].border_colors.get('clicked')
-            self.buttons[0].text.color = self.buttons[0].text_colors['clicked']
+                self.buttons[0].border_color = self.buttons[0].border_colors.get("clicked")
+            self.buttons[0].text.color = self.buttons[0].text_colors["clicked"]
 
     def update(self):
         for button in self.buttons:
@@ -376,7 +380,7 @@ class ImageButton(ButtonBase):
         self.image_align = config.image_align
         self.margin = config.margin
         self._align_image()
-        logging.info(f'Created {repr(self)}.')
+        logging.info(f"Created {self!r}.")
 
     @property
     def image_align(self):
@@ -392,27 +396,26 @@ class ImageButton(ButtonBase):
         self.image_rect.center = self._rect.center
 
         if len(self.image_align) == 2:
-            if self.image_align[0] == 'left':
+            if self.image_align[0] == "left":
                 self.image_rect.left = self._rect.left + self.margin
-            elif self.image_align[0] == 'right':
+            elif self.image_align[0] == "right":
                 self.image_rect.right = self._rect.right - self.margin
 
-            if self.image_align[1] == 'top':
+            if self.image_align[1] == "top":
                 self.image_rect.top = self._rect.top + self.margin
-            elif self.image_align[1] == 'bottom':
+            elif self.image_align[1] == "bottom":
                 self.image_rect.bottom = self._rect.bottom - self.margin
 
     @override
     def contains(self, x, y):
         if self.use_rect_collision:
             return super().contains(x, y)
-        else:
-            local_x = x - self.image_rect.left
-            local_y = y - self.image_rect.top
-            try:
-                return self._current_image.get_at((local_x, local_y)).a != 0
-            except IndexError:
-                return False
+        local_x = x - self.image_rect.left
+        local_y = y - self.image_rect.top
+        try:
+            return self._current_image.get_at((local_x, local_y)).a != 0
+        except IndexError:
+            return False
 
     @override
     def on_click(self):

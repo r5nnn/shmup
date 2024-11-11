@@ -8,13 +8,14 @@ from data.components import RectAlignments
 from data.components.entities.entity import Entity
 from data.core import screen
 
-EnemyStats = TypedDict('EnemyStats', {'health': int})
+class EnemyStats(TypedDict):
+    health: int
 
 
 class Enemy(Entity):
     """Base class for all the game's enemies."""
     def __init__(self, spawn: tuple[int, int], sprite: pygame.Surface,
-                 spawn_alignment: RectAlignments = 'center',
+                 spawn_alignment: RectAlignments = "center",
                  sprite_rect: Optional[pygame.Rect] = None,
                  rect_offset: tuple[int, int] = (0, 0),
                  stats: Optional[EnemyStats] = None):
@@ -22,9 +23,9 @@ class Enemy(Entity):
         super().__init__(
             (spawn[0] + rect_offset[0], spawn[1] + rect_offset[1]),
             sprite, sprite_rect, spawn_alignment)
-        self.health = stats.get('health', 1)
+        self.health = stats.get("health", 1)
         self.x, self.y = float(spawn[0]), float(spawn[1])
-        logging.info(f'Spawned {self!r}.')
+        logging.info("Spawned %r.", self)
 
     @property
     def spawn(self):
@@ -39,8 +40,8 @@ class Enemy(Entity):
     @override
     def move_to_spawn(self):
         super().move_to_spawn()
-        logging.info(f'{self!r} moved to spawnpoint: '
-                     f'{getattr(self.rect, self.spawn_alignment)}')
+        logging.info("%r moved to spawnpoint: %d", self,
+                     getattr(self.rect, self.spawn_alignment))
 
     @override
     def update(self) -> None:
@@ -53,7 +54,7 @@ class Enemy(Entity):
     @override
     def on_collide(self, sprite) -> None:
         self.kill()
-        logging.info(f'{self!r} collided with {sprite!r} and killed.')
+        logging.info("%r collided with %r and killed.", self, sprite)
 
     @override
     def __repr__(self):

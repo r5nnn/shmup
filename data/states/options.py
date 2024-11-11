@@ -9,28 +9,28 @@ from data.states.state import State
 class Options(State):
     def __init__(self):
         super().__init__()
-        self.background = pygame.image.load(image_paths('menu')).convert()
+        self.background = pygame.image.load(image_paths("menu")).convert()
         self.title = pygame.transform.scale_by(
-            pygame.image.load(image_paths('title options')), 4)
+            pygame.image.load(image_paths("title options")), 4)
         self.bg_rect = pygame.Rect(
             0, screen_size[1] * 0.1 + 20 + self.title.get_height(),
             screen_size[0] * 0.8, (screen_size[1] - self.title.get_height()) * 0.8)
         self.bg_rect.centerx = screen_center[0]
         self.bg_surf = pygame.Surface(self.bg_rect.size)
-        self.bg_surf.fill(Colors.BACKGROUND)
+        self.bg_surf.fill(Colors.PRIMARY)
         self.bg_surf.set_alpha(96)
         config = TextButtonConfig(position=self.bg_rect.topleft,
                                   size=(round(self.bg_rect.width / 3), 30),
-                                  colors={'default': Colors.BACKGROUND,
-                                          'hovered': Colors.FOREGROUND,
-                                          'clicked': Colors.ACCENT},
-                                  text='Graphics')
+                                  colors={"default": Colors.PRIMARY,
+                                          "hovered": Colors.SECONDARY,
+                                          "clicked": Colors.ACCENT},
+                                  text="Graphics")
         self.graphics = ToggleButton(config)
         config.position = self.graphics.rect.topright
-        config.text = 'Keybinds'
+        config.text = "Keybinds"
         self.keybinds = ToggleButton(config)
         config.position = self.keybinds.rect.topright
-        config.text = 'Audio'
+        config.text = "Audio"
         self.audio = ToggleButton(config)
         self.options = ToggleGroup(self.keybinds, self.graphics, self.audio)
 

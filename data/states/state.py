@@ -19,7 +19,7 @@ class State:
             widgethandler.add_widget(widget)
 
     def startup(self):
-        InputBinder.register(('keydown', pygame.K_ESCAPE),
+        InputBinder.register(("keydown", pygame.K_ESCAPE),
                              action=self.back)
 
     def clear_widgets(self):
@@ -27,7 +27,7 @@ class State:
             widgethandler.remove_widget(widget)
 
     def cleanup(self):
-        InputBinder.deregister(('keydown', pygame.K_ESCAPE))
+        InputBinder.deregister(("keydown", pygame.K_ESCAPE))
 
     def update(self, *args):
         widgethandler.update()
@@ -45,7 +45,7 @@ class StateManager(metaclass=Singleton):
         self.state_dict = {}
         self._state_stack = []
         self._current_state = None
-        self.control = None
+        self.quit_game = None
 
     @property
     def state_stack(self):
@@ -59,8 +59,7 @@ class StateManager(metaclass=Singleton):
         if not self.current_state: pass"""
         if self._state_stack:
             return self._state_stack[-1]
-        else:
-            return None
+        return None
 
     def _validate(self, state_name):
         if state_name.lower() not in self.state_dict:
@@ -123,14 +122,13 @@ class StateManager(metaclass=Singleton):
     def quit(self):
         self.current_state.clear_widgets()
         self.current_state.cleanup()
-        self.control.quit()
+        self.quit_game()
 
     def append_overlay(self, state: State, *args):
         """Append a temporary overlay state (like a popup) that can be easily dismissed."""
         if not self.current_state:
             raise ValueError("Overlay must be added on top of existing state.")
         self.current_state.cleanup()
-        print(state.options)
         self._state_stack.append(state)
         self.current_state.startup()
         self.current_state.add_widgets()
