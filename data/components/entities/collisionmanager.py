@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pygame.sprite
 
-from data.components.entities.entity import Entity
+from data.components.entities.entityutils import Entity
 
 if TYPE_CHECKING:
     from data.states.game import Game

@@ -1,25 +1,29 @@
 """Contains the base class for all the game's players."""
 import logging
+from abc import abstractmethod, ABC
 from typing import Optional, TypedDict, override, TYPE_CHECKING
 
 import pygame
 
 from data.core.prepare import screen_center, sprites
-from data.core.utils import Singleton, dt
+from data.core.utils import dt
 from data.components import RectAlignments
-from data.components.entities.entity import Entity
+from data.components.entities.entityutils import Entity, Animation
 from data.components.entities.projectile import SimpleBullet
 import data.components.input as InputManager
-from data.core import screen, screen_rect
+from data.core import screen, screen_rect, SingletonABCMeta
 
 if TYPE_CHECKING:
     from data.states.game import Game
 
-PlayerStats = TypedDict("PlayerStats", {"health": int, "speed": int, "spells": int,
-                                        "atk delay": int})
+
+class PlayerStats(TypedDict):
+    health: int
+    speed: int
+    spells: int
 
 
-class Player(Entity):
+class Player(Entity, ABC):
     """Base class for all the game's players."""
     def __init__(self, game :"Game",
                  spawn: tuple[int, int],
@@ -43,13 +47,10 @@ class Player(Entity):
             sprite or spritesheet[0], sprite_rect, spawn_alignment)
 
         self.keys = []
-        self.show_hitbox = False
         self.dx, self.dy = 0.0, 0.0
         self.x, self.y = float(spawn[0]), float(spawn[1])
         self._abs_rect.center = round(self.x), round(self.y)
 
-        self.fire_rate = stats.get("fire rate", 250)
-        self.last_shot_time = 0  # Tracks the last time a bullet was shot
         logging.info("Created %r.", self)
 
     @override
@@ -95,11 +96,6 @@ class Player(Entity):
         elif self.spritesheet:
             self.sprite = self.spritesheet[0]
 
-        if InputManager.is_key_pressed(pygame.K_LSHIFT):
-            self.dx /= 2
-            self.dy /= 2
-            self.show_hitbox = True
-
         logging.debug("Direction of player set as x: %f, y: %f.", self.dx, self.dy)
 
     def _set_direction_sprite(self, direction: str):
@@ -137,24 +133,9 @@ class Player(Entity):
 
         self._abs_rect.center = (round(self.x), round(self.y))
 
-        if InputManager.is_key_pressed(pygame.K_z):
-            current_time = pygame.time.get_ticks()
-            if current_time - self.last_shot_time >= self.fire_rate:
-                self.attack()
-                self.last_shot_time = current_time
-
-    @override
+    @abstractmethod
     def blit(self):
-        sprite_position = (round(self.x) - self.sprite.get_width() // 2,
-                           round(self.y) - self.sprite.get_height() // 2)
-
-        if self.show_hitbox:
-            faded_sprite = self.sprite.copy()
-            faded_sprite.set_alpha(128)
-            screen.blit(faded_sprite, sprite_position)
-            pygame.draw.rect(screen, pygame.Color("white"), self.rect)
-        else:
-            screen.blit(self.sprite, sprite_position)
+        ...
 
     @override
     def on_collide(self, sprite):
@@ -169,15 +150,80 @@ class Player(Entity):
                 f" stats={{'health': {self.health!r},'speed': {self.speed!r}}})")
 
 
-class Remi(Player, metaclass=Singleton):
+class Remi(Player, metaclass=SingletonABCMeta):
     def __init__(self, game: "Game"):
         super().__init__(game, spawn=screen_center,
-                         spritesheet=[pygame.transform.scale_by(image, 2)
-                                      for image in sprites("remi")],
+                         spritesheet=[pygame.transform.scale_by(image, 2) for image in
+                                      sprites("remi")],
                          sprite_rect=pygame.Rect(0, 0, 20, 20), rect_offset=(1, -7),
-                         stats={"Health": 4, "speed": 2, "spells": 3, "atk delay": 100})
+                         stats={"health": 4, "speed": 2, "spells": 3})
+
+        # Initialize shift animation for the attack effect
+        self.shift_animation = Animation(
+            [pygame.transform.scale_by(image, 2) for image in
+             sprites("remi attack effect")], frame_duration=1, loop=False)
+        self.show_hitbox = False
+        self.fire_rate = 100
+        self.last_shot_time = 0
+        self.attacking = False
+        self.shift_pressed = False
+
+    @override
+    def update(self):
+        super().update()
+        if InputManager.is_key_pressed(pygame.K_LSHIFT):
+            self.dx /= 2
+            self.dy /= 2
+            self.show_hitbox = True
+
+        if InputManager.is_key_pressed(pygame.K_z):
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_shot_time >= self.fire_rate:
+                self.attack()
+                self.last_shot_time = current_time
+
+        # Attack logic (Z key)
+        if InputManager.is_key_down(pygame.K_z):
+            if not self.attacking:
+                self.attacking = True
+                self.shift_animation.reset(reverse=False)  # Start from beginning
+        elif InputManager.is_key_up(pygame.K_z):
+            self.attacking = False  # Stop attack when Z is released
+
+        # Shift key logic
+        if self.attacking:
+            if InputManager.is_key_down(pygame.K_LSHIFT):
+                if not self.shift_pressed:
+                    self.shift_pressed = True
+                    self.shift_animation.set_direction(forward=True)
+            elif InputManager.is_key_up(pygame.K_LSHIFT):
+                self.shift_pressed = False
+                self.shift_animation.set_direction(forward=False)
+
+            # Update animation only if attacking
+            self.shift_animation.update()
+
+    @override
+    def blit(self):
+        sprite_position = (round(self.x) - self.sprite.get_width() // 2,
+                           round(self.y) - self.sprite.get_height() // 2)
+        if self.show_hitbox:
+            faded_sprite = self.sprite.copy()
+            faded_sprite.set_alpha(128)
+            screen.blit(faded_sprite, sprite_position)
+            pygame.draw.rect(screen, pygame.Color("white"), self.rect)
+        else:
+            screen.blit(self.sprite, sprite_position)
+
+        # Only display the animation if attacking
+        if self.attacking:
+            sprite = self.shift_animation.get_frame()
+            sprite_position = (round(self.x) - sprite.get_width() // 2,
+                               round(self.y) - sprite.get_height() // 2)
+            screen.blit(sprite, sprite_position)
 
     @override
     def attack(self):
+        """Fires a bullet and triggers an animation frame update."""
         bullet = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4))
         self.game.player_bullets.add(bullet)
