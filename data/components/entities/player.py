@@ -48,7 +48,7 @@ class Player(Entity):
         self.x, self.y = float(spawn[0]), float(spawn[1])
         self._abs_rect.center = round(self.x), round(self.y)
 
-        self.fire_rate = 100
+        self.fire_rate = stats.get("fire rate", 250)
         self.last_shot_time = 0  # Tracks the last time a bullet was shot
         logging.info("Created %r.", self)
 
