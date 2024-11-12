@@ -8,6 +8,7 @@ from data.components import RectAlignments
 from data.components.entities.entity import Entity
 from data.core import screen
 
+
 class EnemyStats(TypedDict):
     health: int
 

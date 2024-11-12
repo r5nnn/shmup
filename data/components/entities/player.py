@@ -5,7 +5,8 @@ from typing import Optional, TypedDict, override, TYPE_CHECKING
 import pygame
 
 from data.core.prepare import screen_center, sprites
-from data.core.utils import Singleton, dt
+from data.core.utils import Singleton
+import data.core.utils
 from data.components import RectAlignments
 from data.components.entities.entity import Entity
 from data.components.entities.projectile import SimpleBullet
@@ -37,7 +38,7 @@ class Player(Entity):
         self.spritesheet = spritesheet
         stats = {} if stats is None else stats
         self.health = stats.get("health", 1)
-        self.speed = stats.get("speed", 2)
+        self.speed = stats.get("speed", 10)
         super().__init__(
             (spawn[0] + rect_offset[0], spawn[1] + rect_offset[1]),
             sprite or spritesheet[0], sprite_rect, spawn_alignment)
@@ -125,8 +126,8 @@ class Player(Entity):
                 self.keys.remove(key)
 
         self._set_direction()
-        self.x += self.dx * dt
-        self.y += self.dy * dt
+        self.x += self.dx * data.core.utils.dt
+        self.y += self.dy * data.core.utils.dt
 
         self.rect.center = (round(self.x) + self.rect_offset_x,
                             round(self.y) + self.rect_offset_y)
@@ -175,7 +176,8 @@ class Remi(Player, metaclass=Singleton):
                          spritesheet=[pygame.transform.scale_by(image, 2)
                                       for image in sprites("remi")],
                          sprite_rect=pygame.Rect(0, 0, 20, 20), rect_offset=(1, -7),
-                         stats={"Health": 4, "speed": 2, "spells": 3, "atk delay": 100})
+                         stats={"Health": 4, "speed": 250, "spells": 3,
+                                "fire rate": 1})
 
     @override
     def attack(self):

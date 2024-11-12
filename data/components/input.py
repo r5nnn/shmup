@@ -20,8 +20,10 @@ _mouse_buttons = []
 _mouse_pos = (0, 0)
 _quit = False
 
+
 def get_quit() -> bool:
     return _quit
+
 
 def process_events(events: list) -> None:
     global _quit, _mouse_pos
@@ -49,23 +51,30 @@ def process_events(events: list) -> None:
 
     _mouse_pos = pygame.mouse.get_pos()
 
+
 def is_key_down(key: int) -> bool:
     return key in _keydown_events
+
 
 def is_key_up(key: int) -> bool:
     return key in _keyup_events
 
+
 def is_key_pressed(key: int) -> bool:
     return key in _held_keys
+
 
 def is_mouse_down(button: int) -> bool:
     return button in _mousedown_events
 
+
 def is_mouse_up(button: int) -> bool:
     return button in _mouseup_events
 
+
 def is_mouse_pressed(button: int) -> bool:
     return button in _mouse_buttons
+
 
 def get_mouse_pos() -> tuple[int, int]:
     return _mouse_pos
@@ -81,7 +90,7 @@ class _InputBinder(Observer, metaclass=SingletonABCMeta):
             "mouse": is_mouse_pressed,
             "mousedown": is_mouse_down,
             "mouseup": is_mouse_up,
-            "quit": lambda _: check_for_quit
+            "quit": lambda: get_quit
         }
 
     @override
