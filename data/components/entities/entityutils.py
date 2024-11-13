@@ -4,7 +4,6 @@ from typing import override, Optional
 import pygame.display
 from pygame.sprite import Sprite
 
-import data.core.utils
 from data.components import RectAlignments
 from data.core import screen
 
@@ -63,11 +62,9 @@ class EntityGroup(pygame.sprite.Group):
 
 
 class Animation:
-    def __init__(self, frames: list[pygame.Surface], frame_duration: int, *,
-                 loop: bool = True):
+    def __init__(self, frames: list[pygame.Surface], frame_duration: int):
         self.frames = frames
         self.frame_duration = frame_duration
-        self.loop = loop
         self.current_frame = 0
         self.time_since_last_frame = 0
         self.is_playing = True
@@ -78,28 +75,21 @@ class Animation:
         if not self.is_playing:
             return
 
-        self.time_since_last_frame += data.core.utils.dt
+        current_time = pygame.time.get_ticks()
 
-        if self.time_since_last_frame >= self.frame_duration:
-            self.time_since_last_frame = 0
+        if current_time - self.time_since_last_frame >= self.frame_duration:
+            self.time_since_last_frame = current_time
             self.current_frame += self.direction
 
             # Handle end of animation for both directions
             if self.current_frame >= len(self.frames):
-                if self.loop:
-                    self.current_frame = 0
-                else:
                     self.current_frame = len(self.frames) - 1
                     self.is_playing = False
             elif self.current_frame < 0:
-                if self.loop:
-                    self.current_frame = len(self.frames) - 1
-                else:
                     self.current_frame = 0
                     self.is_playing = False
 
     def get_frame(self):
-        print(self.current_frame)
         return self.frames[self.current_frame]
 
     def reset(self, reverse: bool = False):
@@ -112,4 +102,3 @@ class Animation:
     def set_direction(self, forward: bool):
         """Set the animation direction."""
         self.direction = 1 if forward else -1
-        self.is_playing = True  # Resume animation if paused

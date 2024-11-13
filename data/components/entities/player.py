@@ -91,6 +91,11 @@ class Player(Entity, ABC):
                     self.dx = self.speed
                     direction = "right"
 
+        if InputManager.is_key_pressed(pygame.K_LSHIFT):
+            self.dx /= 2
+            self.dy /= 2
+            self.show_hitbox = True
+
         if direction:
             self._set_direction_sprite(direction)
         elif self.spritesheet:
@@ -161,7 +166,10 @@ class Remi(Player, metaclass=SingletonABCMeta):
         # Initialize shift animation for the attack effect
         self.shift_animation = Animation(
             [pygame.transform.scale_by(image, 2) for image in
-             sprites("remi attack effect")], frame_duration=1, loop=False)
+             sprites("remi attack effect")], frame_duration=50)
+
+        # Set initial states and configurations
+        self.shift_animation.set_direction(forward=False)
         self.show_hitbox = False
         self.fire_rate = 100
         self.last_shot_time = 0
@@ -170,41 +178,32 @@ class Remi(Player, metaclass=SingletonABCMeta):
 
     @override
     def update(self):
+        # Handle base player movement and direction logic
         super().update()
-        if InputManager.is_key_pressed(pygame.K_LSHIFT):
-            self.dx /= 2
-            self.dy /= 2
-            self.show_hitbox = True
-
-        if InputManager.is_key_pressed(pygame.K_z):
+        self.attacking = False
+        if attacking := InputManager.is_key_pressed(pygame.K_z):
+            # Set attacking state and check fire rate cooldown
+            self.attacking = True
             current_time = pygame.time.get_ticks()
             if current_time - self.last_shot_time >= self.fire_rate:
                 self.attack()
                 self.last_shot_time = current_time
 
-        # Attack logic (Z key)
-        if InputManager.is_key_down(pygame.K_z):
-            if not self.attacking:
-                self.attacking = True
-                self.shift_animation.reset(reverse=False)  # Start from beginning
-        elif InputManager.is_key_up(pygame.K_z):
-            self.attacking = False  # Stop attack when Z is released
-
-        # Shift key logic
-        if self.attacking:
-            if InputManager.is_key_down(pygame.K_LSHIFT):
-                if not self.shift_pressed:
-                    self.shift_pressed = True
-                    self.shift_animation.set_direction(forward=True)
-            elif InputManager.is_key_up(pygame.K_LSHIFT):
-                self.shift_pressed = False
-                self.shift_animation.set_direction(forward=False)
-
-            # Update animation only if attacking
-            self.shift_animation.update()
+        if InputManager.is_key_down(pygame.K_LSHIFT):
+            if attacking:
+                self.shift_animation.reset()
+            else:
+                self.shift_animation.current_frame = -1
+        elif InputManager.is_key_up(pygame.K_LSHIFT):
+            if attacking:
+                self.shift_animation.reset(reverse=True)
+            else:
+                self.shift_animation.current_frame = 0
+        self.shift_animation.update()
 
     @override
     def blit(self):
+        # Blit the main player sprite
         sprite_position = (round(self.x) - self.sprite.get_width() // 2,
                            round(self.y) - self.sprite.get_height() // 2)
         if self.show_hitbox:
@@ -215,15 +214,18 @@ class Remi(Player, metaclass=SingletonABCMeta):
         else:
             screen.blit(self.sprite, sprite_position)
 
-        # Only display the animation if attacking
+        # Blit the shift animation if attacking
         if self.attacking:
             sprite = self.shift_animation.get_frame()
             sprite_position = (round(self.x) - sprite.get_width() // 2,
-                               round(self.y) - sprite.get_height() // 2)
+                               round(self.y) - sprite.get_height() // 2 - 11)
             screen.blit(sprite, sprite_position)
 
     @override
     def attack(self):
         """Fires a bullet and triggers an animation frame update."""
-        bullet = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4))
-        self.game.player_bullets.add(bullet)
+        bullet_left = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4),
+                              spawn_location=(-15, 5), spawn_alignment="topleft")
+        bullet_right = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4),
+                              spawn_location=(15, 5), spawn_alignment="topright")
+        self.game.player_bullets.add(bullet_left, bullet_right)
