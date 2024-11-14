@@ -5,7 +5,7 @@ from typing import Optional, TypedDict, override
 import pygame
 
 from data.components import RectAlignments
-from data.components.entities.entity import Entity
+from data.components.entities.entityutils import Entity
 from data.core import screen
 
 

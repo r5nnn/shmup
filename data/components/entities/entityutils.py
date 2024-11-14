@@ -59,3 +59,46 @@ class EntityGroup(pygame.sprite.Group):
     def blit(self):
         for sprite in self.sprites():
             sprite.blit()
+
+
+class Animation:
+    def __init__(self, frames: list[pygame.Surface], frame_duration: int):
+        self.frames = frames
+        self.frame_duration = frame_duration
+        self.current_frame = 0
+        self.time_since_last_frame = 0
+        self.is_playing = True
+        self.direction = 1  # 1 for forward, -1 for backward
+
+    def update(self):
+        """Update the current frame based on time and direction (dt in milliseconds)."""
+        if not self.is_playing:
+            return
+
+        current_time = pygame.time.get_ticks()
+
+        if current_time - self.time_since_last_frame >= self.frame_duration:
+            self.time_since_last_frame = current_time
+            self.current_frame += self.direction
+
+            # Handle end of animation for both directions
+            if self.current_frame >= len(self.frames):
+                    self.current_frame = len(self.frames) - 1
+                    self.is_playing = False
+            elif self.current_frame < 0:
+                    self.current_frame = 0
+                    self.is_playing = False
+
+    def get_frame(self):
+        return self.frames[self.current_frame]
+
+    def reset(self, reverse: bool = False):
+        """Reset the animation to the first frame, forward or backward."""
+        self.current_frame = 0 if not reverse else len(self.frames) - 1
+        self.time_since_last_frame = 0
+        self.is_playing = True
+        self.direction = -1 if reverse else 1
+
+    def set_direction(self, forward: bool):
+        """Set the animation direction."""
+        self.direction = 1 if forward else -1
