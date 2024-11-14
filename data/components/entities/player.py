@@ -5,13 +5,13 @@ from typing import Optional, TypedDict, override, TYPE_CHECKING
 
 import pygame
 
-from data.core.prepare import screen_center, sprites
-from data.core.utils import dt
+import data.components.input as InputManager
+import data.core.utils
 from data.components import RectAlignments
 from data.components.entities.entityutils import Entity, Animation
 from data.components.entities.projectile import SimpleBullet
-import data.components.input as InputManager
 from data.core import screen, screen_rect, SingletonABCMeta
+from data.core.prepare import screen_center, sprites
 
 if TYPE_CHECKING:
     from data.states.game import Game
@@ -126,8 +126,8 @@ class Player(Entity, ABC):
                 self.keys.remove(key)
 
         self._set_direction()
-        self.x += self.dx * dt
-        self.y += self.dy * dt
+        self.x += self.dx * data.core.utils.dt
+        self.y += self.dy * data.core.utils.dt
 
         self.rect.center = (round(self.x) + self.rect_offset_x,
                             round(self.y) + self.rect_offset_y)
@@ -161,7 +161,7 @@ class Remi(Player, metaclass=SingletonABCMeta):
                          spritesheet=[pygame.transform.scale_by(image, 2) for image in
                                       sprites("remi")],
                          sprite_rect=pygame.Rect(0, 0, 20, 20), rect_offset=(1, -7),
-                         stats={"health": 4, "speed": 2, "spells": 3})
+                         stats={"health": 4, "speed": 250, "spells": 3})
 
         # Initialize shift animation for the attack effect
         self.shift_animation = Animation(
@@ -225,7 +225,7 @@ class Remi(Player, metaclass=SingletonABCMeta):
     def attack(self):
         """Fires a bullet and triggers an animation frame update."""
         bullet_left = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4),
-                              spawn_location=(-15, 5), spawn_alignment="topleft")
+                                   spawn_location=(-15, 5), spawn_alignment="topleft")
         bullet_right = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4),
-                              spawn_location=(15, 5), spawn_alignment="topright")
+                                    spawn_location=(15, 5), spawn_alignment="topright")
         self.game.player_bullets.add(bullet_left, bullet_right)
