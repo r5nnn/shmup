@@ -25,7 +25,7 @@ class PlayerStats(TypedDict):
 
 class Player(Entity, ABC):
     """Base class for all the game's players."""
-    def __init__(self, game :"Game",
+    def __init__(self, game: "Game",
                  spawn: tuple[int, int],
                  spawn_alignment: RectAlignments = "center",
                  sprite: Optional[pygame.Surface] = None,
@@ -69,7 +69,6 @@ class Player(Entity, ABC):
         super().move_to_spawn()
         logging.info("%r moved to spawnpoint: %d", self,
                      getattr(self.rect, self.spawn_alignment))
-
 
     def _set_direction(self):
         self.dx, self.dy = 0.0, 0.0

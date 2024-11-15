@@ -41,7 +41,6 @@ class Title(State):
             self.state_manager.quit)
         self.widgets = (self.play, self.editor, self.options, self.quit)
 
-
     @override
     def startup(self):
         super().startup()
