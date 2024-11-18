@@ -16,7 +16,8 @@ class Projectile(Entity):
                  sprite_rect: Optional[pygame.Rect] = None):
 
         if not (sprite or sprite_rect):
-            raise ValueError("Must provide either sprite or sprite_rect, not neither.")
+            msg = "Must provide either sprite or sprite_rect, not neither."
+            raise ValueError(msg)
 
         if sprite is None:
             current_sprite = pygame.Surface(sprite_rect.size)
@@ -24,20 +25,17 @@ class Projectile(Entity):
         else:
             current_sprite = sprite
 
-        # Determine spawn position based on type of spawn_location
         if isinstance(spawn_location, tuple):
-            # Use (x, y) coordinates relative to owner's alignment position
             x_offset, y_offset = spawn_location
             spawn_x, spawn_y = getattr(owner.abs_rect, spawn_alignment)
             calculated_spawn = (spawn_x + x_offset, spawn_y + y_offset)
         else:
-            # Assume spawn_location is a RectAlignment string; align directly
             calculated_spawn = getattr(owner.abs_rect, spawn_location)
 
-        # Initialize Entity with calculated spawn position
-        super().__init__(calculated_spawn, sprite=current_sprite,
-                         sprite_rect=sprite.get_rect() if sprite_rect is None else sprite_rect,
-                         spawn_alignment=spawn_alignment)
+        super().__init__(
+            calculated_spawn, sprite=current_sprite,
+            sprite_rect=sprite.get_rect() if sprite_rect is None else sprite_rect,
+            spawn_alignment=spawn_alignment)
 
     @override
     def update(self):
@@ -62,13 +60,11 @@ class SimpleBullet(Projectile):
         super().__init__(owner, sprite, spawn_location, spawn_alignment,
                          sprite_rect)
 
-        # Calculate dx and dy based on direction and speed
         angle_radians = math.radians(direction)
         self.dx = speed * math.sin(angle_radians)
         self.dy = -speed * math.cos(angle_radians)
 
     def update(self):
-        # Move bullet based on direction and delta time
         self._rect.move_ip(self.dx * data.core.utils.dt, self.dy * data.core.utils.dt)
         super().update()
 

@@ -202,7 +202,7 @@ class TextButtonConfig(ButtonConfig):
     text_colors: Optional[tuple[tuple | pygame.Color]] = None
     font: Optional[pygame.font.Font] = None
     font_size: int = 32
-    text_align: tuple[str, str] = "center"
+    text_align: tuple[str, str] = None
     margin: int = 20
 
 
@@ -213,21 +213,22 @@ class TextButton(ButtonBase):
         self.text_colors = (config.text_colors or
                             tuple(pygame.Color("White") for _ in range(3)))
         self._text_color = self.text_colors[0]
-        self._text = Text((0, 0), config.text, config.font, config.font_size, color=self._text_color, sub_widget=True)
+        self._text = Text((0, 0), config.text, config.font, config.font_size,
+                          color=self._text_color, sub_widget=True)
 
         # Store alignment configuration and margin
         self.text_align = config.text_align
         self.margin = config.margin
         super().__init__(config)
-        logging.info(f"Created {self!r}.")
+        logging.info("Created %r.", self)
 
     def _align_text(self, text_surface):
-        """Align the text within the button's rect based on the specified text alignment."""
+        """Align the text within the button's rect based on the specified text
+        alignment."""
         self.text_rect = text_surface.rect
         self.text_rect.center = self._rect.center  # Start with centered alignment
 
-        # Adjust alignment based on text_align tuple values
-        if len(self.text_align) == 2:
+        if self.text_align:
             if self.text_align[0] == "left":
                 self.text_rect.left = self._rect.left + self.margin
             elif self.text_align[0] == "right":
@@ -275,39 +276,64 @@ class TextButton(ButtonBase):
         self._text.blit()
 
 
-class ToggleButton(TextButton):
-    def __init__(self, config: TextButtonConfig):
-        super().__init__(config)
-        self.toggled = False  # Track toggle state (on/off)
+class ToggleableMixin:
+    """Mixin class to add toggling behavior to any button."""
+
+    def __init__(self):
+        self.on_release_call = None
+        self.on_click_call = None
+        self.toggled = False  # Toggle state
 
     def toggle_on(self):
-        """Force button to toggle on."""
+        """Turn the toggle state on."""
         if not self.toggled:
             self.toggled = True
-            self.on_click()
+            self.   on_click()
             self.on_click_call() if self.on_click_call is not None else None
 
     def toggle_off(self):
-        """Force button to toggle off."""
+        """Turn the toggle state off."""
         if self.toggled:
             self.toggled = False
             self.on_release()
             self.on_release_call() if self.on_release_call is not None else None
 
-    @override
-    def update(self):
-        if self._requires_realignment:
-            self._align_rect(self._rect, self._align, (self._x, self._y))
-
-        # Check if the button should toggle only when it's clicked and not already toggled
-        x, y = InputManager.get_mouse_pos()
-        if self.contains(x, y) and InputManager.is_mouse_down(Mouse.LEFTCLICK):
-            if not self.toggled:  # Only toggle if not currently active
+    def update_toggle(self, *, contains_mouse: bool, mouse_down: bool):
+        if contains_mouse and mouse_down:
+            if not self.toggled:
                 self.toggle_on()
-        elif not self.contains(x, y) and not self.toggled:
+        elif not contains_mouse and not self.toggled:
             self.on_idle()
 
-        self._text.update()
+    @override
+    def on_idle(self):
+        if not self.toggled:
+            super().on_idle()
+
+    def on_release(self) -> None:
+        """Method that is called when the button is released."""
+        if not self.toggled:
+            super().on_release()
+
+
+class ToggleButton(ToggleableMixin, TextButton):
+    """A button that toggles on/off when clicked, inheriting from TextButton."""
+
+    def __init__(self, config: TextButtonConfig):
+        TextButton.__init__(self, config)
+        ToggleableMixin.__init__(self)
+
+    @override
+    def update(self):
+        x, y = InputManager.get_mouse_pos()
+        mouse_down = InputManager.is_mouse_down(Mouse.LEFTCLICK)
+        contains_mouse = self.contains(x, y)
+        self.update_toggle(contains_mouse=contains_mouse, mouse_down=mouse_down)
+        super().update()
+
+    @override
+    def blit(self):
+        super().blit()
 
 
 class ToggleGroup:
@@ -315,13 +341,7 @@ class ToggleGroup:
         self.buttons = list(buttons)
         if self.buttons:
             # Automatically toggle on the first button
-            self.buttons[0].toggled = True
-            self.buttons[0].clicked = True
-            if self.buttons[0].colors is not None:
-                self.buttons[0].color = self.buttons[0].colors[2]
-            if self.buttons[0].border_colors is not None:
-                self.buttons[0].border_color = self.buttons[0].border_colors[2]
-            self.buttons[0].text.color = self.buttons[0].text_colors[2]
+            self.buttons[0].toggle_on()
 
     def update(self):
         for button in self.buttons:
@@ -355,7 +375,7 @@ class ImageButtonConfig(ButtonConfig):
         alignment)"""
     images: list
     use_rect_collisions: bool = False
-    image_align: tuple[str, str] = ()
+    image_align: tuple[str, str] = None
     margin: int = 20
 
 
@@ -371,7 +391,7 @@ class ImageButton(ButtonBase):
         self.image_align = config.image_align
         self.margin = config.margin
         self._align_image()
-        logging.info(f"Created {self!r}.")
+        logging.info("Created %r.", self)
 
     @property
     def image_align(self):
@@ -386,7 +406,7 @@ class ImageButton(ButtonBase):
         self.image_rect = self._current_image.get_rect()
         self.image_rect.center = self._rect.center
 
-        if len(self.image_align) == 2:
+        if self.image_align:
             if self.image_align[0] == "left":
                 self.image_rect.left = self._rect.left + self.margin
             elif self.image_align[0] == "right":

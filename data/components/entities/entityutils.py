@@ -92,13 +92,13 @@ class Animation:
     def get_frame(self):
         return self.frames[self.current_frame]
 
-    def reset(self, reverse: bool = False):
+    def reset(self, *, reverse: bool = False):
         """Reset the animation to the first frame, forward or backward."""
         self.current_frame = 0 if not reverse else len(self.frames) - 1
         self.time_since_last_frame = 0
         self.is_playing = True
         self.direction = -1 if reverse else 1
 
-    def set_direction(self, forward: bool):
+    def set_direction(self, *, forward: bool):
         """Set the animation direction."""
         self.direction = 1 if forward else -1
