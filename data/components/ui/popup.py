@@ -24,7 +24,6 @@ class PopupConfig:
     font: Optional[pygame.freetype.Font] = None
     font_size: int = 32
     buttons: tuple[ButtonBase, ...] = ()
-    popup_type: Popups = 0
 
 
 class Popup(WidgetBase, State):
