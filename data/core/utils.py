@@ -23,14 +23,6 @@ class Mouse:
 
 
 @dataclass(frozen=True)
-class Popups:
-    """Pygame style references to popup styles."""
-    ANY = 0
-    OK_CANCEL = 1
-    YES_NO = 2
-
-
-@dataclass(frozen=True)
 class Colors:
     """Pygame style references to shmup's color palette."""
     PRIMARY = (30, 30, 30)
