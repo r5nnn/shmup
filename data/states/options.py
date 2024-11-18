@@ -19,20 +19,32 @@ class Options(State):
         self.bg_surf = pygame.Surface(self.bg_rect.size)
         self.bg_surf.fill(Colors.PRIMARY)
         self.bg_surf.set_alpha(96)
+        self.current_option = None
         config = TextButtonConfig(position=self.bg_rect.topleft,
                                   size=(round(self.bg_rect.width / 3), 30),
-                                  colors={"default": Colors.PRIMARY,
-                                          "hovered": Colors.SECONDARY,
-                                          "clicked": Colors.ACCENT},
-                                  text="Graphics")
+                                  colors=(Colors.PRIMARY,
+                                          Colors.SECONDARY,
+                                          Colors.ACCENT),
+                                  text="Graphics", on_click=self.graphics_startup)
         self.graphics = ToggleButton(config)
         config.position = self.graphics.rect.topright
         config.text = "Keybinds"
+        config.on_click = self.audio_startup
         self.keybinds = ToggleButton(config)
         config.position = self.keybinds.rect.topright
         config.text = "Audio"
+        config.on_click = self.keybinds_startup
         self.audio = ToggleButton(config)
-        self.options = ToggleGroup(self.keybinds, self.graphics, self.audio)
+        self.options = ToggleGroup(self.graphics, self.audio, self.keybinds)
+
+    def graphics_startup(self):
+        self.current_option = "Graphics"
+
+    def audio_startup(self):
+        self.current_option = "Audio"
+
+    def keybinds_startup(self):
+        self.current_option = "Keybinds"
 
     def update(self):
         super().update()
@@ -49,6 +61,13 @@ class Options(State):
         self.keybinds.blit()
         self.audio.blit()
         widgethandler.blit()
+        match self.current_option:
+            case "Graphics":
+                ...
+            case "Audio":
+                ...
+            case "Keybinds":
+                ...
 
     def startup(self):
         super().startup()

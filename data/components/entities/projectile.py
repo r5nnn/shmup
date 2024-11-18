@@ -34,7 +34,6 @@ class Projectile(Entity):
             # Assume spawn_location is a RectAlignment string; align directly
             calculated_spawn = getattr(owner.abs_rect, spawn_location)
 
-        print(current_sprite)
         # Initialize Entity with calculated spawn position
         super().__init__(calculated_spawn, sprite=current_sprite,
                          sprite_rect=sprite.get_rect() if sprite_rect is None else sprite_rect,

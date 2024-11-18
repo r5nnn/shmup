@@ -8,13 +8,13 @@ change or an action can be executed when the button is pressed down or released.
 """
 import logging
 from dataclasses import dataclass
-from typing import Callable, override, Optional, TypedDict
+from typing import Callable, override, Optional
 
 import pygame.display
 
+import data.components.input as InputManager
 from data.components import RectAlignments
 from data.components.audio import button_audio
-import data.components.input as InputManager
 from data.components.ui.text import Text
 from data.components.ui.widgetutils import WidgetBase
 from data.core import screen, sprites
@@ -135,7 +135,7 @@ class ButtonBase(WidgetBase):
         if self.colors is not None:
             self.color = self.colors[2]
         if self.border_colors is not None:
-            self.border_color = self.border_colors.get(2)
+            self.border_color = self.border_colors[2]
 
     def on_release(self) -> None:
         """Method that is called when the button is released."""
@@ -156,7 +156,7 @@ class ButtonBase(WidgetBase):
         if self.colors is not None:
             self.color = self.colors[0]
         if self.border_colors is not None:
-            self.border_color = self.border_colors.get(0)
+            self.border_color = self.border_colors[0]
 
     def update(self):
         if self._requires_realignment:
@@ -211,7 +211,7 @@ class TextButton(ButtonBase):
 
     def __init__(self, config: TextButtonConfig):
         self.text_colors = (config.text_colors or
-                            (pygame.Color("White"), pygame.Color("White"), pygame.Color("White"))
+                            tuple(pygame.Color("White") for _ in range(3)))
         self._text_color = self.text_colors[0]
         self._text = Text((0, 0), config.text, config.font, config.font_size, color=self._text_color, sub_widget=True)
 
@@ -275,7 +275,6 @@ class TextButton(ButtonBase):
         self._text.blit()
 
 
-
 class ToggleButton(TextButton):
     def __init__(self, config: TextButtonConfig):
         super().__init__(config)
@@ -319,10 +318,10 @@ class ToggleGroup:
             self.buttons[0].toggled = True
             self.buttons[0].clicked = True
             if self.buttons[0].colors is not None:
-                self.buttons[0].color = self.buttons[0].colors["clicked"]
+                self.buttons[0].color = self.buttons[0].colors[2]
             if self.buttons[0].border_colors is not None:
-                self.buttons[0].border_color = self.buttons[0].border_colors.get("clicked")
-            self.buttons[0].text.color = self.buttons[0].text_colors["clicked"]
+                self.buttons[0].border_color = self.buttons[0].border_colors[2]
+            self.buttons[0].text.color = self.buttons[0].text_colors[2]
 
     def update(self):
         for button in self.buttons:
