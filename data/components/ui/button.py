@@ -31,19 +31,13 @@ def button_from_images(name: str, position: tuple[int, int],
     return ImageButton(config)
 
 
-class Colors(TypedDict):
-    default: tuple | pygame.Color
-    hovered: tuple | pygame.Color
-    clicked: tuple | pygame.Color
-
-
 @dataclass
 class ButtonConfig:
     position: tuple[int, int]
     size: tuple[int, int]
     align: RectAlignments = "topleft"
-    colors: Optional[Colors] = None
-    border_colors: Optional[Colors] = None
+    colors: Optional[tuple[tuple | pygame.Color]] = None
+    border_colors: Optional[tuple[tuple | pygame.Color]] = None
     border_thickness: int = 0
     radius: int = 0
     on_click: Optional[Callable] = None
@@ -62,9 +56,9 @@ class ButtonBase(WidgetBase):
         self._rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self._align_rect(self._rect, self._align, (self._x, self._y))
         self.colors = config.colors
-        self.color = self.colors["default"] if self.colors is not None else None
+        self.color = self.colors[0] if self.colors is not None else None
         self.border_colors = config.border_colors
-        self.border_color = self.border_colors["default"] \
+        self.border_color = self.border_colors[0] \
             if self.border_colors is not None else None
         self._border_thickness = config.border_thickness
         self._border_rect = pygame.Rect(
@@ -139,9 +133,9 @@ class ButtonBase(WidgetBase):
         if self.click_audio_tag is not None:
             button_audio.play_audio(self.click_audio_tag, override=True)
         if self.colors is not None:
-            self.color = self.colors["clicked"]
+            self.color = self.colors[2]
         if self.border_colors is not None:
-            self.border_color = self.border_colors.get("clicked")
+            self.border_color = self.border_colors.get(2)
 
     def on_release(self) -> None:
         """Method that is called when the button is released."""
@@ -152,17 +146,17 @@ class ButtonBase(WidgetBase):
     def on_hover(self) -> None:
         """Method that is called when the button is hovered."""
         if self.colors is not None:
-            self.color = self.colors["hovered"]
+            self.color = self.colors[1]
         if self.border_colors is not None:
-            self.border_color = self.border_colors.get("hovered")
+            self.border_color = self.border_colors[1]
 
     def on_idle(self):
         """Method that is called when the button is idle."""
         self.clicked = False
         if self.colors is not None:
-            self.color = self.colors["default"]
+            self.color = self.colors[0]
         if self.border_colors is not None:
-            self.border_color = self.border_colors.get("default")
+            self.border_color = self.border_colors.get(0)
 
     def update(self):
         if self._requires_realignment:
@@ -205,7 +199,7 @@ class TextButtonConfig(ButtonConfig):
         alignment)
     """
     text: str
-    text_colors: Optional[Colors] = None
+    text_colors: Optional[tuple[tuple | pygame.Color]] = None
     font: Optional[pygame.font.Font] = None
     font_size: int = 32
     text_align: tuple[str, str] = "center"
@@ -217,10 +211,8 @@ class TextButton(ButtonBase):
 
     def __init__(self, config: TextButtonConfig):
         self.text_colors = (config.text_colors or
-                            {"default": pygame.Color("White"),
-                             "hovered": (255, 255, 255),
-                             "clicked": (255, 255, 255)})
-        self._text_color = self.text_colors["default"]
+                            (pygame.Color("White"), pygame.Color("White"), pygame.Color("White"))
+        self._text_color = self.text_colors[0]
         self._text = Text((0, 0), config.text, config.font, config.font_size, color=self._text_color, sub_widget=True)
 
         # Store alignment configuration and margin
@@ -260,17 +252,17 @@ class TextButton(ButtonBase):
     @override
     def on_click(self):
         super().on_click()
-        self._text.color = self.text_colors["clicked"]
+        self._text.color = self.text_colors[2]
 
     @override
     def on_hover(self):
         super().on_hover()
-        self._text.color = self.text_colors["hovered"]
+        self._text.color = self.text_colors[1]
 
     @override
     def on_idle(self):
         super().on_idle()
-        self._text.color = self.text_colors["default"]
+        self._text.color = self.text_colors[0]
 
     @override
     def update(self):
