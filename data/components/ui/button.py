@@ -31,6 +31,14 @@ def button_from_images(name: str, position: tuple[int, int],
     return ImageButton(config)
 
 
+def checktoggle(method):
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        if not self.toggled:
+            method(self, *args, **kwargs)
+    return wrapper
+
+
 @dataclass
 class ButtonConfig:
     position: tuple[int, int]
@@ -40,11 +48,113 @@ class ButtonConfig:
     border_colors: Optional[tuple[tuple | pygame.Color]] = None
     border_thickness: int = 0
     radius: int = 0
-    on_click: Optional[Callable] = None
-    on_release: Optional[Callable] = None
-    click_audio: Optional[str] = "click"
-    release_audio: Optional[str] = "click"
     sub_widget: bool = False
+
+
+class ClickInputMixin:
+    def __init__(self, on_click: Optional[Callable] = None,
+                 on_release: Optional[Callable] = None)
+        self.on_click = on_click
+        self.on_release = on_release
+
+    def update_click(self):
+        self.clicked = True
+        if self.click_audio_tag is not None:
+            button_audio.play_audio(self.click_audio_tag, override=True)
+        if self.colors is not None:
+            self.color = self.colors[2]
+        if self.border_colors is not None:
+            self.border_color = self.border_colors[2]
+
+    def update_release(self) -> None:
+        """Method that is called when the button is released."""
+        self.clicked = False
+        if self.release_audio_tag is not None:
+            button_audio.play_audio(self.release_audio_tag, override=True)
+
+    def update_hover(self) -> None:
+        """Method that is called when the button is hovered."""
+        if self.colors is not None:
+            self.color = self.colors[1]
+        if self.border_colors is not None:
+            self.border_color = self.border_colors[1]
+
+    def update_idle(self):
+        """Method that is called when the button is idle."""
+        self.clicked = False
+        if self.colors is not None:
+            self.color = self.colors[0]
+        if self.border_colors is not None:
+            self.border_color = self.border_colors[0]
+
+    def update(self):
+        if self._requires_realignment:
+            self._align_rect(self._rect, self._align, (self._x, self._y))
+        x, y = InputManager.get_mouse_pos()
+        if self.contains(x, y):
+            # button is released
+            if InputManager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
+                self.update_release()
+                self.on_release_call() if self.on_release_call is not None else None
+            # button is clicked
+            elif InputManager.is_mouse_down(Mouse.LEFTCLICK):
+                self.update_click()
+                self.on_click_call() if self.on_click_call is not None else None
+            # button hovered
+            elif not self.clicked:
+                self.update_hover()
+        # button not interacted with
+        else:
+            self.update_idle()
+
+
+class ToggleableMixin:
+    def __init__(self):
+        self.toggled = False
+
+    def toggle_on(self):
+        """Turn the toggle state on."""
+        self.toggled = True
+        if self.click_audio_tag is not None:
+            button_audio.play_audio(self.click_audio_tag, override=True)
+        if self.colors is not None:
+            self.color = self.colors[2]
+        if self.border_colors is not None:
+            self.border_color = self.border_colors[2]
+
+    def toggle_off(self):
+        """Turn the toggle state off."""
+        self.toggled = False
+        if self.release_audio_tag is not None:
+            button_audio.play_audio(self.release_audio_tag, override=True)
+
+    @checktoggle
+    def update_hover(self):
+        if self.colors is not None:
+            self.color = self.colors[1]
+        if self.border_colors is not None:
+            self.border_color = self.border_colors[1]
+
+    @checktoggle
+    def update_idle(self):
+        if self.colors is not None:
+            self.color = self.colors[0]
+        if self.border_colors is not None:
+            self.border_color = self.border_colors[0]
+
+    def update(self):
+        if self._requires_realignment:
+            self._align_rect(self._rect, self._align, (self._x, self._y))
+        x, y = InputManager.get_mouse_pos()
+        if self.contains(x, y):
+            if InputManager.is_mouse_down(Mouse.LEFTCLICK) and not self.toggled:
+                self.toggle_on()
+            elif InputManager.is_mouse_down(Mouse.LEFTCLICK) and self.toggled:
+                self.toggle_off()
+            elif not self.toggled:
+                self.update_hover()
+        else:
+            self.update_idle()
 
 
 class ButtonBase(WidgetBase):
@@ -66,12 +176,9 @@ class ButtonBase(WidgetBase):
             self._rect.top + self._border_thickness,
             self._width - self._border_thickness * 2,
             self._height - self._border_thickness * 2)
-        self.on_click_call = config.on_click
-        self.on_release_call = config.on_release
         self.click_audio_tag = config.click_audio
         self.release_audio_tag = config.release_audio
         self.radius = config.radius
-        self.clicked = False
 
     @property
     def rect(self) -> pygame.Rect:
@@ -126,57 +233,6 @@ class ButtonBase(WidgetBase):
                 self._rect.left + self._width) and \
                (self._rect.top < y - screen.get_abs_offset()[1] <
                 self._rect.top + self._height)
-
-    def on_click(self) -> None:
-        """Method that is called when the button is clicked."""
-        self.clicked = True
-        if self.click_audio_tag is not None:
-            button_audio.play_audio(self.click_audio_tag, override=True)
-        if self.colors is not None:
-            self.color = self.colors[2]
-        if self.border_colors is not None:
-            self.border_color = self.border_colors[2]
-
-    def on_release(self) -> None:
-        """Method that is called when the button is released."""
-        self.clicked = False
-        if self.release_audio_tag is not None:
-            button_audio.play_audio(self.release_audio_tag, override=True)
-
-    def on_hover(self) -> None:
-        """Method that is called when the button is hovered."""
-        if self.colors is not None:
-            self.color = self.colors[1]
-        if self.border_colors is not None:
-            self.border_color = self.border_colors[1]
-
-    def on_idle(self):
-        """Method that is called when the button is idle."""
-        self.clicked = False
-        if self.colors is not None:
-            self.color = self.colors[0]
-        if self.border_colors is not None:
-            self.border_color = self.border_colors[0]
-
-    def update(self):
-        if self._requires_realignment:
-            self._align_rect(self._rect, self._align, (self._x, self._y))
-        x, y = InputManager.get_mouse_pos()
-        if self.contains(x, y):
-            # button is released
-            if InputManager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
-                self.on_release()
-                self.on_release_call() if self.on_release_call is not None else None
-            # button is clicked
-            elif InputManager.is_mouse_down(Mouse.LEFTCLICK):
-                self.on_click()
-                self.on_click_call() if self.on_click_call is not None else None
-            # button hovered
-            elif not self.clicked:
-                self.on_hover()
-        # button not interacted with
-        else:
-            self.on_idle()
 
     def blit(self):
         if self.border_colors is not None:
@@ -274,46 +330,6 @@ class TextButton(ButtonBase):
     def blit(self):
         super().blit()
         self._text.blit()
-
-
-class ToggleableMixin:
-    """Mixin class to add toggling behavior to any button."""
-
-    def __init__(self):
-        self.on_release_call = None
-        self.on_click_call = None
-        self.toggled = False  # Toggle state
-
-    def toggle_on(self):
-        """Turn the toggle state on."""
-        if not self.toggled:
-            self.toggled = True
-            self.   on_click()
-            self.on_click_call() if self.on_click_call is not None else None
-
-    def toggle_off(self):
-        """Turn the toggle state off."""
-        if self.toggled:
-            self.toggled = False
-            self.on_release()
-            self.on_release_call() if self.on_release_call is not None else None
-
-    def update_toggle(self, *, contains_mouse: bool, mouse_down: bool):
-        if contains_mouse and mouse_down:
-            if not self.toggled:
-                self.toggle_on()
-        elif not contains_mouse and not self.toggled:
-            self.on_idle()
-
-    @override
-    def on_idle(self):
-        if not self.toggled:
-            super().on_idle()
-
-    def on_release(self) -> None:
-        """Method that is called when the button is released."""
-        if not self.toggled:
-            super().on_release()
 
 
 class ToggleButton(ToggleableMixin, TextButton):
