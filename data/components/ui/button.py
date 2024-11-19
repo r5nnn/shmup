@@ -8,6 +8,7 @@ change or an action can be executed when the button is pressed down or released.
 """
 import logging
 from dataclasses import dataclass
+from functools import wraps
 from typing import Callable, override, Optional
 
 import pygame.display
@@ -48,12 +49,14 @@ class ButtonConfig:
     border_colors: Optional[tuple[tuple | pygame.Color]] = None
     border_thickness: int = 0
     radius: int = 0
+    click_audio: Optional[str] = None
+    release_audio: Optional[str] = None
     sub_widget: bool = False
 
 
 class ClickInputMixin:
     def __init__(self, on_click: Optional[Callable] = None,
-                 on_release: Optional[Callable] = None)
+                 on_release: Optional[Callable] = None):
         self.on_click = on_click
         self.on_release = on_release
 
@@ -262,9 +265,8 @@ class TextButtonConfig(ButtonConfig):
     margin: int = 20
 
 
-class TextButton(ButtonBase):
+class TextButtonBase(ButtonBase):
     """Class for creating buttons with text labels."""
-
     def __init__(self, config: TextButtonConfig):
         self.text_colors = (config.text_colors or
                             tuple(pygame.Color("White") for _ in range(3)))
@@ -272,7 +274,6 @@ class TextButton(ButtonBase):
         self._text = Text((0, 0), config.text, config.font, config.font_size,
                           color=self._text_color, sub_widget=True)
 
-        # Store alignment configuration and margin
         self.text_align = config.text_align
         self.margin = config.margin
         super().__init__(config)
@@ -307,53 +308,18 @@ class TextButton(ButtonBase):
         self._align_text(self._text)
 
     @override
-    def on_click(self):
-        super().on_click()
-        self._text.color = self.text_colors[2]
-
-    @override
-    def on_hover(self):
-        super().on_hover()
-        self._text.color = self.text_colors[1]
-
-    @override
-    def on_idle(self):
-        super().on_idle()
-        self._text.color = self.text_colors[0]
-
-    @override
-    def update(self):
-        super().update()
-        self._text.update()
-
-    @override
     def blit(self):
         super().blit()
         self._text.blit()
 
 
-class ToggleButton(ToggleableMixin, TextButton):
-    """A button that toggles on/off when clicked, inheriting from TextButton."""
-
-    def __init__(self, config: TextButtonConfig):
-        TextButton.__init__(self, config)
-        ToggleableMixin.__init__(self)
-
-    @override
-    def update(self):
-        x, y = InputManager.get_mouse_pos()
-        mouse_down = InputManager.is_mouse_down(Mouse.LEFTCLICK)
-        contains_mouse = self.contains(x, y)
-        self.update_toggle(contains_mouse=contains_mouse, mouse_down=mouse_down)
-        super().update()
-
-    @override
-    def blit(self):
-        super().blit()
+class TextButton(TextButtonBase, ClickInputMixin):
+    def __init__(self, config):
+        TextButtonBase.__init__(self, config)
 
 
 class ToggleGroup:
-    def __init__(self, *buttons: ToggleButton):
+    def __init__(self, *buttons):
         self.buttons = list(buttons)
         if self.buttons:
             # Automatically toggle on the first button
@@ -369,7 +335,7 @@ class ToggleGroup:
                     if other_button != button and other_button.toggled:
                         other_button.toggle_off()
 
-    def add_button(self, button: ToggleButton):
+    def add_button(self, button):
         """Add more buttons to the group if needed."""
         self.buttons.append(button)
         if len(self.buttons) == 1:
