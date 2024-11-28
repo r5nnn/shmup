@@ -19,7 +19,7 @@ from data.components.audio import button_audio
 from data.components.ui.text import Text
 from data.components.ui.widgetutils import WidgetBase
 from data.core import screen, sprites
-from data.core.utils import Mouse
+from data.core.utils import Mouse, mixin_requiring
 
 
 def button_from_images(name: str, position: tuple[int, int],
@@ -54,6 +54,7 @@ class ButtonConfig:
     sub_widget: bool = False
 
 
+@mixin_requiring("click_audio_tag", "colors")
 class ClickInputMixin:
     def __init__(self, on_click: Optional[Callable] = None,
                  on_release: Optional[Callable] = None):

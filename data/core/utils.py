@@ -12,6 +12,19 @@ from typing import Callable, ClassVar
 dt = 1.0
 
 
+AbstractField = lambda: property(abstractmethod(lambda s: s))
+
+
+def mixin_requiring(*attributes):
+    def make_mixin_class(cls):
+        wrapped_cls = type(cls.__name__, (cls, ABC), {})
+        for a in attributes:
+            for attr_name in a:
+                setattr(wrapped_cls, attr_name, AbstractField())
+        return wrapped_cls
+    return make_mixin_class
+
+
 @dataclass(frozen=True)
 class Mouse:
     """Pygame style references to mouse buttons."""
