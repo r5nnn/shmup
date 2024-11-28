@@ -1,6 +1,7 @@
 import pygame
 
-from data.components.ui import ToggleButton, TextButtonConfig, ToggleGroup, widgethandler
+from data.components.ui import ToggleGroup, widgethandler, \
+    ToggleableTextButton, ToggleableTextButtonConfig
 from data.core import Colors
 from data.core.prepare import image_paths, screen, screen_size, screen_center
 from data.states.state import State
@@ -20,36 +21,28 @@ class Options(State):
         self.bg_surf.fill(Colors.PRIMARY)
         self.bg_surf.set_alpha(96)
         self.current_option = None
-        config = TextButtonConfig(position=self.bg_rect.topleft,
+        config = ToggleableTextButtonConfig(position=self.bg_rect.topleft,
                                   size=(round(self.bg_rect.width / 3), 30),
-                                  colors=(Colors.PRIMARY,
-                                          Colors.SECONDARY,
-                                          Colors.ACCENT),
-                                  text="Graphics", on_click=self.graphics_startup)
-        self.graphics = ToggleButton(config)
+                                            colors=(Colors.PRIMARY,
+                                                    Colors.SECONDARY,
+                                                    Colors.ACCENT),
+                                  text="Graphics")
+        self.graphics = ToggleableTextButton(config)
         config.position = self.graphics.rect.topright
         config.text = "Keybinds"
-        config.on_click = self.audio_startup
-        self.keybinds = ToggleButton(config)
+        self.keybinds = ToggleableTextButton(config)
         config.position = self.keybinds.rect.topright
         config.text = "Audio"
-        config.on_click = self.keybinds_startup
-        self.audio = ToggleButton(config)
+        self.audio = ToggleableTextButton(config)
         self.options = ToggleGroup(self.graphics, self.audio, self.keybinds)
-
-    def graphics_startup(self):
-        self.current_option = "Graphics"
-
-    def audio_startup(self):
-        self.current_option = "Audio"
-
-    def keybinds_startup(self):
-        self.current_option = "Keybinds"
 
     def update(self):
         super().update()
         self.options.update()
         widgethandler.update()
+        for index, option in enumerate((self.graphics, self.keybinds, self.audio)):
+            if option.toggled:
+                self.current_option = index
 
     def render(self):
         screen.blit(self.background, (0, 0))
@@ -62,11 +55,11 @@ class Options(State):
         self.audio.blit()
         widgethandler.blit()
         match self.current_option:
-            case "Graphics":
+            case 0:
                 ...
-            case "Audio":
+            case 1:
                 ...
-            case "Keybinds":
+            case 2:
                 ...
 
     def startup(self):

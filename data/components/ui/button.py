@@ -57,8 +57,9 @@ class ButtonConfig:
 class ClickInputMixin:
     def __init__(self, on_click: Optional[Callable] = None,
                  on_release: Optional[Callable] = None):
-        self.on_click = on_click
-        self.on_release = on_release
+        self.on_click_call = on_click
+        self.on_release_call = on_release
+        self.clicked = False
 
     def update_click(self):
         self.clicked = True
@@ -111,7 +112,7 @@ class ClickInputMixin:
             self.update_idle()
 
 
-class ToggleableMixin:
+class ToggleInputMixin:
     def __init__(self):
         self.toggled = False
 
@@ -247,7 +248,7 @@ class ButtonBase(WidgetBase):
 
 
 @dataclass(kw_only=True)
-class TextButtonConfig(ButtonConfig):
+class ToggleableTextButtonConfig(ButtonConfig):
     """Dataclass containing arguments to be passed to the `TextButton` class.
 
     :param text_colors: A dict of the colors that correspond to the colors
@@ -267,7 +268,7 @@ class TextButtonConfig(ButtonConfig):
 
 class TextButtonBase(ButtonBase):
     """Class for creating buttons with text labels."""
-    def __init__(self, config: TextButtonConfig):
+    def __init__(self, config: ToggleableTextButtonConfig):
         self.text_colors = (config.text_colors or
                             tuple(pygame.Color("White") for _ in range(3)))
         self._text_color = self.text_colors[0]
@@ -313,10 +314,28 @@ class TextButtonBase(ButtonBase):
         self._text.blit()
 
 
-class TextButton(TextButtonBase, ClickInputMixin):
-    def __init__(self, config):
-        TextButtonBase.__init__(self, config)
+class TextButtonConfig(ToggleableTextButtonConfig):
+    on_click: Optional[Callable] = None
+    on_release: Optional[Callable] = None
 
+
+class TextButton(TextButtonBase, ClickInputMixin):
+    def __init__(self, config: TextButtonConfig):
+        TextButtonBase.__init__(self, config)
+        ClickInputMixin.__init__(self, on_click=config.on_click,
+                                 on_release=config.on_release)
+
+    def update(self) -> None:
+        ClickInputMixin.update(self)
+
+
+class ToggleableTextButton(TextButtonBase, ToggleInputMixin):
+    def __init__(self, config: ToggleableTextButtonConfig):
+        TextButtonBase.__init__(self, config)
+        ToggleInputMixin.__init__(self)
+
+    def update(self) -> None:
+        ToggleInputMixin.update(self)
 
 class ToggleGroup:
     def __init__(self, *buttons):
@@ -355,18 +374,21 @@ class ImageButtonConfig(ButtonConfig):
         to `()` in order to use center alignment.
     :param margin: The offset of the image in the button (when not using center
         alignment)"""
+    on_click: Optional[Callable] = None
+    on_release: Optional[Callable] = None
     images: list
     use_rect_collisions: bool = False
     image_align: tuple[str, str] = None
     margin: int = 20
 
 
-class ImageButton(ButtonBase):
+class ImageButton(ButtonBase, ClickInputMixin):
     """Button class that includes image rendering and allows for toggling
     between rect-based and pixel-perfect collision detection."""
 
     def __init__(self, config: ImageButtonConfig):
-        super().__init__(config)
+        ButtonBase.__init__(self, config)
+        ClickInputMixin.__init__(self, on_click=config.on_click, on_release=config.on_release)
         self.images = config.images
         self._current_image = self.images[0]
         self.use_rect_collision = config.use_rect_collisions
@@ -410,24 +432,21 @@ class ImageButton(ButtonBase):
         except IndexError:
             return False
 
-    @override
     def on_click(self):
-        super().on_click()
+        ClickInputMixin.update_click(self)
         self._current_image = self.images[2]
 
-    @override
     def on_hover(self):
-        super().on_hover()
+        ClickInputMixin.update_hover(self)
         self._current_image = self.images[1]
 
-    @override
     def on_idle(self):
-        super().on_idle()
+        ClickInputMixin.update_idle(self)
         self._current_image = self.images[0]
 
     @override
     def update(self):
-        super().update()
+        ClickInputMixin.update(self)
 
     @override
     def blit(self):
