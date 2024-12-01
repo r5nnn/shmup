@@ -1,9 +1,11 @@
+"""Module containing utilities for managing color values."""
+from __future__ import annotations
 import colorsys
 
 
-def shift_rgb(rgb_color, shift_amount):
+def shift_rgb(rgb_color: tuple[int], shift_amount: int) -> tuple[int, int, int, float]:
     r, g, b, a = [x / 255.0 for x in rgb_color]
-    h, l, s = colorsys.rgb_to_hls(r, g, b)
+    h, l, s = colorsys.rgb_to_hls(r, g, b)  # noqa: E741
     h = (h + shift_amount) % 1.0
     r, g, b = colorsys.hls_to_rgb(h, l, s)
     r, g, b = [int(x * 255) for x in (r, g, b)]
@@ -12,8 +14,11 @@ def shift_rgb(rgb_color, shift_amount):
 
 
 class ColorGradient:
-    def __init__(self, color_dict, steps_per_segment=100,
-                 use_longest_path=False):
+    """Class for creating smooth gradients."""
+
+    hue_midpoint = 0.5
+    def __init__(self, color_dict: dict, steps_per_segment: int = 100, *,
+                 use_longest_path: bool = False):
         self.rgb_colors = list(color_dict.keys())
         self.delays = list(color_dict.values())
         self.steps_per_segment = steps_per_segment
@@ -34,12 +39,11 @@ class ColorGradient:
                 h1 += 1  # Move to the next hue circle (wrap around)
             else:
                 h2 += 1
-        else:  # Shortest path
-            if abs(h2 - h1) > 0.5:
-                if h1 > h2:
-                    h2 += 1
-                else:
-                    h1 += 1
+        elif abs(h2 - h1) > ColorGradient.hue_midpoint:
+            if h1 > h2:
+                h2 += 1
+            else:
+                h1 += 1
 
         hue = h1 + (h2 - h1) * t
         return hue % 1.0

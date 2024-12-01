@@ -1,27 +1,37 @@
-"""Module containing audio channel manager class and module level global
-instances of all channels to be used in the game."""
-import os
+"""Module containing an audio channel manager class.
+
+Includes instances of all channels to be used in the game.
+"""
+from __future__ import annotations
+
 import warnings
 from functools import wraps
 from pathlib import Path
-from typing import Optional
+from typing import TypeVar, Callable, Any
 
 import pygame
 
 from data.core.prepare import audio_paths
 
+_T = TypeVar("_T", bound=Callable[..., Any])
 
-def checkaudio(method):
+def checkaudio(method: _T) -> _T:
     @wraps(method)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self, *args, **kwargs):  # noqa: ANN001, ANN202
         if not self.no_audio:
             method(self, *args, **kwargs)
     return wrapper
 
 
 class Audio:
-    _channel_counter = 0
+    """Class for managing audio channels.
 
+    When instantiated creates a unique channel associated with the object. Audio can
+    then be added and played on that channel. Acts as a wrapper for
+    `pygame.mixer.Sound`.
+    """
+
+    _channel_counter = 0
     def __init__(self):
         self.channel_id = Audio._channel_counter
         Audio._channel_counter += 1
@@ -34,21 +44,19 @@ class Audio:
         self.current_audio = None
 
     @checkaudio
-    def add_audio(self, audio_dir: str, tag: Optional[str] = None) -> None:
-        if not os.path.isfile(audio_dir):
-            raise FileNotFoundError(f"File {audio_dir} does not exist.")
+    def add_audio(self, audio_dir: str, tag: str | None = None) -> None:
+        if not Path.is_file(Path(audio_dir)):
+            msg = f"File {audio_dir} does not exist."
+            raise FileNotFoundError(msg)
         tag = Path(audio_dir).stem if tag is None else None
         self.sounds[tag] = pygame.mixer.Sound(audio_dir)
 
     @checkaudio
-    def play_audio(self, tag: str = None, loops: int = 0,
+    def play_audio(self, tag: str | None = None, loops: int = 0, *,
                    override: bool = False) -> None:
-        if len(self.sounds) == 0:
-            raise KeyError("No audio loaded to play.")
-        elif len(self.sounds) > 1 and tag is None:
-            warnings.warn("Tag not specified when more than one audio loaded")
-        if loops < -1:
-            raise ValueError("loops argument cannot be smaller than -1.")
+        if len(self.sounds) > 1 and tag is None:
+            warnings.warn("Tag not specified when more than one audio loaded",
+                          stacklevel=2)
         tag = next(iter(self.sounds)) if tag is None else tag
         self.stop() if override else None
         if not self.channel.get_busy():
@@ -64,7 +72,8 @@ class Audio:
     @checkaudio
     def set_volume(self, volume: float) -> None:
         if not 0.0 <= volume <= 1.0:
-            raise ValueError("Volume must be between 0.0 and 1.0.")
+            msg = "Volume must be between 0.0 and 1.0."
+            raise ValueError(msg)
         self.channel.set_volume(volume)
 
     @checkaudio
@@ -85,4 +94,4 @@ background_audio.set_volume(0.2)
 
 button_audio = Audio()
 button_audio.set_volume(0.2)
-button_audio.add_audio(audio_paths('click'))
+button_audio.add_audio(audio_paths("click"))

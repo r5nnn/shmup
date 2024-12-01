@@ -1,17 +1,22 @@
 """Module for displaying text on the screen."""
+from __future__ import annotations
+
 import warnings
-from typing import Literal, Optional, Type
+from typing import Literal, TYPE_CHECKING, override
 
 import pygame
 from pygame import freetype
 
+from data.components.ui.widgetutils import RenderNeeded, WidgetBase
+from data.core import screen
 from data.core.prepare import font_paths
-from data.components import RectAlignments
-from .widgetutils import RenderNeeded, AlignmentNeeded, WidgetBase
-from data.core import screen, screen_size
 
-text_rect_alignments: Type[str] = Literal['right', 'left', 'center', 'justified']
-default_font_dir: str = font_paths('editundo')
+if TYPE_CHECKING:
+    from data.components import RectAlignments
+
+text_rect_alignments = Literal["right", "left", "center", "justified"]
+default_font_dir = font_paths("editundo")
+default_font_size = 32
 
 
 class Text(WidgetBase):
@@ -21,24 +26,23 @@ class Text(WidgetBase):
     color = RenderNeeded()
 
     def __init__(self, position: tuple[int, int], text: str,
-                 font: Optional[pygame.freetype.Font] = None,
+                 font: pygame.freetype.Font | None = None,
                  font_size: int = 32,
-                 color: pygame.Color | tuple = pygame.Color('white'),
-                 align: RectAlignments = 'topleft',
+                 color: pygame.Color | tuple | None = None,
+                 align: RectAlignments = "topleft", *,
                  antialias: bool = False,
                  sub_widget: bool = False):
-        super().__init__(position, align, sub_widget)
-
-        if (font is not None and font_size != 32) and not \
+        super().__init__(position, align, sub_widget=sub_widget)
+        if (font is not None and font_size != default_font_size) and not \
                 isinstance(font, (pygame.freetype.Font, pygame.font.Font)):
-            warnings.warn("font_size parameter passed when default font not "
-                          "used.")
+            warnings.warn("font_size parameter passed when default font not used.",
+                          stacklevel=2)
 
         self._text = text
         self._font = font if font is not None \
             else pygame.freetype.Font(default_font_dir)
         self._font_size = font_size
-        self._color = color
+        self._color = color if color is not None else pygame.Color("white")
         self._antialias = antialias
         self._text_surface, self._rect = self._render_text(self._text, self._color)
         self._align_rect(self._rect, self._align, (self._x, self._y))
@@ -49,7 +53,7 @@ class Text(WidgetBase):
         return self._antialias
 
     @antialias.setter
-    def antialias(self, value):
+    def antialias(self, value: bool) -> None:
         self._antialias = value
         self._font.antialiased = value
 
@@ -57,127 +61,29 @@ class Text(WidgetBase):
     def rect(self) -> pygame.Rect:
         return self._rect
 
-    def blit(self):
+    @override
+    def blit(self) -> None:
         screen.blit(self._text_surface, self._rect)
 
-    def update(self):
+    @override
+    def update(self) -> None:
         if self._requires_rerender:
             self._text_surface, self._rect = self._render_text(self._text, self._color)
         if self._requires_realignment:
             self._align_rect(self._rect, self._align, (self._x, self._y))
 
-    def contains(self, x, y):
-        return (self._x < x - screen.get_abs_offset()[0] < self._x + self._rect.width) and \
-               (self._y < y - screen.get_abs_offset()[1] < self._y + self._rect.height)
+    @override
+    def contains(self, x: int, y: int) -> bool:
+        return (self._x < x - screen.get_abs_offset()[0] < self._x + self._rect.width) \
+            and (self._y < y - screen.get_abs_offset()[1] < self._y + self._rect.height)
 
-    def _render_text(self, text, color):
+    def _render_text(self, text: str,
+                     color: pygame.Color | tuple) -> tuple[pygame.Surface, pygame.Rect]:
         self._requires_rerender = False
         return self._font.render(text, color, size=self.font_size)
 
-    def _align_rect(self, rect, align, position):
+    def _align_rect(self, rect: pygame.Rect, align: RectAlignments,
+                    position: tuple[int, int]) -> None:
         self._requires_realignment = False
         setattr(rect, align, position)
         self._x, self._y = getattr(rect, align)
-
-
-class WrappedText:
-    rect = AlignmentNeeded()
-    text = RenderNeeded()
-    font = RenderNeeded()
-    color = RenderNeeded()
-    align = AlignmentNeeded()
-    line_spacing = RenderNeeded()
-
-    def __init__(self, rect: pygame.Rect, text: str,
-                 font: Optional[pygame.font.Font] = None, font_size: int = 32,
-                 color: pygame.Color | tuple = pygame.Color('white'),
-                 align: RectAlignments = 'topleft',
-                 text_align: text_rect_alignments = 'left',
-                 antialias: bool = False, line_spacing: int = 0):
-        self._rect = rect if rect is not None else screen_size
-        self._text = text
-        self._font = font if font is not None else \
-            pygame.font.Font(default_font_dir, font_size)
-        self._font_size = font_size
-        self._color = color
-        self._align = align
-        self.text_align = text_align
-        self._antialias = antialias
-        self._line_spacing = line_spacing
-        self._space_width = None
-        self._line_len_list = [0]
-        self._line_list = [[]]
-        self._align_rect(self._rect, self._align, self._rect.topleft)
-        self._render_text(antialias, color)
-        self._requires_render, self._requires_realignment = False, False
-
-    @property
-    def antialias(self) -> bool:
-        return self._antialias
-
-    @antialias.setter
-    def antialias(self, value):
-        self._antialias = value
-        self._font.antialiased = value
-
-    def blit(self):
-        font_height = self._font.size("Tg")[1]
-        line_bottom = self._rect[1]
-        last_line = 0
-        for line_len, line_surfaces in zip(self._line_len_list,
-                                           self._line_list):
-            line_left = self._rect[0]
-            if self.text_align == 'right':
-                line_left += + self._rect[2] - line_len - self._space_width * (
-                        len(line_surfaces) - 1)
-            elif self.text_align == 'center':
-                line_left += (self._rect[2] - line_len - self._space_width * (
-                        len(line_surfaces) - 1)) // 2
-            elif self.text_align == 'block' and len(line_surfaces) > 1:
-                self._space_width = (self._rect[2] - line_len) // (len(
-                    line_surfaces) - 1)
-            if line_bottom + font_height > self._rect[1] + self._rect[3]:
-                break
-            last_line += 1
-            for i, image in enumerate(line_surfaces):
-                x, y = line_left + i * self._space_width, line_bottom
-                screen.blit(image, (round(x), y))
-                line_left += image.get_width()
-            line_bottom += font_height + self._line_spacing
-
-        if last_line < len(self._line_list):
-            draw_words = sum([len(self._line_list[i])
-                              for i in range(last_line)])
-            remaining_text = ""
-            for text in self._words_list[draw_words:]:
-                remaining_text += text + " "
-            return remaining_text
-        return ""
-
-    def update(self):
-        if self._requires_render:
-            self._render_text(self._text, self._color)
-        if self._requires_realignment:
-            self._align_rect(self._rect, self._align, self._rect.topleft)
-
-    def _render_text(self, aa, col):
-        self._requires_render = False
-        self._space_width = self._font.size(" ")[0]
-        self._words_list = self._text.split(" ")
-        surface_list = [self._font.render(word, aa, col) for word in
-                        self._words_list]
-        max_len = self._rect[2]
-
-        for surface in surface_list:
-            width = surface.get_width()
-            line_len = (self._line_len_list[-1] + len(self._line_list[-1]) * self._space_width + width)
-            if len(self._line_list[-1]) == 0 or line_len <= max_len:
-                self._line_len_list[-1] += width
-                self._line_list[-1].append(surface)
-            else:
-                self._line_len_list.append(width)
-                self._line_list.append([surface])
-
-    def _align_rect(self, rect, align, coords):
-        self._requires_rect_update = False
-        setattr(rect, align, coords)

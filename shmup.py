@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Top level module that initialises the game."""
+"""Top level script that initialises the game."""
 import sys
 import pygame
 from data import main

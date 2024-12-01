@@ -1,17 +1,23 @@
 """Contains the base class for all the game's entities and a group for managing them."""
-from typing import override, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+from typing import override
 
 import pygame.display
 from pygame.sprite import Sprite
 
-from data.components import RectAlignments
 from data.core import screen
+
+if TYPE_CHECKING:
+    from data.components import RectAlignments
 
 
 class Entity(Sprite):
     """Base class for all the game's entities."""
+
     def __init__(self, spawn: tuple[int, int], sprite: pygame.Surface,
-                 sprite_rect: Optional[pygame.Rect] = None,
+                 sprite_rect: pygame.Rect | None = None,
                  spawn_alignment: RectAlignments = "center"):
         Sprite.__init__(self)
         self._spawn = spawn
@@ -22,28 +28,28 @@ class Entity(Sprite):
         self.move_to_spawn()
 
     @property
-    def spawn(self):
+    def spawn(self) -> tuple[int, int]:
         return self._spawn
 
     @property
-    def rect(self):
+    def rect(self) -> pygame.Rect:
         return self._rect
 
     @property
-    def abs_rect(self):
+    def abs_rect(self) -> pygame.Rect:
         return self._abs_rect
 
-    def move_to_spawn(self):
+    def move_to_spawn(self) -> None:
         setattr(self._rect, self.spawn_alignment, self._spawn)
 
     @override
-    def update(self):
+    def update(self) -> None:
         ...
 
-    def blit(self):
+    def blit(self) -> None:
         screen.blit(self.sprite, self._rect)
 
-    def on_collide(self, collided_sprite):
+    def on_collide(self, collided_sprite: Entity) -> None:
         ...
 
     def __repr__(self):
@@ -53,10 +59,11 @@ class Entity(Sprite):
 
 class EntityGroup(pygame.sprite.Group):
     """Child class of `pygame.sprite.Group` that includes a `blit()` method."""
+
     def __init__(self):
         super().__init__()
 
-    def blit(self):
+    def blit(self) -> None:
         for sprite in self.sprites():
             sprite.blit()
 
@@ -68,9 +75,9 @@ class Animation:
         self.current_frame = 0
         self.time_since_last_frame = 0
         self.is_playing = True
-        self.direction = 1  # 1 for forward, -1 for backward
+        self.direction = 1
 
-    def update(self):
+    def update(self) -> None:
         """Update the current frame based on time and direction (dt in milliseconds)."""
         if not self.is_playing:
             return
@@ -89,16 +96,16 @@ class Animation:
                     self.current_frame = 0
                     self.is_playing = False
 
-    def get_frame(self):
+    def get_frame(self) -> pygame.Surface:
         return self.frames[self.current_frame]
 
-    def reset(self, *, reverse: bool = False):
+    def reset(self, *, reverse: bool = False) -> None:
         """Reset the animation to the first frame, forward or backward."""
         self.current_frame = 0 if not reverse else len(self.frames) - 1
         self.time_since_last_frame = 0
         self.is_playing = True
         self.direction = -1 if reverse else 1
 
-    def set_direction(self, *, forward: bool):
+    def set_direction(self, *, forward: bool) -> None:
         """Set the animation direction."""
         self.direction = 1 if forward else -1

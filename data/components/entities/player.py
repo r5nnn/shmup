@@ -25,6 +25,7 @@ class PlayerStats(TypedDict):
 
 class Player(Entity, ABC):
     """Base class for all the game's players."""
+
     def __init__(self, game: "Game",
                  spawn: tuple[int, int],
                  spawn_alignment: RectAlignments = "center",
@@ -221,7 +222,7 @@ class Remi(Player, metaclass=SingletonABCMeta):
             screen.blit(sprite, sprite_position)
 
     @override
-    def attack(self):
+    def attack(self) -> None:
         """Fires a bullet and triggers an animation frame update."""
         bullet_left = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4),
                                    spawn_location=(-15, 5), spawn_alignment="topleft")

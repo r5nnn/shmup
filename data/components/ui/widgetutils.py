@@ -1,22 +1,28 @@
-from abc import ABC, abstractmethod
-from typing import override
+"""Module including the widget base class and other utilities for them to use."""
+from __future__ import annotations
 
-from data.components import RectAlignments
+from abc import ABC, abstractmethod
+from typing import override, Any
+
+from typing import TYPE_CHECKING
 from data.core.utils import Validator
 from . import widgethandler
+
+if TYPE_CHECKING:
+    from data.components import RectAlignments
 
 
 class AlignmentNeeded(Validator):
     @override
-    def _validate(self, instance, value):
-        instance._requires_realignment = True
+    def _validate(self, instance: Any, value: Any) -> None:
+        instance._requires_realignment = True  # noqa: SLF001
 
 
 class RenderNeeded(AlignmentNeeded):
     @override
-    def _validate(self, instance, value):
+    def _validate(self, instance: Any, value: Any) -> None:
         super()._validate(instance, value)
-        instance._requires_rerender = True
+        instance._requires_rerender = True  # noqa: SLF001
 
 
 class WidgetBase(ABC):
@@ -25,7 +31,7 @@ class WidgetBase(ABC):
     align = AlignmentNeeded()
 
     def __init__(self, position: tuple[int, int],
-                 align: RectAlignments = 'topleft',
+                 align: RectAlignments = "topleft", *,
                  sub_widget: bool = False):
         self._x, self._y = position
         self._align = align
@@ -44,8 +50,8 @@ class WidgetBase(ABC):
     def blit(self) -> None:
         ...
 
-    def contains(self, x, y):
-        if not self.interactable:
+    def contains(self, x: int, y: int) -> bool:
+        if not self.interactable:  # noqa: RET503
             return False
 
     def hide(self) -> None:

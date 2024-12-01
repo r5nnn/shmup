@@ -1,11 +1,10 @@
-"""Module that prepares the game for running by initialising the games components.
+"""Module for preparing the game to run by initialising the game's components."""
+from __future__ import annotations
 
-Initialises pygame and creates references to files/filepaths. Contains global """
 import json
 import logging
 import os
 from pathlib import Path
-from typing import Optional
 
 import pygame
 
@@ -29,8 +28,11 @@ def parse_spritesheet(spritesheet_file: Path) -> list[pygame.Surface]:
     """Gets the subsurfaces from a spritesheet image.
 
     Splits a spritesheet (image) file into into subsurfaces based on the metadata of
-    the spritesheet stored in a json file of the same name. Result is stored in a tuple
-    which depends on the order of the sprites referenced in the json file."""
+    the spritesheet stored in a json file of the same name. Json file should be
+    formatted according to aseprite's spritesheet json output format. Result is stored
+    in a tuple. Order of list returned depends on the order of the sprites referenced
+    in the json file.
+    """
     spritesheet = pygame.image.load(spritesheet_file).convert_alpha()
     metadata = spritesheet_file.with_suffix(".json")
     try:
@@ -53,9 +55,11 @@ class Load:
     """Class for loading the filepaths of files in a directory.
 
     Recursively searches directories unless explicitly mentioned to skip in
-    `exclude_dirs`."""
+    `exclude_dirs`.
+    """
+
     def __init__(self, directory: Path, *accept: str,
-                 exclude_dirs: Optional[list[str]] = None):
+                 exclude_dirs: list[str] | None = None):
         self.files = {}
         self.exclude_dirs = exclude_dirs if exclude_dirs else []
         for path, _, files in os.walk(directory):
@@ -76,7 +80,9 @@ class LoadSprites:
 
     Recursively searches directories unless explicitly mentioned to skip in
     `exclude_dirs`. If file has an accompanying json file, attempts to load spritesheet
-    using the `parse_spritesheet` function."""
+    using the `parse_spritesheet` function.
+    """
+
     def __init__(self, directory: Path):
         self.files = {}
         self.default = None

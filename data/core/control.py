@@ -1,8 +1,9 @@
 """Module containing the game loop and a function to quit it.
 
 Must be initialised with `state_dict` and `start_state` otherwise a RuntimeError will be
-raised."""
-from typing import Type
+raised.
+"""
+from __future__ import annotations
 
 import pygame.display
 
@@ -12,19 +13,19 @@ from data.components.input import InputBinder
 from data.states.state import State, state_manager
 
 
-def initialise(state_dict: dict[str, Type[State]], start_state: str) -> None:
+def initialise(state_dict: dict[str, type[State]], start_state: str) -> None:
     state_manager.quit_game = quit_game
     state_manager.state_dict = state_dict
     state_manager.append(start_state)
 
 
-def _toggle_tag(tag):
+def _toggle_tag(tag: int) -> None:
     global _screen_flags
     _screen_flags ^= tag
     pygame.display.set_mode((1920, 1080), _screen_flags)
 
 
-def main():
+def main() -> None:
     if state_manager.state_dict is None:
         msg = "Control module has not been initialised with state_dict."
         raise RuntimeError(msg)
@@ -42,7 +43,7 @@ def main():
         pygame.display.flip()
 
 
-def quit_game():
+def quit_game() -> None:
     global _running
     _running = False
 

@@ -1,3 +1,5 @@
+"""Module containing a collection on functions for checking if any inputs are active."""
+from __future__ import annotations
 from typing import Callable, override, Literal
 
 import pygame
@@ -7,7 +9,7 @@ from data.core.utils import Observer, SingletonABCMeta
 input_types = Literal[
     "key", "keydown", "keyup",
     "mouse", "mousedown", "mouseup",
-    "quit"
+    "quit",
 ]
 
 
@@ -80,7 +82,12 @@ def get_mouse_pos() -> tuple[int, int]:
     return _mouse_pos
 
 
-class _InputBinder(Observer, metaclass=SingletonABCMeta):
+class InputBinder(Observer, metaclass=SingletonABCMeta):
+    """Singleton for binding inputs to call a function.
+
+    For handling held persistent inputs, just check for the input directly.
+    """
+
     def __init__(self):
         super().__init__()
         self._input_checks = {
@@ -90,7 +97,7 @@ class _InputBinder(Observer, metaclass=SingletonABCMeta):
             "mouse": is_mouse_pressed,
             "mousedown": is_mouse_down,
             "mouseup": is_mouse_up,
-            "quit": lambda: get_quit
+            "quit": lambda: get_quit,
         }
 
     @override
@@ -115,15 +122,15 @@ class _InputBinder(Observer, metaclass=SingletonABCMeta):
                 action()
                 used_inputs.update(inputs)
 
-    def _are_inputs_active(self, inputs, used_inputs):
+    def _are_inputs_active(self, inputs: tuple[str, int], used_inputs: set) -> bool:
         for input_type, value in inputs:
             if (input_type, value) in used_inputs:
                 return False
 
             check_func = self._input_checks.get(input_type)
-            if check_func and not check_func(value):
+            if check_func is not None and not check_func(value):
                 return False
         return True
 
 
-InputBinder = _InputBinder()
+InputBinder = InputBinder()
