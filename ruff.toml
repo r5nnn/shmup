@@ -1,7 +1,11 @@
 [lint]
 select = ["ALL"]
 ignore = [
-    # general error types
-    "ANN", "D", "FA",
-    # specific errors
-    "PLW0603", "N812", "I001", "E402", "EXE002", "PLR0913"]
+    # unsorted warnings
+    "N812", "E402", "EXE002", "I001", "F401", "ARG002",
+    # pylint
+    "PLW0603", "PLR0913",
+    # annotations
+    "ANN002", "ANN003", "ANN204", "ANN401",
+    # docstrings
+    "D101", "D102", "D103", "D105", "D107", "D401"]

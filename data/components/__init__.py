@@ -9,6 +9,3 @@ RectAlignments = Literal[
 from data.components.audio import Audio, background_audio, button_audio
 from data.components.colors import shift_rgb, ColorGradient
 from data.components.input import InputBinder
-
-__all__ = ["Audio", "background_audio", "button_audio", "shift_rgb", "ColorGradient",
-           "InputBinder", "RectAlignments"]
