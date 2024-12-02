@@ -69,29 +69,24 @@ def blit() -> None:
     # Conversion is used to prevent errors when widgets are added/removed during
     # iteration a.k.a safe iteration
     for widget in list(widgets):
-        if not widget.sub_widget:
-            widget.blit()
+        widget.blit()
 
 
 def update() -> None:
     blocked = False
     for widget in list(widgets)[::-1]:
-        if not widget.sub_widget:
-            if widget.disabled:
-                widget.update()
-    
-            elif not blocked or not widget.contains(*InputManager.get_mouse_pos()):
-                widget.update()
-            # Ensure widgets covered by others are not affected (widgets created later)
-            if widget.contains(*InputManager.get_mouse_pos()):
-                blocked = True
+        if widget.disabled:
+            widget.update()
+
+        elif not blocked or not widget.contains(*InputManager.get_mouse_pos()):
+            widget.update()
+        # Ensure widgets covered by others are not affected (widgets created later)
+        if widget.contains(*InputManager.get_mouse_pos()):
+            blocked = True
 
 
 def add_widget(widget: WidgetBase) -> None:
     if widget not in widgets:
-        if widget.sub_widget:
-            warnings.warm(f"Widget: {widget!r} being added to widgethandler is a sub-"
-                          f"widget.", stacklevel=2)
         widgets.add(widget)
         move_to_top(widget)
     else:
