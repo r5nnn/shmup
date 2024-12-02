@@ -38,7 +38,6 @@ class WidgetBase(ABC):
         self.sub_widget = sub_widget
 
         self._hidden = False
-        self._disabled = False
         self._requires_realignment = False
 
     @abstractmethod
@@ -63,8 +62,10 @@ class WidgetBase(ABC):
         if not self.sub_widget:
             widgethandler.move_to_top(self)
 
-    def disable(self) -> None:
-        self._disabled = True
+    @property
+    def disabled(self) -> bool:
+        return self._disabled
 
-    def enable(self) -> None:
-        self._disabled = False
+    @disabled.setter
+    def disabled(self, value: bool) -> None:
+        self._disabled = value
