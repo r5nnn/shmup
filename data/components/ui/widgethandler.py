@@ -69,51 +69,55 @@ def blit() -> None:
     # Conversion is used to prevent errors when widgets are added/removed during
     # iteration a.k.a safe iteration
     for widget in list(widgets):
-        widget.blit()
+        if not widget.sub_widget:
+            widget.blit()
 
 
 def update() -> None:
     blocked = False
     for widget in list(widgets)[::-1]:
-        if widget.disabled:
-            widget.update()
-            continue
-
-        if not blocked or not widget.contains(*InputManager.get_mouse_pos()):
-            widget.update()
-        # Ensure widgets covered by others are not affected (widgets created later)
-        if widget.contains(*InputManager.get_mouse_pos()):
-            blocked = True
+        if not widget.sub_widget:
+            if widget.disabled:
+                widget.update()
+    
+            elif not blocked or not widget.contains(*InputManager.get_mouse_pos()):
+                widget.update()
+            # Ensure widgets covered by others are not affected (widgets created later)
+            if widget.contains(*InputManager.get_mouse_pos()):
+                blocked = True
 
 
 def add_widget(widget: WidgetBase) -> None:
     if widget not in widgets:
+        if widget.sub_widget:
+            warnings.warm(f"Widget: {widget!r} being added to widgethandler is a sub-"
+                          f"widget.", stacklevel=2)
         widgets.add(widget)
         move_to_top(widget)
     else:
-        warnings.warn(f"Attempted to add widget: {widget} which already "
-                      f"existed in the widgethandler: {widgets}.", stacklevel=2)
+        warnings.warn(f"Attempted to add widget: {widget!r} which already "
+                      f"existed in the widgethandler: {widgets!r}.", stacklevel=2)
 
 
 def remove_widget(widget: WidgetBase) -> None:
     try:
         widgets.remove(widget)
     except ValueError:
-        warnings.warn(f"Attempted to remove widget: {widget} when widget not "
-                      f"in the widgethandler: {widgets}.", stacklevel=2)
+        warnings.warn(f"Attempted to remove widget: {widget!r} when widget not "
+                      f"in the widgethandler: {widgets!r}.", stacklevel=2)
 
 
 def move_to_top(widget: WidgetBase) -> None:
     try:
         widgets.move_to_end(widget)
     except KeyError:
-        warnings.warn(f"Attempted to move widget: {widget} to the top when "
-                      f"widget not in widgethandler: {widgets}.", stacklevel=2)
+        warnings.warn(f"Attempted to move widget: {widget!r} to the top when "
+                      f"widget not in widgethandler: {widgets!r}.", stacklevel=2)
 
 
 def move_to_bottom(widget: WidgetBase) -> None:
     try:
         widgets.move_to_start(widget)
     except KeyError:
-        warnings.warn(f"Error: Tried to move {widget} to bottom when {widget} not in "
+        warnings.warn(f"Error: Tried to move {widget!r} to bottom when {widget!r} not in "
                       f"WidgetHandler.", stacklevel=2)
