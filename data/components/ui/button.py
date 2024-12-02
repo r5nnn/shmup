@@ -132,7 +132,7 @@ class ClickInputMixin(_ButtonMixinFields):
 class ToggleInputMixin(_ButtonMixinFields):
     def __init__(self):
         self.toggled = False
-
+        self.sub_widget = False
     @staticmethod
     def checktoggle(method: _T) -> _T:
         @wraps(method)
@@ -177,9 +177,9 @@ class ToggleInputMixin(_ButtonMixinFields):
             self._align_rect(self._rect, self._align, (self._x, self._y))
         x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
-            if InputManager.is_mouse_down(Mouse.LEFTCLICK) and not self.toggled:
+            if and InputManager.is_mouse_down(Mouse.LEFTCLICK) and not self.toggled:
                 self.toggle_on()
-            elif InputManager.is_mouse_down(Mouse.LEFTCLICK) and self.toggled:
+            elif not self.sub_widget and InputManager.is_mouse_down(Mouse.LEFTCLICK) and self.toggled:
                 self.toggle_off()
             elif not self.toggled:
                 self.update_hover()
@@ -279,6 +279,8 @@ class ButtonBase(WidgetBase, ABC):
 class ToggleGroup:
     def __init__(self, *buttons):
         self.buttons = list(buttons)
+        for button in self.buttons:
+            button.sub_widget = True
         if self.buttons:
             # Automatically toggle on the first button
             self.buttons[0].toggle_on(silent=True)
@@ -292,13 +294,6 @@ class ToggleGroup:
                 for other_button in self.buttons:
                     if other_button != button and other_button.toggled:
                         other_button.toggle_off()
-
-    def add_button(self, button: ToggleInputMixin) -> None:
-        """Add more buttons to the group if needed."""
-        self.buttons.append(button)
-        if len(self.buttons) == 1:
-            # Toggle the first button if it's the only one
-            button.toggle_on(silent=True)
 
 
 @dataclass(kw_only=True)
