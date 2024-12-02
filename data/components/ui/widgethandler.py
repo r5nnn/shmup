@@ -75,7 +75,7 @@ def blit() -> None:
 def update() -> None:
     blocked = False
     for widget in list(widgets)[::-1]:
-        if not widget.interactable:
+        if widget.disabled:
             widget.update()
             continue
 
