@@ -177,7 +177,7 @@ class ToggleInputMixin(_ButtonMixinFields):
             self._align_rect(self._rect, self._align, (self._x, self._y))
         x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
-            if and InputManager.is_mouse_down(Mouse.LEFTCLICK) and not self.toggled:
+            if InputManager.is_mouse_down(Mouse.LEFTCLICK) and not self.toggled:
                 self.toggle_on()
             elif not self.sub_widget and InputManager.is_mouse_down(Mouse.LEFTCLICK) and self.toggled:
                 self.toggle_off()

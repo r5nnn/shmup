@@ -38,6 +38,7 @@ class WidgetBase(ABC):
         self.sub_widget = sub_widget
 
         self._hidden = False
+        self._disabled = False
         self._requires_realignment = False
 
     @abstractmethod
@@ -49,7 +50,7 @@ class WidgetBase(ABC):
         ...
 
     def contains(self, x: int, y: int) -> bool:
-        if not self.interactable:  # noqa: RET503
+        if self._disabled:
             return False
 
     def hide(self) -> None:

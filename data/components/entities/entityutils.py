@@ -90,11 +90,11 @@ class Animation:
 
             # Handle end of animation for both directions
             if self.current_frame >= len(self.frames):
-                    self.current_frame = len(self.frames) - 1
-                    self.is_playing = False
+                self.current_frame = len(self.frames) - 1
+                self.is_playing = False
             elif self.current_frame < 0:
-                    self.current_frame = 0
-                    self.is_playing = False
+                self.current_frame = 0
+                self.is_playing = False
 
     def get_frame(self) -> pygame.Surface:
         return self.frames[self.current_frame]

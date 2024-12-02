@@ -13,20 +13,19 @@ class Options(State):
         self.background = pygame.image.load(image_paths("menu")).convert()
         self.title = pygame.transform.scale_by(
             pygame.image.load(image_paths("title options")), 4)
-        self.bg_rect = pygame.Rect(
-            0, screen_size[1] * 0.1 + 20 + self.title.get_height(),
-            screen_size[0] * 0.8, (screen_size[1] - self.title.get_height()) * 0.8)
+        self.bg_rect = pygame.Rect(0, screen_size[1] * 0.1 + 20 + self.title.get_height(),
+                                   screen_size[0] * 0.8, (screen_size[1] - self.title.get_height()) * 0.8)
         self.bg_rect.centerx = screen_center[0]
         self.bg_surf = pygame.Surface(self.bg_rect.size)
         self.bg_surf.fill(Colors.PRIMARY)
         self.bg_surf.set_alpha(96)
         self.current_option = None
         config = ToggleableTextButtonConfig(position=self.bg_rect.topleft,
-                                  size=(round(self.bg_rect.width / 3), 30),
+                                            size=(round(self.bg_rect.width / 3), 30),
                                             colors=(Colors.PRIMARY,
                                                     Colors.SECONDARY,
                                                     Colors.ACCENT),
-                                  text="Graphics")
+                                            text="Graphics")
         self.graphics = ToggleableTextButton(config)
         config.position = self.graphics.rect.topright
         config.text = "Keybinds"
@@ -35,6 +34,7 @@ class Options(State):
         config.text = "Audio"
         self.audio = ToggleableTextButton(config)
         self.options = ToggleGroup(self.graphics, self.audio, self.keybinds)
+        widgethandler.add_widget((self.graphics, self.audio, self.keybinds))
 
     def update(self):
         super().update()
@@ -50,9 +50,6 @@ class Options(State):
         screen.blit(self.title,
                     (screen_size[0] / 2 - self.title.get_width() / 2,
                      screen_size[1] * 0.1))
-        self.graphics.blit()
-        self.keybinds.blit()
-        self.audio.blit()
         widgethandler.blit()
         match self.current_option:
             case 0:
