@@ -313,8 +313,8 @@ class TextButtonBase(ButtonBase, ABC):
         self.text_colors = (config.text_colors or
                             tuple(pygame.Color("White") for _ in range(3)))
         self._text_color = self.text_colors[0]
-        self._text = Text((0, 0), config.text, config.font, config.font_size,
-                          color=self._text_color, sub_widget=True)
+        self.text = Text((0, 0), config.text, config.font, config.font_size,
+                         color=self._text_color, sub_widget=True)
 
         self.text_align = config.text_align
         self.margin = config.margin
@@ -338,20 +338,16 @@ class TextButtonBase(ButtonBase, ABC):
         # Update text surface position
         text_object.x, text_object.y = self.text_rect.topleft
 
-    @property
-    def text(self) -> Text:
-        return self._text
-
     @override
     def _align_rect(self, rect: pygame.Rect, align: RectAlignments,
                     coords: tuple[int, int]) -> None:
         super()._align_rect(rect, align, coords)
-        self._align_text(self._text)
+        self._align_text(self.text)
 
     @override
     def blit(self) -> None:
         super().blit()
-        self._text.blit()
+        self.text.blit()
 
 
 class TextButtonConfig(ToggleableTextButtonConfig):

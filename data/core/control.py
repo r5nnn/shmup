@@ -11,6 +11,7 @@ import data.components.input as InputManager
 import data.core.utils
 from data.components.input import InputBinder
 from data.states.state import State, state_manager
+from data.core.data import GameData
 
 
 def initialise(state_dict: dict[str, type[State]], start_state: str) -> None:
@@ -20,9 +21,8 @@ def initialise(state_dict: dict[str, type[State]], start_state: str) -> None:
 
 
 def _toggle_tag(tag: int) -> None:
-    global _screen_flags
-    _screen_flags ^= tag
-    pygame.display.set_mode((1920, 1080), _screen_flags)
+    GameData.screen_flags ^= tag
+    pygame.display.set_mode((1920, 1080), GameData.screen_flags)
 
 
 def main() -> None:
@@ -39,7 +39,7 @@ def main() -> None:
         state_manager.current_state.update()
         state_manager.current_state.render()
 
-        data.core.utils.dt = _clock.tick(_refresh_rate) / 1000.0
+        data.core.utils.dt = _clock.tick(GameData.refresh_rate) / 1000.0
         pygame.display.flip()
 
 
@@ -48,10 +48,10 @@ def quit_game() -> None:
     _running = False
 
 
-_screen_flags = (pygame.FULLSCREEN | pygame.SCALED)
+GameData.screen_flags = (pygame.FULLSCREEN | pygame.SCALED)
 _running = True
 _clock = pygame.time.Clock()
-_refresh_rate = 165
+GameData.refresh_rate = 165
 
 InputBinder.register(("keydown", pygame.K_F11),
                      action=lambda: _toggle_tag(pygame.FULLSCREEN))

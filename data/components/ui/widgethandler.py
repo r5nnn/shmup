@@ -85,13 +85,15 @@ def update() -> None:
             blocked = True
 
 
-def add_widget(widget: WidgetBase) -> None:
-    if widget not in widgets:
-        widgets.add(widget)
-        move_to_top(widget)
-    else:
-        warnings.warn(f"Attempted to add widget: {widget!r} which already "
-                      f"existed in the widgethandler: {widgets!r}.", stacklevel=2)
+def add_widget(*widget_tuple: WidgetBase) -> None:
+    for widget in widget_tuple:
+        if widget not in widgets:
+            widgets.add(widget)
+            move_to_top(widget)
+        else:
+            warnings.warn(f"Attempted to add widget: {widget!r} which already "
+                          f"existed in the widgethandler: {widgets!r}.",
+                          stacklevel=2)
 
 
 def remove_widget(widget: WidgetBase) -> None:
