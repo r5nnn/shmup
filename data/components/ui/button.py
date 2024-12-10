@@ -20,7 +20,7 @@ import pygame.display
 import data.components.input as InputManager
 from data.components import RectAlignments, button_audio
 from data.components.ui.text import Text
-from data.components.ui.widgetutils import WidgetBase
+from data.components.ui.widgetutils import WidgetBase, AlignmentNeeded
 from data.core import screen, sprites, Mouse
 
 if TYPE_CHECKING:
@@ -109,8 +109,6 @@ class ClickInputMixin(_ButtonMixinFields):
             self.border_color = self.border_colors[0]
 
     def update(self) -> None:
-        if self._requires_realignment:
-            self._align_rect(self._rect, self._align, (self._x, self._y))
         x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
             # button is released
@@ -173,8 +171,6 @@ class ToggleInputMixin(_ButtonMixinFields):
             self.border_color = self.border_colors[0]
 
     def update(self) -> None:
-        if self._requires_realignment:
-            self._align_rect(self._rect, self._align, (self._x, self._y))
         x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
             if InputManager.is_mouse_down(Mouse.LEFTCLICK) and not self.toggled:
@@ -274,6 +270,10 @@ class ButtonBase(WidgetBase, ABC):
         if self.colors is not None:
             pygame.draw.rect(screen, self.color, self._rect,
                              border_radius=self.radius)
+    
+    def update(self) -> None:
+        if self._requires_realignment:
+            self._align_rect(self._rect, self._align, (self._x, self._y))
 
 
 class ToggleGroup:
@@ -307,6 +307,7 @@ class ToggleableTextButtonConfig(ButtonConfig):
 
 
 class TextButtonBase(ButtonBase, ABC):
+    text = AlignmentNeeded()
     """Class for creating buttons with text labels."""
 
     def __init__(self, config: ToggleableTextButtonConfig):
@@ -343,11 +344,17 @@ class TextButtonBase(ButtonBase, ABC):
                     coords: tuple[int, int]) -> None:
         super()._align_rect(rect, align, coords)
         self._align_text(self.text)
+        print('ye')
 
     @override
     def blit(self) -> None:
         super().blit()
         self.text.blit()
+
+    @override
+    def update(self) -> None:
+        super().update()
+        self.text.update()
 
 
 class TextButtonConfig(ToggleableTextButtonConfig):
@@ -362,6 +369,7 @@ class TextButton(TextButtonBase, ClickInputMixin):
         TextButtonBase.__init__(self, config)
 
     def update(self) -> None:
+        super().update()
         ClickInputMixin.update(self)
 
 
@@ -371,6 +379,7 @@ class ToggleableTextButton(TextButtonBase, ToggleInputMixin):
         TextButtonBase.__init__(self, config)
 
     def update(self) -> None:
+        super().update()
         ToggleInputMixin.update(self)
 
 
@@ -449,6 +458,9 @@ class ImageButtonBase(ButtonBase, ABC):
             pygame.draw.rect(screen, self.color, self._rect, border_radius=self.radius)
 
         screen.blit(self._current_image, self.image_rect.topleft)
+    
+    def update(self) -> None:
+        super().update()
 
 
 class ImageButton(ImageButtonBase, ClickInputMixin):
