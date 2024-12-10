@@ -3,7 +3,6 @@ import pygame
 from data.components.ui import ToggleGroup, widgethandler, \
     ToggleableTextButton, ToggleableTextButtonConfig, Text
 from data.core import Colors
-from data.core.data import GameData
 from data.core.prepare import image_paths, screen, screen_size, screen_center
 from data.states.state import State
 
@@ -39,9 +38,11 @@ class Options(State):
         self._padding = 20
         fullscreen_text = Text((self.bg_rect.left + self._padding, self.bg_rect.top + self.graphics.height + self._padding),
                                text="Fullscreen:")
-        fullscreen_graphics_config = ToggleableTextButtonConfig(position=(self.bg_rect.left + self._padding, fullscreen_text.rect.top + self._padding), size=(75, 30),
+        fullscreen_graphics_config = ToggleableTextButtonConfig(position=(fullscreen_text.rect.right + self._padding,
+                                                                          fullscreen_text.rect.centery),
+                                                                size=(200, 30),
                                                                 colors=(Colors.PRIMARY, Colors.SECONDARY, Colors.ACCENT),
-                                                                text="")
+                                                                text="ugh", align="midleft")
         fullscreen_graphics = ToggleableTextButton(fullscreen_graphics_config)
         self.option_widgets = ({"fullscreen": fullscreen_text, "fullscreen button": fullscreen_graphics}), ({}), ({})
 
@@ -56,17 +57,17 @@ class Options(State):
     def update(self):
         super().update()
         self.options.update()
-        widgethandler.update()
         for index, option in enumerate((self.graphics, self.keybinds, self.audio)):
             if option.toggled:
                 self.current_option = index
         match self.current_option:
             case 0:
-                if GameData.screen_flags & pygame.FULLSCREEN:
+                if screen.get_flags() & pygame.FULLSCREEN:
                     text = "True"
                 else:
                     text = "False"
                 self.option_widgets[self.current_option]["fullscreen button"].text.text = text
+        widgethandler.update()
         self.update_widget(self.current_option) if self.current_option is not None else None
 
     def render(self):

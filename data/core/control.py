@@ -10,6 +10,7 @@ import pygame.display
 import data.components.input as InputManager
 import data.core.utils
 from data.components.input import InputBinder
+from data.core import screen
 from data.states.state import State, state_manager
 from data.core.data import GameData
 
@@ -21,8 +22,8 @@ def initialise(state_dict: dict[str, type[State]], start_state: str) -> None:
 
 
 def _toggle_tag(tag: int) -> None:
-    GameData.screen_flags ^= tag
-    pygame.display.set_mode((1920, 1080), GameData.screen_flags)
+    flags = screen.get_flags() ^ tag
+    pygame.display.set_mode((1920, 1080), flags)
 
 
 def main() -> None:
@@ -48,7 +49,6 @@ def quit_game() -> None:
     _running = False
 
 
-GameData.screen_flags = (pygame.FULLSCREEN | pygame.SCALED)
 _running = True
 _clock = pygame.time.Clock()
 GameData.refresh_rate = 165
