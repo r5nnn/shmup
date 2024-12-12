@@ -6,8 +6,19 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Callable, ClassVar, Any, TypeVar, Generic
 
+import pygame
+
 dt = 1.0
 _T = TypeVar("_T")
+FLAG_NAMES = {
+    pygame.FULLSCREEN: "FULLSCREEN",
+    pygame.RESIZABLE: "RESIZABLE",
+    pygame.SCALED: "SCALED",
+    pygame.NOFRAME: "NOFRAME",
+    pygame.SHOWN: "SHOWN",
+    pygame.HIDDEN: "HIDDEN",
+    pygame.OPENGL: "OPENGL",
+}
 
 
 @dataclass(frozen=True)
