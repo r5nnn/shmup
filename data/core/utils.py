@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Callable, ClassVar, Any, TypeVar, Generic
+from typing import Callable, ClassVar, Any, TypeVar, Generic, override
 
 import pygame
 
@@ -47,20 +47,41 @@ class Observer(ABC):
     """Implementation of the observer design pattern."""
 
     def __init__(self):
-        self._handlers = defaultdict(list)
+        self._handlers = ()
 
     @abstractmethod
     def notify(self, *args) -> None:
-        """Calls the registered handler."""
+        """Notify the hanlder of updates."""
 
     @abstractmethod
+    def register(self, handler: Any, *args) -> None:
+        """Registers the handler."""
+
+    @abstractmethod
+    def deregister(self, handler: Any, *args) -> None:
+        """Deregisters the handler."""
+
+    def is_registered(self, handler: Any, *args) -> bool:
+        return handler in self._handlers
+
+
+# noinspection PyMethodOverriding
+class EventObserver(Observer, ABC):
+    """Implementation of the observer design pattern using events."""
+
+    def __init__(self):
+        super().__init__()
+        self._handlers = defaultdict(list)
+
+    @override
     def register(self, event: int, handler: Callable) -> None:
         """Registers the event to its handler."""
 
-    @abstractmethod
+    @override
     def deregister(self, event: int, handler: Callable) -> None:
         """Deregisters the event from its handler."""
 
+    @override
     def is_registered(self, event: int, handler: Callable) -> bool:
         return event in self._handlers and handler in self._handlers[event]
 
