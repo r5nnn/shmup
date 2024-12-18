@@ -15,14 +15,14 @@ if TYPE_CHECKING:
 class AlignmentNeeded(Validator):
     @override
     def _validate(self, instance: Any, value: Any) -> None:
-        instance._requires_realignment = True  # noqa: SLF001
+        instance.requires_realignment = True
 
 
 class RenderNeeded(AlignmentNeeded):
     @override
     def _validate(self, instance: Any, value: Any) -> None:
         super()._validate(instance, value)
-        instance._requires_rerender = True  # noqa: SLF001
+        instance.requires_rerender = True
 
 
 class WidgetBase(ABC):
@@ -39,7 +39,7 @@ class WidgetBase(ABC):
 
         self._hidden = False
         self._disabled = False
-        self._requires_realignment = False
+        self.requires_realignment = False
 
     @abstractmethod
     def update(self) -> None:
@@ -50,7 +50,7 @@ class WidgetBase(ABC):
         ...
 
     def contains(self, x: int, y: int) -> bool:
-        if self._disabled:
+        if self._disabled:  # noqa: RET503
             return False
 
     def hide(self) -> None:

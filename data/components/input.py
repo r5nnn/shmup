@@ -1,10 +1,12 @@
 """Module containing a collection on functions for checking if any inputs are active."""
 from __future__ import annotations
+
 from typing import Callable, override, Literal
 
 import pygame
 
-from data.core.utils import Observer, SingletonABCMeta
+from data.core import EventObserver
+from data.core.utils import SingletonABCMeta
 
 input_types = Literal[
     "key", "keydown", "keyup",
@@ -82,7 +84,7 @@ def get_mouse_pos() -> tuple[int, int]:
     return _mouse_pos
 
 
-class _InputBinder(Observer, metaclass=SingletonABCMeta):
+class _InputBinder(EventObserver, metaclass=SingletonABCMeta):
     """Singleton for binding inputs to call a function.
 
     For handling held persistent inputs, just check for the input directly.

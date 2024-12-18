@@ -46,7 +46,7 @@ class Text(WidgetBase):
         self._antialias = antialias
         self._text_surface, self._rect = self._render_text(self._text, self._color)
         self._align_rect(self._rect, self._align, (self._x, self._y))
-        self._requires_rerender = False
+        self.requires_rerender = False
 
     @property
     def antialias(self) -> bool:
@@ -67,15 +67,16 @@ class Text(WidgetBase):
 
     @override
     def update(self) -> None:
-        if self._requires_rerender:
+        if self.requires_rerender:
             self._text_surface, self._rect = self._render_text(self._text, self._color)
-        if self._requires_realignment:
+        if self.requires_realignment:
             self._align_rect(self._rect, self._align, (self._x, self._y))
 
     @override
     def contains(self, x: int, y: int) -> bool:
         return (self._x < x - screen.get_abs_offset()[0] < self._x + self._rect.width) \
             and (self._y < y - screen.get_abs_offset()[1] < self._y + self._rect.height)
+
 
     def _render_text(self, text: str,
                      color: pygame.Color | tuple) -> tuple[pygame.Surface, pygame.Rect]:

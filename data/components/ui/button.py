@@ -270,9 +270,9 @@ class ButtonBase(WidgetBase, ABC):
         if self.colors is not None:
             pygame.draw.rect(screen, self.color, self._rect,
                              border_radius=self.radius)
-    
+
     def update(self) -> None:
-        if self._requires_realignment:
+        if self.requires_realignment:
             self._align_rect(self._rect, self._align, (self._x, self._y))
 
 
@@ -307,8 +307,9 @@ class ToggleableTextButtonConfig(ButtonConfig):
 
 
 class TextButtonBase(ButtonBase, ABC):
-    text = AlignmentNeeded()
     """Class for creating buttons with text labels."""
+
+    text = AlignmentNeeded()
 
     def __init__(self, config: ToggleableTextButtonConfig):
         self.text_colors = (config.text_colors or
@@ -343,18 +344,19 @@ class TextButtonBase(ButtonBase, ABC):
     def _align_rect(self, rect: pygame.Rect, align: RectAlignments,
                     coords: tuple[int, int]) -> None:
         super()._align_rect(rect, align, coords)
-        self._align_text(self.text)
-        print('ye')
+        self._align_text(self._text)
 
     @override
     def blit(self) -> None:
         super().blit()
-        self.text.blit()
+        self._text.blit()
 
     @override
     def update(self) -> None:
+        if self._text.requires_realignment:
+            self.requires_realignment = True
         super().update()
-        self.text.update()
+        self._text.update()
 
 
 class TextButtonConfig(ToggleableTextButtonConfig):
@@ -458,7 +460,7 @@ class ImageButtonBase(ButtonBase, ABC):
             pygame.draw.rect(screen, self.color, self._rect, border_radius=self.radius)
 
         screen.blit(self._current_image, self.image_rect.topleft)
-    
+
     def update(self) -> None:
         super().update()
 
