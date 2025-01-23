@@ -257,6 +257,7 @@ class ButtonBase(WidgetBase, ABC):
 
     @override
     def contains(self, x: int, y: int) -> bool:
+        super().contains(x, y)g
         return (self._rect.left < x - screen.get_abs_offset()[0] <
                 self._rect.left + self._width) and \
                (self._rect.top < y - screen.get_abs_offset()[1] <

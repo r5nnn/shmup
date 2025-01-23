@@ -75,10 +75,7 @@ def blit() -> None:
 def update() -> None:
     blocked = False
     for widget in list(widgets)[::-1]:
-        if widget.disabled:
-            widget.update()
-
-        elif not blocked or not widget.contains(*InputManager.get_mouse_pos()):
+        if widget.disabled or not blocked or not widget.contains(*InputManager.get_mouse_pos()):
             widget.update()
         # Ensure widgets covered by others are not affected (widgets created later)
         if widget.contains(*InputManager.get_mouse_pos()):

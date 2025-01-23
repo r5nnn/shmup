@@ -202,7 +202,7 @@ class Remi(Player, metaclass=SingletonABCMeta):
         self.shift_animation.update()
 
     @override
-    def blit(self):
+    def blit(self) -> None:
         # Blit the main player sprite
         sprite_position = (round(self.x) - self.sprite.get_width() // 2,
                            round(self.y) - self.sprite.get_height() // 2)
