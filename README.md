@@ -1,4 +1,3 @@
-![](https://github.com/r5nnn/shmup/blob/main/assets/textures/title/logo_scaled.png)  
 <p align="center">
 Bullet hell OCR A-level project using pygame.  
 </p>
