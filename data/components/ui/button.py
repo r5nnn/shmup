@@ -392,9 +392,10 @@ class TextButton(TextButtonBase, ClickInputMixin):
 class ToggleableTextButton(TextButtonBase, ToggleInputMixin):
     def __init__(self, config: ToggleableTextButtonConfig):
         ToggleInputMixin.__init__(self, config.on_toggle_on, config.on_toggle_off, config.on_toggle)
-        self.text_tuple = config.text if isinstance(config.text, tuple) else config.text, config.text
+        print(config.text, isinstance(config.text, tuple))
+        self.text_tuple = config.text if isinstance(config.text, tuple) else (config.text) * 2
+        print(self.text_tuple)
         config.text = self.text_tuple[0]
-        print(config.text)
         TextButtonBase.__init__(self, config)
 
     def toggle_on(self, *, external: bool = False) -> None:
