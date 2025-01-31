@@ -42,7 +42,7 @@ class Options(State):
                                                                           fullscreen_text.rect.centery),
                                                                 size=(200, 30),
                                                                 colors=(Colors.PRIMARY, Colors.SECONDARY, Colors.ACCENT),
-                                                                text="ugh", align="midleft")
+                                                                text=("True", "False"), align="midleft", on_toggle=pygame.display.toggle_fullscreen)
         fullscreen_graphics = ToggleableTextButton(fullscreen_graphics_config)
         self.option_widgets = ({"fullscreen": fullscreen_text, "fullscreen button": fullscreen_graphics}), ({}), ({})
 
@@ -60,15 +60,14 @@ class Options(State):
         for index, option in enumerate((self.graphics, self.keybinds, self.audio)):
             if option.toggled:
                 self.current_option = index
+        widgethandler.update()
+        self.update_widget(self.current_option) if self.current_option is not None else None
         match self.current_option:
             case 0:
                 if screen.get_flags() & pygame.FULLSCREEN:
-                    text = "True"
+                    self.option_widgets[self.current_option]["fullscreen button"].toggle_on(external=True)
                 else:
-                    text = "False"
-                self.option_widgets[self.current_option]["fullscreen button"].text.text = text
-        widgethandler.update()
-        self.update_widget(self.current_option) if self.current_option is not None else None
+                    self.option_widgets[self.current_option]["fullscreen button"].toggle_off(external=True)
 
     def render(self):
         screen.blit(self.background, (0, 0))

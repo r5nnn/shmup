@@ -26,7 +26,6 @@ from data.core import screen, sprites, Mouse
 if TYPE_CHECKING:
     import types
 
-
 _T = TypeVar("_T", bound=Callable[..., Any])
 
 
@@ -128,33 +127,44 @@ class ClickInputMixin(_ButtonMixinFields):
 
 
 class ToggleInputMixin(_ButtonMixinFields):
-    def __init__(self):
+    def __init__(self, on_toggle_on, on_toggle_off, on_toggle):
+        self.on_toggle_off = on_toggle_off
+        self.on_toggle_on = on_toggle_on
+        self.on_toggle = on_toggle
         self.toggled = False
         self.sub_widget = False
+
     @staticmethod
     def checktoggle(method: _T) -> _T:
         @wraps(method)
         def wrapper(self, *args, **kwargs):  # noqa: ANN001, ANN202
             if not self.toggled:
                 method(self, *args, **kwargs)
+
         return wrapper
 
-    def toggle_on(self, *, silent: bool = False) -> None:
+    def toggle_on(self, *, external: bool = False) -> None:
         """Turn the toggle state on."""
         self.toggled = True
-        if self.click_audio_tag is not None and not silent:
+        if self.click_audio_tag is not None and not external:
             button_audio.play_audio(self.click_audio_tag, override=True)
         if self.colors is not None:
             self.color = self.colors[2]
         if self.border_colors is not None:
             self.border_color = self.border_colors[2]
+        if not external:
+            self.on_toggle_on() if self.on_toggle_on is not None else None
+            self.on_toggle() if self.on_toggle is not None else None
 
-    def toggle_off(self, *, silent: bool = False) -> None:
+    def toggle_off(self, *, external: bool = False) -> None:
         """Turn the toggle state off."""
         self.toggled = False
         # no need to toggle colors off since that is handled by update hover and idle
-        if self.release_audio_tag is not None and not silent:
+        if self.release_audio_tag is not None and not external:
             button_audio.play_audio(self.release_audio_tag, override=True)
+        if not external:
+            self.on_toggle_off() if self.on_toggle_off is not None else None
+            self.on_toggle() if self.on_toggle is not None else None
 
     @checktoggle
     def update_hover(self) -> None:
@@ -257,11 +267,11 @@ class ButtonBase(WidgetBase, ABC):
 
     @override
     def contains(self, x: int, y: int) -> bool:
-        super().contains(x, y)g
+        super().contains(x, y)
         return (self._rect.left < x - screen.get_abs_offset()[0] <
                 self._rect.left + self._width) and \
-               (self._rect.top < y - screen.get_abs_offset()[1] <
-                self._rect.top + self._height)
+            (self._rect.top < y - screen.get_abs_offset()[1] <
+             self._rect.top + self._height)
 
     @override
     def blit(self) -> None:
@@ -284,7 +294,7 @@ class ToggleGroup:
             button.sub_widget = True
         if self.buttons:
             # Automatically toggle on the first button
-            self.buttons[0].toggle_on(silent=True)
+            self.buttons[0].toggle_on(external=True)
 
     def update(self) -> None:
         for button in self.buttons:
@@ -299,12 +309,15 @@ class ToggleGroup:
 
 @dataclass(kw_only=True)
 class ToggleableTextButtonConfig(ButtonConfig):
-    text: str
+    text: tuple
     text_colors: tuple[tuple | pygame.Color] | None = None
     font: pygame.font.Font | None = None
     font_size: int = 32
     text_align: tuple[str, str] = None
     margin: int = 20
+    on_toggle_on: Callable | None = None
+    on_toggle_off: Callable | None = None
+    on_toggle: Callable | None = None
 
 
 class TextButtonBase(ButtonBase, ABC):
@@ -378,8 +391,19 @@ class TextButton(TextButtonBase, ClickInputMixin):
 
 class ToggleableTextButton(TextButtonBase, ToggleInputMixin):
     def __init__(self, config: ToggleableTextButtonConfig):
-        ToggleInputMixin.__init__(self)
+        ToggleInputMixin.__init__(self, config.on_toggle_on, config.on_toggle_off, config.on_toggle)
+        self.text_tuple = config.text if isinstance(config.text, tuple) else config.text, config.text
+        config.text = self.text_tuple[0]
+        print(config.text)
         TextButtonBase.__init__(self, config)
+
+    def toggle_on(self, *, external: bool = False) -> None:
+        super().toggle_on(external=external)
+        self.text.text = self.text_tuple[0]
+
+    def toggle_off(self, *, external: bool = False) -> None:
+        super().toggle_off(external=external)
+        self.text.text = self.text_tuple[1]
 
     def update(self) -> None:
         super().update()
