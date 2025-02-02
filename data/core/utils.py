@@ -3,33 +3,24 @@ from __future__ import annotations
 
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
-from dataclasses import dataclass
 from typing import Callable, ClassVar, Any, TypeVar, Generic, override
 
 import pygame
 
 dt = 1.0
-_T = TypeVar("_T")
+_flags = pygame.FULLSCREEN | pygame.SCALED
 
 
-@dataclass(frozen=True)
-class Mouse:
-    """Pygame style references to mouse buttons."""
-
-    LEFTCLICK = 1
-    MIDDLECLICK = 2
-    RIGHTCLICK = 3
-    SCROLLUP = 4
-    SCROLLDOWN = 5
+def toggle_flag(flag: int) -> None:
+    global _flags
+    _flags ^= flag
+    pygame.display.set_mode((1920, 1080), _flags)
 
 
-@dataclass(frozen=True)
-class Colors:
-    """Pygame style references to shmup's color palette."""
-
-    PRIMARY = (30, 30, 30)
-    SECONDARY = (35, 35, 35)
-    ACCENT = (85, 85, 85)
+def toggle_fullscreen() -> None:
+    global _flags
+    _flags ^= pygame.FULLSCREEN
+    pygame.display.toggle_fullscreen()
 
 
 class Singleton(type):
@@ -90,21 +81,21 @@ class SingletonABCMeta(Singleton, ABCMeta):
     """Class used to combine a Singleton and ABC for use as a metaclass."""
 
 
-class Validator(ABC, Generic[_T]):
+class Validator(ABC):
     """Descriptor abstract base class for validating when a property is set."""
 
     def __set_name__(self, owner: type, name: str):
         self.private_name = "_" + name
 
-    def __get__(self, instance: Any | None, owner: type | None = None) -> _T:
+    def __get__(self, instance: Any | None, owner: type | None = None):
         if instance is None:
             return self
         return getattr(instance, self.private_name)
 
-    def __set__(self, instance: Any, value: _T):
+    def __set__(self, instance: Any, value):
         self._validate(instance, value)
         setattr(instance, self.private_name, value)
 
     @abstractmethod
-    def _validate(self, instance: Any, value: _T) -> None:
+    def _validate(self, instance: Any, value: Any) -> None:
         pass

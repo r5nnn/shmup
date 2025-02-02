@@ -2,11 +2,13 @@ import pygame
 
 from data.components.ui import ToggleGroup, widgethandler, \
     ToggleableTextButton, ToggleableTextButtonConfig, Text
-from data.core import Colors
+from data.core.constants import PRIMARY, SECONDARY, ACCENT
 from data.core.prepare import image_paths, screen, screen_size, screen_center
 from data.states.state import State
+from data.core.control import toggle_fullscreen
 
 
+# noinspection PyTypeChecker
 class Options(State):
     def __init__(self):
         super().__init__()
@@ -17,14 +19,14 @@ class Options(State):
                                    screen_size[0] * 0.8, (screen_size[1] - self.title.get_height()) * 0.8)
         self.bg_rect.centerx = screen_center[0]
         self.bg_surf = pygame.Surface(self.bg_rect.size)
-        self.bg_surf.fill(Colors.PRIMARY)
+        self.bg_surf.fill(PRIMARY)
         self.bg_surf.set_alpha(96)
         self.current_option = None
         config = ToggleableTextButtonConfig(position=self.bg_rect.topleft,
                                             size=(round(self.bg_rect.width / 3), 30),
-                                            colors=(Colors.PRIMARY,
-                                                    Colors.SECONDARY,
-                                                    Colors.ACCENT),
+                                            colors=(PRIMARY,
+                                                    SECONDARY,
+                                                    ACCENT),
                                             text="Graphics")
         self.graphics = ToggleableTextButton(config)
         config.position = self.graphics.rect.topright
@@ -41,8 +43,8 @@ class Options(State):
         fullscreen_graphics_config = ToggleableTextButtonConfig(position=(fullscreen_text.rect.right + self._padding,
                                                                           fullscreen_text.rect.centery),
                                                                 size=(200, 30),
-                                                                colors=(Colors.PRIMARY, Colors.SECONDARY, Colors.ACCENT),
-                                                                text=("True", "False"), align="midleft", on_toggle=pygame.display.toggle_fullscreen)
+                                                                colors=(PRIMARY, SECONDARY, ACCENT),
+                                                                text=("True", "False"), align="midleft", on_toggle=toggle_fullscreen)
         fullscreen_graphics = ToggleableTextButton(fullscreen_graphics_config)
         self.option_widgets = ({"fullscreen": fullscreen_text, "fullscreen button": fullscreen_graphics}), ({}), ({})
 
@@ -65,9 +67,9 @@ class Options(State):
         match self.current_option:
             case 0:
                 if screen.get_flags() & pygame.FULLSCREEN:
-                    self.option_widgets[self.current_option]["fullscreen button"].toggle_on(external=True)
+                    self.option_widgets[self.current_option]["fullscreen button"].toggle_on()
                 else:
-                    self.option_widgets[self.current_option]["fullscreen button"].toggle_off(external=True)
+                    self.option_widgets[self.current_option]["fullscreen button"].toggle_off()
 
     def render(self):
         screen.blit(self.background, (0, 0))

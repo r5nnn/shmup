@@ -18,10 +18,11 @@ from typing import TYPE_CHECKING
 import pygame.display
 
 import data.components.input as InputManager
+from data.core.constants import LEFTCLICK
 from data.components import RectAlignments, button_audio
 from data.components.ui.text import Text
 from data.components.ui.widgetutils import WidgetBase, AlignmentNeeded
-from data.core import screen, sprites, Mouse
+from data.core import screen, sprites
 
 if TYPE_CHECKING:
     import types
@@ -66,8 +67,8 @@ class _ButtonMixinFields:
     release_audio_tag = str | None
     colors: tuple[tuple | pygame.Color] | None
     color: tuple | pygame.Color | None
-    border_colors = tuple[tuple | pygame.Color] | None
-    border_color = tuple | pygame.Color | None
+    border_colors:  tuple[tuple | pygame.Color] | None
+    border_color: tuple | pygame.Color | None
 
 
 class ClickInputMixin(_ButtonMixinFields):
@@ -111,13 +112,15 @@ class ClickInputMixin(_ButtonMixinFields):
         x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
             # button is released
-            if InputManager.is_mouse_up(Mouse.LEFTCLICK) and self.clicked:
+            if InputManager.is_mouse_up(LEFTCLICK) and self.clicked:
                 self.update_release()
                 self.on_release_call() if self.on_release_call is not None else None
             # button is clicked
-            elif InputManager.is_mouse_down(Mouse.LEFTCLICK):
+            elif InputManager.is_mouse_down(LEFTCLICK):
                 self.update_click()
-                self.on_click_call() if self.on_click_call is not None else None
+                if self.on_click_call is not None:
+                    self.clicked = False
+                    self.on_click_call()
             # button hovered
             elif not self.clicked:
                 self.update_hover()
@@ -143,28 +146,30 @@ class ToggleInputMixin(_ButtonMixinFields):
 
         return wrapper
 
-    def toggle_on(self, *, external: bool = False) -> None:
+    def toggle_on(self) -> None:
         """Turn the toggle state on."""
         self.toggled = True
-        if self.click_audio_tag is not None and not external:
-            button_audio.play_audio(self.click_audio_tag, override=True)
         if self.colors is not None:
             self.color = self.colors[2]
         if self.border_colors is not None:
             self.border_color = self.border_colors[2]
-        if not external:
-            self.on_toggle_on() if self.on_toggle_on is not None else None
-            self.on_toggle() if self.on_toggle is not None else None
 
-    def toggle_off(self, *, external: bool = False) -> None:
+    def _toggle_on(self) -> None:
+        self.toggle_on()
+        button_audio.play_audio(self.click_audio_tag, override=True)
+        self.on_toggle_on() if self.on_toggle_on is not None else None
+        self.on_toggle() if self.on_toggle is not None else None
+
+    def toggle_off(self) -> None:
         """Turn the toggle state off."""
         self.toggled = False
         # no need to toggle colors off since that is handled by update hover and idle
-        if self.release_audio_tag is not None and not external:
-            button_audio.play_audio(self.release_audio_tag, override=True)
-        if not external:
-            self.on_toggle_off() if self.on_toggle_off is not None else None
-            self.on_toggle() if self.on_toggle is not None else None
+
+    def _toggle_off(self) -> None:
+        self.toggle_off()
+        button_audio.play_audio(self.release_audio_tag, override=True)
+        self.on_toggle_off() if self.on_toggle_off is not None else None
+        self.on_toggle() if self.on_toggle is not None else None
 
     @checktoggle
     def update_hover(self) -> None:
@@ -183,10 +188,10 @@ class ToggleInputMixin(_ButtonMixinFields):
     def update(self) -> None:
         x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
-            if InputManager.is_mouse_down(Mouse.LEFTCLICK) and not self.toggled:
-                self.toggle_on()
-            elif not self.sub_widget and InputManager.is_mouse_down(Mouse.LEFTCLICK) and self.toggled:
-                self.toggle_off()
+            if InputManager.is_mouse_down(LEFTCLICK) and not self.toggled:
+                self._toggle_on()
+            elif not self.sub_widget and InputManager.is_mouse_down(LEFTCLICK) and self.toggled:
+                self._toggle_off()
             elif not self.toggled:
                 self.update_hover()
         else:
@@ -294,7 +299,7 @@ class ToggleGroup:
             button.sub_widget = True
         if self.buttons:
             # Automatically toggle on the first button
-            self.buttons[0].toggle_on(external=True)
+            self.buttons[0].toggle_on()
 
     def update(self) -> None:
         for button in self.buttons:
@@ -309,7 +314,7 @@ class ToggleGroup:
 
 @dataclass(kw_only=True)
 class ToggleableTextButtonConfig(ButtonConfig):
-    text: tuple
+    text: tuple | str
     text_colors: tuple[tuple | pygame.Color] | None = None
     font: pygame.font.Font | None = None
     font_size: int = 32
@@ -392,18 +397,16 @@ class TextButton(TextButtonBase, ClickInputMixin):
 class ToggleableTextButton(TextButtonBase, ToggleInputMixin):
     def __init__(self, config: ToggleableTextButtonConfig):
         ToggleInputMixin.__init__(self, config.on_toggle_on, config.on_toggle_off, config.on_toggle)
-        print(config.text, isinstance(config.text, tuple))
-        self.text_tuple = config.text if isinstance(config.text, tuple) else (config.text) * 2
-        print(self.text_tuple)
+        self.text_tuple = config.text if isinstance(config.text, tuple) else (config.text, config.text)
         config.text = self.text_tuple[0]
         TextButtonBase.__init__(self, config)
 
-    def toggle_on(self, *, external: bool = False) -> None:
-        super().toggle_on(external=external)
+    def toggle_on(self) -> None:
+        super().toggle_on()
         self.text.text = self.text_tuple[0]
 
-    def toggle_off(self, *, external: bool = False) -> None:
-        super().toggle_off(external=external)
+    def toggle_off(self) -> None:
+        super().toggle_off()
         self.text.text = self.text_tuple[1]
 
     def update(self) -> None:

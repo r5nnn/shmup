@@ -45,7 +45,6 @@ class StateManager(metaclass=Singleton):
         self.state_dict = {}
         self._state_stack = []
         self._current_state = None
-        self.quit_game = None
 
     @property
     def state_stack(self):
@@ -120,9 +119,10 @@ class StateManager(metaclass=Singleton):
             warnings.warn(f"State {state_name} not found in the state stack.")
 
     def quit(self):
-        self.current_state.clear_widgets()
-        self.current_state.cleanup()
-        self.quit_game()
+        if self.current_state:
+            self.current_state.clear_widgets()
+            self.current_state.cleanup()
+        pygame.event.post(pygame.event.Event(pygame.QUIT))
 
     def append_overlay(self, state: State, *args):
         """Append a temporary overlay state (like a popup) that can be easily dismissed."""
