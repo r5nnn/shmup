@@ -5,7 +5,7 @@ from data.components.ui import ToggleGroup, widgethandler, \
 from data.core.constants import PRIMARY, SECONDARY, ACCENT
 from data.core.prepare import image_paths, screen, screen_size, screen_center
 from data.states.state import State
-from data.core.control import toggle_fullscreen
+from data.core.control import toggle_fullscreen, toggle_flag
 
 
 # noinspection PyTypeChecker
@@ -46,7 +46,16 @@ class Options(State):
                                                                 colors=(PRIMARY, SECONDARY, ACCENT),
                                                                 text=("True", "False"), align="midleft", on_toggle=toggle_fullscreen)
         fullscreen_graphics = ToggleableTextButton(fullscreen_graphics_config)
-        self.option_widgets = ({"fullscreen": fullscreen_text, "fullscreen button": fullscreen_graphics}), ({}), ({})
+        borderless_text = Text((self.bg_rect.left + self._padding, fullscreen_text.rect.bottom + self._padding),
+                               text="Borderless:")
+        borderless_graphics_config = ToggleableTextButtonConfig(position=(borderless_text.rect.right + self._padding,
+                                                                          borderless_text.rect.centery),
+                                                                size=(200, 30),
+                                                                colors=(PRIMARY, SECONDARY, ACCENT),
+                                                                text=("True", "False"), align="midleft",
+                                                                on_toggle=lambda: toggle_flag(pygame.NOFRAME))
+        borderless_button = ToggleableTextButton(borderless_graphics_config)
+        self.option_widgets = ({"fullscreen": fullscreen_text, "fullscreen button": fullscreen_graphics, "borderless": borderless_text, "borderless button": borderless_button}), ({}), ({})
 
     def update_widget(self, num):
         for widget in self.option_widgets[num].values():
@@ -70,6 +79,10 @@ class Options(State):
                     self.option_widgets[self.current_option]["fullscreen button"].toggle_on()
                 else:
                     self.option_widgets[self.current_option]["fullscreen button"].toggle_off()
+                if screen.get_flags() & pygame.NOFRAME:
+                    self.option_widgets[self.current_option]["borderless button"].toggle_on()
+                else:
+                    self.option_widgets[self.current_option]["borderless button"].toggle_off()
 
     def render(self):
         screen.blit(self.background, (0, 0))

@@ -14,6 +14,7 @@ _flags = pygame.FULLSCREEN | pygame.SCALED
 def toggle_flag(flag: int) -> None:
     global _flags
     _flags ^= flag
+    print('called w flag', flag)
     pygame.display.set_mode((1920, 1080), _flags)
 
 
