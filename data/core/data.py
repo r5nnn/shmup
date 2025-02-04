@@ -1,6 +1,16 @@
-from dataclasses import dataclass
+import json
+from pathlib import Path
+
+data = {
+    "fullscreen": True,
+    "borderless": True,
+}
+data_dir = Path("data.json")
 
 
-@dataclass
-class GameData:
-    refresh_rate = 165
+def save():
+    try:
+        file = Path.open(data_dir, encoding = "UTF-8")
+    except FileNotFoundError:
+        data_dir.touch()
+    json.dumps(data)

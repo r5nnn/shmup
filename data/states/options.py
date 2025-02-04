@@ -55,7 +55,10 @@ class Options(State):
                                                                 text=("True", "False"), align="midleft",
                                                                 on_toggle=lambda: toggle_flag(pygame.NOFRAME))
         borderless_button = ToggleableTextButton(borderless_graphics_config)
-        self.option_widgets = ({"fullscreen": fullscreen_text, "fullscreen button": fullscreen_graphics, "borderless": borderless_text, "borderless button": borderless_button}), ({}), ({})
+        self.option_widgets = ({"fullscreen": fullscreen_text,
+                                "fullscreen button": fullscreen_graphics,
+                                "borderless": borderless_text,
+                                "borderless button": borderless_button}), ({}), ({})
 
     def update_widget(self, num):
         for widget in self.option_widgets[num].values():
