@@ -1,24 +1,24 @@
 """Module containing the game loop and a function to quit it.
 
-Must be initialised with `state_dict` and `start_state` otherwise a RuntimeError will be
-raised.
+Must be initialised with `state_dict` and `start_state` otherwise a
+RuntimeError will be raised.
 """
 from __future__ import annotations
+
+from typing import Literal, Final
 
 import pygame.display
 
 from data.core.utils import toggle_fullscreen, toggle_flag
 import data.core.utils
 import data.components.input as InputManager
-from data.components.input import InputBinder
+from data.components import InputBinder
 from data.states.state import State, state_manager
 
 
 def initialise(state_dict: dict[str, type[State]], start_state: str) -> None:
     state_manager.state_dict = state_dict
     state_manager.append(start_state)
-
-
 
 
 def main() -> None:
@@ -31,7 +31,7 @@ def main() -> None:
         InputManager.process_events(pygame.event.get())
         if InputManager.get_quit():
             _running = False
-        InputBinder.notify()
+        input_binder.notify()
 
         state_manager.current_state.update()
         state_manager.current_state.render()
@@ -42,10 +42,11 @@ def main() -> None:
 
 _running = True
 _clock = pygame.time.Clock()
+input_binder = InputBinder()
 
 
-InputBinder.register(("keydown", pygame.K_F11),
-                     action=toggle_fullscreen)
-InputBinder.register(("keydown", pygame.K_END), action=state_manager.quit)
-InputBinder.register(("key", pygame.K_LSHIFT), ("keydown", pygame.K_F11),
+input_binder.register(("keydown", pygame.K_F11),
+                      action=toggle_fullscreen)
+input_binder.register(("keydown", pygame.K_END), action=state_manager.quit)
+input_binder.register(("key", pygame.K_LSHIFT), ("keydown", pygame.K_F11),
                      action=lambda: toggle_flag(flag=pygame.NOFRAME))

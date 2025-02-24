@@ -84,7 +84,7 @@ def get_mouse_pos() -> tuple[int, int]:
     return _mouse_pos
 
 
-class _InputBinder(EventObserver, metaclass=SingletonABCMeta):
+class InputBinder(EventObserver, metaclass=SingletonABCMeta):
     """Singleton for binding inputs to call a function.
 
     For handling held persistent inputs, just check for the input directly.
@@ -133,6 +133,3 @@ class _InputBinder(EventObserver, metaclass=SingletonABCMeta):
             if check_func is not None and not check_func(value):
                 return False
         return True
-
-
-InputBinder = _InputBinder()

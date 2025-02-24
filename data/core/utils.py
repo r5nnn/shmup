@@ -42,15 +42,15 @@ class Observer(ABC):
         self._handlers = ()
 
     @abstractmethod
-    def notify(self, *args) -> None:
+    def notify(self) -> None:
         """Notify the hanlder of updates."""
 
     @abstractmethod
-    def register(self, handler: Any, *args) -> None:
+    def register(self, *args, **kwargs) -> None:
         """Registers the handler."""
 
     @abstractmethod
-    def deregister(self, handler: Any, *args) -> None:
+    def deregister(self, *args, **kwargs) -> None:
         """Deregisters the handler."""
 
     def is_registered(self, handler: Any, *args) -> bool:
@@ -66,11 +66,11 @@ class EventObserver(Observer, ABC):
         self._handlers = defaultdict(list)
 
     @override
-    def register(self, event: int, handler: Callable) -> None:
+    def register(self, *args, **kwargs) -> None:
         """Registers the event to its handler."""
 
     @override
-    def deregister(self, event: int, handler: Callable) -> None:
+    def deregister(self, *args, **kwargs) -> None:
         """Deregisters the event from its handler."""
 
     @override
