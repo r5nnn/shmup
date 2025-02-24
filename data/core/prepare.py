@@ -5,12 +5,17 @@ import json
 import logging
 import os
 from pathlib import Path
+from data.core.data import data
 
 import pygame
 
 pygame.init()
 pygame.display.set_caption("shmup")
-pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN | pygame.SCALED)
+flags = pygame.SCALED
+for flag_name, flag_value in {"fullscreen": pygame.FULLSCREEN, "borderless": pygame.NOFRAME}.items():
+    if data[flag_name]:
+        flags &= flag_value
+pygame.display.set_mode((1920, 1080), flags)
 
 sources_root = Path.resolve(Path())
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
-from typing import Callable, ClassVar, Any, TypeVar, Generic, override
+from typing import Callable, ClassVar, Any, override
 
 import pygame
 

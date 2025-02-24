@@ -48,4 +48,4 @@ InputBinder.register(("keydown", pygame.K_F11),
                      action=toggle_fullscreen)
 InputBinder.register(("keydown", pygame.K_END), action=state_manager.quit)
 InputBinder.register(("key", pygame.K_LSHIFT), ("keydown", pygame.K_F11),
-                     action=lambda: toggle_flag(pygame.NOFRAME))
+                     action=lambda: toggle_flag(flag=pygame.NOFRAME))
