@@ -1,2 +1,3 @@
 """Package containing all the games source code."""
-from src.core.main import main
+from core import main
+from states import game, options, title
