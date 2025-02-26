@@ -100,7 +100,7 @@ class LoadSprites:
                     image = parse_spritesheet(path1)
                     self.files[name] = image
 
-    def __call__(self, name: str) -> list[pygame.Surface]:
+    def __call__(self, name: str) -> list[pygame.Surface] | None:
         return self.files.get(name, self.default)
 
 

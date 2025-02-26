@@ -11,11 +11,8 @@ import pygame
 
 from src.core.data import config, system_data
 
-if TYPE_CHECKING:
-    from src.core.constants import display_flags
 
-
-def toggle_flag(flag: display_flags) -> None:
+def toggle_flag(flag: int) -> None:
     system_data["flags"] ^= flag
     config[DISPLAY_FLAG_NAMES[flag]] = not config[DISPLAY_FLAG_NAMES[flag]]
     pygame.display.set_mode((1920, 1080), system_data["flags"])
@@ -57,8 +54,9 @@ class Observer(ABC):
     def deregister(self, *args, **kwargs) -> None:
         """Deregisters the handler."""
 
-    def is_registered(self, handler: Any, *args) -> bool:
-        return handler in self._handlers
+    @abstractmethod
+    def is_registered(self, *args) -> bool:
+        """Checks if handler is registered."""
 
 
 # noinspection PyMethodOverriding
@@ -97,7 +95,7 @@ class Validator(ABC):
             return self
         return getattr(instance, self.private_name)
 
-    def __set__(self, instance: Any, value):
+    def __set__(self, instance: Any, value: Any):
         self._validate(instance, value)
         setattr(instance, self.private_name, value)
 

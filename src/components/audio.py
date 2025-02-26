@@ -7,17 +7,15 @@ from __future__ import annotations
 import warnings
 from functools import wraps
 from pathlib import Path
-from typing import TypeVar, Callable, Any
 
 import pygame
 
 from src.core.prepare import audio_paths
 
-_T = TypeVar("_T", bound=Callable[..., Any])
 
-def checkaudio(method: _T) -> _T:
+def checkaudio(method):
     @wraps(method)
-    def wrapper(self, *args, **kwargs):  # noqa: ANN001, ANN202
+    def wrapper(self, *args, **kwargs):
         if not self.no_audio:
             method(self, *args, **kwargs)
     return wrapper
@@ -26,8 +24,8 @@ def checkaudio(method: _T) -> _T:
 class Audio:
     """Class for managing audio channels.
 
-    When instantiated creates a unique channel associated with the object. Audio can
-    then be added and played on that channel. Acts as a wrapper for
+    When instantiated creates a unique channel associated with the object.
+    Audio can then be added and played on that channel. Acts as a wrapper for
     `pygame.mixer.Sound`.
     """
 

@@ -17,6 +17,8 @@ PRIMARY = (30, 30, 30)
 SECONDARY = (35, 35, 35)
 ACCENT = (85, 85, 85)
 
+# convert from constant to name
+
 DISPLAY_FLAG_NAMES = {
     pygame.FULLSCREEN: "fullscreen",
     pygame.DOUBLEBUF: "doublebuf",
@@ -36,7 +38,3 @@ input_types = Literal[
     "mouse", "mousedown", "mouseup",
     "quit",
 ]
-# both display_flag constants are missing pygame.FULLSCREEN since there is a
-# dedicated toggle_fullscreen function meaning it is always expected when
-# passed.
-display_flags = Literal[1073741824, 1, 2, 16, 32, 64, 128, 512]

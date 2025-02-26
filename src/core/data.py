@@ -45,6 +45,6 @@ _config_dir = Path("config.json")
 config = validate_config(load(_config_dir, _default_config), _default_config)
 # volatile global data
 system_data = {
-    "display flags": pygame.SCALED,
+    "flags": pygame.SCALED,
     "dt": 1.0,
 }
