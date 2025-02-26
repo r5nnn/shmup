@@ -1,14 +1,15 @@
 """Module containing a collection on functions for checking if any inputs are active."""
 from __future__ import annotations
 
-from typing import Callable, override, Literal
+from typing import Callable, override, TYPE_CHECKING
 
 import pygame
 
 from src.core import EventObserver
 from src.core.utils import SingletonABCMeta
 
-
+if TYPE_CHECKING:
+    from src.core.constants import input_types
 
 
 _keydown_events = []

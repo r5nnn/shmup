@@ -14,15 +14,19 @@ from src.core.data import config, system_data
 
 def toggle_flag(flag: int) -> None:
     system_data["flags"] ^= flag
-    config[DISPLAY_FLAG_NAMES[flag]] = not config[DISPLAY_FLAG_NAMES[flag]]
+    config["flags"][DISPLAY_FLAG_NAMES[flag]] = not config[
+        "flags"][DISPLAY_FLAG_NAMES[flag]]
     pygame.display.set_mode((1920, 1080), system_data["flags"])
 
 
 def toggle_fullscreen() -> None:
-    system_data["flags"] ^= pygame.FULLSCREEN
-    config[DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]] = not config[
-        DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]]
-    pygame.display.toggle_fullscreen()
+    if system_data["flags"] & pygame.FULLSCREEN:
+        toggle_flag(pygame.FULLSCREEN)
+    else:
+        system_data["flags"] ^= pygame.FULLSCREEN
+        config["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]] = not config[
+            "flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]]
+        pygame.display.toggle_fullscreen()
 
 
 class Singleton(type):

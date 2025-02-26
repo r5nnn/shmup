@@ -7,6 +7,7 @@ import os
 from operator import attrgetter
 from pathlib import Path
 from src.core.data import config, system_data
+from src.core.constants import ROOT
 
 import pygame
 
@@ -16,8 +17,6 @@ for flag_name, enabled in config["flags"].items():
     if enabled:
         system_data["flags"] |= attrgetter(flag_name.upper())(pygame)
 pygame.display.set_mode((1920, 1080), system_data["flags"])
-
-sources_root = Path.resolve(Path())
 
 screen = pygame.display.get_surface()
 screen_size = screen.get_size()
@@ -104,7 +103,7 @@ class LoadSprites:
         return self.files.get(name, self.default)
 
 
-image_paths = Load(Path(sources_root) / "resources" / "graphics", ".png")
-audio_paths = Load(Path(sources_root) / "resources" / "audio", ".wav")
-font_paths = Load(Path(sources_root) / "resources" / "fonts", ".ttf")
-sprites = LoadSprites(Path(sources_root) / "resources" / "graphics")
+image_paths = Load(Path(ROOT) / "resources" / "graphics", ".png")
+audio_paths = Load(Path(ROOT) / "resources" / "audio", ".wav")
+font_paths = Load(Path(ROOT) / "resources" / "fonts", ".ttf")
+sprites = LoadSprites(Path(ROOT) / "resources" / "graphics")

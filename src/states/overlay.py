@@ -17,6 +17,18 @@ class Overlay(State):
     def render(self) -> None:
         widgethandler.blit()
 
+    @override
+    def startup(self) -> None:
+        self.add_widgets()
+
+    @override
+    def cleanup(self) -> None:
+        self.clear_widgets()
+
+    @override
+    def back(self) -> None:
+        self.overlay_manager.pop()
+
 
 class OverlayManager(metaclass=Singleton):
     def __init__(self):

@@ -83,12 +83,10 @@ class StateManager(metaclass=Singleton):
         if not self.current_state:
             msg = "No states to pop."
             raise AttributeError(msg)
-        self.current_state.clear_widgets()
         self.current_state.cleanup()
         self._state_stack.pop()
         if self.current_state:
             self.current_state.startup()
-            self.current_state.add_widgets()
 
     def switch(self, state_name: str) -> None:
         if self.current_state:
@@ -100,11 +98,9 @@ class StateManager(metaclass=Singleton):
                           "present in the state stack.", stacklevel=2)
         self._state_stack.append(self._initialise_state(state_name))
         self.current_state.startup()
-        self.current_state.add_widgets()
 
     def back_to(self, state_name: str) -> None:
         if self.current_state:
-            self.current_state.clear_widgets()
             self.current_state.cleanup()
         else:
             warnings.warn("Attempted to go back to a state when no state was "
@@ -115,13 +111,11 @@ class StateManager(metaclass=Singleton):
 
         if self.current_state:
             self.current_state.startup()
-            self.current_state.add_widgets()
         else:
             warnings.warn(f"State {state_name} not found in the state stack.",
                           stacklevel=2)
 
     def quit(self) -> None:
         if self.current_state:
-            self.current_state.clear_widgets()
             self.current_state.cleanup()
         pygame.event.post(pygame.event.Event(pygame.QUIT))

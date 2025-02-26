@@ -1,4 +1,5 @@
 """Module containing constants used in the game."""
+from pathlib import Path
 from typing import Literal
 
 import pygame
@@ -30,6 +31,10 @@ DISPLAY_FLAG_NAMES = {
     pygame.SHOWN: "shown",
     pygame.HIDDEN: "hidden",
 }
+
+# sources root
+
+ROOT = Path.resolve(Path())
 
 # literal type constants
 
