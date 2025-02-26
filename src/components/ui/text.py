@@ -7,12 +7,12 @@ from typing import Literal, TYPE_CHECKING, override
 import pygame
 from pygame import freetype
 
-from data.components.ui.widgetutils import RenderNeeded, WidgetBase
-from data.core import screen
-from data.core.prepare import font_paths
+from src.components.ui.widgetutils import RenderNeeded, WidgetBase
+from src.core import screen
+from src.core.prepare import font_paths
 
 if TYPE_CHECKING:
-    from data.components import RectAlignments
+    from src.components import RectAlignments
 
 text_rect_alignments = Literal["right", "left", "center", "justified"]
 default_font_dir = font_paths("editundo")

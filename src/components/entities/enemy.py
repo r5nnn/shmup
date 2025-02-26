@@ -5,13 +5,13 @@ import logging
 from typing import TYPE_CHECKING
 from typing import TypedDict, override
 
-from data.components.entities.entityutils import Entity
-from data.core import screen
+from src.components.entities.entityutils import Entity
+from src.core import screen
 
 
 if TYPE_CHECKING:
     import pygame
-    from data.components import RectAlignments
+    from src.components import RectAlignments
 
 
 class EnemyStats(TypedDict):

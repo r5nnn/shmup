@@ -3,12 +3,12 @@ from typing import override
 
 import pygame
 
-from data.components import InputBinder
-from data.components.audio import background_audio
-from data.components.ui import widgethandler, button_from_images
-from data.core import screen, screen_size
-from data.core.prepare import image_paths, audio_paths
-from data.states.state import State
+from src.components import InputBinder
+from src.components.audio import background_audio
+from src.components.ui import widgethandler, button_from_images
+from src.core import screen, screen_size
+from src.core.prepare import image_paths, audio_paths
+from src.states.state import State
 
 
 class Title(State):

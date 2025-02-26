@@ -5,11 +5,11 @@ from abc import ABC, abstractmethod
 from typing import override, Any
 
 from typing import TYPE_CHECKING
-from data.core.utils import Validator
+from src.core.utils import Validator
 from . import widgethandler
 
 if TYPE_CHECKING:
-    from data.components import RectAlignments
+    from src.components import RectAlignments
 
 
 class AlignmentNeeded(Validator):

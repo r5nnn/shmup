@@ -17,12 +17,12 @@ from typing import TYPE_CHECKING
 
 import pygame.display
 
-import data.components.input as InputManager
-from data.core.constants import LEFTCLICK
-from data.components import RectAlignments, button_audio
-from data.components.ui.text import Text
-from data.components.ui.widgetutils import WidgetBase, AlignmentNeeded
-from data.core import screen, sprites
+import src.components.input as InputManager
+from src.core.constants import LEFTCLICK
+from src.components import RectAlignments, button_audio
+from src.components.ui.text import Text
+from src.components.ui.widgetutils import WidgetBase, AlignmentNeeded
+from src.core import screen, sprites
 
 if TYPE_CHECKING:
     import types

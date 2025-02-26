@@ -4,18 +4,18 @@ from __future__ import annotations
 import json
 import logging
 import os
+from operator import attrgetter
 from pathlib import Path
-from data.core.data import data
+from src.core.data import config, system_data
 
 import pygame
 
 pygame.init()
 pygame.display.set_caption("shmup")
-flags = pygame.SCALED
-for flag_name, flag_value in {"fullscreen": pygame.FULLSCREEN, "borderless": pygame.NOFRAME}.items():
-    if data[flag_name]:
-        flags &= flag_value
-pygame.display.set_mode((1920, 1080), flags)
+for flag_name, enabled in config["flags"].items():
+    if enabled:
+        system_data["flags"] |= attrgetter(flag_name.upper())(pygame)
+pygame.display.set_mode((1920, 1080), system_data["flags"])
 
 sources_root = Path.resolve(Path())
 

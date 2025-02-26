@@ -2,10 +2,10 @@ import warnings
 
 import pygame
 
-from data.components import InputBinder
-from data.components.ui import widgethandler
-from data.core import screen, screen_size
-from data.core.utils import Singleton
+from src.components import InputBinder
+from src.components.ui import widgethandler
+from src.core import screen, screen_size
+from src.core.utils import Singleton
 
 
 class State:

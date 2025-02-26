@@ -5,14 +5,10 @@ from typing import Callable, override, Literal
 
 import pygame
 
-from data.core import EventObserver
-from data.core.utils import SingletonABCMeta
+from src.core import EventObserver
+from src.core.utils import SingletonABCMeta
 
-input_types = Literal[
-    "key", "keydown", "keyup",
-    "mouse", "mousedown", "mouseup",
-    "quit",
-]
+
 
 
 _keydown_events = []

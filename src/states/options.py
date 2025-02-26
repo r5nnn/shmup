@@ -1,11 +1,11 @@
 import pygame
 
-from data.components.ui import ToggleGroup, widgethandler, \
+from src.components.ui import ToggleGroup, widgethandler, \
     ToggleableTextButton, ToggleableTextButtonConfig, Text
-from data.core.constants import PRIMARY, SECONDARY, ACCENT
-from data.core.prepare import image_paths, screen, screen_size, screen_center
-from data.states.state import State
-from data.core.control import toggle_fullscreen, toggle_flag
+from src.core.constants import PRIMARY, SECONDARY, ACCENT
+from src.core.prepare import image_paths, screen, screen_size, screen_center
+from src.states.state import State
+from src.core.control import toggle_fullscreen, toggle_flag
 
 
 # noinspection PyTypeChecker

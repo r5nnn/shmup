@@ -7,10 +7,10 @@ from typing import override
 import pygame.display
 from pygame.sprite import Sprite
 
-from data.core import screen
+from src.core import screen
 
 if TYPE_CHECKING:
-    from data.components import RectAlignments
+    from src.components import RectAlignments
 
 
 class Entity(Sprite):

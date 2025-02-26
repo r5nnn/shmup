@@ -6,13 +6,13 @@ from typing import override
 import pygame
 from pygame import freetype
 
-from data.components import RectAlignments, InputBinder
-from data.components.ui import ButtonBase, Text, widgethandler
-from data.components.ui.widgetutils import WidgetBase
-from data.core import screen
-from data.core.prepare import screen_center
-from data.core.utils import Colors
-from data.states.state import State
+from src.components import RectAlignments, InputBinder
+from src.components.ui import ButtonBase, Text, widgethandler
+from src.components.ui.widgetutils import WidgetBase
+from src.core import screen
+from src.core.prepare import screen_center
+from src.core.utils import Colors
+from src.states.state import State
 
 
 @dataclass(kw_only=True)

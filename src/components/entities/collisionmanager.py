@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING
 
 import pygame.sprite
 
-from data.components.entities.entityutils import Entity
+from src.components.entities.entityutils import Entity
 
 if TYPE_CHECKING:
-    from data.states.game import Game
+    from src.states.game import Game
 
 
 def update_collisions(game: "Game") -> None:

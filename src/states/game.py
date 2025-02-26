@@ -1,7 +1,7 @@
 from typing import override
 
-from data.components import entities
-from data.components.entities import EntityGroup, Remi
+from src.components import entities
+from src.components.entities import EntityGroup, Remi
 from .state import State
 
 

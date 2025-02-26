@@ -11,7 +11,7 @@ from typing import TypeVar, Callable, Any
 
 import pygame
 
-from data.core.prepare import audio_paths
+from src.core.prepare import audio_paths
 
 _T = TypeVar("_T", bound=Callable[..., Any])
 

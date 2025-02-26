@@ -6,10 +6,10 @@ from collections import OrderedDict
 from collections.abc import MutableSet
 from typing import override, TYPE_CHECKING, Any
 
-import data.components.input as InputManager
+import src.components.input as InputManager
 
 if TYPE_CHECKING:
-    from data.components.ui.widgetutils import WidgetBase
+    from src.components.ui.widgetutils import WidgetBase
 
 
 # Implementation of an insertion-ordered set. Necessary to keep track of the
