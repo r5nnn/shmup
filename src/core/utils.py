@@ -4,23 +4,25 @@ from __future__ import annotations
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
 from typing import Callable, ClassVar, Any, override
+from typing import TYPE_CHECKING
 
 import pygame
 
-dt = 1.0
-_flags = pygame.FULLSCREEN | pygame.SCALED
+from src.core.data import config, system_data
+
+if TYPE_CHECKING:
+    from src.core.constants import display_flags, display_flag_names
 
 
-def toggle_flag(*, flag) -> None:
-    global _flags
-    _flags ^= flag
-    print('called w flag', _flags & flag)
-    pygame.display.set_mode((1920, 1080), _flags)
+def toggle_flag(*, flag: display_flags, name: display_flag_names) -> None:
+    system_data["flags"] ^= flag
+    config[name] = not config[name]
+    pygame.display.set_mode((1920, 1080), system_data["flags"])
 
 
 def toggle_fullscreen() -> None:
-    global _flags
-    _flags ^= pygame.FULLSCREEN
+    system_data["flags"] ^= pygame.FULLSCREEN
+    config["fullscreen"] = not config["fullscreen"]
     pygame.display.toggle_fullscreen()
 
 
