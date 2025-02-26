@@ -39,7 +39,7 @@ _default_config = {
     "flags": {
         "fullscreen": True,
         "noframe": True,
-    }
+    },
 }
 _config_dir = Path("config.json")
 config = validate_config(load(_config_dir, _default_config), _default_config)

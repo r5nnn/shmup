@@ -10,10 +10,10 @@ from typing import TYPE_CHECKING
 import pygame.display
 
 import src.components.input as input_manager
-import src.core.utils
 from src.components import InputBinder
 from src.core.utils import toggle_fullscreen, toggle_flag
 from src.states.state import state_manager
+from src.core.data import system_data
 
 if TYPE_CHECKING:
     from src.states.state import State
@@ -38,7 +38,7 @@ def gameloop() -> None:
         state_manager.current_state.update()
         state_manager.current_state.render()
 
-        src.core.utils.dt = _clock.tick(165) / 1000.0
+        system_data["dt"] = _clock.tick(165) / 1000.0
         pygame.display.flip()
 
 
@@ -49,4 +49,4 @@ _input_binder = InputBinder()
 _input_binder.register(("keydown", pygame.K_F11), action=toggle_fullscreen)
 _input_binder.register(("keydown", pygame.K_END), action=state_manager.quit)
 _input_binder.register(("key", pygame.K_LSHIFT), ("keydown", pygame.K_F11),
-                      action=lambda: toggle_flag(flag=pygame.NOFRAME))
+                      action=lambda: toggle_flag(pygame.NOFRAME))

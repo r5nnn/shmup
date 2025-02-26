@@ -5,24 +5,26 @@ from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
 from typing import Callable, ClassVar, Any, override
 from typing import TYPE_CHECKING
+from src.core.constants import DISPLAY_FLAG_NAMES
 
 import pygame
 
 from src.core.data import config, system_data
 
 if TYPE_CHECKING:
-    from src.core.constants import display_flags, display_flag_names
+    from src.core.constants import display_flags
 
 
-def toggle_flag(*, flag: display_flags, name: display_flag_names) -> None:
+def toggle_flag(flag: display_flags) -> None:
     system_data["flags"] ^= flag
-    config[name] = not config[name]
+    config[DISPLAY_FLAG_NAMES[flag]] = not config[DISPLAY_FLAG_NAMES[flag]]
     pygame.display.set_mode((1920, 1080), system_data["flags"])
 
 
 def toggle_fullscreen() -> None:
     system_data["flags"] ^= pygame.FULLSCREEN
-    config["fullscreen"] = not config["fullscreen"]
+    config[DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]] = not config[
+        DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]]
     pygame.display.toggle_fullscreen()
 
 
