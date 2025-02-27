@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING
 import pygame.display
 
 import src.components.input as InputManager
+from src.components.ui import widgethandler
 from src.core.constants import LEFTCLICK
 from src.components import RectAlignments, button_audio
 from src.components.ui.text import Text
@@ -158,7 +159,7 @@ class ToggleInputMixin(_ButtonMixinFields):
         self.toggle_on()
         button_audio.play_audio(self.click_audio_tag, override=True)
         self.on_toggle_on() if self.on_toggle_on is not None else None
-        self.on_toggle() if self.on_toggle is not None else None
+        self.on_toggle(True) if self.on_toggle is not None else None
 
     def toggle_off(self) -> None:
         """Turn the toggle state off."""
@@ -169,7 +170,7 @@ class ToggleInputMixin(_ButtonMixinFields):
         self.toggle_off()
         button_audio.play_audio(self.release_audio_tag, override=True)
         self.on_toggle_off() if self.on_toggle_off is not None else None
-        self.on_toggle() if self.on_toggle is not None else None
+        self.on_toggle(False) if self.on_toggle is not None else None
 
     @checktoggle
     def update_hover(self) -> None:
@@ -294,6 +295,10 @@ class ButtonBase(WidgetBase, ABC):
 
 class ToggleGroup:
     def __init__(self, *buttons):
+        self.sub_widget = False
+        self.hidden = False
+        self.disabled = False
+        self.requires_realignment = False
         self.buttons = list(buttons)
         for button in self.buttons:
             button.sub_widget = True
@@ -310,6 +315,26 @@ class ToggleGroup:
                 for other_button in self.buttons:
                     if other_button != button and other_button.toggled:
                         other_button.toggle_off()
+
+    def blit(self) -> None:
+        for button in self.buttons:
+            button.blit()
+
+    def contains(self, x: int, y: int) -> bool:
+        if self.disabled:  # noqa: RET503
+            return False
+
+    def hide(self) -> None:
+        self.hidden = True
+        if not self.sub_widget:
+            for button in self.buttons:
+                widgethandler.move_to_bottom(button)
+
+    def show(self) -> None:
+        self.hidden = False
+        if not self.sub_widget:
+            for button in self.buttons:
+                widgethandler.move_to_top(button)
 
 
 @dataclass(kw_only=True)

@@ -12,12 +12,12 @@ import pygame.display
 import src.components.input as input_manager
 from src.components import InputBinder
 from src.core.utils import toggle_fullscreen, toggle_flag
-from src.states.state import StateManager
-from src.states.overlay import OverlayManager
+from src.states.managers import StateManager, OverlayManager
 from src.core.data import system_data
 
 if TYPE_CHECKING:
     from src.states.state import State
+
 
 def init(state_dict: dict[str, type[State]], start_state: str) -> None:
     _state_manager.state_dict = state_dict
