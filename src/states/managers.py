@@ -113,6 +113,7 @@ class OverlayManager(metaclass=Singleton):
     def remove(self, overlay: type["Overlay"]) -> bool:
         for obj in self._overlay_stack:
             if isinstance(obj, overlay):
+                obj.cleanup()
                 self.overlay_stack.remove(obj)
                 return True
         return False

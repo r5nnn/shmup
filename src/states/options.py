@@ -25,7 +25,8 @@ class Options(State):
             position=self.bg_rect.topleft,
             size=(round(self.bg_rect.width / 3), 30),
             colors=(PRIMARY, SECONDARY, ACCENT),
-            text="Graphics", on_toggle=lambda enabled: self.toggle(enabled, GraphicsOptions))
+            text="Graphics", on_toggle=lambda enabled: self.toggle(enabled, GraphicsOptions),
+            on_toggle_arg=True)
         self.graphics = ToggleableTextButton(config)
         config.position = self.graphics.rect.topright
         config.text = "Keybinds"
@@ -36,6 +37,7 @@ class Options(State):
         config.on_toggle = lambda enabled: self.toggle(enabled, AudioOptions)
         self.audio = ToggleableTextButton(config)
         self.options = ToggleGroup(self.graphics, self.audio, self.keybinds)
+        self.active_overlay = GraphicsOptions
         self.widgets = (self.options,)
         self.padding = 20
 
@@ -52,12 +54,16 @@ class Options(State):
 
     def startup(self):
         super().startup()
+        self.toggle(True, self.active_overlay)
 
     def cleanup(self):
         super().cleanup()
 
+
     def toggle(self, enabled: bool, cls: type):
+        print(enabled, cls)
         if enabled:
             self.overlay_manager.append(cls)
+            self.active_overlay = cls
         else:
             self.overlay_manager.remove(cls)

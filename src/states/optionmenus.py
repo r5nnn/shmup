@@ -35,8 +35,11 @@ class GraphicsOptions(Overlay):
             text=("True", "False"), align="midleft",
             on_toggle=lambda: toggle_flag(flag=pygame.NOFRAME))
         self.borderless_button = ToggleableTextButton(borderless_graphics_config)
-        self.objects = (self.fullscreen_text, self.fullscreen_button,
+        self.widgets = (self.fullscreen_text, self.fullscreen_button,
                         self.borderless_text, self.borderless_text)
+
+    def render(self) -> None:
+        super().render()
 
 
 class KeybindsOptions(Overlay):

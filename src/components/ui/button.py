@@ -131,10 +131,11 @@ class ClickInputMixin(_ButtonMixinFields):
 
 
 class ToggleInputMixin(_ButtonMixinFields):
-    def __init__(self, on_toggle_on, on_toggle_off, on_toggle):
+    def __init__(self, on_toggle_on, on_toggle_off, on_toggle, on_toggle_arg=False):
         self.on_toggle_off = on_toggle_off
         self.on_toggle_on = on_toggle_on
         self.on_toggle = on_toggle
+        self.on_toggle_arg = on_toggle_arg
         self.toggled = False
         self.sub_widget = False
 
@@ -159,7 +160,11 @@ class ToggleInputMixin(_ButtonMixinFields):
         self.toggle_on()
         button_audio.play_audio(self.click_audio_tag, override=True)
         self.on_toggle_on() if self.on_toggle_on is not None else None
-        self.on_toggle(True) if self.on_toggle is not None else None
+        if self.on_toggle is not None:
+            if self.on_toggle_arg:
+                self.on_toggle(True)
+            else:
+                self.on_toggle()
 
     def toggle_off(self) -> None:
         """Turn the toggle state off."""
@@ -170,7 +175,11 @@ class ToggleInputMixin(_ButtonMixinFields):
         self.toggle_off()
         button_audio.play_audio(self.release_audio_tag, override=True)
         self.on_toggle_off() if self.on_toggle_off is not None else None
-        self.on_toggle(False) if self.on_toggle is not None else None
+        if self.on_toggle is not None:
+            if self.on_toggle_arg:
+                self.on_toggle(False)
+            else:
+                self.on_toggle()
 
     @checktoggle
     def update_hover(self) -> None:
@@ -348,6 +357,7 @@ class ToggleableTextButtonConfig(ButtonConfig):
     on_toggle_on: Callable | None = None
     on_toggle_off: Callable | None = None
     on_toggle: Callable | None = None
+    on_toggle_arg: bool = False
 
 
 class TextButtonBase(ButtonBase, ABC):
@@ -421,7 +431,7 @@ class TextButton(TextButtonBase, ClickInputMixin):
 
 class ToggleableTextButton(TextButtonBase, ToggleInputMixin):
     def __init__(self, config: ToggleableTextButtonConfig):
-        ToggleInputMixin.__init__(self, config.on_toggle_on, config.on_toggle_off, config.on_toggle)
+        ToggleInputMixin.__init__(self, config.on_toggle_on, config.on_toggle_off, config.on_toggle, config.on_toggle_arg)
         self.text_tuple = config.text if isinstance(config.text, tuple) else (config.text, config.text)
         config.text = self.text_tuple[0]
         TextButtonBase.__init__(self, config)
