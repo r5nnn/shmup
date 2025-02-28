@@ -8,7 +8,7 @@ import pygame
 
 import src.core.utils
 from src.components.entities.entityutils import Entity
-from src.core import screen_rect
+from src.core import screen_rect, system_data
 
 if TYPE_CHECKING:
     from src.components import RectAlignments
@@ -70,7 +70,7 @@ class SimpleBullet(Projectile):
         self.dy = -speed * math.cos(angle_radians)
 
     def update(self) -> None:
-        self._rect.move_ip(self.dx * src.core.utils.dt, self.dy * src.core.utils.dt)
+        self._rect.move_ip(self.dx * system_data["dt"], self.dy * system_data["dt"])
         super().update()
 
     def blit(self) -> None:

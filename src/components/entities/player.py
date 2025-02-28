@@ -10,7 +10,7 @@ import src.core.utils
 from src.components import RectAlignments
 from src.components.entities.entityutils import Entity, Animation
 from src.components.entities.projectile import SimpleBullet
-from src.core import screen, screen_rect, SingletonABCMeta
+from src.core import screen, screen_rect, SingletonABCMeta, system_data
 from src.core.prepare import screen_center, sprites
 
 if TYPE_CHECKING:
@@ -126,8 +126,8 @@ class Player(Entity, ABC):
                 self.keys.remove(key)
 
         self._set_direction()
-        self.x += self.dx * src.core.utils.dt
-        self.y += self.dy * src.core.utils.dt
+        self.x += self.dx * system_data["dt"]
+        self.y += self.dy * system_data["dt"]
 
         self.rect.center = (round(self.x) + self.rect_offset_x,
                             round(self.y) + self.rect_offset_y)

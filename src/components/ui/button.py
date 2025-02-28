@@ -156,7 +156,7 @@ class ToggleInputMixin(_ButtonMixinFields):
         if self.border_colors is not None:
             self.border_color = self.border_colors[2]
 
-    def _toggle_on(self) -> None:
+    def toggle_on_call(self) -> None:
         self.toggle_on()
         button_audio.play_audio(self.click_audio_tag, override=True)
         self.on_toggle_on() if self.on_toggle_on is not None else None
@@ -171,7 +171,7 @@ class ToggleInputMixin(_ButtonMixinFields):
         self.toggled = False
         # no need to toggle colors off since that is handled by update hover and idle
 
-    def _toggle_off(self) -> None:
+    def toggle_off_call(self) -> None:
         self.toggle_off()
         button_audio.play_audio(self.release_audio_tag, override=True)
         self.on_toggle_off() if self.on_toggle_off is not None else None
@@ -199,9 +199,9 @@ class ToggleInputMixin(_ButtonMixinFields):
         x, y = InputManager.get_mouse_pos()
         if self.contains(x, y):
             if InputManager.is_mouse_down(LEFTCLICK) and not self.toggled:
-                self._toggle_on()
+                self.toggle_on_call()
             elif not self.sub_widget and InputManager.is_mouse_down(LEFTCLICK) and self.toggled:
-                self._toggle_off()
+                self.toggle_off_call()
             elif not self.toggled:
                 self.update_hover()
         else:
@@ -313,7 +313,7 @@ class ToggleGroup:
             button.sub_widget = True
         if self.buttons:
             # Automatically toggle on the first button
-            self.buttons[0].toggle_on()
+            self.buttons[0].toggle_on_call()
 
     def update(self) -> None:
         for button in self.buttons:
@@ -323,7 +323,7 @@ class ToggleGroup:
             if button.toggled:
                 for other_button in self.buttons:
                     if other_button != button and other_button.toggled:
-                        other_button.toggle_off()
+                        other_button.toggle_off_call()
 
     def blit(self) -> None:
         for button in self.buttons:
@@ -349,6 +349,7 @@ class ToggleGroup:
 @dataclass(kw_only=True)
 class ToggleableTextButtonConfig(ButtonConfig):
     text: tuple | str
+    start_text: int = 0
     text_colors: tuple[tuple | pygame.Color] | None = None
     font: pygame.font.Font | None = None
     font_size: int = 32
@@ -433,7 +434,7 @@ class ToggleableTextButton(TextButtonBase, ToggleInputMixin):
     def __init__(self, config: ToggleableTextButtonConfig):
         ToggleInputMixin.__init__(self, config.on_toggle_on, config.on_toggle_off, config.on_toggle, config.on_toggle_arg)
         self.text_tuple = config.text if isinstance(config.text, tuple) else (config.text, config.text)
-        config.text = self.text_tuple[0]
+        config.text = self.text_tuple[config.start_text]
         TextButtonBase.__init__(self, config)
 
     def toggle_on(self) -> None:

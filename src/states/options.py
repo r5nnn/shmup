@@ -25,20 +25,17 @@ class Options(State):
             position=self.bg_rect.topleft,
             size=(round(self.bg_rect.width / 3), 30),
             colors=(PRIMARY, SECONDARY, ACCENT),
-            text="Graphics", on_toggle=lambda enabled: self.toggle(enabled, GraphicsOptions),
-            on_toggle_arg=True)
+            text="Graphics", on_toggle_on=lambda: self.switch_overlay(GraphicsOptions))
         self.graphics = ToggleableTextButton(config)
         config.position = self.graphics.rect.topright
         config.text = "Keybinds"
-        config.on_toggle = lambda enabled: self.toggle(enabled, KeybindsOptions)
+        config.on_toggle_on = lambda: self.switch_overlay(KeybindsOptions)
         self.keybinds = ToggleableTextButton(config)
         config.position = self.keybinds.rect.topright
         config.text = "Audio"
-        config.on_toggle = lambda enabled: self.toggle(enabled, AudioOptions)
+        config.on_toggle_on = lambda: self.switch_overlay(AudioOptions)
         self.audio = ToggleableTextButton(config)
-        self.options = ToggleGroup(self.graphics, self.audio, self.keybinds)
-        self.active_overlay = GraphicsOptions
-        self.widgets = (self.options,)
+        self.active_overlay = None
         self.padding = 20
 
     def update(self):
@@ -53,17 +50,15 @@ class Options(State):
         widgethandler.blit()
 
     def startup(self):
+        self.options = ToggleGroup(self.graphics, self.audio, self.keybinds)
+        self.widgets = (self.options,)
         super().startup()
-        self.toggle(True, self.active_overlay)
 
     def cleanup(self):
         super().cleanup()
+        self.overlay_manager.remove(self.active_overlay)
 
-
-    def toggle(self, enabled: bool, cls: type):
-        print(enabled, cls)
-        if enabled:
-            self.overlay_manager.append(cls)
-            self.active_overlay = cls
-        else:
-            self.overlay_manager.remove(cls)
+    def switch_overlay(self, cls: type):
+        self.overlay_manager.remove(self.active_overlay) if self.active_overlay is not None else None
+        self.overlay_manager.append(cls)
+        self.active_overlay = cls
