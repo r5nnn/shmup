@@ -2,8 +2,6 @@
 import json
 from pathlib import Path
 
-from src.core.constants import ROOT
-
 import pygame
 
 
@@ -11,7 +9,6 @@ def save(data: dict, directory: Path) -> None:
     directory.touch()
     with directory.open("w", encoding="UTF-8") as file:
         json.dump(data, file, indent=4)
-
 
 def load(directory: Path, default_config: dict) -> dict:
     directory.touch()
@@ -21,7 +18,6 @@ def load(directory: Path, default_config: dict) -> dict:
         except json.JSONDecodeError:
             save(default_config, directory)
             return default_config
-
 
 def validate_config(data: dict, default_config: dict) -> dict:
     if default_config.keys() == data.keys():
@@ -35,7 +31,6 @@ def validate_config(data: dict, default_config: dict) -> dict:
         for key in invalid_keys:
             del data[key]
     return data
-
 
 _default_config = {
     "flags": {
