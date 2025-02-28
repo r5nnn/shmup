@@ -4,7 +4,6 @@ from __future__ import annotations
 from abc import ABC, ABCMeta, abstractmethod
 from collections import defaultdict
 from typing import Callable, ClassVar, Any, override
-from typing import TYPE_CHECKING
 from src.core.constants import DISPLAY_FLAG_NAMES
 
 import pygame
@@ -24,8 +23,8 @@ def toggle_fullscreen() -> None:
         toggle_flag(pygame.FULLSCREEN)
     else:
         system_data["flags"] ^= pygame.FULLSCREEN
-        config["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]] = not config[
-            "flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]]
+        config["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]] = not (
+            config)["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]]
         pygame.display.toggle_fullscreen()
 
 
@@ -63,7 +62,6 @@ class Observer(ABC):
         """Checks if handler is registered."""
 
 
-# noinspection PyMethodOverriding
 class EventObserver(Observer, ABC):
     """Implementation of the observer design pattern using events."""
 

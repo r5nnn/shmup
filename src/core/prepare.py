@@ -31,11 +31,11 @@ logging.basicConfig(level=logging.WARNING,
 def parse_spritesheet(spritesheet_file: Path) -> list[pygame.Surface]:
     """Gets the subsurfaces from a spritesheet image.
 
-    Splits a spritesheet (image) file into into subsurfaces based on the metadata of
-    the spritesheet stored in a json file of the same name. Json file should be
-    formatted according to aseprite's spritesheet json output format. Result is stored
-    in a tuple. Order of list returned depends on the order of the sprites referenced
-    in the json file.
+    Splits a spritesheet (image) file into into subsurfaces based on the
+    metadata of the spritesheet stored in a json file of the same name. Json
+    file should be formatted according to aseprite's spritesheet json output
+    format. Result is stored in a tuple. Order of list returned depends on
+    the order of the sprites referenced in the json file.
     """
     spritesheet = pygame.image.load(spritesheet_file).convert_alpha()
     metadata = spritesheet_file.with_suffix(".json")
@@ -83,8 +83,8 @@ class LoadSprites:
     """Class for loading in sprites/spritesheets from a given directory.
 
     Recursively searches directories unless explicitly mentioned to skip in
-    `exclude_dirs`. If file has an accompanying json file, attempts to load spritesheet
-    using the `parse_spritesheet` function.
+    `exclude_dirs`. If file has an accompanying json file, attempts to load
+    spritesheet using the `parse_spritesheet` function.
     """
 
     def __init__(self, directory: Path):
