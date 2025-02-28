@@ -156,9 +156,10 @@ class ToggleInputMixin(_ButtonMixinFields):
         if self.border_colors is not None:
             self.border_color = self.border_colors[2]
 
-    def toggle_on_call(self) -> None:
+    def toggle_on_call(self, *, silent: bool = False) -> None:
         self.toggle_on()
-        button_audio.play_audio(self.click_audio_tag, override=True)
+        if not silent:
+            button_audio.play_audio(self.click_audio_tag, override=True)
         self.on_toggle_on() if self.on_toggle_on is not None else None
         if self.on_toggle is not None:
             if self.on_toggle_arg:
@@ -171,9 +172,10 @@ class ToggleInputMixin(_ButtonMixinFields):
         self.toggled = False
         # no need to toggle colors off since that is handled by update hover and idle
 
-    def toggle_off_call(self) -> None:
+    def toggle_off_call(self, *, silent: bool = False) -> None:
         self.toggle_off()
-        button_audio.play_audio(self.release_audio_tag, override=True)
+        if not silent:
+            button_audio.play_audio(self.release_audio_tag, override=True)
         self.on_toggle_off() if self.on_toggle_off is not None else None
         if self.on_toggle is not None:
             if self.on_toggle_arg:
@@ -313,7 +315,7 @@ class ToggleGroup:
             button.sub_widget = True
         if self.buttons:
             # Automatically toggle on the first button
-            self.buttons[0].toggle_on_call()
+            self.buttons[0].toggle_on_call(silent=True)
 
     def update(self) -> None:
         for button in self.buttons:
@@ -323,7 +325,7 @@ class ToggleGroup:
             if button.toggled:
                 for other_button in self.buttons:
                     if other_button != button and other_button.toggled:
-                        other_button.toggle_off_call()
+                        other_button.toggle_off_call(silent=True)
 
     def blit(self) -> None:
         for button in self.buttons:
