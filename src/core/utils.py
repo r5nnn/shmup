@@ -1,9 +1,8 @@
-"""Module containing variables and design patterns used globally across the game."""
+"""Module containing functions and design patterns used globally across the game."""
 from __future__ import annotations
 
 from abc import ABC, ABCMeta, abstractmethod
-from collections import defaultdict
-from typing import Callable, ClassVar, Any, override
+from typing import ClassVar, Any
 from src.core.constants import DISPLAY_FLAG_NAMES
 
 import pygame
@@ -17,9 +16,12 @@ def toggle_flag(flag: int) -> None:
         "flags"][DISPLAY_FLAG_NAMES[flag]]
     pygame.display.set_mode((1920, 1080), system_data["flags"])
 
-
 def toggle_fullscreen() -> None:
     if system_data["flags"] & pygame.FULLSCREEN:
+        # using the pygame inbuilt display.toggle_fullscreen to exit fullscreen
+        # causes the noframe  flag and potentially other flags to disappear.
+        # Toggling the flag and manually setting the mode of the screen makes
+        # sure all flags are preserved.
         toggle_flag(pygame.FULLSCREEN)
     else:
         system_data["flags"] ^= pygame.FULLSCREEN
@@ -29,57 +31,14 @@ def toggle_fullscreen() -> None:
 
 
 class Singleton(type):
-    """Implementation of the singleton design pattern."""
+    """Enforces the singleton pattern when passed as a metaclass."""
 
-    _instances: ClassVar[dict[Singleton, Any]] = {}
+    _instances: ClassVar[dict[object, Singleton]] = {}
 
-    def __call__(cls, *args, **kwargs) -> Any:
+    def __call__(cls, *args, **kwargs) -> object:
         if cls not in cls._instances:
             cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
-
-
-class Observer(ABC):
-    """Implementation of the observer design pattern."""
-
-    def __init__(self):
-        self._handlers = ()
-
-    @abstractmethod
-    def notify(self) -> None:
-        """Notify the hanlder of updates."""
-
-    @abstractmethod
-    def register(self, *args, **kwargs) -> None:
-        """Registers the handler."""
-
-    @abstractmethod
-    def deregister(self, *args, **kwargs) -> None:
-        """Deregisters the handler."""
-
-    @abstractmethod
-    def is_registered(self, *args) -> bool:
-        """Checks if handler is registered."""
-
-
-class EventObserver(Observer, ABC):
-    """Implementation of the observer design pattern using events."""
-
-    def __init__(self):
-        super().__init__()
-        self._handlers = defaultdict(list)
-
-    @override
-    def register(self, *args, **kwargs) -> None:
-        """Registers the event to its handler."""
-
-    @override
-    def deregister(self, *args, **kwargs) -> None:
-        """Deregisters the event from its handler."""
-
-    @override
-    def is_registered(self, event: int, handler: Callable) -> bool:
-        return event in self._handlers and handler in self._handlers[event]
 
 
 class SingletonABCMeta(Singleton, ABCMeta):
