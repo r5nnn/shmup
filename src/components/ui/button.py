@@ -12,12 +12,13 @@ import logging
 from abc import ABC
 from dataclasses import dataclass
 from functools import wraps
-from typing import Callable, override, TypeVar, Any
+from typing import Callable, override, TypeVar
 from typing import TYPE_CHECKING
 
 import pygame.display
+from typing_extensions import ParamSpec
 
-import src.components.input as InputManager
+import src.components.events as input_manager
 from src.components.ui import widgethandler
 from src.core.constants import LEFTCLICK
 from src.components import RectAlignments, button_audio
@@ -28,8 +29,9 @@ from src.core import screen, sprites
 if TYPE_CHECKING:
     import types
 
-_T = TypeVar("_T", bound=Callable[..., Any])
 
+_P = ParamSpec("_P")
+_RETURN = TypeVar("_RETURN")
 
 def button_from_images(name: str, position: tuple[int, int],
                        on_click: Callable | None = None,
@@ -57,12 +59,6 @@ class ButtonConfig:
 
 
 class _ButtonMixinFields:
-    _x: int
-    _y: int
-    _requires_realignment: bool
-    _align_rect: types.FunctionType
-    _align: RectAlignments
-    _rect: pygame.Rect
     contains: types.FunctionType
     click_audio_tag = str | None
     release_audio_tag = str | None
@@ -110,14 +106,14 @@ class ClickInputMixin(_ButtonMixinFields):
             self.border_color = self.border_colors[0]
 
     def update(self) -> None:
-        x, y = InputManager.get_mouse_pos()
+        x, y = input_manager.get_mouse_pos()
         if self.contains(x, y):
             # button is released
-            if InputManager.is_mouse_up(LEFTCLICK) and self.clicked:
+            if input_manager.is_mouse_up(LEFTCLICK) and self.clicked:
                 self.update_release()
                 self.on_release_call() if self.on_release_call is not None else None
             # button is clicked
-            elif InputManager.is_mouse_down(LEFTCLICK):
+            elif input_manager.is_mouse_down(LEFTCLICK):
                 self.update_click()
                 if self.on_click_call is not None:
                     self.clicked = False
@@ -131,7 +127,9 @@ class ClickInputMixin(_ButtonMixinFields):
 
 
 class ToggleInputMixin(_ButtonMixinFields):
-    def __init__(self, on_toggle_on, on_toggle_off, on_toggle, on_toggle_arg=False):
+    def __init__(self, on_toggle_on: Callable | None,
+                 on_toggle_off: Callable | None, on_toggle: Callable | None, *,
+                 on_toggle_arg: bool = False):
         self.on_toggle_off = on_toggle_off
         self.on_toggle_on = on_toggle_on
         self.on_toggle = on_toggle
@@ -140,9 +138,8 @@ class ToggleInputMixin(_ButtonMixinFields):
         self.sub_widget = False
 
     @staticmethod
-    def checktoggle(method: _T) -> _T:
-        @wraps(method)
-        def wrapper(self, *args, **kwargs):  # noqa: ANN001, ANN202
+    def checktoggle(method: Callable[_P, _RETURN]) -> Callable[_P, _RETURN]:
+        def wrapper(self, *args: _P.args, **kwargs: _P.kwargs) -> _RETURN:
             if not self.toggled:
                 method(self, *args, **kwargs)
 
@@ -198,11 +195,11 @@ class ToggleInputMixin(_ButtonMixinFields):
             self.border_color = self.border_colors[0]
 
     def update(self) -> None:
-        x, y = InputManager.get_mouse_pos()
+        x, y = input_manager.get_mouse_pos()
         if self.contains(x, y):
-            if InputManager.is_mouse_down(LEFTCLICK) and not self.toggled:
+            if input_manager.is_mouse_down(LEFTCLICK) and not self.toggled:
                 self.toggle_on_call()
-            elif not self.sub_widget and InputManager.is_mouse_down(LEFTCLICK) and self.toggled:
+            elif not self.sub_widget and input_manager.is_mouse_down(LEFTCLICK) and self.toggled:
                 self.toggle_off_call()
             elif not self.toggled:
                 self.update_hover()
@@ -434,7 +431,9 @@ class TextButton(TextButtonBase, ClickInputMixin):
 
 class ToggleableTextButton(TextButtonBase, ToggleInputMixin):
     def __init__(self, config: ToggleableTextButtonConfig):
-        ToggleInputMixin.__init__(self, config.on_toggle_on, config.on_toggle_off, config.on_toggle, config.on_toggle_arg)
+        ToggleInputMixin.__init__(self, config.on_toggle_on,
+                                  config.on_toggle_off, config.on_toggle,
+                                  on_toggle_arg=config.on_toggle_arg)
         self.text_tuple = config.text if isinstance(config.text, tuple) else (config.text, config.text)
         config.text = self.text_tuple[config.start_text]
         TextButtonBase.__init__(self, config)
