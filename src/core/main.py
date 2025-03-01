@@ -9,8 +9,7 @@ from typing import TYPE_CHECKING
 
 import pygame.display
 
-import src.components.input as input_manager
-from src.components import InputBinder
+from src.components import events
 from src.core.utils import toggle_fullscreen, toggle_flag
 from src.states.managers import StateManager, OverlayManager
 from src.core.data import system_data
@@ -31,10 +30,10 @@ def gameloop() -> None:
         raise RuntimeError(msg)
 
     while _running:
-        input_manager.process_events(pygame.event.get())
-        if input_manager.get_quit():
+        events.process(pygame.event.get())
+        if system_data["quit"]:
             _running = False
-        _input_binder.notify()
+        events.binder.notify()
 
         _state_manager.current_state.update()
         _state_manager.current_state.render()
@@ -48,11 +47,10 @@ def gameloop() -> None:
 
 _running = True
 _clock = pygame.time.Clock()
-_input_binder = InputBinder()
 _state_manager = StateManager()
 _overlay_manager = OverlayManager()
 
-_input_binder.register(("keydown", pygame.K_F11), action=toggle_fullscreen)
-_input_binder.register(("keydown", pygame.K_END), action=_state_manager.quit)
-_input_binder.register(("key", pygame.K_LSHIFT), ("keydown", pygame.K_F11),
+events.binder.register(("keydown", pygame.K_F11), action=toggle_fullscreen)
+events.binder.register(("keydown", pygame.K_END), action=_state_manager.quit)
+events.binder.register(("key", pygame.K_LSHIFT), ("keydown", pygame.K_F11),
                       action=lambda: toggle_flag(pygame.NOFRAME))

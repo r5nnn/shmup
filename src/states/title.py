@@ -4,6 +4,7 @@ from typing import override
 import pygame
 
 from src.components.audio import background_audio
+from src.components import events
 from src.components.ui import widgethandler, button_from_images
 from src.core import screen, screen_size
 from src.core.prepare import image_paths, audio_paths
@@ -44,17 +45,17 @@ class Title(State):
     @override
     def startup(self):
         super().startup()
-        self.input_binder.register(("keydown", pygame.K_LEFT),
+        events.binder.register(("keydown", pygame.K_LEFT),
                              action=lambda: self.switch_splash(-1))
-        self.input_binder.register(("keydown", pygame.K_RIGHT),
+        events.binder.register(("keydown", pygame.K_RIGHT),
                              action=lambda: self.switch_splash(1))
         background_audio.play_audio("menuloop rmx", loops=-1)
 
     @override
     def cleanup(self):
         super().cleanup()
-        self.input_binder.deregister(("keydown", pygame.K_LEFT))
-        self.input_binder.deregister(("keydown", pygame.K_RIGHT))
+        events.binder.deregister(("keydown", pygame.K_LEFT))
+        events.binder.deregister(("keydown", pygame.K_RIGHT))
 
     @override
     def render(self):

@@ -3,7 +3,7 @@ from typing import override
 
 import pygame
 
-from src.components import InputBinder
+from src.components import events
 from src.components.ui import widgethandler
 from src.core import screen, screen_size
 from src.states.managers import StateManager, OverlayManager
@@ -13,7 +13,6 @@ class State:
     def __init__(self):
         self.state_manager = StateManager()
         self.overlay_manager = OverlayManager()
-        self.input_binder = InputBinder()
         self.background = pygame.Surface(screen_size)
         self.widgets = ()
 
@@ -22,7 +21,7 @@ class State:
             widgethandler.add_widget(widget)
 
     def startup(self) -> None:
-        self.input_binder.register(("keydown", pygame.K_ESCAPE),
+        events.binder.register(("keydown", pygame.K_ESCAPE),
                                    action=self.back)
         self.add_widgets()
 
@@ -31,7 +30,7 @@ class State:
             widgethandler.remove_widget(widget)
 
     def cleanup(self) -> None:
-        self.input_binder.deregister(("keydown", pygame.K_ESCAPE))
+        events.binder.deregister(("keydown", pygame.K_ESCAPE))
         self.clear_widgets()
 
     def update(self, *args) -> None:

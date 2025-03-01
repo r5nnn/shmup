@@ -44,4 +44,5 @@ config = validate_config(load(_config_dir, _default_config), _default_config)
 system_data = {
     "flags": pygame.SCALED,
     "dt": 1.0,
+    "quit": False,
 }

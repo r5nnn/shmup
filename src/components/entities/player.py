@@ -5,8 +5,7 @@ from typing import Optional, TypedDict, override, TYPE_CHECKING
 
 import pygame
 
-import src.components.input as InputManager
-import src.core.utils
+from src.components import events
 from src.components import RectAlignments
 from src.components.entities.entityutils import Entity, Animation
 from src.components.entities.projectile import SimpleBullet
@@ -91,7 +90,7 @@ class Player(Entity, ABC):
                     self.dx = self.speed
                     direction = "right"
 
-        if InputManager.is_key_pressed(pygame.K_LSHIFT):
+        if events.is_key_pressed(pygame.K_LSHIFT):
             self.dx /= 2
             self.dy /= 2
             self.show_hitbox = True
@@ -120,9 +119,9 @@ class Player(Entity, ABC):
     @override
     def update(self):
         for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT):
-            if InputManager.is_key_down(key) and key not in self.keys:
+            if events.is_key_down(key) and key not in self.keys:
                 self.keys.append(key)
-            elif InputManager.is_key_up(key) and key in self.keys:
+            elif events.is_key_up(key) and key in self.keys:
                 self.keys.remove(key)
 
         self._set_direction()
@@ -181,7 +180,7 @@ class Remi(Player, metaclass=SingletonABCMeta):
         # Handle base player movement and direction logic
         super().update()
         self.attacking = False
-        if attacking := InputManager.is_key_pressed(pygame.K_z):
+        if attacking := events.is_key_pressed(pygame.K_z):
             # Set attacking state and check fire rate cooldown
             self.attacking = True
             current_time = pygame.time.get_ticks()
@@ -189,12 +188,12 @@ class Remi(Player, metaclass=SingletonABCMeta):
                 self.attack()
                 self.last_shot_time = current_time
 
-        if InputManager.is_key_down(pygame.K_LSHIFT):
+        if events.is_key_down(pygame.K_LSHIFT):
             if attacking:
                 self.shift_animation.reset()
             else:
                 self.shift_animation.current_frame = -1
-        elif InputManager.is_key_up(pygame.K_LSHIFT):
+        elif events.is_key_up(pygame.K_LSHIFT):
             if attacking:
                 self.shift_animation.reset(reverse=True)
             else:
