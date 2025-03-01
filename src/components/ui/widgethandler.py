@@ -6,7 +6,7 @@ from collections import OrderedDict
 from collections.abc import MutableSet
 from typing import override, TYPE_CHECKING, Any
 
-import src.components.input as InputManager
+import src.components.events as InputManager
 
 if TYPE_CHECKING:
     from src.components.ui.widgetutils import WidgetBase
@@ -74,7 +74,7 @@ def blit() -> None:
 
 def update() -> None:
     blocked = False
-    for widget in list(widgets)[::-1]:
+    for widget in reversed(list(widgets)):
         if widget.disabled or not blocked or not widget.contains(
                 *InputManager.get_mouse_pos()):
             widget.update()
