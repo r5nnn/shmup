@@ -6,7 +6,6 @@ from typing import override, Any
 
 from typing import TYPE_CHECKING
 from src.core.utils import Validator
-from . import widgethandler
 
 if TYPE_CHECKING:
     from src.components import RectAlignments
@@ -35,38 +34,21 @@ class WidgetBase(ABC):
                  sub_widget: bool = False):
         self._x, self._y = position
         self._align = align
-        self.sub_widget = sub_widget
 
-        self._hidden = False
-        self._disabled = False
+        self.sub_widget = False
+        self.disabled = False
         self.requires_realignment = False
 
     @abstractmethod
     def update(self) -> None:
-        ...
+        if self.disabled:
+            return
 
     @abstractmethod
     def blit(self) -> None:
         ...
 
-    def contains(self, x: int, y: int) -> bool:
-        if self._disabled:  # noqa: RET503
+    @abstractmethod
+    def contains(self, x: int, y: int) -> bool | None:
+        if self.disabled:  # noqa: RET503
             return False
-
-    def hide(self) -> None:
-        self._hidden = True
-        if not self.sub_widget:
-            widgethandler.move_to_bottom(self)
-
-    def show(self) -> None:
-        self._hidden = False
-        if not self.sub_widget:
-            widgethandler.move_to_top(self)
-
-    @property
-    def disabled(self) -> bool:
-        return self._disabled
-
-    @disabled.setter
-    def disabled(self, value: bool) -> None:
-        self._disabled = value
