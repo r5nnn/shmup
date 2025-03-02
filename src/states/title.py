@@ -4,11 +4,12 @@ from typing import override
 import pygame
 
 from src.components.audio import background_audio
-from src.components import events
+from src.components.events import eventbinder
 from src.components.ui import widgethandler, button_from_images
 from src.core import screen, screen_size
 from src.core.prepare import image_paths, audio_paths
 from src.states.state import State
+from src.components.manager import statemanager
 
 
 class Title(State):
@@ -31,31 +32,31 @@ class Title(State):
         # buttons
         self.play = button_from_images(
             "play", (screen_size[0] * 0.6, screen_size[1] * 0.35),
-            lambda: self.state_manager.append("game"))
+            lambda: statemanager.append("game"))
         self.editor = button_from_images(
             "editor", (screen_size[0] * 0.6, screen_size[1] * 0.475))
         self.options = button_from_images(
             "options", (screen_size[0] * 0.6, screen_size[1] * 0.6),
-            lambda: self.state_manager.append("options"))
+            lambda: statemanager.append("options"))
         self.quit = button_from_images(
             "quit", (screen_size[0] * 0.6, screen_size[1] * 0.725),
-            self.state_manager.quit)
+            statemanager.quit_game)
         self.widgets = (self.play, self.editor, self.options, self.quit)
 
     @override
     def startup(self):
         super().startup()
-        events.binder.register(("keydown", pygame.K_LEFT),
+        eventbinder.register(("keydown", pygame.K_LEFT),
                              action=lambda: self.switch_splash(-1))
-        events.binder.register(("keydown", pygame.K_RIGHT),
+        eventbinder.register(("keydown", pygame.K_RIGHT),
                              action=lambda: self.switch_splash(1))
         background_audio.play_audio("menuloop rmx", loops=-1)
 
     @override
     def cleanup(self):
         super().cleanup()
-        events.binder.deregister(("keydown", pygame.K_LEFT))
-        events.binder.deregister(("keydown", pygame.K_RIGHT))
+        eventbinder.deregister(("keydown", pygame.K_LEFT))
+        eventbinder.deregister(("keydown", pygame.K_RIGHT))
 
     @override
     def render(self):
@@ -77,4 +78,4 @@ class Title(State):
 
     @override
     def back(self):
-        self.state_manager.append("options")
+        statemanager.append("options")

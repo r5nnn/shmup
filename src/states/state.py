@@ -1,18 +1,17 @@
 from __future__ import annotations
+
 from typing import override
 
 import pygame
 
 from src.components import events
+from src.components.manager import statemanager, overlaymanager
 from src.components.ui import widgethandler
 from src.core import screen, screen_size
-from src.states.managers import StateManager, OverlayManager
 
 
 class State:
     def __init__(self):
-        self.state_manager = StateManager()
-        self.overlay_manager = OverlayManager()
         self.background = pygame.Surface(screen_size)
         self.widgets = ()
 
@@ -21,7 +20,7 @@ class State:
             widgethandler.add_widget(widget)
 
     def startup(self) -> None:
-        events.binder.register(("keydown", pygame.K_ESCAPE),
+        events.eventbinder.register(("keydown", pygame.K_ESCAPE),
                                    action=self.back)
         self.add_widgets()
 
@@ -30,7 +29,7 @@ class State:
             widgethandler.remove_widget(widget)
 
     def cleanup(self) -> None:
-        events.binder.deregister(("keydown", pygame.K_ESCAPE))
+        events.eventbinder.deregister(("keydown", pygame.K_ESCAPE))
         self.clear_widgets()
 
     def update(self, *args) -> None:
@@ -41,14 +40,12 @@ class State:
         widgethandler.blit()
 
     def back(self) -> None:
-        self.state_manager.pop()
+        statemanager.pop()
 
 
 class Overlay(State):
     def __init__(self):
         super().__init__()
-        self.current_state = self.state_manager.current_state
-        self.overlay_manager = OverlayManager()
         self.background = None
 
     @override
@@ -65,4 +62,4 @@ class Overlay(State):
 
     @override
     def back(self) -> None:
-        self.overlay_manager.pop()
+        overlaymanager.pop()

@@ -1,11 +1,13 @@
 import pygame
 
+from src.components.manager import overlaymanager
 from src.components.ui import ToggleGroup, widgethandler, \
-    ToggleableTextButton, ToggleableTextButtonConfig, Text
+    ToggleableTextButton, ToggleableTextButtonConfig
 from src.core.constants import PRIMARY, SECONDARY, ACCENT
 from src.core.prepare import image_paths, screen, screen_size, screen_center
-from src.states.state import State
 from src.states.optionmenus import GraphicsOptions, KeybindsOptions, AudioOptions
+from src.states.state import Overlay
+from src.states.state import State
 
 
 class Options(State):
@@ -14,8 +16,10 @@ class Options(State):
         self.background = pygame.image.load(image_paths("menu")).convert()
         self.title = pygame.transform.scale_by(
             pygame.image.load(image_paths("title options")), 4)
-        self.bg_rect = pygame.Rect(0, screen_size[1] * 0.1 + 20 + self.title.get_height(),
-                                   screen_size[0] * 0.8, (screen_size[1] - self.title.get_height()) * 0.8)
+        self.bg_rect = pygame.Rect(
+            0, screen_size[1] * 0.1 + 20 + self.title.get_height(),
+            screen_size[0] * 0.8,
+            (screen_size[1] - self.title.get_height()) * 0.8)
         self.bg_rect.centerx = screen_center[0]
         self.bg_surf = pygame.Surface(self.bg_rect.size)
         self.bg_surf.fill(PRIMARY)
@@ -25,7 +29,8 @@ class Options(State):
             position=self.bg_rect.topleft,
             size=(round(self.bg_rect.width / 3), 30),
             colors=(PRIMARY, SECONDARY, ACCENT),
-            text="Graphics", on_toggle_on=lambda: self.switch_overlay(GraphicsOptions))
+            text="Graphics",
+            on_toggle_on=lambda: self.switch_overlay(GraphicsOptions))
         self.graphics = ToggleableTextButton(config)
         config.position = self.graphics.rect.topright
         config.text = "Keybinds"
@@ -56,9 +61,10 @@ class Options(State):
 
     def cleanup(self):
         super().cleanup()
-        self.overlay_manager.remove(self.active_overlay)
+        overlaymanager.remove(self.active_overlay)
 
-    def switch_overlay(self, cls: type):
-        self.overlay_manager.remove(self.active_overlay) if self.active_overlay is not None else None
-        self.overlay_manager.append(cls)
+    def switch_overlay(self, cls: type[Overlay]):
+        if self.active_overlay is not None:
+            overlaymanager.remove(self.active_overlay)
+        overlaymanager.append(cls)
         self.active_overlay = cls
