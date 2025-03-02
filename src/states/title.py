@@ -18,11 +18,11 @@ class Title(State):
         super().__init__()
         # images
         self.background = pygame.image.load(
-            image_paths("titlescreen")).convert()
+            image_paths("menu")).convert()
         self.title = pygame.transform.scale_by(
             pygame.image.load(image_paths("title main")), 4)
         self.splashes = tuple(pygame.transform.scale_by(
-            pygame.image.load(image_paths(name)).convert(), 5) for name in
+            pygame.image.load(image_paths(name)).convert(), 4) for name in
             ("gun die", "can we get more christof", "tiferet"))
         self.splash = random.choice(self.splashes)
 
@@ -67,7 +67,7 @@ class Title(State):
                      screen_size[1] * 0.1))
         screen.blit(self.splash,
                     (screen_size[0] / 2 - self.splash.get_width(),
-                     screen_size[1] * 0.275))
+                     screen_size[1] * 0.25))
 
     def switch_splash(self, direction: int) -> None:
         try:

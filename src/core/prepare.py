@@ -103,7 +103,7 @@ class LoadSprites:
         return self.files.get(name, self.default)
 
 
-image_paths = Load(Path(ROOT) / "resources" / "graphics", ".png")
-audio_paths = Load(Path(ROOT) / "resources" / "audio", ".wav")
-font_paths = Load(Path(ROOT) / "resources" / "fonts", ".ttf")
-sprites = LoadSprites(Path(ROOT) / "resources" / "graphics")
+image_paths = Load(Path(ROOT) / "assets" / "graphics", ".png")
+audio_paths = Load(Path(ROOT) / "assets" / "audio", ".wav")
+font_paths = Load(Path(ROOT) / "assets" / "fonts", ".ttf")
+sprites = LoadSprites(Path(ROOT) / "assets" / "graphics")
