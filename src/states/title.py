@@ -1,3 +1,4 @@
+"""Title state."""
 import random
 from typing import override
 
@@ -15,7 +16,6 @@ from src.components.manager import statemanager
 class Title(State):
     def __init__(self):
         super().__init__()
-
         # images
         self.background = pygame.image.load(
             image_paths("titlescreen")).convert()
@@ -44,7 +44,7 @@ class Title(State):
         self.widgets = (self.play, self.editor, self.options, self.quit)
 
     @override
-    def startup(self):
+    def startup(self) -> None:
         super().startup()
         eventbinder.register(("keydown", pygame.K_LEFT),
                              action=lambda: self.switch_splash(-1))
@@ -53,13 +53,13 @@ class Title(State):
         background_audio.play_audio("menuloop rmx", loops=-1)
 
     @override
-    def cleanup(self):
+    def cleanup(self) -> None:
         super().cleanup()
         eventbinder.deregister(("keydown", pygame.K_LEFT))
         eventbinder.deregister(("keydown", pygame.K_RIGHT))
 
     @override
-    def render(self):
+    def render(self) -> None:
         super().render()
         widgethandler.blit()
         screen.blit(self.title,
@@ -69,7 +69,7 @@ class Title(State):
                     (screen_size[0] / 2 - self.splash.get_width(),
                      screen_size[1] * 0.275))
 
-    def switch_splash(self, direction):
+    def switch_splash(self, direction: int) -> None:
         try:
             self.splash = self.splashes[
                 self.splashes.index(self.splash) + direction]
@@ -77,5 +77,5 @@ class Title(State):
             self.splash = self.splashes[0]
 
     @override
-    def back(self):
+    def back(self) -> None:
         statemanager.append("options")
