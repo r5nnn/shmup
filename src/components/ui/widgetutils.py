@@ -35,7 +35,7 @@ class WidgetBase(ABC):
         self._x, self._y = position
         self._align = align
 
-        self.sub_widget = False
+        self.sub_widget = sub_widget
         self.disabled = False
         self.requires_realignment = False
 
