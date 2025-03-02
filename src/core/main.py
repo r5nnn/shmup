@@ -12,7 +12,7 @@ import pygame.display
 from src.components import events
 from src.core.utils import toggle_fullscreen, toggle_flag
 from src.components.manager import statemanager, overlaymanager
-from src.core.data import system_data
+from src.core.data import system_data, save, config, config_dir
 
 if TYPE_CHECKING:
     from src.states.state import State
@@ -31,6 +31,7 @@ def gameloop() -> None:
     while _running:
         events.process(pygame.event.get())
         if system_data["quit"]:
+            save(config, config_dir)
             _running = False
         events.eventbinder.notify()
 

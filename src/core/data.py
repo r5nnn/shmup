@@ -38,8 +38,8 @@ _default_config = {
         "noframe": True,
     },
 }
-_config_dir = Path("config.json")
-config = validate_config(load(_config_dir, _default_config), _default_config)
+config_dir = Path("config.json")
+config = validate_config(load(config_dir, _default_config), _default_config)
 # volatile global data
 system_data = {
     "flags": pygame.SCALED,
