@@ -36,10 +36,12 @@ DISPLAY_FLAG_NAMES = {
 
 ROOT = Path.resolve(Path())
 
-# literal type constants
-
-input_types = Literal[
+EventTypes = Literal[
     "key", "keydown", "keyup",
     "mouse", "mousedown", "mouseup",
     "quit",
 ]
+RectAlignments = Literal[
+    "topleft", "midtop", "topright",
+    "midleft", "center", "midright",
+    "bottomleft", "midbottom", "bottomright"]

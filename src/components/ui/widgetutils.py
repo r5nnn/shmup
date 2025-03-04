@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 from typing import override, Any
 
-from typing import TYPE_CHECKING
 from src.core.utils import Validator
 
 if TYPE_CHECKING:
@@ -52,3 +52,4 @@ class WidgetBase(ABC):
     def contains(self, x: int, y: int) -> bool | None:
         if self.disabled:  # noqa: RET503
             return False
+        # return will be provided when method is overriden

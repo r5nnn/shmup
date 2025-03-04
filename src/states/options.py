@@ -4,8 +4,7 @@ from typing import override
 import pygame
 
 from src.components.manager import overlaymanager
-from src.components.ui import ToggleGroup, widgethandler, \
-    ToggleableTextButton, ToggleableTextButtonConfig
+from src.components.ui import widgethandler
 from src.core.constants import PRIMARY, SECONDARY, ACCENT
 from src.core.prepare import image_paths, screen, screen_size, screen_center
 from src.states.optionmenus import GraphicsOptions, KeybindsOptions, AudioOptions
@@ -30,21 +29,21 @@ class Options(State):
         self.bg_surf.fill(PRIMARY)
         self.bg_surf.set_alpha(96)
         # buttons
-        config = ToggleableTextButtonConfig(
-            position=self.bg_rect.topleft,
-            size=(round(self.bg_rect.width / 3), 30),
-            colors=(PRIMARY, SECONDARY, ACCENT),
-            text="Graphics",
-            on_toggle_on=lambda: self.switch_overlay(GraphicsOptions))
-        self.graphics = ToggleableTextButton(config)
-        config.position = self.graphics.rect.topright
-        config.text = "Keybinds"
-        config.on_toggle_on = lambda: self.switch_overlay(KeybindsOptions)
-        self.keybinds = ToggleableTextButton(config)
-        config.position = self.keybinds.rect.topright
-        config.text = "Audio"
-        config.on_toggle_on = lambda: self.switch_overlay(AudioOptions)
-        self.audio = ToggleableTextButton(config)
+        # config = ToggleableTextButtonConfig(
+        #     position=self.bg_rect.topleft,
+        #     size=(round(self.bg_rect.width / 3), 30),
+        #     colors=(PRIMARY, SECONDARY, ACCENT),
+        #     text="Graphics",
+        #     on_toggle_on=lambda: self.switch_overlay(GraphicsOptions))
+        # self.graphics = ToggleableTextButton(config)
+        # config.position = self.graphics.rect.topright
+        # config.text = "Keybinds"
+        # config.on_toggle_on = lambda: self.switch_overlay(KeybindsOptions)
+        # self.keybinds = ToggleableTextButton(config)
+        # config.position = self.keybinds.rect.topright
+        # config.text = "Audio"
+        # config.on_toggle_on = lambda: self.switch_overlay(AudioOptions)
+        # self.audio = ToggleableTextButton(config)
 
         # defined on startup
         self.options = None

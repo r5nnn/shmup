@@ -6,11 +6,12 @@ import pygame
 
 from src.components.audio import background_audio
 from src.components.events import eventbinder
-from src.components.ui import widgethandler, button_from_images
+from src.components.ui import widgethandler
 from src.core import screen, screen_size
-from src.core.prepare import image_paths, audio_paths
+from src.core.prepare import image_paths, audio_paths, sprites
 from src.states.state import State
 from src.components.manager import statemanager
+from src.components.ui.button import ImageToggleButton
 
 
 class Title(State):
@@ -28,20 +29,22 @@ class Title(State):
 
         # audio
         background_audio.add_audio(audio_paths("menuloop rmx"))
-
-        # buttons
-        self.play = button_from_images(
-            "play", (screen_size[0] * 0.6, screen_size[1] * 0.35),
-            lambda: statemanager.append("game"))
-        self.editor = button_from_images(
-            "editor", (screen_size[0] * 0.6, screen_size[1] * 0.475))
-        self.options = button_from_images(
-            "options", (screen_size[0] * 0.6, screen_size[1] * 0.6),
-            lambda: statemanager.append("options"))
-        self.quit = button_from_images(
-            "quit", (screen_size[0] * 0.6, screen_size[1] * 0.725),
-            statemanager.quit_game)
-        self.widgets = (self.play, self.editor, self.options, self.quit)
+        self.play = ImageToggleButton(
+            (int(screen_size[0] * 0.6), screen_size[1] * 0.35), tuple(pygame.transform.scale_by(images, 3) for images in sprites("play")))
+        # # buttons
+        # self.play = button_from_images(
+        #     "play", (screen_size[0] * 0.6, screen_size[1] * 0.35),
+        #     lambda: statemanager.append("game"))
+        # self.editor = button_from_images(
+        #     "editor", (screen_size[0] * 0.6, screen_size[1] * 0.475))
+        # self.options = button_from_images(
+        #     "options", (screen_size[0] * 0.6, screen_size[1] * 0.6),
+        #     lambda: statemanager.append("options"))
+        # self.quit = button_from_images(
+        #     "quit", (screen_size[0] * 0.6, screen_size[1] * 0.725),
+        #     statemanager.quit_game)
+        # self.widgets = (self.play, self.editor, self.options, self.quit)
+        self.widgets = (self.play,)
 
     @override
     def startup(self) -> None:
@@ -65,9 +68,9 @@ class Title(State):
         screen.blit(self.title,
                     (screen_size[0] / 2 - self.title.get_width() / 2,
                      screen_size[1] * 0.1))
-        screen.blit(self.splash,
-                    (screen_size[0] / 2 - self.splash.get_width(),
-                     screen_size[1] * 0.25))
+        # screen.blit(self.splash,
+        #             (screen_size[0] / 2 - self.splash.get_width(),
+        #              screen_size[1] * 0.25))
 
     def switch_splash(self, direction: int) -> None:
         try:

@@ -2,9 +2,10 @@
 select = ["ALL"]
 ignore = [
     # unsorted warnings
-    "N812", "E402", "EXE002", "I001", "F401", "ARG002", "S",
+    "N812", "E402", "EXE002", "I001", "F401", "ARG002", "S", "FBT003",
+    "SLF001",
     # pylint
-    "PLW0603", "PLR0913",
+    "PLW0603", "PLR0913", "PLR2004",
     # annotations
     "ANN002", "ANN003", "ANN204", "ANN401",
     # docstrings
