@@ -11,7 +11,7 @@ from src.core import screen, screen_size
 from src.core.prepare import image_paths, audio_paths, sprites
 from src.states.state import State
 from src.components.manager import statemanager
-from src.components.ui.button import ImageToggleButton
+from src.components.ui.button import ImageClickButton
 
 
 class Title(State):
@@ -29,8 +29,8 @@ class Title(State):
 
         # audio
         background_audio.add_audio(audio_paths("menuloop rmx"))
-        self.play = ImageToggleButton(
-            (int(screen_size[0] * 0.6), screen_size[1] * 0.35), tuple(pygame.transform.scale_by(images, 3) for images in sprites("play")))
+        self.play = ImageClickButton(
+            (int(screen_size[0] * 0.6), screen_size[1] * 0.35), tuple(pygame.transform.scale_by(images, 3) for images in sprites("play")), image_mask=False)
         # # buttons
         # self.play = button_from_images(
         #     "play", (screen_size[0] * 0.6, screen_size[1] * 0.35),

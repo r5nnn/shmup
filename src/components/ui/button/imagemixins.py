@@ -16,15 +16,20 @@ class ImageLabelMixin:
     requires_realignment: bool = ...
 
     def __init__(self, images: tuple[pygame.Surface] | pygame.Surface,
-                 mask_image: pygame.Surface | None = None,
+                 mask_image: pygame.Surface | False | None = None,
                  image_align: _Align = None, padding: int = 20):
         self._images = images if isinstance(images, tuple) else (images,) * 3
         self._image = self._images[0]
-        self._image_mask = mask_image if mask_image is not None else (
-            pygame.mask.from_surface(self._images[0]))
+        self._use_mask = True
+        if mask_image is None:
+            self._image_mask = pygame.mask.from_surface(self._images[0])
+        elif mask_image is False:
+            self._use_mask = False
+        else:
+            self._image_mask = mask_image
         self._image_align = image_align
         self._padding = padding
-        self._image_rect = self._image.get_rect()  # defined when _align_image called
+        self._image_rect = self._image.get_rect()
         self.requires_realignment = True
 
     def _align_image(self) -> None:
@@ -76,7 +81,7 @@ class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
 
 class ClickImageMixin(ClickInputMixin, ImageLabelMixin):
     def __init__(self, images: tuple[pygame.Surface] | pygame.Surface,
-                 image_mask: pygame.Surface | None = None,
+                 image_mask: pygame.Surface | False | None = None,
                  image_align: _Align = None, padding: int = 20,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):

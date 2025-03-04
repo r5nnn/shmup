@@ -123,6 +123,7 @@ class ImageButtonBaseMixin(WidgetBase, ABC):
     _width: int = ...
     _height: int = ...
     _image: pygame.Surface = ...
+    _use_mask: bool = ...
 
     def __init__(self, position: tuple[int, int],
                  align: RectAlignments = "topleft",
@@ -152,6 +153,9 @@ class ImageButtonBaseMixin(WidgetBase, ABC):
     @override
     def contains(self, x: int, y: int) -> bool | None:
         super().contains(x, y)
-        relx, rely = x - self._rect.x, y - self._rect.y
-        return (self._rect.collidepoint(x, y) and
-                self._image_mask.get_at((relx, rely)))
+        if self._rect.collidepoint(x, y):
+            if self._use_mask:
+                relx, rely = x - self._rect.x, y - self._rect.y
+                return bool(self._image_mask.get_at((relx, rely)))
+            return True
+        return False

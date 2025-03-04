@@ -13,8 +13,6 @@ if TYPE_CHECKING:
     from src.components.ui.button._types import _Colors, _Align
 
 
-
-
 class TextLabelMixin:
     _rect: pygame.Rect = ...
     requires_realignment: bool = ...
@@ -72,6 +70,7 @@ class ToggleTextMixin(ToggleInputMixin, TextLabelMixin):
                  font: pygame.font.Font | None = None, font_size: int = 32,
                  text_align: _Align | None = None, padding: int = 20,
                  on_toggle_on: Callable | None = None,
+
                  on_toggle_off: Callable | None = None, *,
                  requires_state: bool = False):
         ToggleInputMixin.__init__(self, on_toggle_on, on_toggle_off,
