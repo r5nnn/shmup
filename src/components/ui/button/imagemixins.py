@@ -5,20 +5,25 @@ from typing import TYPE_CHECKING, Callable
 import pygame
 
 from src.components.ui.button.inputmixins import ToggleInputMixin, ClickInputMixin
-from src.core import screen
+from src.core import screen, get_sprites, spritesheet_paths
 
 if TYPE_CHECKING:
-    from src.components.ui.button._types import _Align
+    from src.components.ui.button._types import _Align, _Images
 
 
 class ImageLabelMixin:
     _rect: pygame.Rect = ...
     requires_realignment: bool = ...
 
-    def __init__(self, images: tuple[pygame.Surface] | pygame.Surface,
-                 mask_image: pygame.Surface | False | None = None,
+    def __init__(self, images: _Images, scale_by: int | None = None,
+                 mask_image: pygame.Surface | str | False | None = None,
                  image_align: _Align = None, padding: int = 20):
+        if isinstance(images, str):
+            images = get_sprites(spritesheet_paths(images))
         self._images = images if isinstance(images, tuple) else (images,) * 3
+        if scale_by is not None:
+            self._images = tuple(pygame.transform.scale_by(image, scale_by)
+                                 for image in self._images)
         self._image = self._images[0]
         self._use_mask = True
         if mask_image is None:
@@ -55,7 +60,7 @@ class ImageLabelMixin:
 
 
 class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
-    def __init__(self, images: tuple[pygame.Surface] | pygame.Surface,
+    def __init__(self, images: _Images, scale_by: int | None = None,
                  mask_image:  pygame.Surface | None = None,
                  image_align: _Align = None, padding: int = 20,
                  on_toggle_on: Callable | None = None,
@@ -63,8 +68,8 @@ class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
                  requires_state: bool = False):
         ToggleInputMixin.__init__(self, on_toggle_on, on_toggle_off,
                                   requires_state=requires_state)
-        ImageLabelMixin.__init__(self, images, mask_image, image_align,
-                                 padding)
+        ImageLabelMixin.__init__(self, images, scale_by, mask_image,
+                                 image_align, padding)
 
     def toggle_on(self) -> None:
         super().toggle_on()
@@ -80,14 +85,14 @@ class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
 
 
 class ClickImageMixin(ClickInputMixin, ImageLabelMixin):
-    def __init__(self, images: tuple[pygame.Surface] | pygame.Surface,
+    def __init__(self, images: _Images, scale_by: int | None = None,
                  image_mask: pygame.Surface | False | None = None,
                  image_align: _Align = None, padding: int = 20,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):
         ClickInputMixin.__init__(self, on_click, on_release)
-        ImageLabelMixin.__init__(self, images, image_mask, image_align,
-                                 padding)
+        ImageLabelMixin.__init__(self, images, scale_by, image_mask,
+                                 image_align, padding)
 
     def update_idle(self) -> None:
         super().update_idle()

@@ -10,7 +10,7 @@ from src.core.constants import RectAlignments
 from src.components.entities.entityutils import Entity, Animation
 from src.components.entities.projectile import SimpleBullet
 from src.core import screen, screen_rect, SingletonABCMeta, system_data
-from src.core.prepare import screen_center, sprites
+from src.core.prepare import screen_center
 
 if TYPE_CHECKING:
     from src.states.game import Game

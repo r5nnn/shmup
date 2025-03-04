@@ -28,7 +28,7 @@ logging.basicConfig(level=logging.WARNING,
                     datefmt="%d/%m/%Y %H:%M:%S")
 
 
-def parse_spritesheet(spritesheet_file: Path) -> list[pygame.Surface]:
+def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface]:
     """Gets the subsurfaces from a spritesheet image.
 
     Splits a spritesheet (image) file into into subsurfaces based on the
@@ -52,7 +52,12 @@ def parse_spritesheet(spritesheet_file: Path) -> list[pygame.Surface]:
         res = frames[sprite]["frame"]
         sprite_list.append(
             spritesheet.subsurface(res["x"], res["y"], res["w"], res["h"]))
-    return sprite_list
+    return tuple(sprite_list)
+
+def get_sprites(directory: Path) -> tuple[pygame.Surface] | None:
+    if directory not in _cached_sprites:
+        _cached_sprites[directory] = parse_spritesheet(directory)
+    return _cached_sprites[directory]
 
 
 class Load:
@@ -79,31 +84,9 @@ class Load:
         return self.files[name]
 
 
-class LoadSprites:
-    """Class for loading in sprites/spritesheets from a given directory.
-
-    Recursively searches directories unless explicitly mentioned to skip in
-    `exclude_dirs`. If file has an accompanying json file, attempts to load
-    spritesheet using the `parse_spritesheet` function.
-    """
-
-    def __init__(self, directory: Path):
-        self.files = {}
-        self.default = None
-        for path, _, files in os.walk(directory):
-            for file in files:
-                name, ext = Path(file).stem, Path(file).suffix
-                if ext.lower() == ".png" and Path.is_file(
-                        Path(path) / (name + ".json")):
-                    path1 = Path(path) / file
-                    image = parse_spritesheet(path1)
-                    self.files[name] = image
-
-    def __call__(self, name: str) -> list[pygame.Surface] | None:
-        return self.files.get(name, self.default)
-
+_cached_sprites = {}
 
 image_paths = Load(Path(ROOT) / "assets" / "graphics", ".png")
 audio_paths = Load(Path(ROOT) / "assets" / "audio", ".wav")
 font_paths = Load(Path(ROOT) / "assets" / "fonts", ".ttf")
-sprites = LoadSprites(Path(ROOT) / "assets" / "graphics")
+spritesheet_paths = Load(Path(ROOT) / "assets" / "graphics", ".png")

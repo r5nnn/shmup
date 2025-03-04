@@ -11,26 +11,26 @@ from src.components.ui.widgetutils import WidgetBase
 
 if TYPE_CHECKING:
     import pygame
-    from src.components.ui.button._types import _Align, _Colors
+    from src.components.ui.button._types import _Align, _Colors, _Images
     from src.core.constants import RectAlignments
 
 
 class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
-    def __init__(self, position: tuple[int, int],
-                 images: tuple[pygame.Surface] | pygame.Surface,
+    def __init__(self, position: tuple[int, int], images: _Images,
+                 scale_by: int | None = None,
                  align: RectAlignments = "topleft",
                  click_audio_tag: str = "click",
                  release_audio_tag: str = "click",
                  mask_image: pygame.Surface | None = None,
-                 image_align: _Align = None, padding: int = 20,
+                 image_align: _Align = None,
                  on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
                  requires_state: bool = False, sub_widget: bool = False):
         ImageButtonBaseMixin.__init__(self, position, align, click_audio_tag,
                                       release_audio_tag, sub_widget=sub_widget)
-        ToggleImageMixin.__init__(self, images, mask_image, image_align,
-                                  padding, on_toggle_on, on_toggle_off,
-                                  requires_state=requires_state)
+        ToggleImageMixin.__init__(self, images, scale_by, mask_image,
+                                  image_align, 0, on_toggle_on,
+                                  on_toggle_off, requires_state=requires_state)
         self._rect = self._image_rect
         self._width, self._height = self._rect.size
 
@@ -58,25 +58,24 @@ class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
 
 
 class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
-    def __init__(self, position: tuple[int, int],
-                 images: tuple[pygame.Surface] | pygame.Surface,
+    def __init__(self, position: tuple[int, int], images: _Images,
+                 scale_by: int | None = None,
                  align: RectAlignments = "topleft",
                  click_audio_tag: str = "click",
                  release_audio_tag: str = "click",
                  image_mask: pygame.Surface | False | None = None,
-                 image_align: _Align = None, padding: int = 20,
-                 on_click: Callable | None = None,
+                 image_align: _Align = None, on_click: Callable | None = None,
                  on_release: Callable | None = None, *,
                  sub_widget: bool = False):
         ImageButtonBaseMixin.__init__(self, position, align, click_audio_tag,
                                       release_audio_tag, sub_widget=sub_widget)
-        ClickImageMixin.__init__(self, images, image_mask, image_align,
-                                 padding, on_click, on_release)
+        ClickImageMixin.__init__(self, images, scale_by, image_mask,
+                                 image_align, 0, on_click, on_release)
         self._rect = self._image_rect
         self._width, self._height = self._rect.size
 
     @override
-    def blit(self):
+    def blit(self) -> None:
         ToggleImageMixin.blit(self)
 
     @override
@@ -92,7 +91,7 @@ class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
 
 class ImageRectToggleButton(RectButtonMixin, ToggleImageMixin):
     def __init__(self, position: tuple[int, int], size: tuple[int, int],
-                 images: tuple[pygame.Surface] | pygame.Surface,
+                 images: _Images, scale_by: int | None = None,
                  align: RectAlignments = "topleft", radius: int = 0,
                  colors: _Colors = None, click_audio_tag: str = "click",
                  release_audio_tag: str = "click",
@@ -104,9 +103,9 @@ class ImageRectToggleButton(RectButtonMixin, ToggleImageMixin):
         RectButtonMixin.__init__(self, position, size, align, radius, colors,
                                  click_audio_tag, release_audio_tag,
                                  sub_widget=sub_widget)
-        ToggleImageMixin.__init__(self, images, mask_image, image_align,
-                                  padding, on_toggle_on, on_toggle_off,
-                                  requires_state=requires_state)
+        ToggleImageMixin.__init__(self, images, scale_by, mask_image,
+                                  image_align, padding, on_toggle_on,
+                                  on_toggle_off, requires_state=requires_state)
 
     def toggle_on(self) -> None:
         super().toggle_on()
@@ -139,7 +138,7 @@ class ImageRectToggleButton(RectButtonMixin, ToggleImageMixin):
 
 class ImageRectClickButton(RectButtonMixin, ClickImageMixin):
     def __init__(self, position: tuple[int, int], size: tuple[int, int],
-                 images: tuple[pygame.Surface] | pygame.Surface,
+                 images: _Images, scale_by: int | None = None,
                  align: RectAlignments = "topleft", radius: int = 0,
                  colors: _Colors = None, click_audio_tag: str = "click",
                  release_audio_tag: str = "click",
@@ -151,8 +150,8 @@ class ImageRectClickButton(RectButtonMixin, ClickImageMixin):
         RectButtonMixin.__init__(self, position, size, align, radius, colors,
                                  click_audio_tag, release_audio_tag,
                                  sub_widget=sub_widget)
-        ClickImageMixin.__init__(self, images, image_mask, image_align,
-                                 padding, on_click, on_release)
+        ClickImageMixin.__init__(self, images, scale_by, image_mask,
+                                 image_align, padding, on_click, on_release)
 
     def update_click(self) -> None:
         super().update_click()
