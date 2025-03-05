@@ -7,12 +7,12 @@ import pygame
 
 def save(data: dict, directory: Path) -> None:
     directory.touch()
-    with directory.open("w", encoding="UTF-8") as file:
+    with directory.open("w") as file:
         json.dump(data, file, indent=4)
 
 def load(directory: Path, default_config: dict) -> dict:
     directory.touch()
-    with directory.open(encoding="UTF-8") as file:
+    with directory.open() as file:
         try:
             return json.load(file)
         except json.JSONDecodeError:
