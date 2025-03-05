@@ -18,6 +18,9 @@ PRIMARY = (30, 30, 30)
 SECONDARY = (35, 35, 35)
 ACCENT = (85, 85, 85)
 
+DEFAULT_FONT_NAME = "editundo"
+DEFAULT_FONT_SIZE = 32
+
 # convert from constant to name
 
 DISPLAY_FLAG_NAMES = {
@@ -45,3 +48,4 @@ RectAlignments = Literal[
     "topleft", "midtop", "topright",
     "midleft", "center", "midright",
     "bottomleft", "midbottom", "bottomright"]
+TextRectAlignments = Literal["right", "left", "center", "justified"]

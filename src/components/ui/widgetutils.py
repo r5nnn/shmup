@@ -8,19 +8,19 @@ from typing import override, Any
 from src.core.utils import Validator
 
 if TYPE_CHECKING:
-    from src.components import RectAlignments
+    from src.core.constants import RectAlignments
 
 
 class AlignmentNeeded(Validator):
     @override
-    def _validate(self, instance: Any, value: Any) -> None:
+    def validate(self, instance: Any, value: Any) -> None:
         instance.requires_realignment = True
 
 
 class RenderNeeded(AlignmentNeeded):
     @override
-    def _validate(self, instance: Any, value: Any) -> None:
-        super()._validate(instance, value)
+    def validate(self, instance: Any, value: Any) -> None:
+        super().validate(instance, value)
         instance.requires_rerender = True
 
 
@@ -30,7 +30,7 @@ class WidgetBase(ABC):
     align = AlignmentNeeded()
 
     def __init__(self, position: tuple[int, int],
-                 align: RectAlignments = "topleft", *,
+                 align: RectAlignments | str = "topleft", *,
                  sub_widget: bool = False):
         self._x, self._y = position
         self._align = align
@@ -45,11 +45,11 @@ class WidgetBase(ABC):
             return
 
     @abstractmethod
-    def blit(self) -> None:
-        ...
+    def blit(self) -> None: ...
 
+    # noinspection PyTypeChecker
     @abstractmethod
-    def contains(self, x: int, y: int) -> bool | None:
+    def contains(self, x: int, y: int) -> bool:
         if self.disabled:  # noqa: RET503
             return False
         # return will be provided when method is overriden

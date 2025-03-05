@@ -57,9 +57,9 @@ class Validator(ABC):
         return getattr(instance, self.private_name)
 
     def __set__(self, instance: Any, value: Any):
-        self._validate(instance, value)
+        self.validate(instance, value)
         setattr(instance, self.private_name, value)
 
     @abstractmethod
-    def _validate(self, instance: Any, value: Any) -> None:
+    def validate(self, instance: Any, value: Any) -> None:
         pass
