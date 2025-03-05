@@ -8,22 +8,22 @@ import pygame
 
 from src.components.ui.widgetutils import WidgetBase
 from src.core import screen
-from src.core.constants import PRIMARY, SECONDARY, ACCENT
+from src.core.constants import PRIMARY, SECONDARY, ACCENT, RectAlignments
 
 if TYPE_CHECKING:
     from src.components.ui import Text
-    from src.components.ui.buttons._types import _Colors, _Align
+    from src.components.ui.buttons._types import _Colors, _Align, _AnyButton
 
 
 @dataclass(kw_only=True)
 class _BaseButtonConfig:
     position: tuple[int, int]
-    align: _Align | None = None
+    align: RectAlignments = "topleft"
     audio_tags: list[str | None] | None = None
     sub_widget: bool = False
 
 
-class RectButtonMixin(WidgetBase):
+class RectButtonBaseMixin(WidgetBase):
     def __init__(self, position: tuple[int, int], size: tuple[int, int],
                  align: str = "topleft", radius: int = 0,
                  colors: _Colors = None,
@@ -131,6 +131,7 @@ class ImageButtonBaseMixin(WidgetBase, ABC):
     def align_rect(self) -> None:
         setattr(self.rect, self._align, (self._x, self._y))
         self._x, self._y = self.rect.topleft
+        self.requires_realignment = False
 
     @override
     def contains(self, x: int, y: int) -> bool | None:
@@ -141,3 +142,47 @@ class ImageButtonBaseMixin(WidgetBase, ABC):
                 return bool(self.image_mask.get_at((relx, rely)))
             return True
         return False
+
+
+@dataclass(kw_only=True)
+class _BaseButtonArrayConfig:
+    audio_tags: list[str | None] | None = None
+    align: RectAlignments = "topleft"
+
+
+class ButtonArrayBase(WidgetBase, ABC):
+    def __init__(self, arr_position: tuple[int, int],
+                 arr_shape: tuple[int, int], arr_padding: tuple[int, int] | int,
+                 config: _BaseButtonArrayConfig, *,
+                 arr_sub_widget: bool = False):
+        super().__init__(arr_position, sub_widget=arr_sub_widget)
+        self.buttons = []
+        arr_padding = arr_padding if isinstance(arr_padding, tuple) else (
+            arr_padding, arr_padding)
+        x_pos, y_pos = self._x, self._y
+        for column in range(arr_shape[1]):
+            for row in range(arr_shape[0]):
+                self.buttons.append(
+                    self.make_button(row, column, x_pos, y_pos, config))
+                y_pos = self.buttons[-1].rect.bottom + arr_padding[1]
+            x_pos = self.buttons[-1].rect.right + arr_padding[0]
+            y_pos = self._y
+
+    @override
+    def update(self) -> None:
+        super().update()
+        for button in self.buttons:
+            button.update()
+
+    @override
+    def blit(self) -> None:
+        for button in self.buttons:
+            button.blit()
+
+    @override
+    def contains(self, x: int, y: int) -> bool | None:
+        super().contains(x, y)
+
+
+    def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
+                    config: _BaseButtonArrayConfig) -> _AnyButton: ...

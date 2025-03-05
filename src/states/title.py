@@ -34,7 +34,7 @@ class Title(State):
         background_audio.add_audio(audio_paths("menuloop rmx"))
         config = ImageButtonConfig(
             position=(int(screen_size[0] * 0.5), screen_size[1] * 0.35), images="play",
-            align=["mid", "top"], scale_by=3)
+            align="center", scale_by=3)
         self.play = ImageClickButton(config, image_mask=False)
         config = TextToggleButtonArrayConfig(((["1", "WHATTT"], "2"), ("3", "4")))
         self.arr = TextToggleButtonArray((int(screen_size[0] * 0.5), screen_size[1] * 0.5),
