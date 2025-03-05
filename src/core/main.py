@@ -11,7 +11,7 @@ import pygame.display
 
 from src.components import events
 from src.core.utils import toggle_fullscreen, toggle_flag
-from src.components.manager import statemanager, overlaymanager
+from src.components.managers import statemanager, overlaymanager
 from src.core.data import system_data, save, config, config_dir
 
 if TYPE_CHECKING:

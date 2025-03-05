@@ -6,7 +6,7 @@ from src.core.constants import PRIMARY, SECONDARY, ACCENT
 from src.core.utils import toggle_flag
 from src.states.state import Overlay
 from src.core.data import config
-from src.components.manager import statemanager
+from src.components.managers import statemanager
 
 
 class GraphicsOptions(Overlay):

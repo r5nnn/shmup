@@ -3,7 +3,7 @@ from typing import override
 
 import pygame
 
-from src.components.manager import overlaymanager
+from src.components.managers import overlaymanager
 from src.components.ui import widgethandler
 from src.core.constants import PRIMARY, SECONDARY, ACCENT
 from src.core.prepare import image_paths, screen, screen_size, screen_center

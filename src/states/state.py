@@ -6,7 +6,7 @@ from typing import override
 import pygame
 
 from src.components import events
-from src.components.manager import statemanager, overlaymanager
+from src.components.managers import statemanager, overlaymanager
 from src.components.ui import widgethandler
 from src.core import screen, screen_size
 
