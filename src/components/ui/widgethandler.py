@@ -6,7 +6,7 @@ from collections import OrderedDict
 from collections.abc import MutableSet
 from typing import override, TYPE_CHECKING, Any
 
-import src.components.events as InputManager
+from src.components import events
 
 if TYPE_CHECKING:
     from src.components.ui.widgetutils import WidgetBase
@@ -62,9 +62,6 @@ class _OrderedWeakset(weakref.WeakSet):
         self.data.move_to_start(weakref.ref(item, self._remove))
 
 
-widgets: _OrderedWeakset[weakref.ref] = _OrderedWeakset()
-
-
 def blit() -> None:
     # Conversion is used to prevent errors when widgets are added/removed during
     # iteration a.k.a safe iteration
@@ -76,10 +73,10 @@ def update() -> None:
     blocked = False
     for widget in reversed(list(widgets)):
         if widget.disabled or not blocked or not widget.contains(
-                *InputManager.get_mouse_pos()):
+                *events.get_mouse_pos()):
             widget.update()
         # Ensure widgets covered by others are not affected (widgets created later)
-        if widget.contains(*InputManager.get_mouse_pos()):
+        if widget.contains(*events.get_mouse_pos()):
             blocked = True
 
 
@@ -88,31 +85,42 @@ def add_widget(*widget_tuple: WidgetBase) -> None:
         if widget not in widgets:
             widgets.add(widget)
             move_to_top(widget)
+        elif widget.sub_widget:
+            warnings.warn(
+                f"Attempted to add subwidget: {widget!r} to the widgethandler."
+                f" Subwidgets should not be added to the widgethandler as the "
+                f"parent widget renders and updates the subwidget.",
+                stacklevel=2)
         else:
-            warnings.warn(f"Attempted to add widget: {widget!r} which already "
-                          f"existed in the widgethandler: {widgets!r}.",
-                          stacklevel=2)
+            warnings.warn(
+                f"Attempted to add widget: {widget!r} which already exists in "
+                f"the widgethandler.", stacklevel=2)
 
 
 def remove_widget(widget: WidgetBase) -> None:
     try:
         widgets.remove(widget)
     except ValueError:
-        warnings.warn(f"Attempted to remove widget: {widget!r} when widget not "
-                      f"in the widgethandler: {widgets!r}.", stacklevel=2)
+        warnings.warn(
+            f"Attempted to remove widget: {widget!r} which doesn't exist in "
+            f"the widgethandler.", stacklevel=2)
 
 
 def move_to_top(widget: WidgetBase) -> None:
     try:
         widgets.move_to_end(widget)
     except KeyError:
-        warnings.warn(f"Attempted to move widget: {widget!r} to the top when "
-                      f"widget not in widgethandler: {widgets!r}.", stacklevel=2)
+        warnings.warn(f"Attempted to move widget: {widget!r} to the top when"
+                      f" widget doesn't exist in widgethandler.", stacklevel=2)
 
 
 def move_to_bottom(widget: WidgetBase) -> None:
     try:
         widgets.move_to_start(widget)
     except KeyError:
-        warnings.warn(f"Error: Tried to move {widget!r} to bottom when {widget!r} not in "
-                      f"WidgetHandler.", stacklevel=2)
+        warnings.warn(
+            f"Error: Tried to move {widget!r} to bottom when {widget!r} "
+            f"doesn't exist in widgethandler.", stacklevel=2)
+
+
+widgets: _OrderedWeakset[weakref.ref] = _OrderedWeakset()
