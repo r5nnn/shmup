@@ -36,6 +36,7 @@ class TextLabelMixin:
         self.requires_realignment = True
 
     def align_text(self) -> None:
+        self.text_rect = self.text_object.rect
         self.text_rect.center = self.rect.center
         if self.text_align is not None:
             horisontal, vertical = self.text_align
@@ -58,6 +59,8 @@ class TextLabelMixin:
         self.text_object.blit()
 
     def update(self) -> None:
+        if self.text_object.requires_realignment:
+            self.requires_realignment = True
         self.text_object.update()
 
 

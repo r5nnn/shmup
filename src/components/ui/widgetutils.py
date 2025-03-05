@@ -22,6 +22,7 @@ class RenderNeeded(AlignmentNeeded):
     def validate(self, instance: Any, value: Any) -> None:
         super().validate(instance, value)
         instance.requires_rerender = True
+        instance.requires_realignment = True
 
 
 class WidgetBase(ABC):

@@ -10,7 +10,7 @@ from src.components.ui.buttons import (
     ImageRectToggleButton, ImageRectClickButton)
 
 _Colors = list[tuple | pygame.Color] | tuple | pygame.Color | None
-_Align = list[Literal["top", "bottom", "mid", "left", "right"]] | str
+_Align = list[Literal["top", "bottom", "left", "right"]] | Literal["center"]
 _Images = tuple[pygame.Surface, ...] | pygame.Surface | str
 _AnyButton = (TextToggleButton | TextClickButton | TextRectToggleButton
             | TextRectClickButton | ImageClickButton | ImageToggleButton

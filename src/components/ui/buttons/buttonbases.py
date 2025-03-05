@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from typing import override, TYPE_CHECKING
+from typing import override, TYPE_CHECKING, Literal
 
 import pygame
 
@@ -153,7 +153,7 @@ class _BaseButtonArrayConfig:
 class ButtonArrayBase(WidgetBase, ABC):
     def __init__(self, arr_position: tuple[int, int],
                  arr_shape: tuple[int, int], arr_padding: tuple[int, int] | int,
-                 config: _BaseButtonArrayConfig, *,
+                 config: _BaseButtonArrayConfig,*,
                  arr_sub_widget: bool = False):
         super().__init__(arr_position, sub_widget=arr_sub_widget)
         self.buttons = []

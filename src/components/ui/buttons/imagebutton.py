@@ -24,7 +24,7 @@ class ImageButtonConfig(_BaseButtonConfig):
 
 class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
     def __init__(self, config: ImageButtonConfig,
-                 mask_image: pygame.Surface | None = None,
+                 mask_image: pygame.Surface | str | False | None = None,
                  on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
                  requires_state: bool = False):
@@ -65,7 +65,7 @@ class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
 
 class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
     def __init__(self, config: ImageButtonConfig,
-                 image_mask: pygame.Surface | False | None = None,
+                 image_mask: pygame.Surface | str | False | None = None,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):
         ImageButtonBaseMixin.__init__(self, config.position, config.align,
@@ -98,7 +98,7 @@ class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
 class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
     def __init__(self, config: ImageButtonConfig, size: tuple[int, int],
                  radius: int = 0, colors: _Colors = None,
-                 mask_image: pygame.Surface | None = None,
+                 mask_image: pygame.Surface | str | False | None = None,
                  image_align: _Align = None, padding: int = 20,
                  on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
@@ -141,7 +141,7 @@ class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
 class ImageRectClickButton(RectButtonBaseMixin, ClickImageMixin):
     def __init__(self, config: ImageButtonConfig, size: tuple[int, int],
                  radius: int = 0, colors: _Colors = None,
-                 image_mask: pygame.Surface | False | None = None,
+                 image_mask: pygame.Surface | str | False | None = None,
                  image_align: _Align = None, padding: int = 20,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):

@@ -57,6 +57,8 @@ class Validator(ABC):
         return getattr(instance, self.private_name)
 
     def __set__(self, instance: Any, value: Any):
+        if getattr(instance, self.private_name) == value:
+            return
         self.validate(instance, value)
         setattr(instance, self.private_name, value)
 

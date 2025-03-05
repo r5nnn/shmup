@@ -61,7 +61,7 @@ class ImageLabelMixin:
 
 class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
     def __init__(self, images: _Images, scale_by: int | None = None,
-                 mask_image:  pygame.Surface | None = None,
+                 mask_image:  pygame.Surface | str | False | None = None,
                  image_align: _Align = None, padding: int = 20,
                  on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
@@ -86,7 +86,7 @@ class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
 
 class ClickImageMixin(ClickInputMixin, ImageLabelMixin):
     def __init__(self, images: _Images, scale_by: int | None = None,
-                 image_mask: pygame.Surface | False | None = None,
+                 image_mask: pygame.Surface | str | False | None = None,
                  image_align: _Align = None, padding: int = 20,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):

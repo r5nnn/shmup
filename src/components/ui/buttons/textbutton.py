@@ -43,9 +43,10 @@ class TextToggleButton(TextButtonBaseMixin, ToggleTextMixin):
     @override
     def update(self) -> None:
         WidgetBase.update(self)
-        if self.requires_realignment:
-            self.align_rect()
         ToggleTextMixin.update(self)
+        if self.requires_realignment:
+            self.requires_realignment = False
+            self.align_rect()
 
     def update_hover(self) -> None:
         super().update_hover()
@@ -80,10 +81,10 @@ class TextClickButton(TextButtonBaseMixin, ClickTextMixin):
     @override
     def update(self) -> None:
         WidgetBase.update(self)
+        ClickTextMixin.update(self)
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
-        ClickTextMixin.update(self)
 
     @override
     def blit(self) -> None:
@@ -95,7 +96,7 @@ class TextClickButton(TextButtonBaseMixin, ClickTextMixin):
 
 class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
     def __init__(self, config: TextButtonConfig, size: tuple[int, int],
-                 text: str, radius: int = 0, colors: _Colors = None,
+                 text: str, radius: int = 0, colors: _Colors | None = None,
                  start_text: int = 0, text_align: _Align | None = None,
                  padding: int = 20, on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
@@ -125,6 +126,9 @@ class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
     def update(self) -> None:
         RectButtonBaseMixin.update(self)
         ToggleTextMixin.update(self)
+        if self.requires_realignment:
+            self.requires_realignment = False
+            self.align_rect()
 
     def blit(self) -> None:
         RectButtonBaseMixin.blit(self)
@@ -164,6 +168,9 @@ class TextRectClickButton(RectButtonBaseMixin, ClickTextMixin):
     def update(self) -> None:
         RectButtonBaseMixin.update(self)
         ClickTextMixin.update(self)
+        if self.requires_realignment:
+            self.requires_realignment = False
+            self.align_rect()
 
     def blit(self) -> None:
         RectButtonBaseMixin.blit(self)
