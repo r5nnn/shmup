@@ -4,15 +4,15 @@ from typing import TYPE_CHECKING, Callable
 
 import pygame
 
-from src.components.ui.button.inputmixins import ToggleInputMixin, ClickInputMixin
+from src.components.ui.buttons.inputmixins import ToggleInputMixin, ClickInputMixin
 from src.core import screen, get_sprites, spritesheet_paths
 
 if TYPE_CHECKING:
-    from src.components.ui.button._types import _Align, _Images
+    from src.components.ui.buttons._types import _Align, _Images
 
 
 class ImageLabelMixin:
-    _rect: pygame.Rect = ...
+    rect: pygame.Rect = ...
     requires_realignment: bool = ...
 
     def __init__(self, images: _Images, scale_by: int | None = None,
@@ -20,43 +20,43 @@ class ImageLabelMixin:
                  image_align: _Align = None, padding: int = 20):
         if isinstance(images, str):
             images = get_sprites(spritesheet_paths(images))
-        self._images = images if isinstance(images, tuple) else (images,) * 3
+        self.images = images if isinstance(images, tuple) else (images,) * 3
         if scale_by is not None:
-            self._images = tuple(pygame.transform.scale_by(image, scale_by)
-                                 for image in self._images)
-        self._image = self._images[0]
-        self._use_mask = True
+            self.images = tuple(pygame.transform.scale_by(image, scale_by)
+                                 for image in self.images)
+        self.image = self.images[0]
+        self.use_mask = True
         if mask_image is None:
-            self._image_mask = pygame.mask.from_surface(self._images[0])
+            self.image_mask = pygame.mask.from_surface(self.images[0])
         elif mask_image is False:
-            self._use_mask = False
+            self.use_mask = False
         else:
-            self._image_mask = mask_image
-        self._image_align = image_align
-        self._padding = padding
-        self._image_rect = self._image.get_rect()
+            self.image_mask = mask_image
+        self.image_align = image_align
+        self.padding = padding
+        self.image_rect = self.image.get_rect()
         self.requires_realignment = True
 
-    def _align_image(self) -> None:
-        self._image_rect.center = self._rect.center
-        if self._image_align is not None:
-            horisontal, vertical = self._image_align
+    def align_image(self) -> None:
+        self.image_rect.center = self.rect.center
+        if self.image_align is not None:
+            horisontal, vertical = self.image_align
             if horisontal is not None:
                 if horisontal == "left":
-                    self._image_rect.left = self._rect.left + self._padding
+                    self.image_rect.left = self.rect.left + self.padding
                 else:
-                    self._image_rect.right = self._rect.right - self._padding
+                    self.image_rect.right = self.rect.right - self.padding
             if vertical is not None:
                 if vertical == "top":
-                    self._image_rect.top = self._rect.top + self._padding
+                    self.image_rect.top = self.rect.top + self.padding
                 else:
-                    self._image_rect.bottom = self._rect.bottom - self._padding
+                    self.image_rect.bottom = self.rect.bottom - self.padding
 
-    def _align_rect(self) -> None:
-        self._align_image()
+    def align_rect(self) -> None:
+        self.align_image()
 
     def blit(self) -> None:
-        screen.blit(self._image, self._image_rect)
+        screen.blit(self.image, self.image_rect)
 
 
 class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
@@ -73,15 +73,15 @@ class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
 
     def toggle_on(self) -> None:
         super().toggle_on()
-        self._image = self._images[2]
+        self.image = self.images[2]
 
     def update_hover(self) -> None:
         super().update_hover()
-        self._image = self._images[1]
+        self.image = self.images[1]
 
     def update_idle(self) -> None:
         super().update_idle()
-        self._image = self._images[0]
+        self.image = self.images[0]
 
 
 class ClickImageMixin(ClickInputMixin, ImageLabelMixin):
@@ -96,12 +96,12 @@ class ClickImageMixin(ClickInputMixin, ImageLabelMixin):
 
     def update_idle(self) -> None:
         super().update_idle()
-        self._image = self._images[0]
+        self.image = self.images[0]
 
     def update_hover(self) -> None:
         super().update_hover()
-        self._image = self._images[1]
+        self.image = self.images[1]
 
     def update_click(self) -> None:
         super().update_click()
-        self._image = self._images[2]
+        self.image = self.images[2]

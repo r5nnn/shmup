@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pygame
 
-from src.components.ui.button import TextButton, TextButtonConfig
+from src.components.ui.buttons import TextButton, TextButtonConfig
 from src.components.ui.widgetutils import WidgetBase
 from src.core.constants import PRIMARY, SECONDARY, ACCENT
 

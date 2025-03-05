@@ -6,96 +6,92 @@ from typing import TYPE_CHECKING
 import pygame
 
 from src.components.ui import Text
-from src.components.ui.button.inputmixins import (
+from src.components.ui.buttons.inputmixins import (
     ToggleInputMixin, ClickInputMixin)
 
 if TYPE_CHECKING:
-    from src.components.ui.button._types import _Colors, _Align
+    from src.components.ui.buttons._types import _Colors, _Align
 
 
 class TextLabelMixin:
-    _rect: pygame.Rect = ...
+    rect: pygame.Rect = ...
     requires_realignment: bool = ...
 
     def __init__(self, text: str,
                  text_colors: _Colors = None,
                  text_align: _Align | None = None, padding: int = 20,
                  font: pygame.font.Font | None = None, font_size: int = 32):
-        if (isinstance(text_colors, (tuple, pygame.Color)) and
-                len(text_colors) == 3):
+        if isinstance(text_colors, list):
             self.text_colors = text_colors
         else:
             if text_colors is None:
                 text_colors = pygame.Color("white")
             self.text_colors = (text_colors,) * 3
-        self._text_color = self.text_colors[0]
-        self.text_label = Text((0, 0), text, font, font_size, self._text_color,
-                               sub_widget=True)
-        self._text_align = text_align
-        self.text_rect = self.text_label.rect
+        self.text_color = self.text_colors[0]
+        self.text_object = Text((0, 0), text, font, font_size, self.text_color,
+                                sub_widget=True)
+        self.text_align = text_align
+        self.text_rect = self.text_object.rect
         self.padding = padding
         self.requires_realignment = True
 
-    def _align_text(self) -> None:
-        self.text_rect.center = self._rect.center
-        if self._text_align is not None:
-            horisontal, vertical = self._text_align
+    def align_text(self) -> None:
+        self.text_rect.center = self.rect.center
+        if self.text_align is not None:
+            horisontal, vertical = self.text_align
             if horisontal is not None:
                 if horisontal == "left":
-                    self.text_rect.left = self._rect.left + self.padding
+                    self.text_rect.left = self.rect.left + self.padding
                 else:
-                    self.text_rect.right = self._rect.right - self.padding
+                    self.text_rect.right = self.rect.right - self.padding
             if vertical is not None:
                 if vertical == "top":
-                    self.text_rect.top = self._rect.top + self.padding
+                    self.text_rect.top = self.rect.top + self.padding
                 else:
-                    self.text_rect.bottom = self._rect.bottom - self.padding
-        self.text_label.x, self.text_label.y = self.text_rect.topleft
+                    self.text_rect.bottom = self.rect.bottom - self.padding
+        self.text_object.x, self.text_object.y = self.text_rect.topleft
 
-    def _align_rect(self) -> None:
-        self._align_text()
+    def align_rect(self) -> None:
+        self.align_text()
 
     def blit(self) -> None:
-        self.text_label.blit()
+        self.text_object.blit()
 
     def update(self) -> None:
-        if self.text_label.requires_realignment:
-            self.requires_realignment = True
-        self.text_label.update()
+        self.text_object.update()
 
 
 class ToggleTextMixin(ToggleInputMixin, TextLabelMixin):
-    def __init__(self, text: str, start_text: int = 0,
+    def __init__(self, text: str | list[str], start_text: int = 0,
                  text_colors: _Colors = None,
                  font: pygame.font.Font | None = None, font_size: int = 32,
                  text_align: _Align | None = None, padding: int = 20,
                  on_toggle_on: Callable | None = None,
-
                  on_toggle_off: Callable | None = None, *,
                  requires_state: bool = False):
         ToggleInputMixin.__init__(self, on_toggle_on, on_toggle_off,
                                   requires_state=requires_state)
-        self.text_tuple = text if isinstance(text, tuple) else (text, text)
-        TextLabelMixin.__init__(self, self.text_tuple[start_text], text_colors,
+        self.texts = text if isinstance(text, list) else [text, text]
+        TextLabelMixin.__init__(self, self.texts[start_text], text_colors,
                                 text_align, padding, font, font_size)
 
     def toggle_on(self) -> None:
         super().toggle_on()
-        self.text_label.color = self.text_colors[2]
-        self.text_label.text = self.text_tuple[0]
+        self.text_object.color = self.text_colors[2]
+        self.text_object.text = self.texts[1]
 
     def toggle_off(self) -> None:
         super().toggle_off()
         # there is no hover text, so no need to update text in the idle method
-        self.text_label.text = self.text_tuple[1]
+        self.text_object.text = self.texts[0]
 
     def update_hover(self) -> None:
         super().update_hover()
-        self.text_label.color = self.text_colors[1]
+        self.text_object.color = self.text_colors[1]
 
     def update_idle(self) -> None:
         super().update_idle()
-        self.text_label.color = self.text_colors[0]
+        self.text_object.color = self.text_colors[0]
 
     def update(self) -> None:
         ToggleInputMixin.update(self)
@@ -119,12 +115,12 @@ class ClickTextMixin(ClickInputMixin, TextLabelMixin):
 
     def update_idle(self) -> None:
         super().update_idle()
-        self.text_label.color = self.text_colors[0]
+        self.text_object.color = self.text_colors[0]
 
     def update_hover(self) -> None:
         super().update_hover()
-        self.text_label.color = self.text_colors[1]
+        self.text_object.color = self.text_colors[1]
 
     def update_click(self) -> None:
         super().update_click()
-        self.text_label.color = self.text_colors[2]
+        self.text_object.color = self.text_colors[2]

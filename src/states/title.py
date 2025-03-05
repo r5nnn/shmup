@@ -3,15 +3,18 @@ import random
 from typing import override
 
 import pygame
+from pygame.transform import scale_by
 
 from src.components.audio import background_audio
 from src.components.events import eventbinder
 from src.components.ui import widgethandler
+from src.components.ui.buttons.textbuttonarray import TextToggleButtonArrayConfig
 from src.core import screen, screen_size
 from src.core.prepare import image_paths, audio_paths
 from src.states.state import State
-from src.components.manager import statemanager
-from src.components.ui.button import ImageClickButton
+from src.components.managers import statemanager
+from src.components.ui.buttons import ImageClickButton, ImageButtonConfig, \
+    TextToggleButtonArray
 
 
 class Title(State):
@@ -29,8 +32,13 @@ class Title(State):
 
         # audio
         background_audio.add_audio(audio_paths("menuloop rmx"))
-        self.play = ImageClickButton(
-            (int(screen_size[0] * 0.6), screen_size[1] * 0.35), "play", 3, image_mask=False)
+        config = ImageButtonConfig(
+            position=(int(screen_size[0] * 0.5), screen_size[1] * 0.35), images="play",
+            align=["mid", "top"], scale_by=3)
+        self.play = ImageClickButton(config, image_mask=False)
+        config = TextToggleButtonArrayConfig(((["1", "WHATTT"], "2"), ("3", "4")))
+        self.arr = TextToggleButtonArray((int(screen_size[0] * 0.5), screen_size[1] * 0.5),
+                                         (2, 2), 10, config)
         # # buttons
         # self.play = button_from_images(
         #     "play", (screen_size[0] * 0.6, screen_size[1] * 0.35),
@@ -44,7 +52,7 @@ class Title(State):
         #     "quit", (screen_size[0] * 0.6, screen_size[1] * 0.725),
         #     statemanager.quit_game)
         # self.widgets = (self.play, self.editor, self.options, self.quit)
-        self.widgets = (self.play,)
+        self.widgets = (self.play, self.arr)
 
     @override
     def startup(self) -> None:
