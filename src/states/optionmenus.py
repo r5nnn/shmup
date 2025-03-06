@@ -16,7 +16,7 @@ class GraphicsOptions(Overlay):
             (statemanager.current_state().bg_rect.left +
              statemanager.current_state().padding,
              statemanager.current_state().bg_rect.top +
-             statemanager.current_state().graphics.height +
+             statemanager.current_state().option_headings_group.buttons[0].height +
              statemanager.current_state().padding),
             text="Fullscreen:")
         # fullscreen_config = ToggleableTextButtonConfig(
@@ -45,22 +45,21 @@ class GraphicsOptions(Overlay):
         #     (statemanager.current_state().bg_rect.left + statemanager.current_state().padding,
         #      self.borderless_text.rect.bottom + statemanager.current_state().padding),
         #     text="Resolution:")
-        self.widgets = (self.fullscreen_text, self.fullscreen_button,
-                        self.borderless_text, self.borderless_button,
-                        self.resolution_text)
+        self.widgets = (self.fullscreen_text, )
 
     def render(self) -> None:
         super().render()
 
     def update(self, *args) -> None:
-        if config["flags"]["fullscreen"]:
-            self.fullscreen_button.toggle_on()
-        else:
-            self.fullscreen_button.toggle_off()
-        if config["flags"]["noframe"]:
-            self.borderless_button.toggle_on()
-        else:
-            self.borderless_button.toggle_off()
+        # if config["flags"]["fullscreen"]:
+        #     self.fullscreen_button.toggle_on()
+        # else:
+        #     self.fullscreen_button.toggle_off()
+        # if config["flags"]["noframe"]:
+        #     self.borderless_button.toggle_on()
+        # else:
+        #     self.borderless_button.toggle_off()
+        ...
 
 
 class KeybindsOptions(Overlay):

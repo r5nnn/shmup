@@ -11,7 +11,7 @@ from src.components.events.utils import (
 from src.core.data import system_data
 
 if TYPE_CHECKING:
-    from src.core.constants import input_types
+    from src.core.constants import EventTypes
 
 _observers = defaultdict(list)
 _input_checks = {
@@ -25,14 +25,14 @@ _input_checks = {
         }
 _sorted_bindings_cache = None
 
-def register(*inputs: tuple[input_types, int],
+def register(*inputs: tuple[EventTypes, int],
              action: Callable[[], Any]) -> None:
     """Registers a combination of inputs to an action."""
     global _sorted_bindings_cache
     _observers[inputs].append(action)
     _sorted_bindings_cache = None
 
-def deregister(*inputs: tuple[input_types, int],
+def deregister(*inputs: tuple[EventTypes, int],
                action: Callable[[], Any] | None = None) -> None:
     """Deregisters an action from a combination of inputs.
 
@@ -70,7 +70,7 @@ def _update_sorted_bindings() -> None:
                                     key=lambda binding: len(binding[0]),
                                     reverse=True)
 
-def _are_inputs_active(inputs: tuple[tuple[input_types, int]],
+def _are_inputs_active(inputs: tuple[tuple[EventTypes, int]],
                        used_inputs: set) -> bool:
     for input_type, value in inputs:
         if (input_type, value) in used_inputs:

@@ -1,3 +1,4 @@
+"""Package containing buttons and button arrays."""
 from src.components.ui.buttons.imagebutton import (
     ImageToggleButton, ImageClickButton, ImageRectClickButton,
     ImageRectToggleButton, ImageButtonConfig)
@@ -13,3 +14,5 @@ from src.components.ui.buttons.imagebuttonarray import (
     ImageToggleButtonArray, ImageToggleButtonArrayConfig,
     ImageClickButtonArray,
     ImageClickButtonArrayConfig)
+from src.components.ui.buttons.togglegroup import (
+    ToggleButtonGroup, ToggleArrayGroup)

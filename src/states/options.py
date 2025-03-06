@@ -10,6 +10,9 @@ from src.core.prepare import image_paths, screen, screen_size, screen_center
 from src.states.optionmenus import GraphicsOptions, KeybindsOptions, AudioOptions
 from src.states.state import Overlay
 from src.states.state import State
+from src.components.ui.buttons import ToggleArrayGroup
+from src.components.ui.buttons import (TextRectToggleButtonArray,
+                                       TextRectToggleButtonArrayConfig)
 
 
 class Options(State):
@@ -28,27 +31,18 @@ class Options(State):
         self.bg_surf = pygame.Surface(self.bg_rect.size)
         self.bg_surf.fill(PRIMARY)
         self.bg_surf.set_alpha(96)
-        # buttons
-        # config = ToggleableTextButtonConfig(
-        #     position=self.bg_rect.topleft,
-        #     size=(round(self.bg_rect.width / 3), 30),
-        #     colors=(PRIMARY, SECONDARY, ACCENT),
-        #     text="Graphics",
-        #     on_toggle_on=lambda: self.switch_overlay(GraphicsOptions))
-        # self.graphics = ToggleableTextButton(config)
-        # config.position = self.graphics.rect.topright
-        # config.text = "Keybinds"
-        # config.on_toggle_on = lambda: self.switch_overlay(KeybindsOptions)
-        # self.keybinds = ToggleableTextButton(config)
-        # config.position = self.keybinds.rect.topright
-        # config.text = "Audio"
-        # config.on_toggle_on = lambda: self.switch_overlay(AudioOptions)
-        # self.audio = ToggleableTextButton(config)
-
-        # defined on startup
-        self.options = None
         self.active_overlay = None
         self.padding = 20
+        config = TextRectToggleButtonArrayConfig(
+            (round(self.bg_rect.width / 3), 30), texts=
+            (("Graphics", ), ("Keybinds",), ("Audio",)),
+            on_toggle_on=((lambda: self.switch_overlay(GraphicsOptions),),
+                          (lambda: self.switch_overlay(KeybindsOptions),),
+                          (lambda: self.switch_overlay(AudioOptions),)))
+        self.option_headings_group = ToggleArrayGroup(
+            TextRectToggleButtonArray(self.bg_rect.topleft, (1, 3), 0, config),
+            toggle_on_init=False)
+        self.widgets = (self.option_headings_group,)
 
     @override
     def render(self) -> None:
@@ -61,9 +55,8 @@ class Options(State):
 
     @override
     def startup(self) -> None:
-        self.options = ToggleGroup(self.graphics, self.audio, self.keybinds)
-        self.widgets = (self.options,)
         super().startup()
+        self.option_headings_group.toggle_start_button()
 
     @override
     def cleanup(self) -> None:

@@ -12,7 +12,7 @@ from src.core.constants import PRIMARY, SECONDARY, ACCENT, RectAlignments
 
 if TYPE_CHECKING:
     from src.components.ui import Text
-    from src.components.ui.buttons._types import _Colors, _Align, _AnyButton
+    from src.components.ui.buttons._types import _Colors, _AnyButton
 
 
 @dataclass(kw_only=True)

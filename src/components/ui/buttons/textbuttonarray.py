@@ -21,6 +21,7 @@ class _TextButtonArrayConfig(_BaseButtonArrayConfig):
     font_size: int = 32
 
 
+@dataclass(kw_only=True)
 class TextToggleButtonArrayConfig(_TextButtonArrayConfig):
     texts: tuple[tuple[str | list[str], ...], ...]
     start_texts: tuple[tuple[int, ...], ...] | int = 0
