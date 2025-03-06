@@ -21,7 +21,7 @@ class _ImageButtonArrayConfig(_BaseButtonArrayConfig):
 
 @dataclass(kw_only=True)
 class ImageToggleButtonArrayConfig(_ImageButtonArrayConfig):
-    mask_images: (tuple[tuple[pygame.Surface | str | False | None, ...], ...]
+    image_masks: (tuple[tuple[pygame.Surface | str | False | None, ...], ...]
                   | str | None | False) = None
     start_images: tuple[tuple[int, ...], ...] | int = 0
     on_toggle_on: tuple[tuple[Callable | None, ...], ...] | None = None
@@ -51,9 +51,9 @@ class ImageToggleButtonArray(ButtonArrayBase):
         start_image = (config.start_images[column][row]
                        if not isinstance(config.start_images, int)
                        else config.start_images)
-        mask_image = (config.mask_images
-                      if not isinstance(config.mask_images, tuple)
-                      else config.mask_images[column][row])
+        mask_image = (config.image_masks
+                      if not isinstance(config.image_masks, tuple)
+                      else config.image_masks[column][row])
         on_toggle_on = (config.on_toggle_on[column][row]
                         if config.on_toggle_on is not None else None)
         on_toggle_off = (config.on_toggle_off[column][row]
@@ -66,7 +66,7 @@ class ImageToggleButtonArray(ButtonArrayBase):
 
 @dataclass(kw_only=True)
 class ImageClickButtonArrayConfig(_ImageButtonArrayConfig):
-    mask_images: (tuple[tuple[pygame.Surface | str | False | None, ...], ...]
+    image_masks: (tuple[tuple[pygame.Surface | str | False | None, ...], ...]
                   | str | None | False) = None
     on_click: tuple[tuple[Callable | None, ...], ...] | None = None
     on_release: tuple[tuple[Callable | None, ...], ...] | None = None
@@ -90,9 +90,9 @@ class ImageClickButtonArray(ButtonArrayBase):
             position=(x_pos, y_pos), align=config.align,
             audio_tags=config.audio_tags, sub_widget=True,
             images=config.images[column][row], scale_by=scale_by)
-        mask_image = (config.mask_images
-                      if not isinstance(config.mask_images, tuple)
-                      else config.mask_images[column][row])
+        mask_image = (config.image_masks
+                      if not isinstance(config.image_masks, tuple)
+                      else config.image_masks[column][row])
         on_click = (config.on_click[column][row]
                     if config.on_click is not None else None)
         on_release = (config.on_release[column][row]
@@ -135,9 +135,9 @@ class ImageRectToggleButtonArray(ButtonArrayBase):
         start_image = (config.start_images
                        if isinstance(config.start_images, int)
                        else config.start_images[column][row])
-        mask_image = (config.mask_images
-                      if not isinstance(config.mask_images, tuple)
-                      else config.mask_images[column][row])
+        mask_image = (config.image_masks
+                      if not isinstance(config.image_masks, tuple)
+                      else config.image_masks[column][row])
         on_toggle_on = (config.on_toggle_on[column][row]
                         if config.on_toggle_on is not None else None)
         on_toggle_off = (config.on_toggle_off[column][row]
@@ -185,5 +185,5 @@ class ImageRectClickButtonArray(ButtonArrayBase):
                       if config.on_release is not None else None)
 
         return ImageRectClickButton(
-            config_, size, config.radius, config.colors, config.mask_images,
+            config_, size, config.radius, config.colors, config.image_masks,
             config.image_align, config.padding, on_click, on_release)

@@ -44,7 +44,7 @@ def deregister(*inputs: tuple[input_types, int],
         if not _observers[inputs]:
             _observers.pop(inputs)
     elif _observers.pop(inputs, None) is None:
-        warnings.warn(f"Attempted to deregister inputs {inputs} that haven't"
+        warnings.warn(f"Attempted to deregister inputs {inputs} that haven't "
                       f"been registered to the observers dict {_observers}",
                       stacklevel=2)
     _sorted_bindings_cache = None

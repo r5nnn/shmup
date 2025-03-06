@@ -65,14 +65,14 @@ class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
 
 class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
     def __init__(self, config: ImageButtonConfig,
-                 image_mask: pygame.Surface | str | False | None = None,
+                 mask_image: pygame.Surface | str | False | None = None,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):
         ImageButtonBaseMixin.__init__(self, config.position, config.align,
                                       config.audio_tags,
                                       sub_widget=config.sub_widget)
         ClickImageMixin.__init__(self, config.images, config.scale_by,
-                                 image_mask, padding=0, on_click=on_click,
+                                 mask_image, padding=0, on_click=on_click,
                                  on_release=on_release)
         self.rect = self.image_rect
         self.align_rect()
