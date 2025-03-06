@@ -116,11 +116,11 @@ class TextRectToggleButtonArray(ButtonArrayBase):
             text_colors=config.text_colors, font=config.font,
             font_size=config.font_size)
         size = (config.sizes
-                 if isinstance(config.sizes[0], int)
-                 else config.sizes[column][row])
+                if isinstance(config.sizes[0], int)
+                else config.sizes[column][row])
         start_text = (config.start_texts
-                       if isinstance(config.start_texts, int)
-                       else config.start_texts[column][row])
+                      if isinstance(config.start_texts, int)
+                      else config.start_texts[column][row])
         on_toggle_on = (config.on_toggle_on[column][row]
                         if config.on_toggle_on is not None else None)
         on_toggle_off = (config.on_toggle_off[column][row]
@@ -159,12 +159,12 @@ class TextRectClickButtonArray(ButtonArrayBase):
             text_colors=config.text_colors, font=config.font,
             font_size=config.font_size)
         size = (config.sizes
-                 if isinstance(config.sizes[0], int)
-                 else config.sizes[column][row])
+                if isinstance(config.sizes[0], int)
+                else config.sizes[column][row])
         on_click = (config.on_click[column][row]
-                        if config.on_click is not None else None)
+                    if config.on_click is not None else None)
         on_release = (config.on_release[column][row]
-                         if config.on_release is not None else None)
+                      if config.on_release is not None else None)
 
         return TextRectClickButton(
             config_, size, config.texts[column][row], config.radius,

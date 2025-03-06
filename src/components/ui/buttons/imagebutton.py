@@ -23,7 +23,7 @@ class ImageButtonConfig(_BaseButtonConfig):
 
 
 class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
-    def __init__(self, config: ImageButtonConfig,
+    def __init__(self, config: ImageButtonConfig, start_image: int,
                  mask_image: pygame.Surface | str | False | None = None,
                  on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
@@ -32,7 +32,7 @@ class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
                                       config.audio_tags,
                                       sub_widget=config.sub_widget)
         ToggleImageMixin.__init__(self, config.images, config.scale_by,
-                                  mask_image, padding=0,
+                                  start_image, mask_image, padding=0,
                                   on_toggle_on=on_toggle_on,
                                   on_toggle_off=on_toggle_off,
                                   requires_state=requires_state)
@@ -97,7 +97,7 @@ class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
 
 class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
     def __init__(self, config: ImageButtonConfig, size: tuple[int, int],
-                 radius: int = 0, colors: _Colors = None,
+                 radius: int = 0, colors: _Colors = None, start_image: int = 0,
                  mask_image: pygame.Surface | str | False | None = None,
                  image_align: _Align = None, padding: int = 20,
                  on_toggle_on: Callable | None = None,
@@ -107,8 +107,8 @@ class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
                                      radius, colors, config.audio_tags,
                                      sub_widget=config.sub_widget)
         ToggleImageMixin.__init__(self, config.images, config.scale_by,
-                                  mask_image, image_align, padding,
-                                  on_toggle_on, on_toggle_off,
+                                  start_image, mask_image, image_align,
+                                  padding, on_toggle_on, on_toggle_off,
                                   requires_state=requires_state)
         self.align_rect()
 

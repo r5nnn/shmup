@@ -9,20 +9,21 @@ from src.components.ui.buttons.imagebutton import (
     ImageRectClickButton, ImageButtonConfig)
 
 if TYPE_CHECKING:
-    from src.components.ui.buttons._types import _AnyButton, _Images
+    from src.components.ui.buttons._types import _AnyButton, _Images, _Colors, _Align
     import pygame
 
 
-@dataclass
+@dataclass(kw_only=True)
 class _ImageButtonArrayConfig(_BaseButtonArrayConfig):
     images: tuple[tuple[_Images, ...], ...]
     scale_by: tuple[tuple[int, ...], ...] | int = 0
 
 
-@dataclass
+@dataclass(kw_only=True)
 class ImageToggleButtonArrayConfig(_ImageButtonArrayConfig):
     mask_images: (tuple[tuple[pygame.Surface | str | False | None, ...], ...]
                   | str | None | False) = None
+    start_images: tuple[tuple[int, ...], ...] | int = 0
     on_toggle_on: tuple[tuple[Callable | None, ...], ...] | None = None
     on_toggle_off: tuple[tuple[Callable | None, ...], ...] | None = None
     requires_state: bool = False
@@ -47,6 +48,9 @@ class ImageToggleButtonArray(ButtonArrayBase):
                                     sub_widget=True,
                                     images=config.images[column][row],
                                     scale_by=scale_by)
+        start_image = (config.start_images[column][row]
+                       if not isinstance(config.start_images, int)
+                       else config.start_images)
         mask_image = (config.mask_images
                       if not isinstance(config.mask_images, tuple)
                       else config.mask_images[column][row])
@@ -55,12 +59,12 @@ class ImageToggleButtonArray(ButtonArrayBase):
         on_toggle_off = (config.on_toggle_off[column][row]
                          if config.on_toggle_off is not None else None)
 
-        return ImageToggleButton(config_, mask_image, on_toggle_on,
+        return ImageToggleButton(config_, start_image, mask_image, on_toggle_on,
                                  on_toggle_off,
                                  requires_state=config.requires_state)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class ImageClickButtonArrayConfig(_ImageButtonArrayConfig):
     mask_images: (tuple[tuple[pygame.Surface | str | False | None, ...], ...]
                   | str | None | False) = None
@@ -82,7 +86,7 @@ class ImageClickButtonArray(ButtonArrayBase):
         scale_by = (config.scale_by
                     if isinstance(config.scale_by, int)
                     else config.scale_by[column][row])
-        _config = ImageButtonConfig(
+        config_ = ImageButtonConfig(
             position=(x_pos, y_pos), align=config.align,
             audio_tags=config.audio_tags, sub_widget=True,
             images=config.images[column][row], scale_by=scale_by)
@@ -90,10 +94,96 @@ class ImageClickButtonArray(ButtonArrayBase):
                       if not isinstance(config.mask_images, tuple)
                       else config.mask_images[column][row])
         on_click = (config.on_click[column][row]
-                        if config.on_click is not None else None)
+                    if config.on_click is not None else None)
         on_release = (config.on_release[column][row]
-                         if config.on_release is not None else None)
+                      if config.on_release is not None else None)
 
-        return ImageClickButton(_config, mask_image, on_click, on_release)
+        return ImageClickButton(config_, mask_image, on_click, on_release)
 
 
+@dataclass
+class ImageRectToggleButtonArrayConfig(ImageToggleButtonArrayConfig):
+    sizes: tuple[tuple[tuple[int, int], ...], ...] | tuple[int, int]
+    start_image: tuple
+    radius: int = 0
+    colors: _Colors | None = None
+    padding: int = 20
+    image_align: _Align | None = None
+
+
+class ImageRectToggleButtonArray(ButtonArrayBase):
+    def __init__(self, arr_position: tuple[int, int],
+                 arr_shape: tuple[int, int], arr_padding: tuple[int, int] | int,
+                 config: ImageRectToggleButtonArrayConfig,
+                 *, arr_sub_widget: bool = False):
+        super().__init__(arr_position, arr_shape, arr_padding, config,
+                         arr_sub_widget=arr_sub_widget)
+
+    @override
+    def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
+                    config: ImageRectToggleButtonArrayConfig) -> _AnyButton:
+        scale_by = (config.scale_by
+                    if isinstance(config.scale_by, int)
+                    else config.scale_by[column][row])
+        config_ = ImageButtonConfig(
+            position=(x_pos, y_pos), align=config.align,
+            audio_tags=config.audio_tags, sub_widget=True,
+            images=config.images, scale_by=scale_by)
+        size = (config.sizes
+                if isinstance(config.sizes[0], int)
+                else config.sizes[column][row])
+        start_image = (config.start_images
+                       if isinstance(config.start_images, int)
+                       else config.start_images[column][row])
+        mask_image = (config.mask_images
+                      if not isinstance(config.mask_images, tuple)
+                      else config.mask_images[column][row])
+        on_toggle_on = (config.on_toggle_on[column][row]
+                        if config.on_toggle_on is not None else None)
+        on_toggle_off = (config.on_toggle_off[column][row]
+                         if config.on_toggle_off is not None else None)
+
+        return ImageRectToggleButton(
+            config_, size, config.radius, config.colors, start_image,
+            mask_image, config.image_align, config.padding,
+            on_toggle_on, on_toggle_off, requires_state=config.requires_state)
+
+
+@dataclass
+class ImageRectClickButtonArrayConfig(ImageClickButtonArrayConfig):
+    sizes: tuple[tuple[tuple[int, int], ...], ...] | tuple[int, int]
+    radius: int = 0
+    colors: _Colors | None = None
+    image_align: _Align | None = None
+    padding: int = 20
+
+
+class ImageRectClickButtonArray(ButtonArrayBase):
+    def __init__(self, arr_position: tuple[int, int],
+                 arr_shape: tuple[int, int], arr_padding: tuple[int, int] | int,
+                 config: ImageRectClickButtonArrayConfig,
+                 *, arr_sub_widget: bool = False):
+        super().__init__(arr_position, arr_shape, arr_padding, config,
+                         arr_sub_widget=arr_sub_widget)
+
+    @override
+    def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
+                    config: ImageRectClickButtonArrayConfig) -> _AnyButton:
+        scale_by = (config.scale_by
+                    if isinstance(config.scale_by, int)
+                    else config.scale_by[column][row])
+        config_ = ImageButtonConfig(position=(x_pos, y_pos), align=config.align,
+                                    audio_tags=config.audio_tags,
+                                    sub_widget=True, images=config.images,
+                                    scale_by=scale_by)
+        size = (config.sizes
+                if isinstance(config.sizes[0], int)
+                else config.sizes[column][row])
+        on_click = (config.on_click[column][row]
+                    if config.on_click is not None else None)
+        on_release = (config.on_release[column][row]
+                      if config.on_release is not None else None)
+
+        return ImageRectClickButton(
+            config_, size, config.radius, config.colors, config.mask_images,
+            config.image_align, config.padding, on_click, on_release)
