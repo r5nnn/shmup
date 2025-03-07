@@ -1,6 +1,5 @@
 """Module containing constants used in the game."""
 from pathlib import Path
-from typing import Literal
 
 import pygame
 
@@ -17,6 +16,8 @@ SCROLLDOWN = 5
 PRIMARY = (30, 30, 30)
 SECONDARY = (35, 35, 35)
 ACCENT = (85, 85, 85)
+
+# defaults
 
 DEFAULT_FONT_NAME = "editundo"
 DEFAULT_FONT_SIZE = 32
@@ -38,14 +39,3 @@ DISPLAY_FLAG_NAMES = {
 # sources root
 
 ROOT = Path.resolve(Path())
-
-EventTypes = Literal[
-    "key", "keydown", "keyup",
-    "mouse", "mousedown", "mouseup",
-    "quit",
-]
-RectAlignments = Literal[
-    "topleft", "midtop", "topright",
-    "midleft", "center", "midright",
-    "bottomleft", "midbottom", "bottomright"]
-TextRectAlignments = Literal["right", "left", "center", "justified"]

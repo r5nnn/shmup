@@ -1,18 +1,19 @@
+"""Module containing base classes for button mixins and arrays."""
 from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from typing import override, TYPE_CHECKING, Literal
+from typing import override, TYPE_CHECKING
 
 import pygame
 
 from src.components.ui.widgetutils import WidgetBase
 from src.core import screen
-from src.core.constants import PRIMARY, SECONDARY, ACCENT, RectAlignments
+from src.core.constants import PRIMARY, SECONDARY, ACCENT
 
 if TYPE_CHECKING:
     from src.components.ui import Text
-    from src.components.ui.buttons._types import _Colors, _AnyButton
+    from src.core.types import Colors, AnyButton, RectAlignments
 
 
 @dataclass(kw_only=True)
@@ -26,7 +27,7 @@ class _BaseButtonConfig:
 class RectButtonBaseMixin(WidgetBase):
     def __init__(self, position: tuple[int, int], size: tuple[int, int],
                  align: str = "topleft", radius: int = 0,
-                 colors: _Colors = None,
+                 colors: Colors = None,
                  audio_tags: list[str | None] | None = None, *,
                  sub_widget: bool = False):
         super().__init__(position, align, sub_widget=sub_widget)
@@ -184,4 +185,4 @@ class ButtonArrayBase(WidgetBase, ABC):
         return super().contains(x, y)
 
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
-                    config: _BaseButtonArrayConfig) -> _AnyButton: ...
+                    config: _BaseButtonArrayConfig) -> AnyButton: ...
