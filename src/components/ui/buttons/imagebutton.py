@@ -13,12 +13,12 @@ from src.components.ui.widgetutils import WidgetBase
 
 if TYPE_CHECKING:
     import pygame
-    from src.components.ui.buttons._types import _Align, _Colors, _Images
+    from src.core.types import Align, Colors, Images
 
 
 @dataclass(kw_only=True)
 class ImageButtonConfig(_BaseButtonConfig):
-    images: _Images
+    images: Images
     scale_by: int | None = None
 
 
@@ -97,9 +97,9 @@ class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
 
 class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
     def __init__(self, config: ImageButtonConfig, size: tuple[int, int],
-                 radius: int = 0, colors: _Colors = None, start_image: int = 0,
+                 radius: int = 0, colors: Colors = None, start_image: int = 0,
                  mask_image: pygame.Surface | str | False | None = None,
-                 image_align: _Align = None, padding: int = 20,
+                 image_align: Align = None, padding: int = 20,
                  on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
                  requires_state: bool = False):
@@ -140,9 +140,9 @@ class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
 
 class ImageRectClickButton(RectButtonBaseMixin, ClickImageMixin):
     def __init__(self, config: ImageButtonConfig, size: tuple[int, int],
-                 radius: int = 0, colors: _Colors = None,
+                 radius: int = 0, colors: Colors = None,
                  image_mask: pygame.Surface | str | False | None = None,
-                 image_align: _Align = None, padding: int = 20,
+                 image_align: Align = None, padding: int = 20,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):
         RectButtonBaseMixin.__init__(self, config.position, size, config.align,

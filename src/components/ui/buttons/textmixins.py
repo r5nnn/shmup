@@ -10,7 +10,7 @@ from src.components.ui.buttons.inputmixins import (
     ToggleInputMixin, ClickInputMixin)
 
 if TYPE_CHECKING:
-    from src.components.ui.buttons._types import _Colors, _Align
+    from src.core.types import Colors, Align
 
 
 class TextLabelMixin:
@@ -18,8 +18,8 @@ class TextLabelMixin:
     requires_realignment: bool = ...
 
     def __init__(self, text: str,
-                 text_colors: _Colors = None,
-                 text_align: _Align | None = None, padding: int = 20,
+                 text_colors: Colors = None,
+                 text_align: Align | None = None, padding: int = 20,
                  font: pygame.font.Font | None = None, font_size: int = 32):
         if isinstance(text_colors, list):
             self.text_colors = text_colors
@@ -66,9 +66,9 @@ class TextLabelMixin:
 
 class ToggleTextMixin(ToggleInputMixin, TextLabelMixin):
     def __init__(self, text: str | list[str], start_text: int = 0,
-                 text_colors: _Colors = None,
+                 text_colors: Colors = None,
                  font: pygame.font.Font | None = None, font_size: int = 32,
-                 text_align: _Align | None = None, padding: int = 20,
+                 text_align: Align | None = None, padding: int = 20,
                  on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
                  requires_state: bool = False):
@@ -103,8 +103,8 @@ class ToggleTextMixin(ToggleInputMixin, TextLabelMixin):
 
 class ClickTextMixin(ClickInputMixin, TextLabelMixin):
     def __init__(self, text: str,
-                 text_colors: _Colors = None,
-                 text_align: _Align | None = None, padding: int = 20,
+                 text_colors: Colors = None,
+                 text_align: Align | None = None, padding: int = 20,
                  font: pygame.font.Font | None = None, font_size: int = 32,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):

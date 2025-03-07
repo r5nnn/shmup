@@ -107,11 +107,16 @@ class TextArray(WidgetBase):
                  config: TextArrayConfig, *,
                  arr_sub_widget: bool = False):
         super().__init__(arr_position, sub_widget=arr_sub_widget)
+
+        arr_padding = arr_padding if isinstance(arr_padding, tuple) else (
+            arr_padding, arr_padding)
         self.texts = []
         x_pos, y_pos = self._x, self._y
         for column in range(arr_shape[1]):
             for row in range(arr_shape[0]):
-                _make_text(row, column, x_pos, y_pos, config)
+                self.texts.append(_make_text(
+
+                    row, column, x_pos, y_pos, config))
                 y_pos = self.texts[-1].rect.bottom + arr_padding[1]
             x_pos = self.texts[-1].rect.right + arr_padding[0]
             y_pos = self._y

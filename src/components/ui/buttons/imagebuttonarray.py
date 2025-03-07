@@ -9,13 +9,13 @@ from src.components.ui.buttons.imagebutton import (
     ImageRectClickButton, ImageButtonConfig)
 
 if TYPE_CHECKING:
-    from src.components.ui.buttons._types import _AnyButton, _Images, _Colors, _Align
+    from src.core.types import AnyButton, Images, Colors, Align
     import pygame
 
 
 @dataclass(kw_only=True)
 class _ImageButtonArrayConfig(_BaseButtonArrayConfig):
-    images: tuple[tuple[_Images, ...], ...]
+    images: tuple[tuple[Images, ...], ...]
     scale_by: tuple[tuple[int, ...], ...] | int = 0
 
 
@@ -39,7 +39,7 @@ class ImageToggleButtonArray(ButtonArrayBase):
 
     @override
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
-                    config: ImageToggleButtonArrayConfig) -> _AnyButton:
+                    config: ImageToggleButtonArrayConfig) -> AnyButton:
         scale_by = (config.scale_by
                     if isinstance(config.scale_by, int)
                     else config.scale_by[column][row])
@@ -82,7 +82,7 @@ class ImageClickButtonArray(ButtonArrayBase):
 
     @override
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
-                    config: ImageClickButtonArrayConfig) -> _AnyButton:
+                    config: ImageClickButtonArrayConfig) -> AnyButton:
         scale_by = (config.scale_by
                     if isinstance(config.scale_by, int)
                     else config.scale_by[column][row])
@@ -106,9 +106,9 @@ class ImageRectToggleButtonArrayConfig(ImageToggleButtonArrayConfig):
     sizes: tuple[tuple[tuple[int, int], ...], ...] | tuple[int, int]
     start_image: tuple
     radius: int = 0
-    colors: _Colors | None = None
+    colors: Colors | None = None
     padding: int = 20
-    image_align: _Align | None = None
+    image_align: Align | None = None
 
 
 class ImageRectToggleButtonArray(ButtonArrayBase):
@@ -121,7 +121,7 @@ class ImageRectToggleButtonArray(ButtonArrayBase):
 
     @override
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
-                    config: ImageRectToggleButtonArrayConfig) -> _AnyButton:
+                    config: ImageRectToggleButtonArrayConfig) -> AnyButton:
         scale_by = (config.scale_by
                     if isinstance(config.scale_by, int)
                     else config.scale_by[column][row])
@@ -153,8 +153,8 @@ class ImageRectToggleButtonArray(ButtonArrayBase):
 class ImageRectClickButtonArrayConfig(ImageClickButtonArrayConfig):
     sizes: tuple[tuple[tuple[int, int], ...], ...] | tuple[int, int]
     radius: int = 0
-    colors: _Colors | None = None
-    image_align: _Align | None = None
+    colors: Colors | None = None
+    image_align: Align | None = None
     padding: int = 20
 
 
@@ -168,7 +168,7 @@ class ImageRectClickButtonArray(ButtonArrayBase):
 
     @override
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
-                    config: ImageRectClickButtonArrayConfig) -> _AnyButton:
+                    config: ImageRectClickButtonArrayConfig) -> AnyButton:
         scale_by = (config.scale_by
                     if isinstance(config.scale_by, int)
                     else config.scale_by[column][row])

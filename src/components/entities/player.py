@@ -1,18 +1,20 @@
 """Contains the base class for all the game's players."""
+from __future__ import annotations
+
 import logging
 from abc import abstractmethod, ABC
-from typing import Optional, TypedDict, override, TYPE_CHECKING
+from typing import TypedDict, override, TYPE_CHECKING
 
 import pygame
 
 from src.components import events
-from src.core.constants import RectAlignments
 from src.components.entities.entityutils import Entity, Animation
 from src.components.entities.projectile import SimpleBullet
-from src.core import screen, screen_rect, SingletonABCMeta, system_data
+from src.core import screen, screen_rect, system_data
 from src.core.prepare import screen_center
 
 if TYPE_CHECKING:
+    from src.core.types import RectAlignments
     from src.states.game import Game
 
 
@@ -25,14 +27,14 @@ class PlayerStats(TypedDict):
 class Player(Entity, ABC):
     """Base class for all the game's players."""
 
-    def __init__(self, game: "Game",
+    def __init__(self, game: Game,
                  spawn: tuple[int, int],
                  spawn_alignment: RectAlignments = "center",
-                 sprite: Optional[pygame.Surface] = None,
-                 spritesheet: Optional[list[pygame.Surface]] = None,
-                 sprite_rect: Optional[pygame.Rect] = None,
+                 sprite: pygame.Surface | None = None,
+                 spritesheet: list[pygame.Surface] | None = None,
+                 sprite_rect: pygame.Rect | None = None,
                  rect_offset: tuple[int, int] = (0, 0),
-                 stats: Optional[PlayerStats] = None):
+                 stats: PlayerStats | None = None):
         if (sprite is None) == (spritesheet is None):  # if both None or both provided
             msg = "Provide either a single sprite or a spritesheet, not both."
             raise ValueError(msg)
@@ -154,8 +156,8 @@ class Player(Entity, ABC):
                 f" stats={{'health': {self.health!r},'speed': {self.speed!r}}})")
 
 
-class Remi(Player, metaclass=SingletonABCMeta):
-    def __init__(self, game: "Game"):
+class Remi(Player):
+    def __init__(self, game: Game):
         super().__init__(game, spawn=screen_center,
                          spritesheet=[pygame.transform.scale_by(image, 2) for image in
                                       sprites("remi")],

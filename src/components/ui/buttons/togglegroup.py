@@ -1,25 +1,15 @@
 from __future__ import annotations
 
-from typing import override
+from typing import override, TYPE_CHECKING
 
-from src.components.ui.buttons.imagebutton import (
-    ImageToggleButton, ImageRectToggleButton)
-from src.components.ui.buttons.imagebuttonarray import (
-    ImageToggleButtonArray, ImageRectToggleButtonArray)
-from src.components.ui.buttons.textbutton import (
-    TextToggleButton, TextRectToggleButton)
-from src.components.ui.buttons.textbuttonarray import (
-    TextToggleButtonArray, TextRectToggleButtonArray)
 from src.components.ui.widgetutils import WidgetBase
 
-_AnyToggleButton = (TextToggleButton | TextRectToggleButton
-                    | ImageToggleButton | ImageRectToggleButton)
-_AnyToggleArray = (TextToggleButtonArray | TextRectToggleButtonArray
-                   | ImageToggleButtonArray | ImageRectToggleButtonArray)
+if TYPE_CHECKING:
+    from src.core.types import AnyToggleButton, AnyToggleArray
 
 
 class ToggleButtonGroup(WidgetBase):
-    def __init__(self, buttons: list[_AnyToggleButton], start_button: int = 0,
+    def __init__(self, buttons: list[AnyToggleButton], start_button: int = 0,
                  *, toggle_on_init: bool = True, sub_widget: bool = False):
         self.buttons = buttons
         self.start_button = start_button
@@ -52,7 +42,7 @@ class ToggleButtonGroup(WidgetBase):
 
 
 class ToggleArrayGroup(ToggleButtonGroup):
-    def __init__(self, button_array: _AnyToggleArray, start_button: int = 0,
+    def __init__(self, button_array: AnyToggleArray, start_button: int = 0,
                  *, toggle_on_init: bool = True, sub_widget: bool = False):
         super().__init__(button_array.buttons, start_button,
                          toggle_on_init=toggle_on_init, sub_widget=sub_widget)

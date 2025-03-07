@@ -11,12 +11,12 @@ from src.components.ui.buttons.buttonbases import (
 
 if TYPE_CHECKING:
     import pygame
-    from src.components.ui.buttons._types import _Colors, _AnyButton, _Align
+    from src.core.types import Colors, AnyButton, Align
 
 
 @dataclass(kw_only=True)
 class _TextButtonArrayConfig(_BaseButtonArrayConfig):
-    text_colors: _Colors = None
+    text_colors: Colors = None
     font: pygame.font.Font | None = None
     font_size: int = 32
 
@@ -40,7 +40,7 @@ class TextToggleButtonArray(ButtonArrayBase):
 
     @override
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
-                    config: TextToggleButtonArrayConfig) -> _AnyButton:
+                    config: TextToggleButtonArrayConfig) -> AnyButton:
         config_ = TextButtonConfig(
             position=(x_pos, y_pos), align=config.align,
             audio_tags=config.audio_tags, sub_widget=True,
@@ -76,7 +76,7 @@ class TextClickButtonArray(ButtonArrayBase):
 
     @override
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
-                    config: TextClickButtonArrayConfig) -> _AnyButton:
+                    config: TextClickButtonArrayConfig) -> AnyButton:
         config_ = TextButtonConfig(
             position=(x_pos, y_pos), align=config.align,
             audio_tags=config.audio_tags, sub_widget=True,
@@ -95,8 +95,8 @@ class TextClickButtonArray(ButtonArrayBase):
 class TextRectToggleButtonArrayConfig(TextToggleButtonArrayConfig):
     sizes: tuple[tuple[tuple[int, int], ...], ...] | tuple[int, int]
     radius: int = 0
-    colors: _Colors | None = None
-    text_align: _Align | None = None
+    colors: Colors | None = None
+    text_align: Align | None = None
     padding: int = 20
 
 
@@ -110,7 +110,7 @@ class TextRectToggleButtonArray(ButtonArrayBase):
 
     @override
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
-                    config: TextRectToggleButtonArrayConfig) -> _AnyButton:
+                    config: TextRectToggleButtonArrayConfig) -> AnyButton:
         config_ = TextButtonConfig(
             position=(x_pos, y_pos), align=config.align,
             audio_tags=config.audio_tags, sub_widget=True,
@@ -138,8 +138,8 @@ class TextRectToggleButtonArray(ButtonArrayBase):
 class TextRectClickButtonArrayConfig(TextClickButtonArrayConfig):
     sizes: tuple[tuple[tuple[int, int], ...], ...] | tuple[int, int]
     radius: int = 0
-    colors: _Colors | None = None
-    text_align: _Align | None = None
+    colors: Colors | None = None
+    text_align: Align | None = None
     padding: int = 20
 
 
@@ -153,7 +153,7 @@ class TextRectClickButtonArray(ButtonArrayBase):
 
     @override
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
-                    config: TextRectClickButtonArrayConfig) -> _AnyButton:
+                    config: TextRectClickButtonArrayConfig) -> AnyButton:
         config_ = TextButtonConfig(
             position=(x_pos, y_pos), align=config.align,
             audio_tags=config.audio_tags, sub_widget=True,

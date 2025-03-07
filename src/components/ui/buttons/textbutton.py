@@ -13,12 +13,12 @@ from src.components.ui.widgetutils import WidgetBase
 
 if TYPE_CHECKING:
     import pygame
-    from src.components.ui.buttons._types import _Align, _Colors
+    from src.core.types import Align, Colors
 
 
 @dataclass(kw_only=True)
 class TextButtonConfig(_BaseButtonConfig):
-    text_colors: _Colors | None = None
+    text_colors: Colors | None = None
     font: pygame.font.Font | None = None
     font_size: int = 32
 
@@ -96,8 +96,8 @@ class TextClickButton(TextButtonBaseMixin, ClickTextMixin):
 
 class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
     def __init__(self, config: TextButtonConfig, size: tuple[int, int],
-                 text: str, radius: int = 0, colors: _Colors | None = None,
-                 start_text: int = 0, text_align: _Align | None = None,
+                 text: str, radius: int = 0, colors: Colors | None = None,
+                 start_text: int = 0, text_align: Align | None = None,
                  padding: int = 20, on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
                  requires_state: bool = False):
@@ -141,8 +141,8 @@ class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
 
 class TextRectClickButton(RectButtonBaseMixin, ClickTextMixin):
     def __init__(self, config: TextButtonConfig, size: tuple[int, int], text: str,
-                 radius: int = 0, colors: _Colors = None,
-                 text_align: _Align | None = None, padding: int = 20,
+                 radius: int = 0, colors: Colors = None,
+                 text_align: Align | None = None, padding: int = 20,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):
         RectButtonBaseMixin.__init__(self, config.position, size, config.align,

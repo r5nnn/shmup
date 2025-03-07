@@ -8,16 +8,16 @@ from src.components.ui.buttons.inputmixins import ToggleInputMixin, ClickInputMi
 from src.core import screen, get_sprites, spritesheet_paths
 
 if TYPE_CHECKING:
-    from src.components.ui.buttons._types import _Align, _Images
+    from src.core.types import Align, Images
 
 
 class ImageLabelMixin:
     rect: pygame.Rect = ...
     requires_realignment: bool = ...
 
-    def __init__(self, images: _Images, scale_by: int | None = None,
+    def __init__(self, images: Images, scale_by: int | None = None,
                  mask_image: pygame.Surface | str | False | None = None,
-                 image_align: _Align = None, padding: int = 20):
+                 image_align: Align = None, padding: int = 20):
         if isinstance(images, str):
             images = get_sprites(spritesheet_paths(images))
         self.images = images if isinstance(images, tuple) else (images,) * 3
@@ -60,10 +60,10 @@ class ImageLabelMixin:
 
 
 class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
-    def __init__(self, images: _Images, scale_by: int | None = None,
+    def __init__(self, images: Images, scale_by: int | None = None,
                  start_image: int = 0,
                  mask_image: pygame.Surface | str | False | None = None,
-                 image_align: _Align = None, padding: int = 20,
+                 image_align: Align = None, padding: int = 20,
                  on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
                  requires_state: bool = False):
@@ -87,9 +87,9 @@ class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
 
 
 class ClickImageMixin(ClickInputMixin, ImageLabelMixin):
-    def __init__(self, images: _Images, scale_by: int | None = None,
+    def __init__(self, images: Images, scale_by: int | None = None,
                  mask_image: pygame.Surface | str | False | None = None,
-                 image_align: _Align = None, padding: int = 20,
+                 image_align: Align = None, padding: int = 20,
                  on_click: Callable | None = None,
                  on_release: Callable | None = None):
         ClickInputMixin.__init__(self, on_click, on_release)
