@@ -1,24 +1,35 @@
 """Module containing functions and design patterns used globally across the game."""
 from __future__ import annotations
 
-from abc import ABC, ABCMeta, abstractmethod
-from typing import ClassVar, Any
-from src.core.constants import DISPLAY_FLAG_NAMES
+from abc import ABC, abstractmethod
+from typing import Any
 
 import pygame
 
+from src.core.constants import DISPLAY_FLAG_NAMES
 from src.core.data import config, system_data
 
 
 def toggle_flag(flag: int) -> None:
+    """Toggles the given flag and resets the screen mode with the new flags.
+
+    :param flag: The integer value of the flag to toggle.
+    """
     system_data["flags"] ^= flag
     config["flags"][DISPLAY_FLAG_NAMES[flag]] = not config[
         "flags"][DISPLAY_FLAG_NAMES[flag]]
     pygame.display.set_mode((1920, 1080), system_data["flags"])
 
 def toggle_fullscreen() -> None:
+    """Toggles the fullscreen flag of the screen.
+
+    While this could be done using exclusively the toggle_flag procedure,
+    pygame has an inbuilt toggle_fullscreen procedure that is more efficient,
+    however doesn't work if already in fullscreen. This procedure abstracts the
+    logic for choosing the correct method.
+    """
     if system_data["flags"] & pygame.FULLSCREEN:
-        # using the pygame inbuilt display.toggle_fullscreen to exit fullscreen
+        # Ssing the pygame inbuilt display.toggle_fullscreen to exit fullscreen
         # causes the noframe  flag and potentially other flags to disappear.
         # Toggling the flag and manually setting the mode of the screen makes
         # sure all flags are preserved.
@@ -28,21 +39,6 @@ def toggle_fullscreen() -> None:
         config["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]] = not (
             config)["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]]
         pygame.display.toggle_fullscreen()
-
-
-class Singleton(type):
-    """Enforces the singleton pattern when passed as a metaclass."""
-
-    _instances: ClassVar[dict[object, Singleton]] = {}
-
-    def __call__(cls, *args, **kwargs) -> object:
-        if cls not in cls._instances:
-            cls._instances[cls] = super().__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-
-class SingletonABCMeta(Singleton, ABCMeta):
-    """Class used to combine a Singleton and ABC for use as a metaclass."""
 
 
 class Validator(ABC):

@@ -1,3 +1,4 @@
+"""Module holding all the game's custom types."""
 from __future__ import annotations
 
 from typing import Literal
@@ -23,7 +24,7 @@ EventTypes = Literal[
     "quit",
 ]
 
-# Complex
+# Commonly needed parameter types
 
 Colors = list[tuple | pygame.Color] | tuple | pygame.Color | None
 Align = list[Literal["top", "bottom", "left", "right"]] | Literal["center"]
