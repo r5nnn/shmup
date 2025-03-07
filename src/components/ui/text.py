@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import warnings
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, override
 
 import pygame
@@ -72,7 +73,6 @@ class Text(WidgetBase):
         super().contains(x, y)
         return self.rect.collidepoint(x, y)
 
-
     def render_text(self, text: str, color: pygame.Color | tuple) -> (
             tuple)[pygame.Surface, pygame.Rect]:
         self.requires_rerender = False
@@ -82,3 +82,51 @@ class Text(WidgetBase):
         self.requires_realignment = False
         setattr(self.rect, self._align, (self._x, self._y))
         self._x, self._y = self.rect.topleft
+
+
+@dataclass
+class TextArrayConfig:
+    text: tuple[tuple[str, ...], ...]
+    font: pygame.freetype.Font | None = None
+    font_size: int = 32
+    color: pygame.Color | tuple | None = None
+    align: RectAlignments = "topleft"
+
+
+def _make_text(row: int, column: int, x_pos: int, y_pos: int,
+               config: TextArrayConfig) -> Text:
+    return Text((x_pos, y_pos), config.text[column][row], config.font,
+                config.font_size, config.color, config.align,
+                sub_widget=True)
+
+
+class TextArray(WidgetBase):
+    def __init__(self, arr_position: tuple[int, int],
+                 arr_shape: tuple[int, int],
+                 arr_padding: tuple[int, int] | int,
+                 config: TextArrayConfig, *,
+                 arr_sub_widget: bool = False):
+        super().__init__(arr_position, sub_widget=arr_sub_widget)
+        self.texts = []
+        x_pos, y_pos = self._x, self._y
+        for column in range(arr_shape[1]):
+            for row in range(arr_shape[0]):
+                _make_text(row, column, x_pos, y_pos, config)
+                y_pos = self.texts[-1].rect.bottom + arr_padding[1]
+            x_pos = self.texts[-1].rect.right + arr_padding[0]
+            y_pos = self._y
+
+    @override
+    def update(self) -> None:
+        super().update()
+        for button in self.texts:
+            button.update()
+
+    @override
+    def blit(self) -> None:
+        for button in self.texts:
+            button.blit()
+
+    @override
+    def contains(self, x: int, y: int) -> bool | None:
+        return super().contains(x, y)

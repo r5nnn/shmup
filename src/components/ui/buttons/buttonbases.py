@@ -181,8 +181,7 @@ class ButtonArrayBase(WidgetBase, ABC):
 
     @override
     def contains(self, x: int, y: int) -> bool | None:
-        super().contains(x, y)
-
+        return super().contains(x, y)
 
     def make_button(self, row: int, column: int, x_pos: int, y_pos: int,
                     config: _BaseButtonArrayConfig) -> _AnyButton: ...

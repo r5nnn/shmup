@@ -27,7 +27,7 @@ class Options(State):
             0, 0, screen_size[0] * 0.8,
             (screen_size[1] - self.title.get_height()) * 0.8)
         self.bg_rect.midtop = (screen_center[0], screen_size[1] * 0.1 + 20 +
-                                self.title.get_height())
+                               self.title.get_height())
         self.bg_surf = pygame.Surface(self.bg_rect.size)
         self.bg_surf.fill(PRIMARY)
         self.bg_surf.set_alpha(96)
