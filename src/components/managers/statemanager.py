@@ -7,13 +7,13 @@ from typing import TYPE_CHECKING
 import pygame
 
 if TYPE_CHECKING:
-    from src.states.state import State
+    from src.core.types import AnyState
 
 
 state_dict = {}
 _state_stack = []
 
-def current_state() -> State:
+def current_state() -> AnyState:
     """Does what it says.
 
     :return: The state at the top of the state stack.
