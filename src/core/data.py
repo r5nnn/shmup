@@ -64,4 +64,5 @@ system_data = {
     "flags": pygame.SCALED,
     "dt": 1.0,
     "quit": False,
+    "version": "v0.0.3 prototype",
 }

@@ -19,10 +19,17 @@ if TYPE_CHECKING:
 
 
 def init(state_dict: dict[str, type[State]], start_state: str) -> None:
+    """Initialises the module with the state_dictionary and start state.
+
+    :param state_dict: A dictionary containing the name of every game state
+    bound to its class.
+    :param start_state: The state which the game should start in.
+    """
     statemanager.state_dict = state_dict
     statemanager.append(start_state, initial=True)
 
 def gameloop() -> None:
+    """Starts the while loop that updates the game every iteration."""
     global _running
     if statemanager.state_dict is None:
         msg = "Control module has not been initialised with state_dict."

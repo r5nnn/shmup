@@ -12,7 +12,7 @@ from src.core.constants import ROOT
 import pygame
 
 pygame.init()
-pygame.display.set_caption("shmup")
+pygame.display.set_caption("shmup " + system_data["version"])
 for flag_name, enabled in config["flags"].items():
     if enabled:
         system_data["flags"] |= attrgetter(flag_name.upper())(pygame)
@@ -28,14 +28,17 @@ logging.basicConfig(level=logging.WARNING,
                     datefmt="%d/%m/%Y %H:%M:%S")
 
 
-def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface]:
+def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface, ...]:
     """Gets the subsurfaces from a spritesheet image.
 
     Splits a spritesheet (image) file into into subsurfaces based on the
     metadata of the spritesheet stored in a json file of the same name. Json
     file should be formatted according to aseprite's spritesheet json output
-    format. Result is stored in a tuple. Order of list returned depends on
-    the order of the sprites referenced in the json file.
+    format. Order of list returned depends on the order of the sprites
+    referenced in the json file.
+
+    :param spritesheet_file: Path to the spritesheet image.
+    :returns: A tuple of surfaces based on the metadata in the json file.
     """
     spritesheet = pygame.image.load(spritesheet_file).convert_alpha()
     metadata = spritesheet_file.with_suffix(".json")
@@ -54,21 +57,32 @@ def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface]:
             spritesheet.subsurface(res["x"], res["y"], res["w"], res["h"]))
     return tuple(sprite_list)
 
-def get_sprites(directory: Path) -> tuple[pygame.Surface] | None:
+def get_sprites(directory: Path) -> tuple[pygame.Surface, ...]:
+    """Gets the sprite surfaces from a given spritesheet directory.
+
+    Uses lazy-loading. Sprites are cached upon being loaded, so they only need
+    to be loaded once per game instance.
+
+    :param directory: The path to the spritesheet to get sprite surfaces from.
+    :return: A tuple of surfaces based on the spritesheet's metadata json file.
+    """
     if directory not in _cached_sprites:
         _cached_sprites[directory] = parse_spritesheet(directory)
     return _cached_sprites[directory]
 
 
 class Load:
-    """Class for loading the filepaths of files in a directory.
-
-    Recursively searches directories unless explicitly mentioned to skip in
-    `exclude_dirs`.
-    """
-
     def __init__(self, directory: Path, *accept: str,
                  exclude_dirs: list[str] | None = None):
+        """Class for loading the filepaths of files in a directory.
+
+        Recursively searches directories unless explicitly mentioned to skip in
+        `exclude_dirs`.
+
+        :param directory: Directory folder to search recursively through.
+        :param accept: File types to accept.
+        :param exclude_dirs: Subdirectories inside the directory to ignore.
+        """
         self.files = {}
         self.exclude_dirs = exclude_dirs if exclude_dirs else []
         for path, _, files in os.walk(directory):
@@ -81,6 +95,11 @@ class Load:
                     self.files[name] = Path(path) / file
 
     def __call__(self, name: str) -> Path:
+        """Returns the path to the filename specified.
+
+        :param name: Name of the file.
+        :return: The path to that file.
+        """
         return self.files[name]
 
 
