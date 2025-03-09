@@ -1,3 +1,4 @@
+# SHMUP
 <p align="center">
 Bullet hell OCR A-level project using pygame.  
 </p>
