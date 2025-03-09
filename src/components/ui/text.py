@@ -14,7 +14,7 @@ from src.core.constants import DEFAULT_FONT_SIZE, DEFAULT_FONT_NAME
 from src.core.prepare import font_paths
 
 if TYPE_CHECKING:
-    from src.core.constants import RectAlignments
+    from src.core.types import RectAlignments
 
 
 class Text(WidgetBase):

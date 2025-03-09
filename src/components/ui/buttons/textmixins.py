@@ -59,8 +59,6 @@ class TextLabelMixin:
         self.text_object.blit()
 
     def update(self) -> None:
-        if self.text_object.requires_realignment:
-            self.requires_realignment = True
         self.text_object.update()
 
 

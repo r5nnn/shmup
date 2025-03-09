@@ -8,7 +8,7 @@ from typing import override, Any
 from src.core.utils import Validator
 
 if TYPE_CHECKING:
-    from src.core.constants import RectAlignments
+    from src.core.types import RectAlignments
 
 
 class AlignmentNeeded(Validator):

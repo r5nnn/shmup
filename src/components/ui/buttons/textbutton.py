@@ -126,6 +126,8 @@ class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
     def update(self) -> None:
         RectButtonBaseMixin.update(self)
         ToggleTextMixin.update(self)
+        if self.text_object.requires_realignment:
+            self.align_text()
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()

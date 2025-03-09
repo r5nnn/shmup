@@ -53,7 +53,7 @@ class Title(State):
         screen.blit(self.title,
                     (screen_size[0] * 0.5 - self.title.get_width() / 2,
                      screen_size[1] * 0.1))
-        screen.blit(self.splash, (screen_size[0] / 2 - self.splash.get_width(),
+        screen.blit(self.splash, (screen_size[0] * 0.13,
                                   screen_size[1] * 0.25))
 
     @override
