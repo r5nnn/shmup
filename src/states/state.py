@@ -1,4 +1,5 @@
 """Contains base classes for both states and overlays."""
+
 from __future__ import annotations
 
 from typing import override
@@ -21,8 +22,9 @@ class State:
             widgethandler.add_widget(widget)
 
     def startup(self) -> None:
-        events.eventbinder.register(("keydown", pygame.K_ESCAPE),
-                                   action=self.back)
+        events.eventbinder.register(
+            ("keydown", pygame.K_ESCAPE), action=self.back
+        )
         self.add_widgets()
 
     def clear_widgets(self) -> None:

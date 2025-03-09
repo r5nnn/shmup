@@ -5,9 +5,11 @@ import pygame
 from src import main, title, options, game
 
 if __name__ == "__main__":
-    states = {"title": title.Title,
-              "options": options.Options,
-              "game": game.Game}
+    states = {
+        "title": title.Title,
+        "options": options.Options,
+        "game": game.Game,
+    }
     main.init(states, "title")
     main.gameloop()
     pygame.quit()
