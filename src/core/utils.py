@@ -1,4 +1,5 @@
 """Module containing functions and design patterns used globally across the game."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -17,9 +18,11 @@ def toggle_flag(flag: int) -> None:
     :param flag: The integer value of the flag to toggle.
     """
     system_data["flags"] ^= flag
-    config["flags"][DISPLAY_FLAG_NAMES[flag]] = not config[
-        "flags"][DISPLAY_FLAG_NAMES[flag]]
+    config["flags"][DISPLAY_FLAG_NAMES[flag]] = not config["flags"][
+        DISPLAY_FLAG_NAMES[flag]
+    ]
     pygame.display.set_mode((1920, 1080), system_data["flags"])
+
 
 def toggle_fullscreen() -> None:
     """Toggles the fullscreen flag of the screen.
@@ -42,8 +45,9 @@ def toggle_fullscreen() -> None:
         toggle_flag(pygame.FULLSCREEN)
     else:
         system_data["flags"] ^= pygame.FULLSCREEN
-        config["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]] = not (
-            config)["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]]
+        config["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]] = not config[
+            "flags"
+        ][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]]
         pygame.display.toggle_fullscreen()
     events.set_abs_mouse_pos(coords)
 

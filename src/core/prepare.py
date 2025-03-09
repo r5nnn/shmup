@@ -1,4 +1,5 @@
 """Module for preparing the game to run by initialising the game's components."""
+
 from __future__ import annotations
 
 import json
@@ -21,12 +22,16 @@ pygame.display.set_mode((1920, 1080), system_data["flags"])
 
 system_data["window"] = pygame.display.get_surface()
 system_data["window size"] = system_data["window"].get_size()
-system_data["window center"] = tuple(coord / 2 for coord in system_data["window size"])
+system_data["window center"] = tuple(
+    coord / 2 for coord in system_data["window size"]
+)
 system_data["window rect"] = system_data["window"].get_rect()
 
-logging.basicConfig(level=logging.WARNING,
-                    format="%(asctime)s %(levelname)s %(message)s",
-                    datefmt="%d/%m/%Y %H:%M:%S")
+logging.basicConfig(
+    level=logging.WARNING,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%d/%m/%Y %H:%M:%S",
+)
 
 
 def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface, ...]:
@@ -46,7 +51,9 @@ def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface, ...]:
     try:
         file = Path.open(metadata, encoding="UTF-8")
     except FileNotFoundError as err:
-        msg = f"Spritesheet ({spritesheet_file}) has no accompanying json file."
+        msg = (
+            f"Spritesheet ({spritesheet_file}) has no accompanying json file."
+        )
         raise FileNotFoundError(msg) from err
     else:
         with file:
@@ -55,8 +62,10 @@ def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface, ...]:
     for sprite in (frames := data["frames"]):
         res = frames[sprite]["frame"]
         sprite_list.append(
-            spritesheet.subsurface(res["x"], res["y"], res["w"], res["h"]))
+            spritesheet.subsurface(res["x"], res["y"], res["w"], res["h"])
+        )
     return tuple(sprite_list)
+
 
 def get_sprites(directory: Path) -> tuple[pygame.Surface, ...]:
     """Gets the sprite surfaces from a given spritesheet directory.
@@ -73,8 +82,12 @@ def get_sprites(directory: Path) -> tuple[pygame.Surface, ...]:
 
 
 class Load:
-    def __init__(self, directory: Path, *accept: str,
-                 exclude_dirs: list[str] | None = None):
+    def __init__(
+        self,
+        directory: Path,
+        *accept: str,
+        exclude_dirs: list[str] | None = None,
+    ):
         """Class for loading the filepaths of files in a directory.
 
         Recursively searches directories unless explicitly mentioned to skip in
@@ -87,8 +100,10 @@ class Load:
         self.files = {}
         self.exclude_dirs = exclude_dirs if exclude_dirs else []
         for path, _, files in os.walk(directory):
-            if any(excluded in os.path.relpath(path, directory) for excluded in
-                   self.exclude_dirs):
+            if any(
+                excluded in os.path.relpath(path, directory)
+                for excluded in self.exclude_dirs
+            ):
                 continue
             for file in files:
                 name, ext = Path(file).stem, Path(file).suffix

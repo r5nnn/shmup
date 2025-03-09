@@ -1,4 +1,5 @@
 """Module containing constants used in the game."""
+
 from pathlib import Path
 
 import pygame

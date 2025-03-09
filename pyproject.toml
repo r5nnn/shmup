@@ -1,12 +1,22 @@
-[lint]
+[tool.ruff.lint]
 select = ["ALL"]
 ignore = [
     # unsorted warnings
     "N812", "E402", "EXE002", "I001", "F401", "ARG002", "S", "FBT003",
     "SLF001",
+    # black does not fully conform to the magic trailing comma rule for now.
+    "COM812",
     # pylint
     "PLW0603", "PLR0913", "PLR2004",
     # annotations
     "ANN002", "ANN003", "ANN204", "ANN401",
     # docstrings
     "D101", "D102", "D103", "D105", "D107", "D203", "D213", "D401"]
+
+[tool.ruff.format]
+# Enable reformatting of code snippets in docstrings.
+docstring-code-format = true
+
+[tool.black]
+line-length = 79
+skip_magic_trailing_comma = true

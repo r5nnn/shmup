@@ -3,6 +3,7 @@
 Must be initialised with `state_dict` and `start_state` otherwise a
 RuntimeError will be raised.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -10,9 +11,9 @@ from typing import TYPE_CHECKING
 import pygame.display
 
 from src.components import events
-from src.core.utils import toggle_fullscreen, toggle_flag
-from src.components.managers import statemanager, overlaymanager
-from src.core.data import system_data, save, config, config_dir
+from src.components.managers import overlaymanager, statemanager
+from src.core.data import config, config_dir, save, system_data
+from src.core.utils import toggle_flag, toggle_fullscreen
 
 if TYPE_CHECKING:
     from src.states.state import State
@@ -27,6 +28,7 @@ def init(state_dict: dict[str, type[State]], start_state: str) -> None:
     """
     statemanager.state_dict = state_dict
     statemanager.append(start_state, initial=True)
+
 
 def gameloop() -> None:
     """Starts the while loop that updates the game every iteration."""
@@ -51,12 +53,17 @@ def gameloop() -> None:
         system_data["dt"] = pygame.time.Clock().tick(165) / 1000.0
         pygame.display.flip()
 
+
 _running = True
 
-events.eventbinder.register(("keydown", pygame.K_F11),
-                            action=toggle_fullscreen)
-events.eventbinder.register(("keydown", pygame.K_END),
-                            action=statemanager.quit_game)
-events.eventbinder.register(("key", pygame.K_LSHIFT),
-                            ("keydown", pygame.K_F11),
-                            action=lambda: toggle_flag(pygame.NOFRAME))
+events.eventbinder.register(
+    ("keydown", pygame.K_F11), action=toggle_fullscreen
+)
+events.eventbinder.register(
+    ("keydown", pygame.K_END), action=statemanager.quit_game
+)
+events.eventbinder.register(
+    ("key", pygame.K_LSHIFT),
+    ("keydown", pygame.K_F11),
+    action=lambda: toggle_flag(pygame.NOFRAME),
+)

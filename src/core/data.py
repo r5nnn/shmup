@@ -1,4 +1,5 @@
 """Module for saving and loading game config file."""
+
 import json
 from pathlib import Path
 
@@ -17,6 +18,7 @@ def save(data: dict, directory: Path) -> None:
     with directory.open("w") as file:
         json.dump(data, file, indent=4)
 
+
 def load(directory: Path, default_config: dict) -> dict:
     """Load a dict from a json file.
 
@@ -31,6 +33,7 @@ def load(directory: Path, default_config: dict) -> dict:
         except json.JSONDecodeError:
             save(default_config, directory)
             return default_config
+
 
 def validate_config(data: dict, default_config: dict) -> dict:
     """Checks that the format of a config dict matches another.
@@ -51,12 +54,8 @@ def validate_config(data: dict, default_config: dict) -> dict:
             del data[key]
     return data
 
-_default_config = {
-    "flags": {
-        "fullscreen": True,
-        "noframe": True,
-    },
-}
+
+_default_config = {"flags": {"fullscreen": True, "noframe": True}}
 config_dir = Path("config.json")
 config = validate_config(load(config_dir, _default_config), _default_config)
 # Global data that is lost on game quit.
