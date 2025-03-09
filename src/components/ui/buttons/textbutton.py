@@ -96,9 +96,10 @@ class TextClickButton(TextButtonBaseMixin, ClickTextMixin):
 
 class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
     def __init__(self, config: TextButtonConfig, size: tuple[int, int],
-                 text: str, radius: int = 0, colors: Colors | None = None,
-                 start_text: int = 0, text_align: Align | None = None,
-                 padding: int = 20, on_toggle_on: Callable | None = None,
+                 text: list[str] | str, radius: int = 0,
+                 colors: Colors | None = None, start_text: int = 0,
+                 text_align: Align | None = None, padding: int = 20,
+                 on_toggle_on: Callable | None = None,
                  on_toggle_off: Callable | None = None, *,
                  requires_state: bool = False):
         RectButtonBaseMixin.__init__(self, config.position, size, config.align,
@@ -126,7 +127,8 @@ class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
     def update(self) -> None:
         RectButtonBaseMixin.update(self)
         ToggleTextMixin.update(self)
-        if self.text_object.requires_realignment:
+        if self.text_label_requires_realignment:
+            self.text_label_requires_realignment = False
             self.align_text()
         if self.requires_realignment:
             self.requires_realignment = False
