@@ -8,7 +8,7 @@ from typing import override, TYPE_CHECKING
 import pygame
 
 from src.components.ui.widgetutils import WidgetBase
-from src.core import screen
+from src.core import system_data
 from src.core.constants import PRIMARY, SECONDARY, ACCENT
 
 if TYPE_CHECKING:
@@ -72,7 +72,7 @@ class RectButtonBaseMixin(WidgetBase):
 
     @override
     def blit(self) -> None:
-        pygame.draw.rect(screen, self.color, self.rect,
+        pygame.draw.rect(system_data["window"], self.color, self.rect,
                          border_radius=self.radius)
 
     @override

@@ -4,15 +4,14 @@ from typing import override
 import pygame
 
 from src.components.managers import overlaymanager
-from src.components.ui import widgethandler
-from src.core.constants import PRIMARY, SECONDARY, ACCENT
-from src.core.prepare import image_paths, screen, screen_size, screen_center
+from src.components.ui import (widgethandler, ToggleArrayGroup,
+                               TextRectToggleButtonArray,
+                               TextRectToggleButtonArrayConfig)
+from src.core.constants import PRIMARY
+from src.core.prepare import image_paths
 from src.states.optionmenus import GraphicsOptions, KeybindsOptions, AudioOptions
-from src.states.state import Overlay
-from src.states.state import State
-from src.components.ui.buttons import ToggleArrayGroup
-from src.components.ui.buttons import (TextRectToggleButtonArray,
-                                       TextRectToggleButtonArrayConfig)
+from src.states.state import State, Overlay
+from src.core import system_data
 
 
 class Options(State):
@@ -23,11 +22,12 @@ class Options(State):
         self.title = pygame.transform.scale_by(pygame.image.load(
             image_paths("title options")), 4)
         # background rect
-        self.bg_rect = pygame.Rect(
-            0, 0, screen_size[0] * 0.8,
-            (screen_size[1] - self.title.get_height()) * 0.8)
-        self.bg_rect.midtop = (screen_center[0], screen_size[1] * 0.1 + 20 +
-                               self.title.get_height())
+        self.bg_rect = pygame.Rect(0, 0, system_data["window size"][0] * 0.8,
+                                   (system_data["window size"][1]
+                                    - self.title.get_height()) * 0.8)
+        self.bg_rect.midtop = (system_data["window center"][0],
+                               system_data["window size"][1] * 0.1 + 20
+                               + self.title.get_height())
         self.bg_surf = pygame.Surface(self.bg_rect.size)
         self.bg_surf.fill(PRIMARY)
         self.bg_surf.set_alpha(96)
@@ -46,11 +46,12 @@ class Options(State):
 
     @override
     def render(self) -> None:
-        screen.blit(self.background, (0, 0))
-        screen.blit(self.bg_surf, self.bg_rect)
-        screen.blit(self.title,
-                    (screen_size[0] / 2 - self.title.get_width() / 2,
-                     screen_size[1] * 0.1))
+        system_data["window"].blit(self.background, (0, 0))
+        system_data["window"].blit(self.bg_surf, self.bg_rect)
+        system_data["window"].blit(self.title,
+                                   (system_data["window size"][0] / 2
+                                    - self.title.get_width()/ 2,
+                                    system_data["window size"][1] * 0.1))
         widgethandler.blit()
 
     @override

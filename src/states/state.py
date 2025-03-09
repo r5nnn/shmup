@@ -6,14 +6,14 @@ from typing import override
 import pygame
 
 from src.components import events
+from src.core import system_data
 from src.components.managers import statemanager, overlaymanager
 from src.components.ui import widgethandler
-from src.core import screen, screen_size
 
 
 class State:
     def __init__(self):
-        self.background = pygame.Surface(screen_size)
+        self.background = pygame.Surface(system_data["window size"])
         self.widgets = ()
 
     def add_widgets(self) -> None:
@@ -37,7 +37,7 @@ class State:
         widgethandler.update()
 
     def render(self) -> None:
-        screen.blit(self.background, (0, 0))
+        system_data["window"].blit(self.background, (0, 0))
         widgethandler.blit()
 
     def back(self) -> None:

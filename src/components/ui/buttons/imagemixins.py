@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Callable
 import pygame
 
 from src.components.ui.buttons.inputmixins import ToggleInputMixin, ClickInputMixin
-from src.core import screen, get_sprites, spritesheet_paths
+from src.core import get_sprites, spritesheet_paths, system_data
 
 if TYPE_CHECKING:
     from src.core.types import Align, Images
@@ -56,7 +56,7 @@ class ImageLabelMixin:
         self.align_image()
 
     def blit(self) -> None:
-        screen.blit(self.image, self.image_rect)
+        system_data["window"].blit(self.image, self.image_rect)
 
 
 class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):

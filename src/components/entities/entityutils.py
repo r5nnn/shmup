@@ -7,8 +7,6 @@ from typing import override
 import pygame.display
 from pygame.sprite import Sprite
 
-from src.core import screen
-
 if TYPE_CHECKING:
     from src.components import RectAlignments
 

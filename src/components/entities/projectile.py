@@ -8,7 +8,7 @@ import pygame
 
 import src.core.utils
 from src.components.entities.entityutils import Entity
-from src.core import screen_rect, system_data
+from src.core import system_data
 
 if TYPE_CHECKING:
     from src.components import RectAlignments

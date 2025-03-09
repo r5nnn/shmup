@@ -16,12 +16,13 @@ pygame.display.set_caption("shmup " + system_data["version"])
 for flag_name, enabled in config["flags"].items():
     if enabled:
         system_data["flags"] |= attrgetter(flag_name.upper())(pygame)
+
 pygame.display.set_mode((1920, 1080), system_data["flags"])
 
-screen = pygame.display.get_surface()
-screen_size = screen.get_size()
-screen_center = tuple(round(coordinate / 2) for coordinate in screen_size)
-screen_rect = screen.get_rect()
+system_data["window"] = pygame.display.get_surface()
+system_data["window size"] = system_data["window"].get_size()
+system_data["window center"] = tuple(coord / 2 for coord in system_data["window size"])
+system_data["window rect"] = system_data["window"].get_rect()
 
 logging.basicConfig(level=logging.WARNING,
                     format="%(asctime)s %(levelname)s %(message)s",

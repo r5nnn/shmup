@@ -9,9 +9,9 @@ import pygame
 from pygame import freetype
 
 from src.components.ui.widgetutils import RenderNeeded, WidgetBase
-from src.core import screen
 from src.core.constants import DEFAULT_FONT_SIZE, DEFAULT_FONT_NAME
 from src.core.prepare import font_paths
+from src.core import system_data
 
 if TYPE_CHECKING:
     from src.core.types import RectAlignments
@@ -58,7 +58,7 @@ class Text(WidgetBase):
 
     @override
     def blit(self) -> None:
-        screen.blit(self.text_surface, self.rect)
+        system_data["window"].blit(self.text_surface, self.rect)
 
     @override
     def update(self) -> None:
