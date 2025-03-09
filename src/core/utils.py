@@ -35,7 +35,7 @@ def toggle_fullscreen() -> None:
     """
     coords = events.get_abs_mouse_pos()
     if system_data["flags"] & pygame.FULLSCREEN:
-        # Ssing the pygame inbuilt display.toggle_fullscreen to exit fullscreen
+        # Using the pygame inbuilt display.toggle_fullscreen to exit fullscreen
         # causes the noframe  flag and potentially other flags to disappear.
         # Toggling the flag and manually setting the mode of the screen makes
         # sure all flags are preserved.

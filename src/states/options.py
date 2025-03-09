@@ -9,7 +9,8 @@ from src.components.ui import (widgethandler, ToggleArrayGroup,
                                TextRectToggleButtonArrayConfig)
 from src.core.constants import PRIMARY
 from src.core.prepare import image_paths
-from src.states.optionmenus import GraphicsOptions, KeybindsOptions, AudioOptions
+from src.states.optionmenus import (GeneralOptions, GraphicsOptions,
+                                    KeybindsOptions, AudioOptions)
 from src.states.state import State, Overlay
 from src.core import system_data
 
@@ -34,13 +35,14 @@ class Options(State):
         self.active_overlay = None
         self.padding = 20
         config = TextRectToggleButtonArrayConfig(
-            (round(self.bg_rect.width / 3), 30), texts=
-            (("Graphics", ), ("Keybinds",), ("Audio",)),
-            on_toggle_on=((lambda: self.switch_overlay(GraphicsOptions),),
+            (round(self.bg_rect.width / 4), 30), texts=
+            (("General",), ("Graphics", ), ("Keybinds",), ("Audio",)),
+            on_toggle_on=((lambda: self.switch_overlay(GeneralOptions),),
+                          (lambda: self.switch_overlay(GraphicsOptions),),
                           (lambda: self.switch_overlay(KeybindsOptions),),
                           (lambda: self.switch_overlay(AudioOptions),)))
         self.option_headings_group = ToggleArrayGroup(
-            TextRectToggleButtonArray(self.bg_rect.topleft, (1, 3), 0, config),
+            TextRectToggleButtonArray(self.bg_rect.topleft, (1, 4), 0, config),
             toggle_on_init=False)
         self.widgets = (self.option_headings_group,)
 

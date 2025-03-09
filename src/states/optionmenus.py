@@ -12,6 +12,11 @@ from src.core import toggle_fullscreen, toggle_flag, config
 from src.states.state import Overlay
 
 
+class GeneralOptions(Overlay):
+    def __init__(self):
+        super().__init__()
+
+
 class GraphicsOptions(Overlay):
     def __init__(self):
         super().__init__()
