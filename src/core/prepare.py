@@ -109,3 +109,5 @@ image_paths = Load(Path(ROOT) / "assets" / "graphics", ".png")
 audio_paths = Load(Path(ROOT) / "assets" / "audio", ".wav")
 font_paths = Load(Path(ROOT) / "assets" / "fonts", ".ttf")
 spritesheet_paths = Load(Path(ROOT) / "assets" / "graphics", ".png")
+
+pygame.display.set_icon(pygame.image.load(image_paths("icon")))
