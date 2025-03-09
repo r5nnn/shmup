@@ -4,7 +4,10 @@ from typing import TYPE_CHECKING, Callable
 
 import pygame
 
-from src.components.ui.buttons.inputmixins import ToggleInputMixin, ClickInputMixin
+from src.components.ui.buttons.inputmixins import (
+    ToggleInputMixin,
+    ClickInputMixin,
+)
 from src.core import get_sprites, spritesheet_paths, system_data
 
 if TYPE_CHECKING:
@@ -15,15 +18,22 @@ class ImageLabelMixin:
     rect: pygame.Rect = ...
     requires_realignment: bool = ...
 
-    def __init__(self, images: Images, scale_by: int | None = None,
-                 mask_image: pygame.Surface | str | False | None = None,
-                 image_align: Align = None, padding: int = 20):
+    def __init__(
+        self,
+        images: Images,
+        scale_by: int | None = None,
+        mask_image: pygame.Surface | str | False | None = None,
+        image_align: Align = None,
+        padding: int = 20,
+    ):
         if isinstance(images, str):
             images = get_sprites(spritesheet_paths(images))
         self.images = images if isinstance(images, tuple) else (images,) * 3
         if scale_by is not None:
-            self.images = tuple(pygame.transform.scale_by(image, scale_by)
-                                for image in self.images)
+            self.images = tuple(
+                pygame.transform.scale_by(image, scale_by)
+                for image in self.images
+            )
         self.image = self.images[0]
         self.use_mask = True
         if mask_image is None:
@@ -60,17 +70,25 @@ class ImageLabelMixin:
 
 
 class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
-    def __init__(self, images: Images, scale_by: int | None = None,
-                 start_image: int = 0,
-                 mask_image: pygame.Surface | str | False | None = None,
-                 image_align: Align = None, padding: int = 20,
-                 on_toggle_on: Callable | None = None,
-                 on_toggle_off: Callable | None = None, *,
-                 requires_state: bool = False):
-        ToggleInputMixin.__init__(self, on_toggle_on, on_toggle_off,
-                                  requires_state=requires_state)
-        ImageLabelMixin.__init__(self, images, scale_by, mask_image,
-                                 image_align, padding)
+    def __init__(
+        self,
+        images: Images,
+        scale_by: int | None = None,
+        start_image: int = 0,
+        mask_image: pygame.Surface | str | False | None = None,
+        image_align: Align = None,
+        padding: int = 20,
+        on_toggle_on: Callable | None = None,
+        on_toggle_off: Callable | None = None,
+        *,
+        requires_state: bool = False,
+    ):
+        ToggleInputMixin.__init__(
+            self, on_toggle_on, on_toggle_off, requires_state=requires_state
+        )
+        ImageLabelMixin.__init__(
+            self, images, scale_by, mask_image, image_align, padding
+        )
         self.image = self.images[start_image]
 
     def toggle_on(self) -> None:
@@ -87,14 +105,20 @@ class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):
 
 
 class ClickImageMixin(ClickInputMixin, ImageLabelMixin):
-    def __init__(self, images: Images, scale_by: int | None = None,
-                 mask_image: pygame.Surface | str | False | None = None,
-                 image_align: Align = None, padding: int = 20,
-                 on_click: Callable | None = None,
-                 on_release: Callable | None = None):
+    def __init__(
+        self,
+        images: Images,
+        scale_by: int | None = None,
+        mask_image: pygame.Surface | str | False | None = None,
+        image_align: Align = None,
+        padding: int = 20,
+        on_click: Callable | None = None,
+        on_release: Callable | None = None,
+    ):
         ClickInputMixin.__init__(self, on_click, on_release)
-        ImageLabelMixin.__init__(self, images, scale_by, mask_image,
-                                 image_align, padding)
+        ImageLabelMixin.__init__(
+            self, images, scale_by, mask_image, image_align, padding
+        )
 
     def update_idle(self) -> None:
         super().update_idle()

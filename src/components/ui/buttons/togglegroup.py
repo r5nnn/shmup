@@ -9,8 +9,14 @@ if TYPE_CHECKING:
 
 
 class ToggleButtonGroup(WidgetBase):
-    def __init__(self, buttons: list[AnyToggleButton], start_button: int = 0,
-                 *, toggle_on_init: bool = True, sub_widget: bool = False):
+    def __init__(
+        self,
+        buttons: list[AnyToggleButton],
+        start_button: int = 0,
+        *,
+        toggle_on_init: bool = True,
+        sub_widget: bool = False,
+    ):
         self.buttons = buttons
         self.start_button = start_button
         for button in self.buttons:
@@ -42,7 +48,17 @@ class ToggleButtonGroup(WidgetBase):
 
 
 class ToggleArrayGroup(ToggleButtonGroup):
-    def __init__(self, button_array: AnyToggleArray, start_button: int = 0,
-                 *, toggle_on_init: bool = True, sub_widget: bool = False):
-        super().__init__(button_array.buttons, start_button,
-                         toggle_on_init=toggle_on_init, sub_widget=sub_widget)
+    def __init__(
+        self,
+        button_array: AnyToggleArray,
+        start_button: int = 0,
+        *,
+        toggle_on_init: bool = True,
+        sub_widget: bool = False,
+    ):
+        super().__init__(
+            button_array.buttons,
+            start_button,
+            toggle_on_init=toggle_on_init,
+            sub_widget=sub_widget,
+        )

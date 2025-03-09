@@ -5,9 +5,14 @@ from typing import Callable, TYPE_CHECKING, override
 
 
 from src.components.ui.buttons.imagemixins import (
-    ToggleImageMixin, ClickImageMixin)
+    ToggleImageMixin,
+    ClickImageMixin,
+)
 from src.components.ui.buttons.buttonbases import (
-    ImageButtonBaseMixin, RectButtonBaseMixin, _BaseButtonConfig)
+    ImageButtonBaseMixin,
+    RectButtonBaseMixin,
+    _BaseButtonConfig,
+)
 from src.components.ui.buttons.inputmixins import checktoggle
 from src.components.ui.widgetutils import WidgetBase
 
@@ -23,19 +28,34 @@ class ImageButtonConfig(_BaseButtonConfig):
 
 
 class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
-    def __init__(self, config: ImageButtonConfig, start_image: int,
-                 mask_image: pygame.Surface | str | False | None = None,
-                 on_toggle_on: Callable | None = None,
-                 on_toggle_off: Callable | None = None, *,
-                 requires_state: bool = False):
-        ImageButtonBaseMixin.__init__(self, config.position, config.align,
-                                      config.audio_tags,
-                                      sub_widget=config.sub_widget)
-        ToggleImageMixin.__init__(self, config.images, config.scale_by,
-                                  start_image, mask_image, padding=0,
-                                  on_toggle_on=on_toggle_on,
-                                  on_toggle_off=on_toggle_off,
-                                  requires_state=requires_state)
+    def __init__(
+        self,
+        config: ImageButtonConfig,
+        start_image: int,
+        mask_image: pygame.Surface | str | False | None = None,
+        on_toggle_on: Callable | None = None,
+        on_toggle_off: Callable | None = None,
+        *,
+        requires_state: bool = False,
+    ):
+        ImageButtonBaseMixin.__init__(
+            self,
+            config.position,
+            config.align,
+            config.audio_tags,
+            sub_widget=config.sub_widget,
+        )
+        ToggleImageMixin.__init__(
+            self,
+            config.images,
+            config.scale_by,
+            start_image,
+            mask_image,
+            padding=0,
+            on_toggle_on=on_toggle_on,
+            on_toggle_off=on_toggle_off,
+            requires_state=requires_state,
+        )
         self.rect = self.image_rect
         self.align_rect()
         self._width, self._height = self.rect.size
@@ -64,16 +84,29 @@ class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
 
 
 class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
-    def __init__(self, config: ImageButtonConfig,
-                 mask_image: pygame.Surface | str | False | None = None,
-                 on_click: Callable | None = None,
-                 on_release: Callable | None = None):
-        ImageButtonBaseMixin.__init__(self, config.position, config.align,
-                                      config.audio_tags,
-                                      sub_widget=config.sub_widget)
-        ClickImageMixin.__init__(self, config.images, config.scale_by,
-                                 mask_image, padding=0, on_click=on_click,
-                                 on_release=on_release)
+    def __init__(
+        self,
+        config: ImageButtonConfig,
+        mask_image: pygame.Surface | str | False | None = None,
+        on_click: Callable | None = None,
+        on_release: Callable | None = None,
+    ):
+        ImageButtonBaseMixin.__init__(
+            self,
+            config.position,
+            config.align,
+            config.audio_tags,
+            sub_widget=config.sub_widget,
+        )
+        ClickImageMixin.__init__(
+            self,
+            config.images,
+            config.scale_by,
+            mask_image,
+            padding=0,
+            on_click=on_click,
+            on_release=on_release,
+        )
         self.rect = self.image_rect
         self.align_rect()
         self._width, self._height = self.rect.size
@@ -96,20 +129,43 @@ class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
 
 
 class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
-    def __init__(self, config: ImageButtonConfig, size: tuple[int, int],
-                 radius: int = 0, colors: Colors = None, start_image: int = 0,
-                 mask_image: pygame.Surface | str | False | None = None,
-                 image_align: Align = None, padding: int = 20,
-                 on_toggle_on: Callable | None = None,
-                 on_toggle_off: Callable | None = None, *,
-                 requires_state: bool = False):
-        RectButtonBaseMixin.__init__(self, config.position, size, config.align,
-                                     radius, colors, config.audio_tags,
-                                     sub_widget=config.sub_widget)
-        ToggleImageMixin.__init__(self, config.images, config.scale_by,
-                                  start_image, mask_image, image_align,
-                                  padding, on_toggle_on, on_toggle_off,
-                                  requires_state=requires_state)
+    def __init__(
+        self,
+        config: ImageButtonConfig,
+        size: tuple[int, int],
+        radius: int = 0,
+        colors: Colors = None,
+        start_image: int = 0,
+        mask_image: pygame.Surface | str | False | None = None,
+        image_align: Align = None,
+        padding: int = 20,
+        on_toggle_on: Callable | None = None,
+        on_toggle_off: Callable | None = None,
+        *,
+        requires_state: bool = False,
+    ):
+        RectButtonBaseMixin.__init__(
+            self,
+            config.position,
+            size,
+            config.align,
+            radius,
+            colors,
+            config.audio_tags,
+            sub_widget=config.sub_widget,
+        )
+        ToggleImageMixin.__init__(
+            self,
+            config.images,
+            config.scale_by,
+            start_image,
+            mask_image,
+            image_align,
+            padding,
+            on_toggle_on,
+            on_toggle_off,
+            requires_state=requires_state,
+        )
         self.align_rect()
 
     def toggle_on(self) -> None:
@@ -139,18 +195,38 @@ class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
 
 
 class ImageRectClickButton(RectButtonBaseMixin, ClickImageMixin):
-    def __init__(self, config: ImageButtonConfig, size: tuple[int, int],
-                 radius: int = 0, colors: Colors = None,
-                 image_mask: pygame.Surface | str | False | None = None,
-                 image_align: Align = None, padding: int = 20,
-                 on_click: Callable | None = None,
-                 on_release: Callable | None = None):
-        RectButtonBaseMixin.__init__(self, config.position, size, config.align,
-                                     radius, colors, config.audio_tags,
-                                     sub_widget=config.sub_widget)
-        ClickImageMixin.__init__(self, config.images, config.scale_by,
-                                 image_mask, image_align, padding, on_click,
-                                 on_release)
+    def __init__(
+        self,
+        config: ImageButtonConfig,
+        size: tuple[int, int],
+        radius: int = 0,
+        colors: Colors = None,
+        image_mask: pygame.Surface | str | False | None = None,
+        image_align: Align = None,
+        padding: int = 20,
+        on_click: Callable | None = None,
+        on_release: Callable | None = None,
+    ):
+        RectButtonBaseMixin.__init__(
+            self,
+            config.position,
+            size,
+            config.align,
+            radius,
+            colors,
+            config.audio_tags,
+            sub_widget=config.sub_widget,
+        )
+        ClickImageMixin.__init__(
+            self,
+            config.images,
+            config.scale_by,
+            image_mask,
+            image_align,
+            padding,
+            on_click,
+            on_release,
+        )
         self.align_rect()
 
     def update_click(self) -> None:

@@ -1,9 +1,12 @@
 """Module containing utilities for managing color values."""
+
 from __future__ import annotations
 import colorsys
 
 
-def shift_rgb(rgb_color: tuple[int], shift_amount: int) -> tuple[int, int, int, float]:
+def shift_rgb(
+    rgb_color: tuple[int], shift_amount: int
+) -> tuple[int, int, int, float]:
     r, g, b, a = [x / 255.0 for x in rgb_color]
     h, l, s = colorsys.rgb_to_hls(r, g, b)  # noqa: E741
     h = (h + shift_amount) % 1.0
@@ -17,16 +20,23 @@ class ColorGradient:
     """Class for creating smooth gradients."""
 
     hue_midpoint = 0.5
-    def __init__(self, color_dict: dict, steps_per_segment: int = 100, *,
-                 use_longest_path: bool = False):
+
+    def __init__(
+        self,
+        color_dict: dict,
+        steps_per_segment: int = 100,
+        *,
+        use_longest_path: bool = False,
+    ):
         self.rgb_colors = list(color_dict.keys())
         self.delays = list(color_dict.values())
         self.steps_per_segment = steps_per_segment
         self.use_longest_path = use_longest_path
 
         # Convert RGB to HSL
-        self.hsl_colors = [self._rgb_to_hsl(color) for color in
-                           self.rgb_colors]
+        self.hsl_colors = [
+            self._rgb_to_hsl(color) for color in self.rgb_colors
+        ]
 
         self.gradient_index = 0
         self.step_index = 0
@@ -63,7 +73,8 @@ class ColorGradient:
 
         start_hsl = self.hsl_colors[self.gradient_index]
         end_hsl = self.hsl_colors[
-            (self.gradient_index + self.direction) % len(self.hsl_colors)]
+            (self.gradient_index + self.direction) % len(self.hsl_colors)
+        ]
         t = self.step_index / self.steps_per_segment
 
         current_hsl = self._interpolate(start_hsl, end_hsl, t)
@@ -73,12 +84,15 @@ class ColorGradient:
         if self.step_index > self.steps_per_segment:
             self.step_index = 0
             self.gradient_index = (self.gradient_index + self.direction) % len(
-                self.hsl_colors)
+                self.hsl_colors
+            )
             self.current_delay = self.delays[self.gradient_index]
 
             # Check if we've reached the end of the gradient in either direction
-            if self.gradient_index == len(
-                    self.hsl_colors) - 1 and self.direction == 1:
+            if (
+                self.gradient_index == len(self.hsl_colors) - 1
+                and self.direction == 1
+            ):
                 self.direction = -1
             elif self.gradient_index == 0 and self.direction == -1:
                 self.direction = 1

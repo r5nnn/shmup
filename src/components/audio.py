@@ -2,6 +2,7 @@
 
 Includes instances of all channels to be used in the game.
 """
+
 from __future__ import annotations
 
 import warnings
@@ -18,6 +19,7 @@ def checkaudio(method):
     def wrapper(self, *args, **kwargs):
         if not self.no_audio:
             method(self, *args, **kwargs)
+
     return wrapper
 
 
@@ -30,6 +32,7 @@ class Audio:
     """
 
     _channel_counter = 0
+
     def __init__(self):
         self.channel_id = Audio._channel_counter
         Audio._channel_counter += 1
@@ -50,11 +53,14 @@ class Audio:
         self.sounds[tag] = pygame.mixer.Sound(audio_dir)
 
     @checkaudio
-    def play_audio(self, tag: str | None = None, loops: int = 0, *,
-                   override: bool = False) -> None:
+    def play_audio(
+        self, tag: str | None = None, loops: int = 0, *, override: bool = False
+    ) -> None:
         if len(self.sounds) > 1 and tag is None:
-            warnings.warn("Tag not specified when more than one audio loaded",
-                          stacklevel=2)
+            warnings.warn(
+                "Tag not specified when more than one audio loaded",
+                stacklevel=2,
+            )
         tag = next(iter(self.sounds)) if tag is None else tag
         self.stop() if override else None
         if not self.channel.get_busy():

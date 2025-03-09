@@ -13,8 +13,11 @@ class ButtonMixinFields:
 
 
 class ClickInputMixin(ButtonMixinFields):
-    def __init__(self, on_click: Callable | None = None,
-                 on_release: Callable | None = None):
+    def __init__(
+        self,
+        on_click: Callable | None = None,
+        on_release: Callable | None = None,
+    ):
         self.on_click_call = on_click
         self.on_release_call = on_release
         self.clicked = False
@@ -45,7 +48,11 @@ class ClickInputMixin(ButtonMixinFields):
             # released
             if events.is_mouse_up(LEFTCLICK) and self.clicked:
                 self.update_release()
-                self.on_release_call() if self.on_release_call is not None else None
+                (
+                    self.on_release_call()
+                    if self.on_release_call is not None
+                    else None
+                )
             # clicked
             elif events.is_mouse_down(LEFTCLICK):
                 self.update_click()
@@ -61,9 +68,13 @@ class ClickInputMixin(ButtonMixinFields):
 
 
 class ToggleInputMixin(ButtonMixinFields):
-    def __init__(self, on_toggle_on: Callable | None = None,
-                 on_toggle_off: Callable | None = None, *,
-                 requires_state: bool = False):
+    def __init__(
+        self,
+        on_toggle_on: Callable | None = None,
+        on_toggle_off: Callable | None = None,
+        *,
+        requires_state: bool = False,
+    ):
         self.on_toggle_off = on_toggle_off
         self.on_toggle_on = on_toggle_on
         self.requires_state = requires_state
@@ -79,8 +90,11 @@ class ToggleInputMixin(ButtonMixinFields):
         if not silent and self.audio_tags[0] is not None:
             button_audio.play_audio(self.audio_tags[0], override=True)
         if self.on_toggle_on is not None:
-            self.on_toggle_on(True) if self.requires_state else (
-                self.on_toggle_on())
+            (
+                self.on_toggle_on(True)
+                if self.requires_state
+                else (self.on_toggle_on())
+            )
 
     def toggle_off(self) -> None:
         """Turn the toggle state off."""
@@ -92,15 +106,17 @@ class ToggleInputMixin(ButtonMixinFields):
         if not silent and self.audio_tags[2] is not None:
             button_audio.play_audio(self.audio_tags[2], override=True)
         if self.on_toggle_off is not None:
-            self.on_toggle_off(False) if self.requires_state else (
-                self.on_toggle_off())
+            (
+                self.on_toggle_off(False)
+                if self.requires_state
+                else (self.on_toggle_off())
+            )
 
     def update_hover(self) -> None:
         if self.audio_tags[1] is not None:
             button_audio.play_audio(self.audio_tags[1], override=True)
 
-    def update_idle(self) -> None:
-        ...
+    def update_idle(self) -> None: ...
 
     def update(self) -> None:
         x, y = events.get_mouse_pos()
@@ -109,8 +125,11 @@ class ToggleInputMixin(ButtonMixinFields):
             if events.is_mouse_down(LEFTCLICK) and not self.toggled:
                 self.toggle_on_call()
             # toggled off
-            elif (not self.sub_widget and
-                  events.is_mouse_down(LEFTCLICK) and self.toggled):
+            elif (
+                not self.sub_widget
+                and events.is_mouse_down(LEFTCLICK)
+                and self.toggled
+            ):
                 self.toggle_off_call()
             # hovered
             elif not self.toggled:
@@ -121,10 +140,12 @@ class ToggleInputMixin(ButtonMixinFields):
 
 
 def checktoggle(method: _Method) -> _Method:
-    def wrapper(self: ToggleInputMixin, *args: _P.args,
-                **kwargs: _P.kwargs) -> _Return:
+    def wrapper(
+        self: ToggleInputMixin, *args: _P.args, **kwargs: _P.kwargs
+    ) -> _Return:
         if not self.toggled:
             method(self, *args, **kwargs)
+
     return wrapper
 
 

@@ -1,7 +1,6 @@
 """Used to process and query events."""
-from __future__ import annotations
 
-from typing import Sequence
+from __future__ import annotations
 
 import pygame
 import pynput
@@ -44,29 +43,38 @@ def process(events: list[pygame.event.Event]) -> None:
 
     _mouse_pos = pygame.mouse.get_pos()
 
+
 def is_key_down(key: int) -> bool:
     return key in _keydown_events
+
 
 def is_key_up(key: int) -> bool:
     return key in _keyup_events
 
+
 def is_key_pressed(key: int) -> bool:
     return key in _held_keys
+
 
 def is_mouse_down(button: int) -> bool:
     return button in _mousedown_events
 
+
 def is_mouse_up(button: int) -> bool:
     return button in _mouseup_events
+
 
 def is_mouse_pressed(button: int) -> bool:
     return button in _mouse_buttons
 
+
 def get_mouse_pos() -> tuple[int, int]:
     return _mouse_pos
+
 
 def get_abs_mouse_pos() -> tuple[int, int]:
     return _mouse_controller.position
 
-def set_abs_mouse_pos(pos: tuple[int, int]):
+
+def set_abs_mouse_pos(pos: tuple[int, int]) -> None:
     _mouse_controller.position = pos

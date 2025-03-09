@@ -1,4 +1,5 @@
 """Used to manage overlays in an overlay stack."""
+
 from __future__ import annotations
 
 import warnings
@@ -9,6 +10,7 @@ if TYPE_CHECKING:
 
 
 _overlay_stack = []
+
 
 def current_overlay(*, accept_no_overlay: bool = False) -> Overlay | None:
     """Does what it says.
@@ -24,9 +26,12 @@ def current_overlay(*, accept_no_overlay: bool = False) -> Overlay | None:
         return _overlay_stack[-1]
     if accept_no_overlay:
         return None
-    msg = (f"Attempted to access current overlay when `accept_no_overlay` was"
-           f"False, and overlay stack {_overlay_stack} is empty.")
+    msg = (
+        f"Attempted to access current overlay when `accept_no_overlay` was"
+        f"False, and overlay stack {_overlay_stack} is empty."
+    )
     raise IndexError(msg)
+
 
 def append(overlay: type[Overlay]) -> None:
     """Adds an overlay to the top of the overlay stack.
@@ -36,10 +41,12 @@ def append(overlay: type[Overlay]) -> None:
     _overlay_stack.append(overlay())
     current_overlay().startup()
 
+
 def pop() -> None:
     """Removes the overlay at the top of the overlay stack."""
     current_overlay().cleanup()
     _overlay_stack.pop()
+
 
 def remove(overlay: type[Overlay]) -> bool:
     """Removes a specific overlay from the overlay stack.
@@ -53,7 +60,9 @@ def remove(overlay: type[Overlay]) -> bool:
             obj.cleanup()
             _overlay_stack.remove(obj)
             return True
-    warnings.warn(f"Attempted to remove overlay {overlay} which was not "
-                  f"present in the overlay stack {_overlay_stack}.",
-                  stacklevel=2)
+    warnings.warn(
+        f"Attempted to remove overlay {overlay} which was not "
+        f"present in the overlay stack {_overlay_stack}.",
+        stacklevel=2,
+    )
     return False

@@ -1,4 +1,5 @@
 """Module containing functions to add and manage widgets from a centralised location."""
+
 from __future__ import annotations
 import warnings
 import weakref
@@ -72,8 +73,11 @@ def blit() -> None:
 def update() -> None:
     blocked = False
     for widget in reversed(list(widgets)):
-        if widget.disabled or not blocked or not widget.contains(
-                *events.get_mouse_pos()):
+        if (
+            widget.disabled
+            or not blocked
+            or not widget.contains(*events.get_mouse_pos())
+        ):
             widget.update()
         # Ensure widgets covered by others are not affected (widgets created later)
         if widget.contains(*events.get_mouse_pos()):
@@ -90,11 +94,14 @@ def add_widget(*widget_tuple: WidgetBase) -> None:
                 f"Attempted to add subwidget: {widget!r} to the widgethandler."
                 f" Subwidgets should not be added to the widgethandler as the "
                 f"parent widget renders and updates the subwidget.",
-                stacklevel=2)
+                stacklevel=2,
+            )
         else:
             warnings.warn(
                 f"Attempted to add widget: {widget!r} which already exists in "
-                f"the widgethandler.", stacklevel=2)
+                f"the widgethandler.",
+                stacklevel=2,
+            )
 
 
 def remove_widget(widget: WidgetBase) -> None:
@@ -103,15 +110,20 @@ def remove_widget(widget: WidgetBase) -> None:
     except ValueError:
         warnings.warn(
             f"Attempted to remove widget: {widget!r} which doesn't exist in "
-            f"the widgethandler.", stacklevel=2)
+            f"the widgethandler.",
+            stacklevel=2,
+        )
 
 
 def move_to_top(widget: WidgetBase) -> None:
     try:
         widgets.move_to_end(widget)
     except KeyError:
-        warnings.warn(f"Attempted to move widget: {widget!r} to the top when"
-                      f" widget doesn't exist in widgethandler.", stacklevel=2)
+        warnings.warn(
+            f"Attempted to move widget: {widget!r} to the top when"
+            f" widget doesn't exist in widgethandler.",
+            stacklevel=2,
+        )
 
 
 def move_to_bottom(widget: WidgetBase) -> None:
@@ -120,7 +132,9 @@ def move_to_bottom(widget: WidgetBase) -> None:
     except KeyError:
         warnings.warn(
             f"Error: Tried to move {widget!r} to bottom when {widget!r} "
-            f"doesn't exist in widgethandler.", stacklevel=2)
+            f"doesn't exist in widgethandler.",
+            stacklevel=2,
+        )
 
 
 widgets: _OrderedWeakset[weakref.ref] = _OrderedWeakset()

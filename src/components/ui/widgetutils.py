@@ -1,4 +1,5 @@
 """Module including the widget base class and other utilities for them to use."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -30,9 +31,13 @@ class WidgetBase(ABC):
     y = AlignmentNeeded()
     align = AlignmentNeeded()
 
-    def __init__(self, position: tuple[int, int],
-                 align: RectAlignments | str = "topleft", *,
-                 sub_widget: bool = False):
+    def __init__(
+        self,
+        position: tuple[int, int],
+        align: RectAlignments | str = "topleft",
+        *,
+        sub_widget: bool = False,
+    ):
         self._x, self._y = position
         self._align = align
 
