@@ -1,4 +1,4 @@
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000)](https://github.com/psf/black)
+# SHMUP
 <p align="center">
 Bullet hell OCR A-level project using pygame.  
 </p>
