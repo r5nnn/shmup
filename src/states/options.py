@@ -35,7 +35,7 @@ class Options(State):
         self.active_overlay = None
         self.padding = 20
         config = TextRectToggleButtonArrayConfig(
-            (round(self.bg_rect.width / 4), 30), texts=
+            sizes=(round(self.bg_rect.width / 4), 30), texts=
             (("General",), ("Graphics", ), ("Keybinds",), ("Audio",)),
             on_toggle_on=((lambda: self.switch_overlay(GeneralOptions),),
                           (lambda: self.switch_overlay(GraphicsOptions),),

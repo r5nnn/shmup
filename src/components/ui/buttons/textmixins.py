@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Callable
-from typing import TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING
 
 import pygame
 
 from src.components.ui import Text
 from src.components.ui.buttons.inputmixins import (
-    ToggleInputMixin, ClickInputMixin)
+    ClickInputMixin,
+    ToggleInputMixin,
+)
 
 if TYPE_CHECKING:
     from src.core.types import Colors, Align
@@ -17,10 +18,19 @@ class TextLabelMixin:
     rect: pygame.Rect = ...
     requires_realignment: bool = ...
 
-    def __init__(self, text: str,
-                 text_colors: Colors = None,
-                 text_align: Align | None = None, padding: int = 20,
-                 font: pygame.font.Font | None = None, font_size: int = 32):
+    def __init__(
+        self,
+        text: str,
+        text_colors: Colors = None,
+        font: pygame.font.Font | None = None,
+        font_size: int = 32,
+        wrap_width: int | None = None,
+        wrap_padding: int = 0,
+        padding: int = 20,
+        text_align: Align | None = None,
+        *,
+        antialias: bool = False,
+    ):
         if isinstance(text_colors, list):
             self.text_colors = text_colors
         else:
@@ -28,8 +38,17 @@ class TextLabelMixin:
                 text_colors = pygame.Color("white")
             self.text_colors = (text_colors,) * 3
         self.text_color = self.text_colors[0]
-        self.text_object = Text((0, 0), text, font, font_size, self.text_color,
-                                sub_widget=True)
+        self.text_object = Text(
+            (0, 0),
+            text,
+            font,
+            font_size,
+            self.text_color,
+            wrap_width=wrap_width,
+            wrap_padding=wrap_padding,
+            antialias=antialias,
+            sub_widget=True,
+        )
         self.text_align = text_align
         self.text_rect = self.text_object.rect
         self.padding = padding
@@ -66,18 +85,43 @@ class TextLabelMixin:
 
 
 class ToggleTextMixin(ToggleInputMixin, TextLabelMixin):
-    def __init__(self, text: str | list[str], start_text: int = 0,
-                 text_colors: Colors = None,
-                 font: pygame.font.Font | None = None, font_size: int = 32,
-                 text_align: Align | None = None, padding: int = 20,
-                 on_toggle_on: Callable | None = None,
-                 on_toggle_off: Callable | None = None, *,
-                 requires_state: bool = False):
-        ToggleInputMixin.__init__(self, on_toggle_on, on_toggle_off,
-                                  requires_state=requires_state)
-        self.texts = text if isinstance(text, list) else [text, text]
-        TextLabelMixin.__init__(self, self.texts[start_text], text_colors,
-                                text_align, padding, font, font_size)
+    def __init__(
+        self,
+        text: str | list[str] | None = None,
+        start_text: int = 0,
+        text_colors: Colors = None,
+        font: pygame.font.Font | None = None,
+        font_size: int = 32,
+        wrap_width: int | None = None,
+        wrap_padding: int = 0,
+        padding: int = 20,
+        text_align: Align | None = None,
+        on_toggle_on: Callable | None = None,
+        on_toggle_off: Callable | None = None,
+        *,
+        antialias: bool = False,
+        requires_state: bool = False,
+    ):
+        ToggleInputMixin.__init__(
+            self, on_toggle_on, on_toggle_off, requires_state=requires_state
+        )
+        self.texts = (
+            ["False", "True"]
+            if text is None
+            else text if isinstance(text, list) else [text, text]
+        )
+        TextLabelMixin.__init__(
+            self,
+            self.texts[start_text],
+            text_colors,
+            font,
+            font_size,
+            wrap_width,
+            wrap_padding,
+            padding,
+            text_align,
+            antialias=antialias,
+        )
 
     def toggle_on(self) -> None:
         super().toggle_on()
@@ -103,15 +147,34 @@ class ToggleTextMixin(ToggleInputMixin, TextLabelMixin):
 
 
 class ClickTextMixin(ClickInputMixin, TextLabelMixin):
-    def __init__(self, text: str,
-                 text_colors: Colors = None,
-                 text_align: Align | None = None, padding: int = 20,
-                 font: pygame.font.Font | None = None, font_size: int = 32,
-                 on_click: Callable | None = None,
-                 on_release: Callable | None = None):
+    def __init__(
+        self,
+        text: str,
+        text_colors: Colors = None,
+        font: pygame.font.Font | None = None,
+        font_size: int = 32,
+        wrap_width: int | None = None,
+        wrap_padding: int = 0,
+        padding: int = 20,
+        text_align: Align | None = None,
+        on_click: Callable | None = None,
+        on_release: Callable | None = None,
+        *,
+        antialias: bool = False,
+    ):
         ClickInputMixin.__init__(self, on_click, on_release)
-        TextLabelMixin.__init__(self, text, text_colors, text_align, padding,
-                                font, font_size)
+        TextLabelMixin.__init__(
+            self,
+            text,
+            text_colors,
+            font,
+            font_size,
+            wrap_width,
+            wrap_padding,
+            padding,
+            text_align,
+            antialias=antialias,
+        )
 
     def update(self) -> None:
         ClickInputMixin.update(self)

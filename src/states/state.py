@@ -33,7 +33,7 @@ class State:
         events.eventbinder.deregister(("keydown", pygame.K_ESCAPE))
         self.clear_widgets()
 
-    def update(self, *args) -> None:
+    def update(self) -> None:
         widgethandler.update()
 
     def render(self) -> None:

@@ -1,14 +1,20 @@
 """Module for displaying text buttons on the screen."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Callable, TYPE_CHECKING, override
 
 from src.components.ui.buttons.buttonbases import (
-    TextButtonBaseMixin, RectButtonBaseMixin, _BaseButtonConfig)
+    TextButtonBaseMixin,
+    RectButtonBaseMixin,
+    _BaseButtonConfig,
+)
 from src.components.ui.buttons.inputmixins import checktoggle
 from src.components.ui.buttons.textmixins import (
-    ToggleTextMixin, ClickTextMixin)
+    ToggleTextMixin,
+    ClickTextMixin,
+)
 from src.components.ui.widgetutils import WidgetBase
 
 if TYPE_CHECKING:
@@ -21,21 +27,45 @@ class TextButtonConfig(_BaseButtonConfig):
     text_colors: Colors | None = None
     font: pygame.font.Font | None = None
     font_size: int = 32
+    wrap_width: int | None = None
+    wrap_padding: int = 0
+    antialias: bool = False
 
 
 class TextToggleButton(TextButtonBaseMixin, ToggleTextMixin):
-    def __init__(self, config: TextButtonConfig, text: str | tuple[str],
-                 start_text: int = 0, on_toggle_on: Callable | None = None,
-                 on_toggle_off: Callable | None = None, *,
-                 requires_state: bool = False):
-        TextButtonBaseMixin.__init__(self, config.position, config.align,
-                                     config.audio_tags,
-                                     sub_widget=config.sub_widget)
-        ToggleTextMixin.__init__(self, text, start_text, config.text_colors,
-                                 config.font, config.font_size, padding=0,
-                                 on_toggle_on=on_toggle_on,
-                                 on_toggle_off=on_toggle_off,
-                                 requires_state=requires_state)
+    def __init__(
+        self,
+        config: TextButtonConfig,
+        text: str | tuple[str] | None = None,
+        start_text: int = 0,
+        on_toggle_on: Callable | None = None,
+        on_toggle_off: Callable | None = None,
+        *,
+        requires_state: bool = False,
+    ):
+        TextButtonBaseMixin.__init__(
+            self,
+            config.position,
+            config.align,
+            config.audio_tags,
+            sub_widget=config.sub_widget,
+        )
+        ToggleTextMixin.__init__(
+            self,
+            text,
+            start_text,
+            config.text_colors,
+            config.font,
+            config.font_size,
+            config.wrap_width,
+            config.wrap_padding,
+            padding=0,
+            text_align=config.align,
+            on_toggle_on=on_toggle_on,
+            on_toggle_off=on_toggle_off,
+            antialias=config.antialias,
+            requires_state=requires_state,
+        )
         self.rect = self.text_rect
         self.align_rect()
         self._width, self._height = self.text_rect.size
@@ -65,15 +95,33 @@ class TextToggleButton(TextButtonBaseMixin, ToggleTextMixin):
 
 
 class TextClickButton(TextButtonBaseMixin, ClickTextMixin):
-    def __init__(self, config: TextButtonConfig, text: str,
-                 on_click: Callable | None = None,
-                 on_release: Callable | None = None):
-        TextButtonBaseMixin.__init__(self, config.position, config.align,
-                                     config.audio_tags,
-                                     sub_widget=config.sub_widget)
-        ClickTextMixin.__init__(self, text, config.text_colors, padding=0,
-                                font=config.font, font_size=config.font_size,
-                                on_click=on_click, on_release=on_release)
+    def __init__(
+        self,
+        config: TextButtonConfig,
+        text: str,
+        on_click: Callable | None = None,
+        on_release: Callable | None = None,
+    ):
+        TextButtonBaseMixin.__init__(
+            self,
+            config.position,
+            config.align,
+            config.audio_tags,
+            sub_widget=config.sub_widget,
+        )
+        ClickTextMixin.__init__(
+            self,
+            text,
+            config.text_colors,
+            config.font,
+            config.font_size,
+            config.wrap_width,
+            config.wrap_padding,
+            padding=0,
+            on_click=on_click,
+            on_release=on_release,
+            antialias=config.antialias,
+        )
         self.rect = self.text_rect
         self.align_rect()
         self._width, self._height = self.rect.size
@@ -95,20 +143,47 @@ class TextClickButton(TextButtonBaseMixin, ClickTextMixin):
 
 
 class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
-    def __init__(self, config: TextButtonConfig, size: tuple[int, int],
-                 text: list[str] | str, radius: int = 0,
-                 colors: Colors | None = None, start_text: int = 0,
-                 text_align: Align | None = None, padding: int = 20,
-                 on_toggle_on: Callable | None = None,
-                 on_toggle_off: Callable | None = None, *,
-                 requires_state: bool = False):
-        RectButtonBaseMixin.__init__(self, config.position, size, config.align,
-                                     radius, colors, config.audio_tags,
-                                     sub_widget=config.sub_widget)
-        ToggleTextMixin.__init__(self, text, start_text, config.text_colors,
-                                 config.font, config.font_size, text_align,
-                                 padding, on_toggle_on, on_toggle_off,
-                                 requires_state=requires_state)
+    def __init__(
+        self,
+        config: TextButtonConfig,
+        size: tuple[int, int],
+        text: list[str] | str | None = None,
+        start_text: int = 0,
+        text_align: Align | None = None,
+        padding: int = 20,
+        radius: int = 0,
+        colors: Colors | None = None,
+        on_toggle_on: Callable | None = None,
+        on_toggle_off: Callable | None = None,
+        *,
+        requires_state: bool = False,
+    ):
+        RectButtonBaseMixin.__init__(
+            self,
+            config.position,
+            size,
+            config.align,
+            radius,
+            colors,
+            config.audio_tags,
+            sub_widget=config.sub_widget,
+        )
+        ToggleTextMixin.__init__(
+            self,
+            text,
+            start_text,
+            config.text_colors,
+            config.font,
+            config.font_size,
+            config.wrap_width,
+            config.wrap_padding,
+            padding,
+            text_align,
+            on_toggle_on,
+            on_toggle_off,
+            antialias=config.antialias,
+            requires_state=requires_state,
+        )
         self.align_rect()
 
     def toggle_on(self) -> None:
@@ -144,17 +219,42 @@ class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
 
 
 class TextRectClickButton(RectButtonBaseMixin, ClickTextMixin):
-    def __init__(self, config: TextButtonConfig, size: tuple[int, int], text: str,
-                 radius: int = 0, colors: Colors = None,
-                 text_align: Align | None = None, padding: int = 20,
-                 on_click: Callable | None = None,
-                 on_release: Callable | None = None):
-        RectButtonBaseMixin.__init__(self, config.position, size, config.align,
-                                     radius, colors, config.audio_tags,
-                                     sub_widget=config.sub_widget)
-        ClickTextMixin.__init__(self, text, config.text_colors, text_align,
-                                padding, config.font, config.font_size,
-                                on_click, on_release)
+    def __init__(
+        self,
+        config: TextButtonConfig,
+        size: tuple[int, int],
+        text: str,
+        text_align: Align | None = None,
+        padding: int = 20,
+        radius: int = 0,
+        colors: Colors = None,
+        on_click: Callable | None = None,
+        on_release: Callable | None = None,
+    ):
+        RectButtonBaseMixin.__init__(
+            self,
+            config.position,
+            size,
+            config.align,
+            radius,
+            colors,
+            config.audio_tags,
+            sub_widget=config.sub_widget,
+        )
+        ClickTextMixin.__init__(
+            self,
+            text,
+            config.text_colors,
+            config.font,
+            config.font_size,
+            config.wrap_width,
+            config.wrap_padding,
+            padding,
+            text_align,
+            on_click,
+            on_release,
+            antialias=config.antialias,
+        )
         self.align_rect()
 
     def update_click(self) -> None:
