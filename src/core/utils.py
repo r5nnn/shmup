@@ -8,6 +8,7 @@ import pygame
 
 from src.core.constants import DISPLAY_FLAG_NAMES
 from src.core.data import config, system_data
+from src.components import events
 
 
 def toggle_flag(flag: int) -> None:
@@ -27,7 +28,12 @@ def toggle_fullscreen() -> None:
     pygame has an inbuilt toggle_fullscreen procedure that is more efficient,
     however doesn't work if already in fullscreen. This procedure abstracts the
     logic for choosing the correct method.
+
+    Also sets the absolute position of the mouse cursor to the same location it
+    was before toggling using pynput, since pygame cannot get or set
+    coordinates beyond the main window.
     """
+    coords = events.get_abs_mouse_pos()
     if system_data["flags"] & pygame.FULLSCREEN:
         # Ssing the pygame inbuilt display.toggle_fullscreen to exit fullscreen
         # causes the noframe  flag and potentially other flags to disappear.
@@ -39,6 +45,7 @@ def toggle_fullscreen() -> None:
         config["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]] = not (
             config)["flags"][DISPLAY_FLAG_NAMES[pygame.FULLSCREEN]]
         pygame.display.toggle_fullscreen()
+    events.set_abs_mouse_pos(coords)
 
 
 class Validator(ABC):
