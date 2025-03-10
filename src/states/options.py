@@ -46,7 +46,7 @@ class Options(State):
         self.bg_surf.fill(PRIMARY)
         self.bg_surf.set_alpha(96)
         self.active_overlay = None
-        self.padding = 20
+        self.padding = 30
         config = TextRectToggleButtonArrayConfig(
             sizes=(round(self.bg_rect.width / 4), 30),
             texts=(("General",), ("Graphics",), ("Keybinds",), ("Audio",)),

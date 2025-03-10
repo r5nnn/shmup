@@ -17,13 +17,18 @@ class OptionsOverlay(Overlay):
     def __init__(self):
         super().__init__()
         headings_group = statemanager.current_state().option_headings_group
+        self.padding = statemanager.current_state().padding
+        self.row_width = (statemanager.current_state()
+                          .option_headings_group.buttons[0].width)
+        self.row_positions = tuple(statemanager.current_state().option_headings_group
+                              .buttons[num].rect.right for num in
+                              range(len(statemanager.current_state()
+                                        .option_headings_group.buttons)))
         self.text_pos = (
-            statemanager.current_state().bg_rect.left
-            + statemanager.current_state().padding,
+            statemanager.current_state().bg_rect.left + self.padding,
             statemanager.current_state().bg_rect.top
             + headings_group.buttons[0].height
-            + statemanager.current_state().padding * 1.5,
-        )
+            + self.padding)
         self.button_size = (200, 30)
 
 
@@ -32,12 +37,12 @@ class GeneralOptions(OptionsOverlay):
         super().__init__()
         config_ = TextArrayConfig(
             (("Keep absolute position on fullscreen toggle:",),),
-            wrap_width=500,
+            wrap_width=self.row_width - self.padding,
         )
         self.text_row1 = TextArray(
             self.text_pos,
             (1, 1),
-            statemanager.current_state().padding * 1.5,
+            self.padding,
             config_,
         )
         self.widgets = (self.text_row1,)
@@ -54,14 +59,14 @@ class GraphicsOptions(OptionsOverlay):
         self.text_row1 = TextArray(
             self.text_pos,
             (3, 1),
-            statemanager.current_state().padding * 1.5,
+            self.padding,
             config_,
         )
 
         config_ = TextButtonConfig(
             position=(
-                self.text_row1.texts[0].rect.right
-                + statemanager.current_state().padding,
+                self.row_positions[0]
+                + self.padding,
                 self.text_row1.texts[0].rect.centery,
             ),
             align="midleft",
@@ -74,8 +79,8 @@ class GraphicsOptions(OptionsOverlay):
             on_toggle_off=toggle_fullscreen,
         )
         config_.position = (
-            self.text_row1.texts[1].rect.right
-            + statemanager.current_state().padding,
+            self.row_positions[0]
+            + self.padding,
             self.text_row1.texts[1].rect.centery,
         )
         self.borderless_button = TextRectToggleButton(
