@@ -20,10 +20,10 @@ class OptionsOverlay(Overlay):
         self.padding = statemanager.current_state().padding
         self.row_width = (statemanager.current_state()
                           .option_headings_group.buttons[0].width)
-        self.row_positions = tuple(statemanager.current_state().option_headings_group
-                              .buttons[num].rect.right for num in
-                              range(len(statemanager.current_state()
-                                        .option_headings_group.buttons)))
+        self.row_positions = tuple(
+            statemanager.current_state().option_headings_group.buttons[
+                num].rect.right for num in range(len(
+                statemanager.current_state().option_headings_group.buttons)))
         self.text_pos = (
             statemanager.current_state().bg_rect.left + self.padding,
             statemanager.current_state().bg_rect.top
@@ -45,7 +45,11 @@ class GeneralOptions(OptionsOverlay):
             self.padding,
             config_,
         )
-        self.widgets = (self.text_row1,)
+        config_ = TextButtonConfig(position=(self.row_positions[0] + self.padding,
+                                             self.text_row1.texts[0].rect.centery),
+                                   align="midleft")
+        self.abs_mouse_button = TextRectToggleButton(config_, self.button_size)
+        self.widgets = (self.text_row1, self.abs_mouse_button)
 
     def update(self) -> None: ...
 
@@ -74,7 +78,7 @@ class GraphicsOptions(OptionsOverlay):
         self.fullscreen_button = TextRectToggleButton(
             config_,
             self.button_size,
-            start_text=0 if config["flags"]["fullscreen"] else 1,
+            start_text=1 if config["flags"]["fullscreen"] else 0,
             on_toggle_on=toggle_fullscreen,
             on_toggle_off=toggle_fullscreen,
         )
@@ -86,6 +90,7 @@ class GraphicsOptions(OptionsOverlay):
         self.borderless_button = TextRectToggleButton(
             config_,
             self.button_size,
+            start_text=1 if config["flags"]["noframe"] else 0,
             on_toggle_on=lambda: toggle_flag(pygame.NOFRAME),
             on_toggle_off=lambda: toggle_flag(pygame.NOFRAME),
         )

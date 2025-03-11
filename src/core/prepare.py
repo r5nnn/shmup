@@ -18,13 +18,17 @@ for flag_name, enabled in config["flags"].items():
     if enabled:
         system_data["flags"] |= attrgetter(flag_name.upper())(pygame)
 
+system_data["screen size"] = pygame.display.Info().current_w, pygame.display.Info().current_h
+
 pygame.display.set_mode((1920, 1080), system_data["flags"])
 
 system_data["window"] = pygame.display.get_surface()
-system_data["window size"] = system_data["window"].get_size()
+system_data["window size"] = pygame.display.get_window_size()
 system_data["window center"] = tuple(
     coord / 2 for coord in system_data["window size"]
 )
+if system_data["screen size"] == system_data["window center"]:
+    config["keep mouse pos on fullscreen"] = False
 system_data["window rect"] = system_data["window"].get_rect()
 
 logging.basicConfig(

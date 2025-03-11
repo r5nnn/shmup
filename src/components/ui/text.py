@@ -136,7 +136,7 @@ class Text(WidgetBase):
             + (len(wrapped_lines) - 1) * self.wrap_padding
         )
         surface = pygame.Surface(
-            (self.wrap_width, total_height), pygame.SRCALPHA
+            (self.wrap_width, total_height)
         )
         y_offset = 0
         for line in wrapped_lines:

@@ -36,6 +36,8 @@ def toggle_fullscreen() -> None:
     was before toggling using pynput, since pygame cannot get or set
     coordinates beyond the main window.
     """
+    if config["keep mouse pos on fullscreen"]:
+        ...
     coords = events.get_abs_mouse_pos()
     pygame.mouse.set_visible(False)
     if system_data["flags"] & pygame.FULLSCREEN:

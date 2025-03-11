@@ -55,7 +55,10 @@ def validate_config(data: dict, default_config: dict) -> dict:
     return data
 
 
-_default_config = {"flags": {"fullscreen": True, "noframe": True}}
+_default_config = {
+    "flags": {"fullscreen": True, "noframe": True},
+    "keep mouse pos on fullscreen": True,
+}
 config_dir = Path("config.json")
 config = validate_config(load(config_dir, _default_config), _default_config)
 # Global data that is lost on game quit.
@@ -64,4 +67,10 @@ system_data = {
     "dt": 1.0,
     "quit": False,
     "version": "v0.0.3 prototype",
+    # defined in prepare.py
+    "screen size": ...,
+    "window": ...,
+    "window size": ...,
+    "window center": ...,
+    "window rect": ...,
 }
