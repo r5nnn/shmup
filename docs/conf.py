@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # noinspection PyUnresolvedReferences
-import shmup
+import __main__
 
 project = 'Shmup'
 copyright = '2024, Rene Timantsev'

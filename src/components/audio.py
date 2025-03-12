@@ -1,25 +1,20 @@
-"""Module containing an audio channel manager class.
-
-Includes instances of all channels to be used in the game.
-"""
+"""Module containing an audio channel manager class."""
 
 from __future__ import annotations
 
 import warnings
 from functools import wraps
 from pathlib import Path
+from typing import Callable, Concatenate, ParamSpec, TypeVar
 
 import pygame
 
-from src.core.prepare import audio_paths
 
-
-def checkaudio(method):
+def checkaudio(method: _Method) -> _Method:
     @wraps(method)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self: Audio, *args: _P.args, **kwargs: _P.kwargs) -> _Return:
         if not self.no_audio:
             method(self, *args, **kwargs)
-
     return wrapper
 
 
@@ -93,9 +88,6 @@ class Audio:
         self.set_volume(new_volume)
 
 
-background_audio = Audio()
-background_audio.set_volume(0.2)
-
-button_audio = Audio()
-button_audio.set_volume(0.2)
-button_audio.add_audio(audio_paths("click"))
+_P = ParamSpec("_P")
+_Return = TypeVar("_Return")
+_Method = Callable[Concatenate[Audio, _P], _Return]

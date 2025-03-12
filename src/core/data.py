@@ -1,12 +1,48 @@
 """Module for saving and loading game config file."""
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 
 import pygame
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from src.components import Audio
+from src.core.load import Load
 
 
-def save(data: dict, directory: Path) -> None:
+class Flags(BaseModel):
+    fullscreen: bool = True
+    noframe: bool = True
+
+
+class Settings(BaseSettings):
+    flags: Flags = Flags()
+    keep_mouse_pos: bool = True
+
+    model_config = SettingsConfigDict(extra="ignore")
+
+
+@dataclass(kw_only=True)
+class SystemData:
+    flags: int = pygame.SCALED
+    dt: float = 1.0
+    quit: bool = False
+    version: str = "0.0.3"
+    version_type: str = "prototype"
+    # Defined when prepare.py is ran.
+    screen_rect: pygame.Rect = ...
+    window: pygame.Surface = ...
+    window_rect: pygame.Rect = ...
+    image_paths: Load = ...
+    audio_paths: Load = ...
+    font_paths: Load = ...
+    background_audio: Audio = ...
+    button_audio: Audio = ...
+
+
+def save(data: Settings, directory: Path) -> None:
     """Save a dictionary to a json file.
 
     :param data: Dictionary to save.
@@ -16,61 +52,29 @@ def save(data: dict, directory: Path) -> None:
     """
     directory.touch()
     with directory.open("w") as file:
-        json.dump(data, file, indent=4)
+        file.write(data.model_dump_json())
 
 
-def load(directory: Path, default_config: dict) -> dict:
+def load(directory: Path, data: Settings) -> Settings:
     """Load a dict from a json file.
 
     :param directory: The path to the json file.
-    :param default_config: The default data of the file. Used if the file
+    :param data: The default data of the file. Used if the file
     doesn't exist, is empty or unreadable.
     """
     directory.touch()
     with directory.open() as file:
         try:
-            return json.load(file)
-        except json.JSONDecodeError:
-            save(default_config, directory)
-            return default_config
+            file_data = json.load(file)
+            data.model_validate(file_data)
+            print(data)
+        except json.decoder.JSONDecodeError:
+            save(data, directory)
+            return data
+        return Settings(**file_data)
 
 
-def validate_config(data: dict, default_config: dict) -> dict:
-    """Checks that the format of a config dict matches another.
-
-    :param data: The config dict to validate.
-    :param default_config: The format/default data of the config dict.
-    :return: A new dict with all invalid/missing data removed/appended.
-    """
-    if default_config.keys() == data.keys():
-        pass
-    elif len(default_config) > len(data):
-        missing_keys = default_config.keys() - data.keys()
-        for key in missing_keys:
-            data[key] = default_config[key]
-    else:
-        invalid_keys = data.keys() - default_config.keys()
-        for key in invalid_keys:
-            del data[key]
-    return data
-
-
-_default_config = {
-    "flags": {"fullscreen": True, "noframe": True},
-    "keep mouse pos on fullscreen": True,
-}
 config_dir = Path("config.json")
-config = validate_config(load(config_dir, _default_config), _default_config)
-# Global data that is lost on game quit.
-system_data = {
-    "flags": pygame.SCALED,
-    "dt": 1.0,
-    "quit": False,
-    "version": "v0.0.3 prototype",
-    # defined in prepare.py
-    "screen size": ...,
-    "window": ...,
-    "window size": ...,
-    "window center": ...,
-    "window rect": ...,
-}
+settings = load(config_dir, Settings())
+system_data = SystemData()
+print(settings)

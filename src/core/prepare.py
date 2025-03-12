@@ -2,132 +2,64 @@
 
 from __future__ import annotations
 
-import json
 import logging
-import os
 from operator import attrgetter
 from pathlib import Path
-from src.core.data import config, system_data
+
+from src.components import Audio
+from src.core import main
+from src.core.data import settings, system_data
 from src.core.constants import ROOT
 
 import pygame
 
+from src.core.load import Load
+from src.states import game, options, title
+
+log = logging.getLogger(__name__)
+
 pygame.init()
-pygame.display.set_caption("shmup " + system_data["version"])
-for flag_name, enabled in config["flags"].items():
+pygame.display.set_caption(f"shmup v{system_data.version} "
+                           f"{system_data.version_type}")
+
+for flag_name, enabled in settings.flags:
     if enabled:
-        system_data["flags"] |= attrgetter(flag_name.upper())(pygame)
+        system_data.flags |= attrgetter(flag_name.upper())(pygame)
+        log.info("Added flag %s to system_data.", flag_name.upper())
 
-system_data["screen size"] = pygame.display.Info().current_w, pygame.display.Info().current_h
+system_data.screen_rect = pygame.Rect(0, 0, pygame.display.Info().current_w,
+                                      pygame.display.Info().current_h)
 
-pygame.display.set_mode((1920, 1080), system_data["flags"])
+pygame.display.set_mode((1920, 1080), system_data.flags)
 
-system_data["window"] = pygame.display.get_surface()
-system_data["window size"] = pygame.display.get_window_size()
-system_data["window center"] = tuple(
-    coord / 2 for coord in system_data["window size"]
-)
-if system_data["screen size"] == system_data["window center"]:
-    config["keep mouse pos on fullscreen"] = False
-system_data["window rect"] = system_data["window"].get_rect()
+system_data.window = pygame.display.get_surface()
+system_data.window_rect = system_data.window.get_rect()
 
-logging.basicConfig(
-    level=logging.WARNING,
-    format="%(asctime)s %(levelname)s %(message)s",
-    datefmt="%d/%m/%Y %H:%M:%S",
-)
+if system_data.window_rect.size == system_data.screen_rect.size:
+    settings.keep_mouse_pos = False
+    log.info("Screen size %s matches native window resolution %s, disabled "
+             "keep_mouse_pos in system_data.", system_data.screen_rect.size,
+             system_data.window_rect.size)
 
+system_data.image_paths = Load(Path(ROOT) / "assets" / "graphics", ".png")
+system_data.audio_paths = Load(Path(ROOT) / "assets" / "audio", ".wav")
+system_data.font_paths = Load(Path(ROOT) / "assets" / "fonts", ".ttf")
+pygame.display.set_icon(pygame.image.load(system_data.image_paths("icon")))
 
-def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface, ...]:
-    """Gets the subsurfaces from a spritesheet image.
+system_data.background_audio = Audio()
+system_data.background_audio.set_volume(0.2)
 
-    Splits a spritesheet (image) file into into subsurfaces based on the
-    metadata of the spritesheet stored in a json file of the same name. Json
-    file should be formatted according to aseprite's spritesheet json output
-    format. Order of list returned depends on the order of the sprites
-    referenced in the json file.
+system_data.button_audio = Audio()
+system_data.button_audio.set_volume(0.2)
+system_data.button_audio.add_audio(system_data.audio_paths("click"))
 
-    :param spritesheet_file: Path to the spritesheet image.
-    :returns: A tuple of surfaces based on the metadata in the json file.
-    """
-    spritesheet = pygame.image.load(spritesheet_file).convert_alpha()
-    metadata = spritesheet_file.with_suffix(".json")
-    try:
-        file = Path.open(metadata, encoding="UTF-8")
-    except FileNotFoundError as err:
-        msg = (
-            f"Spritesheet ({spritesheet_file}) has no accompanying json file."
-        )
-        raise FileNotFoundError(msg) from err
-    else:
-        with file:
-            data = json.load(file)
-    sprite_list = []
-    for sprite in (frames := data["frames"]):
-        res = frames[sprite]["frame"]
-        sprite_list.append(
-            spritesheet.subsurface(res["x"], res["y"], res["w"], res["h"])
-        )
-    return tuple(sprite_list)
+states = {
+        "title": title.Title,
+        "options": options.Options,
+        "game": game.Game,
+}
+start_state = "title"
 
-
-def get_sprites(directory: Path) -> tuple[pygame.Surface, ...]:
-    """Gets the sprite surfaces from a given spritesheet directory.
-
-    Uses lazy-loading. Sprites are cached upon being loaded, so they only need
-    to be loaded once per game instance.
-
-    :param directory: The path to the spritesheet to get sprite surfaces from.
-    :return: A tuple of surfaces based on the spritesheet's metadata json file.
-    """
-    if directory not in _cached_sprites:
-        _cached_sprites[directory] = parse_spritesheet(directory)
-    return _cached_sprites[directory]
-
-
-class Load:
-    def __init__(
-        self,
-        directory: Path,
-        *accept: str,
-        exclude_dirs: list[str] | None = None,
-    ):
-        """Class for loading the filepaths of files in a directory.
-
-        Recursively searches directories unless explicitly mentioned to skip in
-        `exclude_dirs`.
-
-        :param directory: Directory folder to search recursively through.
-        :param accept: File types to accept.
-        :param exclude_dirs: Subdirectories inside the directory to ignore.
-        """
-        self.files = {}
-        self.exclude_dirs = exclude_dirs if exclude_dirs else []
-        for path, _, files in os.walk(directory):
-            if any(
-                excluded in os.path.relpath(path, directory)
-                for excluded in self.exclude_dirs
-            ):
-                continue
-            for file in files:
-                name, ext = Path(file).stem, Path(file).suffix
-                if ext.lower() in accept:
-                    self.files[name] = Path(path) / file
-
-    def __call__(self, name: str) -> Path:
-        """Returns the path to the filename specified.
-
-        :param name: Name of the file.
-        :return: The path to that file.
-        """
-        return self.files[name]
-
-
-_cached_sprites = {}
-
-image_paths = Load(Path(ROOT) / "assets" / "graphics", ".png")
-audio_paths = Load(Path(ROOT) / "assets" / "audio", ".wav")
-font_paths = Load(Path(ROOT) / "assets" / "fonts", ".ttf")
-spritesheet_paths = Load(Path(ROOT) / "assets" / "graphics", ".png")
-
-pygame.display.set_icon(pygame.image.load(image_paths("icon")))
+main.init(states, start_state)
+log.info("main.py initialised with dict %s and starting state %s", states,
+         start_state)

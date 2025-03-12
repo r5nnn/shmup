@@ -11,8 +11,7 @@ from pygame import freetype
 
 from src.components.ui.widgetutils import RenderNeeded, WidgetBase
 from src.core.constants import DEFAULT_FONT_SIZE, DEFAULT_FONT_NAME
-from src.core.prepare import font_paths
-from src.core import system_data
+from src.core.data import system_data
 
 if TYPE_CHECKING:
     from src.core.types import RectAlignments
@@ -52,12 +51,13 @@ class Text(WidgetBase):
         self._font = (
             font
             if font is not None
-            else pygame.freetype.Font(font_paths(DEFAULT_FONT_NAME))
+            else pygame.freetype.Font(system_data.font_paths(DEFAULT_FONT_NAME))
         )
         self._font_size = font_size
         self._color = color if color is not None else pygame.Color("white")
         self.wrap_width = wrap_width
         self.wrap_padding = wrap_padding
+        self.wrap_rects = []
         self._antialias = antialias
         self.requires_rerender = False
         self.line_height = self._font.get_sized_height(self._font_size)
@@ -77,7 +77,7 @@ class Text(WidgetBase):
 
     @override
     def blit(self) -> None:
-        system_data["window"].blit(self.text_surface, self.rect)
+        system_data.window.blit(self.text_surface, self.rect)
 
     @override
     def update(self) -> None:
@@ -112,6 +112,9 @@ class Text(WidgetBase):
         """
         newline_wrapped_text = text.split("\n")
         wrapped_lines = []
+        # line_rect is defined outside the for loop to avoid crashes if no text
+        # passed but wrap_width still defined.
+        line_rect = None
         for line in newline_wrapped_text:
             words = line.split(" ")
             current_line = ""
@@ -122,13 +125,15 @@ class Text(WidgetBase):
                 line_rect = self._font.get_rect(new_line, size=self._font_size)
                 if line_rect.width > self.wrap_width:
                     wrapped_lines.append(current_line)
+                    self.wrap_rects.append(line_rect)
                     # start the next line with the word that didn't fit
                     current_line = word
                 else:
                     current_line = new_line
-            # During the last iteration, the current_line won't be appended in
-            # the inner for loop.
+            # During the last iteration, the current_line and line_rect won't
+            # be appended in the inner for loop so is appended here.
             wrapped_lines.append(current_line)
+            self.wrap_rects.append(line_rect) if line_rect is not None else None
         # There is no padding below the last line, so subtract one when
         # calculating total padding.
         total_height = (
@@ -136,7 +141,7 @@ class Text(WidgetBase):
             + (len(wrapped_lines) - 1) * self.wrap_padding
         )
         surface = pygame.Surface(
-            (self.wrap_width, total_height)
+            (self.wrap_width, total_height), pygame.SRCALPHA
         )
         y_offset = 0
         for line in wrapped_lines:
@@ -150,6 +155,11 @@ class Text(WidgetBase):
         self.requires_realignment = False
         setattr(self.rect, self._align, (self._x, self._y))
         self._x, self._y = self.rect.topleft
+        if self.wrap_rects:
+            y_offset = 0
+            for line_rect in self.wrap_rects:
+                line_rect.topleft = (self._x, self._y + y_offset)
+                y_offset += line_rect.height + self.wrap_padding
 
 
 @dataclass

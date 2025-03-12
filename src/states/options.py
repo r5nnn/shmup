@@ -12,7 +12,6 @@ from src.components.ui import (
     TextRectToggleButtonArrayConfig,
 )
 from src.core.constants import PRIMARY
-from src.core.prepare import image_paths
 from src.states.optionmenus import (
     GeneralOptions,
     GraphicsOptions,
@@ -20,27 +19,27 @@ from src.states.optionmenus import (
     AudioOptions,
 )
 from src.states.state import State, Overlay
-from src.core import system_data
+from src.core.data import system_data
 
 
 class Options(State):
     def __init__(self):
         super().__init__()
         # images
-        self.background = pygame.image.load(image_paths("menu")).convert()
+        self.background = pygame.image.load(system_data.image_paths("menu")).convert()
         self.title = pygame.transform.scale_by(
-            pygame.image.load(image_paths("title options")), 4
+            pygame.image.load(system_data.image_paths("title options")), 4
         )
         # background rect
         self.bg_rect = pygame.Rect(
             0,
             0,
-            system_data["window size"][0] * 0.8,
-            (system_data["window size"][1] - self.title.get_height()) * 0.8,
+            system_data.window_rect.width * 0.8,
+            (system_data.window_rect.height - self.title.get_height()) * 0.8,
         )
         self.bg_rect.midtop = (
-            system_data["window center"][0],
-            system_data["window size"][1] * 0.1 + 20 + self.title.get_height(),
+            system_data.window_rect.centerx,
+            system_data.window_rect.height * 0.1 + 20 + self.title.get_height(),
         )
         self.bg_surf = pygame.Surface(self.bg_rect.size)
         self.bg_surf.fill(PRIMARY)
@@ -65,13 +64,13 @@ class Options(State):
 
     @override
     def render(self) -> None:
-        system_data["window"].blit(self.background, (0, 0))
-        system_data["window"].blit(self.bg_surf, self.bg_rect)
-        system_data["window"].blit(
+        system_data.window.blit(self.background, (0, 0))
+        system_data.window.blit(self.bg_surf, self.bg_rect)
+        system_data.window.blit(
             self.title,
             (
-                system_data["window size"][0] / 2 - self.title.get_width() / 2,
-                system_data["window size"][1] * 0.1,
+                system_data.window_rect.width / 2 - self.title.get_width() / 2,
+                system_data.window_rect.height * 0.1,
             ),
         )
         widgethandler.blit()

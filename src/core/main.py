@@ -10,9 +10,8 @@ from typing import TYPE_CHECKING
 
 import pygame.display
 
-from src.components import events
-from src.components.managers import overlaymanager, statemanager
-from src.core.data import config, config_dir, save, system_data
+from src.components import events, overlaymanager, statemanager
+from src.core.data import settings, config_dir, save, system_data
 from src.core.utils import toggle_flag, toggle_fullscreen
 
 if TYPE_CHECKING:
@@ -39,8 +38,8 @@ def gameloop() -> None:
 
     while _running:
         events.process(pygame.event.get())
-        if system_data["quit"]:
-            save(config, config_dir)
+        if system_data.quit:
+            save(settings, config_dir)
             _running = False
         events.eventbinder.notify()
 
@@ -50,8 +49,9 @@ def gameloop() -> None:
             overlay.update()
             overlay.render()
 
-        system_data["dt"] = pygame.time.Clock().tick(165) / 1000.0
+        system_data.dt = pygame.time.Clock().tick(165) / 1000.0
         pygame.display.flip()
+
 
 
 _running = True

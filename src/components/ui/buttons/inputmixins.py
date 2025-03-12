@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Callable, ParamSpec, TypeVar, Concatenate
 
-from src.components import button_audio, events
+from src.components import events
+from src.core.data import system_data
 from src.core.constants import LEFTCLICK
 
 
@@ -25,18 +26,18 @@ class ClickInputMixin(ButtonMixinFields):
     def update_click(self) -> None:
         self.clicked = True
         if self.audio_tags[0] is not None:
-            button_audio.play_audio(self.audio_tags[0], override=True)
+            system_data.button_audio.play_audio(self.audio_tags[0], override=True)
 
     def update_release(self) -> None:
         """Method that is called when the buttons is released."""
         self.clicked = False
         if self.audio_tags[2] is not None:
-            button_audio.play_audio(self.audio_tags[2], override=True)
+            system_data.button_audio.play_audio(self.audio_tags[2], override=True)
 
     def update_hover(self) -> None:
         """Method that is called when the buttons is hovered."""
         if self.audio_tags[1] is not None:
-            button_audio.play_audio(self.audio_tags[1], override=True)
+            system_data.button_audio.play_audio(self.audio_tags[1], override=True)
 
     def update_idle(self) -> None:
         """Method that is called when the buttons is idle."""
@@ -88,7 +89,7 @@ class ToggleInputMixin(ButtonMixinFields):
     def toggle_on_call(self, *, silent: bool = False) -> None:
         self.toggle_on()
         if not silent and self.audio_tags[0] is not None:
-            button_audio.play_audio(self.audio_tags[0], override=True)
+            system_data.button_audio.play_audio(self.audio_tags[0], override=True)
         if self.on_toggle_on is not None:
             (
                 self.on_toggle_on(True)
@@ -104,7 +105,7 @@ class ToggleInputMixin(ButtonMixinFields):
     def toggle_off_call(self, *, silent: bool = False) -> None:
         self.toggle_off()
         if not silent and self.audio_tags[2] is not None:
-            button_audio.play_audio(self.audio_tags[2], override=True)
+            system_data.button_audio.play_audio(self.audio_tags[2], override=True)
         if self.on_toggle_off is not None:
             (
                 self.on_toggle_off(False)
@@ -114,7 +115,7 @@ class ToggleInputMixin(ButtonMixinFields):
 
     def update_hover(self) -> None:
         if self.audio_tags[1] is not None:
-            button_audio.play_audio(self.audio_tags[1], override=True)
+            system_data.button_audio.play_audio(self.audio_tags[1], override=True)
 
     def update_idle(self) -> None: ...
 
@@ -139,6 +140,11 @@ class ToggleInputMixin(ButtonMixinFields):
             self.update_idle()
 
 
+_P = ParamSpec("_P")
+_Return = TypeVar("_Return")
+_Method = Callable[Concatenate[ToggleInputMixin, _P], _Return]
+
+
 def checktoggle(method: _Method) -> _Method:
     def wrapper(
         self: ToggleInputMixin, *args: _P.args, **kwargs: _P.kwargs
@@ -147,8 +153,3 @@ def checktoggle(method: _Method) -> _Method:
             method(self, *args, **kwargs)
 
     return wrapper
-
-
-_P = ParamSpec("_P")
-_Return = TypeVar("_Return")
-_Method = Callable[Concatenate[ToggleInputMixin, _P], _Return]

@@ -39,7 +39,7 @@ def process(events: list[pygame.event.Event]) -> None:
                 _mouseup_events.append(event.button)
                 _mouse_buttons.remove(event.button)
             case pygame.QUIT:
-                system_data["quit"] = True
+                system_data.quit = True
 
     _mouse_pos = pygame.mouse.get_pos()
 

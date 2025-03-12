@@ -25,7 +25,7 @@ DEFAULT_FONT_SIZE = 32
 
 # convert from constant to name
 
-DISPLAY_FLAG_NAMES = {
+DISPLAY_FLAG_NAMES_MAP = {
     pygame.FULLSCREEN: "fullscreen",
     pygame.DOUBLEBUF: "doublebuf",
     pygame.HWSURFACE: "hwsurface",

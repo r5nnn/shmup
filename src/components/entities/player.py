@@ -10,7 +10,7 @@ import pygame
 from src.components import events
 from src.components.entities.entityutils import Entity, Animation
 from src.components.entities.projectile import SimpleBullet
-from src.core import system_data
+from src.core.data import system_data
 
 if TYPE_CHECKING:
     from src.core.types import RectAlignments

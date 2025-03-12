@@ -9,7 +9,7 @@ from typing import override, TYPE_CHECKING
 import pygame
 
 from src.components.ui.widgetutils import WidgetBase
-from src.core import system_data
+from src.core.data import system_data
 from src.core.constants import PRIMARY, SECONDARY, ACCENT
 
 if TYPE_CHECKING:
@@ -49,7 +49,7 @@ class RectButtonBaseMixin(WidgetBase):
         self.rect = pygame.Rect(self._x, self._y, self._width, self._height)
         self.radius = radius
         self.audio_tags = (
-            ["click", None, "click"] if audio_tags is None else (audio_tags)
+            ["click", None, "click"] if audio_tags is None else audio_tags
         )
         self.requires_realignment = True
 
@@ -81,7 +81,7 @@ class RectButtonBaseMixin(WidgetBase):
     @override
     def blit(self) -> None:
         pygame.draw.rect(
-            system_data["window"],
+            system_data.window,
             self.color,
             self.rect,
             border_radius=self.radius,
@@ -116,7 +116,7 @@ class TextButtonBaseMixin(WidgetBase, ABC):
     ):
         super().__init__(position, align, sub_widget=sub_widget)
         self.audio_tags = (
-            ["click", None, "click"] if audio_tags is None else (audio_tags)
+            ["click", None, "click"] if audio_tags is None else audio_tags 
         )
 
     @override
@@ -150,7 +150,7 @@ class ImageButtonBaseMixin(WidgetBase, ABC):
     ):
         super().__init__(position, align, sub_widget=sub_widget)
         self.audio_tags = (
-            ["click", None, "click"] if audio_tags is None else (audio_tags)
+            ["click", None, "click"] if audio_tags is None else audio_tags
         )
 
     def align_rect(self) -> None:
