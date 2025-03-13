@@ -1,6 +1,7 @@
 """Module containing constants used in the game."""
 
 from pathlib import Path
+from src.core.structs import Bidict
 
 import pygame
 
@@ -25,7 +26,7 @@ DEFAULT_FONT_SIZE = 32
 
 # convert from constant to name
 
-DISPLAY_FLAG_NAMES_MAP = {
+DISPLAY_FLAG_NAMES_MAP = Bidict({
     pygame.FULLSCREEN: "fullscreen",
     pygame.DOUBLEBUF: "doublebuf",
     pygame.HWSURFACE: "hwsurface",
@@ -35,7 +36,7 @@ DISPLAY_FLAG_NAMES_MAP = {
     pygame.SCALED: "scaled",
     pygame.SHOWN: "shown",
     pygame.HIDDEN: "hidden",
-}
+})
 
 # sources root
 

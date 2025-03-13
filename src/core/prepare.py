@@ -22,9 +22,9 @@ pygame.init()
 pygame.display.set_caption(f"shmup v{system_data.version} "
                            f"{system_data.version_type}")
 
-for flag_name, enabled in settings.flags.values():
+for flag_name, enabled in settings.flags.items():
     if enabled:
-        system_data.flags |= DISPLAY_FLAG_NAMES_MAP
+        system_data.flags |= DISPLAY_FLAG_NAMES_MAP.inverse[flag_name][0]
         log.info("Added flag %s to system_data.", flag_name.upper())
 
 system_data.screen_rect = pygame.Rect(0, 0, pygame.display.Info().current_w,

@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import logging
-from abc import ABC, abstractmethod
-from typing import Any
 
 import pygame
 from operator import attrgetter
@@ -12,7 +10,6 @@ from operator import attrgetter
 from src.core.constants import DISPLAY_FLAG_NAMES_MAP
 from src.core.data import settings, system_data
 from src.components import events
-
 
 log = logging.getLogger(__name__)
 
@@ -23,8 +20,8 @@ def toggle_flag(flag: int) -> None:
     :param flag: The integer value of the flag to toggle.
     """
     system_data.flags ^= flag
-    setattr(settings.flags, flag_name := DISPLAY_FLAG_NAMES_MAP[flag],
-            toggled := attrgetter(flag_name)(settings.flags))
+    settings.flags[flag_name := DISPLAY_FLAG_NAMES_MAP[flag]] = (
+        toggled := not settings.flags[DISPLAY_FLAG_NAMES_MAP[flag]])
     pygame.display.set_mode((1920, 1080), system_data.flags)
     log.info("Window flag %s toggled %s", flag_name, "on" if toggled else "off")
 
@@ -52,32 +49,10 @@ def toggle_fullscreen() -> None:
         toggle_flag(pygame.FULLSCREEN)
     else:
         system_data.flags ^= pygame.FULLSCREEN
-        settings.flags.fullscreen = True
+        settings.flags["fullscreen"] = True
         pygame.display.toggle_fullscreen()
         log.info("Fullscreen safely toggled on using"
-                 "pygame.display.toggle_fullscreen().")
+                 " pygame.display.toggle_fullscreen().")
     if settings.keep_mouse_pos:
         events.set_abs_mouse_pos(coords)
         pygame.mouse.set_visible(True)
-
-
-class Validator(ABC):
-    """Descriptor abstract base class for validating when a property is set."""
-
-    def __set_name__(self, owner: type, name: str):
-        self.private_name = "_" + name
-
-    def __get__(self, instance: object | None, owner: type | None = None):
-        if instance is None:
-            return self
-        return getattr(instance, self.private_name)
-
-    def __set__(self, instance: object, value: Any):
-        if getattr(instance, self.private_name) == value:
-            return
-        self.validate(instance, value)
-        setattr(instance, self.private_name, value)
-
-    @abstractmethod
-    def validate(self, instance: object, value: Any) -> None:
-        pass

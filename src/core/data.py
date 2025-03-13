@@ -14,25 +14,19 @@ from src.core.load import Load
 
 
 class Settings(BaseModel):
-    flags: dict[Literal["fullscreen", "noframe"], bool] = {"fullscreen": True,
-                                                           "noframe": True}
+    flags: dict[str, bool] = {"fullscreen": True, "noframe": True}
     keep_mouse_pos: bool = True
 
     model_config = ConfigDict(extra="ignore")
-
 
     def save(self) -> None:
         config_dir.touch()
         with config_dir.open("w") as file:
             file.write(self.model_dump_json())
 
-
     @classmethod
     def load(cls) -> "Settings":
-        """Load a dict from a json file.
-
-        :param directory: The path to the json file.
-        """
+        """Load a dict from a json file."""
         config_dir.touch()
         with config_dir.open() as file:
             try:
