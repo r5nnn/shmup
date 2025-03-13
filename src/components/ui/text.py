@@ -78,6 +78,7 @@ class Text(WidgetBase):
     @override
     def blit(self) -> None:
         system_data.window.blit(self.text_surface, self.rect)
+        pygame.draw.rect(system_data.window, (0, 0, 100), self.rect)
 
     @override
     def update(self) -> None:
@@ -149,7 +150,7 @@ class Text(WidgetBase):
                 surface, (0, y_offset), line, color, size=self._font_size
             )
             y_offset += self.line_height + self.wrap_padding
-        return surface, surface.get_rect()
+        return surface, pygame.Rect(*self.wrap_rects[0].topleft, self.wrap_rects[0].width, 0)
 
     def align_rect(self) -> None:
         self.requires_realignment = False
@@ -160,6 +161,7 @@ class Text(WidgetBase):
             for line_rect in self.wrap_rects:
                 line_rect.topleft = (self._x, self._y + y_offset)
                 y_offset += line_rect.height + self.wrap_padding
+            self.rect.height = self.wrap_rects[-1].bottom - self.wrap_rects[0].top
 
 
 @dataclass

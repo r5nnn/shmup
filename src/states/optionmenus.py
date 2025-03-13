@@ -49,10 +49,11 @@ class GeneralOptions(OptionsOverlay):
         self.text_row1 = TextArray(
             self.text_pos, (1, 1), self.padding, config_
         )
+        print(self.text_row1.texts[0].rect, self.text_row1.texts[0].text_surface)
         config_ = TextButtonConfig(
             position=(
                 self.row_positions[0] + self.padding,
-                self.text_row1.texts[0].wrap_rects[0].centery,
+                self.text_row1.texts[0].rect.centery,
             ),
             align="midleft",
         )
@@ -92,7 +93,7 @@ class GraphicsOptions(OptionsOverlay):
         self.fullscreen_button = TextRectToggleButton(
             config_,
             self.button_size,
-            start_text=1 if settings.flags.fullscreen else 0,
+            start_text=1 if settings.flags["fullscreen"] else 0,
             on_toggle_on=toggle_fullscreen,
             on_toggle_off=toggle_fullscreen,
         )
@@ -103,7 +104,7 @@ class GraphicsOptions(OptionsOverlay):
         self.borderless_button = TextRectToggleButton(
             config_,
             self.button_size,
-            start_text=1 if settings.flags.noframe else 0,
+            start_text=1 if settings.flags["noframe"] else 0,
             on_toggle_on=lambda: toggle_flag(pygame.NOFRAME),
             on_toggle_off=lambda: toggle_flag(pygame.NOFRAME),
         )
@@ -117,11 +118,11 @@ class GraphicsOptions(OptionsOverlay):
         super().render()
 
     def update(self) -> None:
-        if settings.flags.fullscreen:
+        if settings.flags["fullscreen"]:
             self.fullscreen_button.toggle_on()
         else:
             self.fullscreen_button.toggle_off()
-        if settings.flags.noframe:
+        if settings.flags["noframe"]:
             self.borderless_button.toggle_on()
         else:
             self.borderless_button.toggle_off()
