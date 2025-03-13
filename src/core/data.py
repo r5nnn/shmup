@@ -4,7 +4,6 @@ import json
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
 
 import pygame
 from pydantic import BaseModel, ConfigDict, ValidationError

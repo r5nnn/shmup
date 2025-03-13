@@ -109,8 +109,9 @@ class Text(WidgetBase):
     ) -> tuple[pygame.Surface, pygame.Rect]:
         r"""Renders the text with word wrapping.
 
-        This method splits text into paragraphs by '\n' and then wraps each paragraph
-        by measuring word widths. It renders each line onto a new surface.
+        This method splits text into paragraphs by '\n' and then wraps each
+        paragraph by measuring word widths. It renders each line onto a new
+        surface.
         """
         newline_wrapped_text = text.split("\n")
         wrapped_lines = []

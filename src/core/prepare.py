@@ -15,7 +15,14 @@ import pygame
 from src.core.load import Load
 from src.states import game, options, title
 
-log = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s %(name)s:%(levelname)s - %(message)s",
+    datefmt="%d/%m/%Y %H:%M:%S",
+)
+logger = logging.getLogger("src")
+logger.debug("Started logging.")
+
 
 pygame.init()
 pygame.display.set_caption(f"shmup v{system_data.version} "
@@ -24,7 +31,7 @@ pygame.display.set_caption(f"shmup v{system_data.version} "
 for flag_name, enabled in settings.flags.items():
     if enabled:
         system_data.flags |= DISPLAY_FLAG_NAMES_MAP.inverse[flag_name][0]
-        log.info("Added flag %s to system_data.", flag_name.upper())
+        logger.info("Added flag %s to system_data.", flag_name.upper())
 
 system_data.screen_rect = pygame.Rect(0, 0, pygame.display.Info().current_w,
                                       pygame.display.Info().current_h)
@@ -36,7 +43,7 @@ system_data.window_rect = system_data.window.get_rect()
 
 if system_data.window_rect.size == system_data.screen_rect.size:
     settings.keep_mouse_pos = False
-    log.info("Screen size %s matches native window resolution %s, disabled "
+    logger.info("Screen size %s matches native window resolution %s, disabled "
              "keep_mouse_pos in system_data.", system_data.screen_rect.size,
              system_data.window_rect.size)
 
@@ -60,5 +67,5 @@ states = {
 start_state = "title"
 
 main.init(states, start_state)
-log.info("main.py initialised with dict %s and starting state %s", states,
+logger.info("main.py initialised with dict %s and starting state %s", states,
          start_state)
