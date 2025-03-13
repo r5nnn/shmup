@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from operator import attrgetter
 from pathlib import Path
 
 from src.components import Audio

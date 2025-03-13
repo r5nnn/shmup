@@ -9,6 +9,7 @@ from src.components.ui import (
     TextButtonConfig,
     TextRectToggleButton,
 )
+from src.core import system_data
 from src.core.utils import toggle_flag, toggle_fullscreen
 from src.core.data import settings
 from src.states.state import Overlay
@@ -49,7 +50,6 @@ class GeneralOptions(OptionsOverlay):
         self.text_row1 = TextArray(
             self.text_pos, (1, 1), self.padding, config_
         )
-        print(self.text_row1.texts[0].rect, self.text_row1.texts[0].text_surface)
         config_ = TextButtonConfig(
             position=(
                 self.row_positions[0] + self.padding,

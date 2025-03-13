@@ -51,7 +51,9 @@ class Text(WidgetBase):
         self._font = (
             font
             if font is not None
-            else pygame.freetype.Font(system_data.font_paths(DEFAULT_FONT_NAME))
+            else pygame.freetype.Font(
+                system_data.font_paths(DEFAULT_FONT_NAME)
+            )
         )
         self._font_size = font_size
         self._color = color if color is not None else pygame.Color("white")
@@ -78,7 +80,6 @@ class Text(WidgetBase):
     @override
     def blit(self) -> None:
         system_data.window.blit(self.text_surface, self.rect)
-        pygame.draw.rect(system_data.window, (0, 0, 100), self.rect)
 
     @override
     def update(self) -> None:
@@ -115,7 +116,7 @@ class Text(WidgetBase):
         wrapped_lines = []
         # line_rect is defined outside the for loop to avoid crashes if no text
         # passed but wrap_width still defined.
-        line_rect = None
+        longest_line_width = 0
         for line in newline_wrapped_text:
             words = line.split(" ")
             current_line = ""
@@ -126,15 +127,28 @@ class Text(WidgetBase):
                 line_rect = self._font.get_rect(new_line, size=self._font_size)
                 if line_rect.width > self.wrap_width:
                     wrapped_lines.append(current_line)
-                    self.wrap_rects.append(line_rect)
+                    current_line_rect = self._font.get_rect(
+                        current_line, size=self._font_size
+                    )
+                    self.wrap_rects.append(current_line_rect)
+                    longest_line_width = max(
+                        longest_line_width, current_line_rect.width
+                    )
                     # start the next line with the word that didn't fit
                     current_line = word
                 else:
                     current_line = new_line
             # During the last iteration, the current_line and line_rect won't
             # be appended in the inner for loop so is appended here.
-            wrapped_lines.append(current_line)
-            self.wrap_rects.append(line_rect) if line_rect is not None else None
+            if current_line:
+                current_line_rect = self._font.get_rect(
+                    current_line, size=self._font_size
+                )
+                wrapped_lines.append(current_line)
+                longest_line_width = max(
+                    longest_line_width, current_line_rect.width
+                )
+                self.wrap_rects.append(current_line_rect)
         # There is no padding below the last line, so subtract one when
         # calculating total padding.
         total_height = (
@@ -145,23 +159,27 @@ class Text(WidgetBase):
             (self.wrap_width, total_height), pygame.SRCALPHA
         )
         y_offset = 0
-        for line in wrapped_lines:
+        for line, line_rect in zip(wrapped_lines, self.wrap_rects):
             self._font.render_to(
                 surface, (0, y_offset), line, color, size=self._font_size
             )
+            line_rect.top = y_offset
             y_offset += self.line_height + self.wrap_padding
-        return surface, pygame.Rect(*self.wrap_rects[0].topleft, self.wrap_rects[0].width, 0)
+        return surface, pygame.Rect(
+            *self.wrap_rects[0].topleft, longest_line_width, 0
+        )
 
     def align_rect(self) -> None:
         self.requires_realignment = False
         setattr(self.rect, self._align, (self._x, self._y))
         self._x, self._y = self.rect.topleft
         if self.wrap_rects:
-            y_offset = 0
             for line_rect in self.wrap_rects:
-                line_rect.topleft = (self._x, self._y + y_offset)
-                y_offset += line_rect.height + self.wrap_padding
-            self.rect.height = self.wrap_rects[-1].bottom - self.wrap_rects[0].top
+                line_rect.left = self._x
+                line_rect.top += self._y
+            self.rect.height = (
+                self.wrap_rects[-1].bottom - self.wrap_rects[0].top
+            )
 
 
 @dataclass
