@@ -9,7 +9,7 @@ from pathlib import Path
 from src.components import Audio
 from src.core import main
 from src.core.data import settings, system_data
-from src.core.constants import ROOT
+from src.core.constants import ROOT, DISPLAY_FLAG_NAMES_MAP
 
 import pygame
 
@@ -22,9 +22,9 @@ pygame.init()
 pygame.display.set_caption(f"shmup v{system_data.version} "
                            f"{system_data.version_type}")
 
-for flag_name, enabled in settings.flags:
+for flag_name, enabled in settings.flags.values():
     if enabled:
-        system_data.flags |= attrgetter(flag_name.upper())(pygame)
+        system_data.flags |= DISPLAY_FLAG_NAMES_MAP
         log.info("Added flag %s to system_data.", flag_name.upper())
 
 system_data.screen_rect = pygame.Rect(0, 0, pygame.display.Info().current_w,

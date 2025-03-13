@@ -1,27 +1,51 @@
 """Module for saving and loading game config file."""
 
 import json
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal
 
 import pygame
-from pydantic import BaseModel
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from src.components import Audio
 from src.core.load import Load
 
 
-class Flags(BaseModel):
-    fullscreen: bool = True
-    noframe: bool = True
-
-
-class Settings(BaseSettings):
-    flags: Flags = Flags()
+class Settings(BaseModel):
+    flags: dict[Literal["fullscreen", "noframe"], bool] = {"fullscreen": True,
+                                                           "noframe": True}
     keep_mouse_pos: bool = True
 
-    model_config = SettingsConfigDict(extra="ignore")
+    model_config = ConfigDict(extra="ignore")
+
+
+    def save(self) -> None:
+        config_dir.touch()
+        with config_dir.open("w") as file:
+            file.write(self.model_dump_json())
+
+
+    @classmethod
+    def load(cls) -> "Settings":
+        """Load a dict from a json file.
+
+        :param directory: The path to the json file.
+        """
+        config_dir.touch()
+        with config_dir.open() as file:
+            try:
+                file_data = json.load(file)
+                return cls.model_validate(file_data)
+            except (json.decoder.JSONDecodeError, ValidationError) as e:
+                warnings.warn(f"Config file corrupted. Using defualts. Error {e}",
+                              stacklevel=2)
+                backup_path = config_dir.with_suffix(".backup.json")
+                config_dir.rename(backup_path)  # Backup the corrupted file
+                default_settings = cls()
+                default_settings.save()
+                return default_settings
 
 
 @dataclass(kw_only=True)
@@ -42,39 +66,6 @@ class SystemData:
     button_audio: Audio = ...
 
 
-def save(data: Settings, directory: Path) -> None:
-    """Save a dictionary to a json file.
-
-    :param data: Dictionary to save.
-    :param directory: Directory in which to save file to. If file doesn't
-    already exist it is created, otherwise any previous data stored is
-    overriden.
-    """
-    directory.touch()
-    with directory.open("w") as file:
-        file.write(data.model_dump_json())
-
-
-def load(directory: Path, data: Settings) -> Settings:
-    """Load a dict from a json file.
-
-    :param directory: The path to the json file.
-    :param data: The default data of the file. Used if the file
-    doesn't exist, is empty or unreadable.
-    """
-    directory.touch()
-    with directory.open() as file:
-        try:
-            file_data = json.load(file)
-            data.model_validate(file_data)
-            print(data)
-        except json.decoder.JSONDecodeError:
-            save(data, directory)
-            return data
-        return Settings(**file_data)
-
-
 config_dir = Path("config.json")
-settings = load(config_dir, Settings())
+settings = Settings.load()
 system_data = SystemData()
-print(settings)
