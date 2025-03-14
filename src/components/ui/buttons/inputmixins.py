@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, ParamSpec, TypeVar, Concatenate
 
-from src.components import events
+from src.components import Audio, events
 from src.core.data import system_data
 from src.core.constants import LEFTCLICK
 
@@ -26,7 +26,7 @@ class ClickInputMixin(ButtonMixinFields):
     def update_click(self) -> None:
         self.clicked = True
         if self.audio_tags[0] is not None:
-            system_data.button_audio.play_audio(self.audio_tags[0], override=True)
+            Audio(channel_name="sfx").play_audio(self.audio_tags[0], override=True)
 
     def update_release(self) -> None:
         """Method that is called when the buttons is released."""

@@ -2,40 +2,73 @@
 
 from __future__ import annotations
 
+import logging
 import warnings
 from functools import wraps
 from pathlib import Path
-from typing import Callable, Concatenate, ParamSpec, TypeVar
+from typing import Callable, ClassVar, Concatenate, ParamSpec, Self, TypeVar
 
 import pygame
+
+
+logger = logging.getLogger("src.components.audio")
 
 
 def checkaudio(method: _Method) -> _Method:
     @wraps(method)
     def wrapper(self: Audio, *args: _P.args, **kwargs: _P.kwargs) -> _Return:
-        if not self.no_audio:
+        if not Audio.no_audio:
             method(self, *args, **kwargs)
+        else:
+            logger.debug(
+                "No audio drivers present, ignoring method call attempt: %s.",
+                method,
+            )
+
     return wrapper
 
 
-class Audio:
-    """Class for managing audio channels.
+class _AudioMeta(type):
+    """Metaclass to ensure unique Audio instances per channel_id."""
+
+    _instances: ClassVar[dict[str, Audio]] = {}
+    channel_counter: int = 0
+
+    def __call__(cls, channel_name: str) -> Audio:
+        """Ensure each channel_id has a unique instance."""
+        if channel_name in cls._instances:
+            return cls._instances[channel_name]  # Return existing instance
+
+        # Create and store new instance
+        instance = super().__call__(channel_name)
+        cls._instances[channel_name] = instance
+        return instance
+
+
+class Audio(metaclass=_AudioMeta):
+    """Class for managing audio channels. Acts as a wrapper for Channel objects.
 
     When instantiated creates a unique channel associated with the object.
     Audio can then be added and played on that channel. Acts as a wrapper for
     `pygame.mixer.Sound`.
     """
 
-    _channel_counter = 0
+    no_audio = False
 
-    def __init__(self):
-        self.channel_id = Audio._channel_counter
-        Audio._channel_counter += 1
+    @checkaudio
+    def __init__(self, channel_name: str):
+        self.channel_name = channel_name
+        self.channel_id = _AudioMeta.channel_counter
+        _AudioMeta.channel_counter += 1
+
         try:
             self.channel = pygame.mixer.Channel(self.channel_id)
-            self.no_audio = False
         except pygame.error:
-            self.no_audio = True
+            logger.exception(
+                "Unable to instantiate mixer channels, audio drivers may not "
+                "be present. Disabling all audio functionality."
+            )
+            Audio.no_audio = True
         self.sounds = {}
         self.current_audio = None
 
@@ -45,7 +78,19 @@ class Audio:
             msg = f"File {audio_dir} does not exist."
             raise FileNotFoundError(msg)
         tag = Path(audio_dir).stem if tag is None else None
+        if tag in self.sounds:
+            warnings.warn(
+                f"Attempted to add audio with tag: {tag} already "
+                f"used in the sounds dict: {self.sounds}",
+                stacklevel=2,
+            )
         self.sounds[tag] = pygame.mixer.Sound(audio_dir)
+        logger.info(
+            "Added audio file %s using tag %s to audio object %s.",
+            audio_dir,
+            tag,
+            repr(self),
+        )
 
     @checkaudio
     def play_audio(
@@ -63,6 +108,19 @@ class Audio:
         if self.current_audio != tag:
             self.channel.play(self.sounds[tag], loops=loops)
             self.current_audio = tag
+            logger.info(
+                "Playing new audio %s in audio object %s. Looping %s times.",
+                tag,
+                repr(self),
+                loops,
+            )
+        else:
+            logger.info(
+                "Rejected playing %s audio. Override parameter not set as "
+                "True, and audio already playing in channel: %s",
+                tag,
+                self,
+            )
 
     @checkaudio
     def stop(self) -> None:
@@ -74,6 +132,7 @@ class Audio:
             msg = "Volume must be between 0.0 and 1.0."
             raise ValueError(msg)
         self.channel.set_volume(volume)
+        logger.info("Set volume of audio object %s as %s", self, volume)
 
     @checkaudio
     def increase_volume(self, increment: float = 0.1) -> None:
@@ -86,6 +145,9 @@ class Audio:
         current_volume = self.channel.get_volume()
         new_volume = max(0.0, current_volume - decrement)
         self.set_volume(new_volume)
+
+    def __repr__(self):
+        return f"Audio(channel_name={self.channel_name}, channel_id={self.channel_id})"
 
 
 _P = ParamSpec("_P")

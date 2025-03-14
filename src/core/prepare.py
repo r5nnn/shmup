@@ -52,12 +52,11 @@ system_data.audio_paths = Load(Path(ROOT) / "assets" / "audio", ".wav")
 system_data.font_paths = Load(Path(ROOT) / "assets" / "fonts", ".ttf")
 pygame.display.set_icon(pygame.image.load(system_data.image_paths("icon")))
 
-system_data.background_audio = Audio()
-system_data.background_audio.set_volume(0.2)
+Audio("bgm").set_volume(0.2)
+Audio("bgm").add_audio(system_data.audio_paths("menuloop rmx"))
 
-system_data.button_audio = Audio()
-system_data.button_audio.set_volume(0.2)
-system_data.button_audio.add_audio(system_data.audio_paths("click"))
+Audio("sfx").set_volume(0.2)
+Audio("sfx").add_audio(system_data.audio_paths("click"))
 
 states = {"title": title.Title, "options": options.Options, "game": game.Game}
 start_state = "title"

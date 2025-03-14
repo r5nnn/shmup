@@ -1,4 +1,4 @@
-"""Module containing functions and design patterns used globally across the game."""
+"""Module containing utilities with some dependencies on other game modules."""
 
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ def toggle_fullscreen() -> None:
         coords = events.get_abs_mouse_pos()
     if system_data.flags & pygame.FULLSCREEN:
         # Using the pygame inbuilt display.toggle_fullscreen to exit fullscreen
-        # causes the noframe  flag and potentially other flags to disappear.
+        # causes the noframe flag and potentially other flags to disappear.
         # Toggling the flag and manually setting the mode of the screen makes
         # sure all flags are preserved.
         toggle_flag(pygame.FULLSCREEN)
@@ -59,7 +59,8 @@ def toggle_fullscreen() -> None:
         )
     if settings.keep_mouse_pos:
         logger.debug(
-            "keep_mouse_pos is True, so setting coords to absolute position: %s",
+            "keep_mouse_pos is True, so setting coords to absolute position: "
+            "%s",
             coords,
         )
         events.set_abs_mouse_pos(coords)
