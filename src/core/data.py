@@ -1,6 +1,7 @@
 """Module for saving and loading game config file."""
 
 import json
+import logging
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,6 +11,9 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 
 from src.components import Audio
 from src.core.load import Load
+
+
+logger = logging.getLogger("src.core")
 
 
 class Settings(BaseModel):
@@ -22,23 +26,32 @@ class Settings(BaseModel):
         config_dir.touch()
         with config_dir.open("w") as file:
             file.write(self.model_dump_json())
+        logger.info("Saved current settings into config.json file: %s.", self)
 
     @classmethod
-    def load(cls) -> "Settings":
+    def load(cls) -> tuple["Settings", bool]:
         """Load a dict from a json file."""
         config_dir.touch()
         with config_dir.open() as file:
             try:
                 file_data = json.load(file)
-                return cls.model_validate(file_data)
+                logger.info(
+                    "Attempting to load existing config.json file with data: "
+                    "%s.",
+                    file_data,
+                )
+                return cls.model_validate(file_data), False
             except (json.decoder.JSONDecodeError, ValidationError) as e:
-                warnings.warn(f"Config file corrupted. Using defualts. Error {e}",
-                              stacklevel=2)
                 backup_path = config_dir.with_suffix(".backup.json")
                 config_dir.rename(backup_path)  # Backup the corrupted file
                 default_settings = cls()
+                logger.warning(
+                    "Config file corrupted/empty. Overwriting config with"
+                    "defaults. Error %s",
+                    e,
+                )
                 default_settings.save()
-                return default_settings
+                return default_settings, True
 
 
 @dataclass(kw_only=True)
@@ -57,8 +70,10 @@ class SystemData:
     font_paths: Load = ...
     background_audio: Audio = ...
     button_audio: Audio = ...
+    # Defined when settings loaded.
+    default_config: bool = ...
 
 
-config_dir = Path("config.json")
-settings = Settings.load()
 system_data = SystemData()
+config_dir = Path("config.json")
+settings, system_data.default_config = Settings.load()
