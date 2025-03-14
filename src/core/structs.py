@@ -1,8 +1,14 @@
-from __future__ import annotations
-import logging
-from abc import abstractmethod, ABC
-from typing import Any
+"""Module containing design patterns, data structures and other utilities.
 
+These utilities specifically have no other dependencies for the game.
+"""
+from __future__ import annotations
+
+import inspect
+import logging
+from abc import ABC, abstractmethod
+from logging import LogRecord
+from typing import Any, Callable, ClassVar
 
 log = logging.getLogger(__name__)
 
@@ -47,3 +53,22 @@ class Bidict(dict):
         if self[key] in self.inverse and not self.inverse[self[key]]:
             del self.inverse[self[key]]
         super().__delitem__(key)
+
+
+class Printable:
+    def __str__(self):
+        return self.__stringify(str)
+
+    def __repr__(self):
+        return self.__stringify(repr)
+
+    def __stringify(self, strfunc: Callable[[object], str]) -> str:
+        sig = inspect.signature(self.__init__)
+        values = []
+        for attr in sig.parameters:
+            value = getattr(self, attr)
+            values.append(strfunc(value))
+
+        clsname = type(self).__name__
+        args = ", ".join(values)
+        return f"{clsname}({args})"
