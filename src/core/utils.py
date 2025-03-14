@@ -5,13 +5,12 @@ from __future__ import annotations
 import logging
 
 import pygame
-from operator import attrgetter
 
 from src.core.constants import DISPLAY_FLAG_NAMES_MAP
 from src.core.data import settings, system_data
 from src.components import events
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def toggle_flag(flag: int) -> None:
@@ -21,9 +20,12 @@ def toggle_flag(flag: int) -> None:
     """
     system_data.flags ^= flag
     settings.flags[flag_name := DISPLAY_FLAG_NAMES_MAP[flag]] = (
-        toggled := not settings.flags[DISPLAY_FLAG_NAMES_MAP[flag]])
+        toggled := not settings.flags[DISPLAY_FLAG_NAMES_MAP[flag]]
+    )
     pygame.display.set_mode((1920, 1080), system_data.flags)
-    log.info("Window flag %s toggled %s", flag_name, "on" if toggled else "off")
+    logger.info(
+        "Window flag %s toggled %s", flag_name, "on" if toggled else "off"
+    )
 
 
 def toggle_fullscreen() -> None:
@@ -51,8 +53,14 @@ def toggle_fullscreen() -> None:
         system_data.flags ^= pygame.FULLSCREEN
         settings.flags["fullscreen"] = True
         pygame.display.toggle_fullscreen()
-        log.info("Fullscreen safely toggled on using"
-                 " pygame.display.toggle_fullscreen().")
+        logger.info(
+            "Fullscreen safely toggled on using"
+            " pygame.display.toggle_fullscreen()."
+        )
     if settings.keep_mouse_pos:
+        logger.debug(
+            "keep_mouse_pos is True, so setting coords to absolute position: %s",
+            coords,
+        )
         events.set_abs_mouse_pos(coords)
         pygame.mouse.set_visible(True)

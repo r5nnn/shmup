@@ -9,7 +9,7 @@ from pathlib import Path
 import pygame
 
 
-log = logging.getLogger("src")
+logger = logging.getLogger("src.core")
 
 
 def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface, ...]:
@@ -42,7 +42,7 @@ def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface, ...]:
         sprite_list.append(
             spritesheet.subsurface(res["x"], res["y"], res["w"], res["h"])
         )
-    log.info("Parsed spritesheet %s into sprites %s.", spritesheet_file,
+    logger.info("Parsed spritesheet %s into sprites %s.", spritesheet_file,
              tuple(sprite_list))
     return tuple(sprite_list)
 

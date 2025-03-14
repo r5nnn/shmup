@@ -6,6 +6,7 @@ RuntimeError will be raised.
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 import pygame.display
@@ -16,6 +17,8 @@ from src.core.utils import toggle_flag, toggle_fullscreen
 
 if TYPE_CHECKING:
     from src.states.state import State
+
+logger = logging.getLogger("src")
 
 
 def init(state_dict: dict[str, type[State]], start_state: str) -> None:
@@ -38,10 +41,11 @@ def gameloop() -> None:
 
     while _running:
         events.process(pygame.event.get())
+        events.eventbinder.notify()
         if system_data.quit:
+            logger.info("Quit set to True, saving and exiting game.")
             settings.save()
             _running = False
-        events.eventbinder.notify()
 
         statemanager.current_state().update()
         statemanager.current_state().render()
