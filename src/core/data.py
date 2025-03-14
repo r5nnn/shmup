@@ -2,14 +2,12 @@
 
 import json
 import logging
-import warnings
 from dataclasses import dataclass
 from pathlib import Path
 
 import pygame
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from src.components import Audio
 from src.core.load import Load
 
 
@@ -45,11 +43,13 @@ class Settings(BaseModel):
                 backup_path = config_dir.with_suffix(".backup.json")
                 config_dir.rename(backup_path)  # Backup the corrupted file
                 default_settings = cls()
-                logger.warning(
-                    "Config file corrupted/empty. Overwriting config with"
-                    "defaults. Error %s",
-                    e,
-                )
+                if e == ValidationError:
+                    logger.exception(
+                        "Config file corrupted. Overwriting config with"
+                        "defaults."
+                    )
+                else:
+                    logger.info("Config file empty. Saving with default config.")
                 default_settings.save()
                 return default_settings, True
 
@@ -68,8 +68,6 @@ class SystemData:
     image_paths: Load = ...
     audio_paths: Load = ...
     font_paths: Load = ...
-    background_audio: Audio = ...
-    button_audio: Audio = ...
     # Defined when settings loaded.
     default_config: bool = ...
 
