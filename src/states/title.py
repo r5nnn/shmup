@@ -5,6 +5,7 @@ from typing import override
 
 import pygame
 
+from src.components import Audio
 from src.components.managers import statemanager
 from src.components.ui import widgethandler
 from src.components.ui.buttons import (
@@ -30,8 +31,6 @@ class Title(State):
             5,
         )
 
-        # audio
-        system_data.background_audio.add_audio(system_data.audio_paths("menuloop rmx"))
         config = ImageClickButtonArrayConfig(
             images=(("play", "editor", "options", "quit"),),
             scale_by=3,
@@ -60,7 +59,7 @@ class Title(State):
     @override
     def startup(self) -> None:
         super().startup()
-        system_data.background_audio.play_audio("menuloop rmx", loops=-1)
+        Audio(channel_name="bgm").play_audio("menuloop rmx", loops=-1)
 
     @override
     def cleanup(self) -> None:
