@@ -1,6 +1,8 @@
 """Package containing widgets for use in the game's UI."""
 
 from src.components.ui.text import Text, TextArray, TextArrayConfig
+from src.components.ui.dropdown import TextDropdown
+from src.components.ui import widgethandler
 from src.components.ui.buttons.imagebutton import (
     ImageToggleButton,
     ImageClickButton,

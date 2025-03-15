@@ -7,9 +7,8 @@ from src.components.ui import (
     TextArray,
     TextArrayConfig,
     TextButtonConfig,
-    TextRectToggleButton,
+    TextRectToggleButton, TextDropdown
 )
-from src.core import system_data
 from src.core.utils import toggle_flag, toggle_fullscreen
 from src.core.data import settings
 from src.states.state import Overlay
@@ -108,10 +107,15 @@ class GraphicsOptions(OptionsOverlay):
             on_toggle_on=lambda: toggle_flag(pygame.NOFRAME),
             on_toggle_off=lambda: toggle_flag(pygame.NOFRAME),
         )
+        self.resolution_dropdown = TextDropdown((self.row_positions[0] + self.padding,
+                                                self.text_row1.texts[2].rect.centery),
+                                                self.button_size,
+                                                choices=("1920x1080", "2560x1440"), align="midleft")
         self.widgets = (
             self.text_row1,
             self.fullscreen_button,
             self.borderless_button,
+            self.resolution_dropdown,
         )
 
     def render(self) -> None:
