@@ -7,8 +7,7 @@ from __future__ import annotations
 import inspect
 import logging
 from abc import ABC, abstractmethod
-from logging import LogRecord
-from typing import Any, Callable, ClassVar
+from typing import Any, Callable
 
 log = logging.getLogger(__name__)
 

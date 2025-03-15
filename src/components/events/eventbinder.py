@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import warnings
 from collections import defaultdict
 from typing import Callable, TYPE_CHECKING, Any
@@ -17,7 +18,9 @@ from src.components.events.utils import (
 from src.core.data import system_data
 
 if TYPE_CHECKING:
-    from src.core.constants import EventTypes
+    from src.core.types import EventTypes
+
+logger = logging.getLogger("src.components.events")
 
 _observers = defaultdict(list)
 _input_checks = {
@@ -27,7 +30,7 @@ _input_checks = {
     "mouse": is_mouse_pressed,
     "mousedown": is_mouse_down,
     "mouseup": is_mouse_up,
-    "quit": lambda: system_data["quit"],
+    "quit": lambda: system_data.quit,
 }
 _sorted_bindings_cache = None
 
@@ -38,6 +41,11 @@ def register(
     """Registers a combination of inputs to an action."""
     global _sorted_bindings_cache
     _observers[inputs].append(action)
+    logger.info(
+        "Registered inputs %s to action %s, resetting bindings cache.",
+        inputs,
+        action,
+    )
     _sorted_bindings_cache = None
 
 
@@ -53,6 +61,16 @@ def deregister(
         _observers[inputs].remove(action)
         if not _observers[inputs]:
             _observers.pop(inputs)
+            logger.debug(
+                "No actions registered to input combination: %s, removing "
+                "input combination from dict.",
+                inputs,
+            )
+        logger.info(
+            "Deregistered inputs %s from action %s, resetting bindings cache.",
+            inputs,
+            action,
+        )
     elif _observers.pop(inputs, None) is None:
         warnings.warn(
             f"Attempted to deregister inputs {inputs} that haven't "
@@ -70,6 +88,9 @@ def notify() -> None:
     for inputs, actions in _sorted_bindings_cache:
         if _are_inputs_active(inputs, used_inputs):
             for action in actions:
+                logging.debug(
+                    "Inputs: %s detected. Calling action %s.", inputs, action
+                )
                 action()
             used_inputs.update(inputs)
 

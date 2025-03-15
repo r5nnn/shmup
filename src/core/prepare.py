@@ -21,6 +21,9 @@ pygame.init()
 pygame.display.set_caption(
     f"shmup {system_data.version}-{system_data.version_type}"
 )
+system_data.screen_rect = pygame.Rect(
+    0, 0, pygame.display.Info().current_w, pygame.display.Info().current_h
+)
 
 for flag_name, enabled in settings.flags.items():
     if enabled:

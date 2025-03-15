@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+import logging
+
 import pygame
 import pynput
 
 from src.core.data import system_data
+
+logger = logging.getLogger("src.components.events")
 
 _keydown_events = []
 _keyup_events = []
@@ -27,21 +31,33 @@ def process(events: list[pygame.event.Event]) -> None:
     for event in events:
         match event.type:
             case pygame.KEYDOWN:
+                logger.debug("Key down event detected. Key %s.", event.button)
                 _keydown_events.append(event.key)
                 _held_keys.append(event.key)
             case pygame.KEYUP:
+                logger.debug("Key up event detected. Key %s.", event.button)
                 _keyup_events.append(event.key)
                 _held_keys.remove(event.key)
             case pygame.MOUSEBUTTONDOWN:
+                logger.debug(
+                    "Mouse button down event detected. Key %s.", event.button
+                )
                 _mousedown_events.append(event.button)
                 _mouse_buttons.append(event.button)
             case pygame.MOUSEBUTTONUP:
+                logger.debug(
+                    "Mouse button up event detected. Key %s.", event.button
+                )
                 _mouseup_events.append(event.button)
                 _mouse_buttons.remove(event.button)
             case pygame.QUIT:
+                logger.debug("Quit event detected.")
                 system_data.quit = True
 
-    _mouse_pos = tuple(x/system_data.scale_factor for x in pygame.mouse.get_pos())
+    _mouse_pos = tuple(
+        x / system_data.scale_factor for x in pygame.mouse.get_pos()
+    )
+    logger.debug("Mouse position updated to new location: %s", _mouse_pos)
 
 
 def is_key_down(key: int) -> bool:

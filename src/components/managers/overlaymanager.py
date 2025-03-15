@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import warnings
 from typing import TYPE_CHECKING
 
@@ -9,7 +10,8 @@ if TYPE_CHECKING:
     from src.states.state import Overlay
 
 
-_overlay_stack = []
+logger = logging.getLogger("src.components.managers")
+overlay_stack = []
 
 
 def current_overlay(*, accept_no_overlay: bool = False) -> Overlay | None:
@@ -22,13 +24,13 @@ def current_overlay(*, accept_no_overlay: bool = False) -> Overlay | None:
     :raises IndexError: If `accept_no_overlay` is False and no overlay in the
     overlay stack.
     """
-    if _overlay_stack:
-        return _overlay_stack[-1]
+    if overlay_stack:
+        return overlay_stack[-1]
     if accept_no_overlay:
         return None
     msg = (
         f"Attempted to access current overlay when `accept_no_overlay` was"
-        f"False, and overlay stack {_overlay_stack} is empty."
+        f"False, and overlay stack {overlay_stack} is empty."
     )
     raise IndexError(msg)
 
@@ -38,14 +40,29 @@ def append(overlay: type[Overlay]) -> None:
 
     :param overlay: The overlay to add.
     """
-    _overlay_stack.append(overlay())
+    logger.debug(
+        "Attempting to add new overlay: %s to the overlay stack %s.",
+        overlay,
+        overlay_stack,
+    )
+    overlay_stack.append(overlay())
     current_overlay().startup()
+    logger.info(
+        "Appended new overlay: %s to the overlay stack %s.",
+        overlay,
+        overlay_stack,
+    )
 
 
 def pop() -> None:
     """Removes the overlay at the top of the overlay stack."""
+    logger.debug(
+        "Attempting to pop top overlay off the overlay stack: %s.",
+        overlay_stack,
+    )
     current_overlay().cleanup()
-    _overlay_stack.pop()
+    overlay_stack.pop()
+    logger.info("Popped top overlay off the overlay stack: %s.", overlay_stack)
 
 
 def remove(overlay: type[Overlay]) -> bool:
@@ -55,14 +72,24 @@ def remove(overlay: type[Overlay]) -> bool:
     :return: True if overlay was successfully removed and False if it was not
     found in the stack.
     """
-    for obj in _overlay_stack:
+    for obj in overlay_stack:
         if isinstance(obj, overlay):
+            logger.debug(
+                "Attempting to remove overlay: %s from overlay stack %s.",
+                overlay,
+                overlay_stack,
+            )
             obj.cleanup()
-            _overlay_stack.remove(obj)
+            overlay_stack.remove(obj)
+            logger.info(
+                "Removed overlay: %s from the overlay stack %s.",
+                overlay,
+                overlay_stack,
+            )
             return True
     warnings.warn(
         f"Attempted to remove overlay {overlay} which was not "
-        f"present in the overlay stack {_overlay_stack}.",
+        f"present in the overlay stack {overlay_stack}.",
         stacklevel=2,
     )
     return False
