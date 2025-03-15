@@ -80,7 +80,7 @@ class Title(State):
         system_data.window.blit(
             self.splash,
             (
-                system_data.window_rect.width * 0.13,
+                system_data.window_rect.width * 0.03,
                 system_data.window_rect.height * 0.25,
             ),
         )
