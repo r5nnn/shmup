@@ -12,6 +12,7 @@ from src.components.ui import (
     TextRectToggleButtonArrayConfig,
 )
 from src.core.constants import PRIMARY
+from src.core.load import Load
 from src.states.optionmenus import (
     GeneralOptions,
     GraphicsOptions,
@@ -26,9 +27,8 @@ class Options(State):
     def __init__(self):
         super().__init__()
         # images
-        self.background = pygame.image.load(system_data.image_paths("menu")).convert()
         self.title = pygame.transform.scale_by(
-            pygame.image.load(system_data.image_paths("title options")), 4
+            pygame.image.load(Load("image").path["title options"]), 4
         )
         # background rect
         self.bg_rect = pygame.Rect(

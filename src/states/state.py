@@ -14,7 +14,10 @@ from src.components.ui import widgethandler
 
 class State:
     def __init__(self):
-        self.background = pygame.Surface(system_data.window_rect.size)
+        if len(statemanager.state_stack) >= 1:
+            self.background = statemanager.current_state().background
+        else:
+            self.background = pygame.Surface(system_data.window_rect.size)
         self.widgets = ()
 
     def add_widgets(self) -> None:

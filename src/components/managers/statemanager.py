@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 state_dict = {}
-_state_stack = []
+state_stack = []
 
 
 def current_state() -> AnyState:
@@ -22,11 +22,11 @@ def current_state() -> AnyState:
     :return: The state at the top of the state stack.
     :raises IndexError: If no state in the state stack.
     """
-    if _state_stack:
-        return _state_stack[-1]
+    if state_stack:
+        return state_stack[-1]
     msg = (
         f"Attempted to access current state in empty state stack "
-        f"{_state_stack}."
+        f"{state_stack}."
     )
     raise IndexError(msg)
 
@@ -56,14 +56,14 @@ def append(state_name: str, *, initial: bool = False) -> None:
     """
     if not initial:
         current_state().cleanup()
-    _state_stack.append(_initialise_state(state_name))
+    state_stack.append(_initialise_state(state_name))
     current_state().startup()
 
 
 def pop() -> None:
     """Removes the state at the top of the state stack."""
     current_state().cleanup()
-    _state_stack.pop()
+    state_stack.pop()
     current_state().startup()
 
 
@@ -76,8 +76,8 @@ def switch(state_name: str) -> None:
     """
     current_state().clear_widgets()
     current_state().cleanup()
-    _state_stack.pop()
-    _state_stack.append(_initialise_state(state_name))
+    state_stack.pop()
+    state_stack.append(_initialise_state(state_name))
     current_state().startup()
 
 
@@ -98,13 +98,13 @@ def back_to(state_name: str) -> None:
         warnings.warn(
             f"Attempted to go back to state {state_name!r} that was"
             f"already the current state in the state stack "
-            f"{_state_stack!r}",
+            f"{state_stack!r}",
             stacklevel=2,
         )
         return
     current_state().cleanup()
     while current_state() != state_dict[state_name]:
-        _state_stack.pop()
+        state_stack.pop()
     current_state().startup()
 
 

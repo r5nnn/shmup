@@ -13,6 +13,7 @@ from src.components.ui.buttons import (
     ImageClickButtonArrayConfig,
 )
 from src.core.data import system_data
+from src.core.load import Load
 from src.states.state import State
 
 
@@ -20,13 +21,13 @@ class Title(State):
     def __init__(self):
         super().__init__()
         # images
-        self.background = pygame.image.load(system_data.image_paths("menu")).convert()
+        self.background = pygame.image.load(Load("image").path["menu"]).convert()
         self.title = pygame.transform.scale_by(
-            pygame.image.load(system_data.image_paths("title main")), 4
+            pygame.image.load(Load("image").path["title main"]), 4
         )
         self.splash = pygame.transform.scale_by(
             pygame.image.load(
-                system_data.image_paths(random.choice(("gun die", "tiferet")))
+                Load("image").path[random.choice(("gun die", "tiferet"))]
             ).convert(),
             5,
         )

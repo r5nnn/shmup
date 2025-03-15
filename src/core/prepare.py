@@ -47,16 +47,16 @@ if (
         system_data.window_rect.size,
     )
 
-system_data.image_paths = Load(Path(ROOT) / "assets" / "graphics", ".png")
-system_data.audio_paths = Load(Path(ROOT) / "assets" / "audio", ".wav")
-system_data.font_paths = Load(Path(ROOT) / "assets" / "fonts", ".ttf")
-pygame.display.set_icon(pygame.image.load(system_data.image_paths("icon")))
+Load("image", Path(ROOT) / "assets" / "graphics", ".png")
+Load("audio", Path(ROOT) / "assets" / "audio", ".wav")
+Load("font", Path(ROOT) / "assets" / "fonts", ".ttf")
+pygame.display.set_icon(pygame.image.load(Load("image").path["icon"]))
 
 Audio("bgm").set_volume(0.2)
-Audio("bgm").add_audio(system_data.audio_paths("menuloop rmx"))
+Audio("bgm").add_audio(Load("audio").path["menuloop rmx"])
 
 Audio("sfx").set_volume(0.2)
-Audio("sfx").add_audio(system_data.audio_paths("click"))
+Audio("sfx").add_audio(Load("audio").path["click"])
 
 states = {"title": title.Title, "options": options.Options, "game": game.Game}
 start_state = "title"

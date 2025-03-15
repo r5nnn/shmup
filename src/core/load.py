@@ -5,6 +5,7 @@ import json
 import logging
 import os
 from pathlib import Path
+from typing import ClassVar
 
 import pygame
 
@@ -61,7 +62,27 @@ def get_sprites(directory: Path) -> tuple[pygame.Surface, ...]:
     return _cached_sprites[directory]
 
 
-class Load:
+class _LoadMeta(type):
+    """Metaclass to ensure unique Load instances per name."""
+
+    _instances: ClassVar[dict[str, Load]] = {}
+
+    def __call__(cls, name: str,
+                 directory: Path | None = None,
+                 *accept: str,
+                 exclude_dirs: list[str] | None = None,
+                 ) -> Load:
+        """Ensure each channel_id has a unique instance."""
+        if name in cls._instances:
+            return cls._instances[name]  # Return existing instance
+
+        # Create and store new instance
+        instance = super().__call__(directory, *accept, exclude_dirs=exclude_dirs)
+        cls._instances[name] = instance
+        return instance
+
+
+class Load(metaclass=_LoadMeta):
     def __init__(
         self,
         directory: Path,
@@ -77,7 +98,7 @@ class Load:
         :param accept: File types to accept.
         :param exclude_dirs: Subdirectories inside the directory to ignore.
         """
-        self.files = {}
+        self.path = {}
         self.exclude_dirs = exclude_dirs if exclude_dirs else []
         for path, _, files in os.walk(directory):
             if any(
@@ -88,15 +109,7 @@ class Load:
             for file in files:
                 name, ext = Path(file).stem, Path(file).suffix
                 if ext.lower() in accept:
-                    self.files[name] = Path(path) / file
-
-    def __call__(self, name: str) -> Path:
-        """Returns the path to the filename specified.
-
-        :param name: Name of the file.
-        :return: The path to that file.
-        """
-        return self.files[name]
+                    self.path[name] = Path(path) / file
 
 
 _cached_sprites = {}

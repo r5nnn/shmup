@@ -12,6 +12,7 @@ from pygame import freetype
 from src.components.ui.widgetutils import RenderNeeded, WidgetBase
 from src.core.constants import DEFAULT_FONT_SIZE, DEFAULT_FONT_NAME
 from src.core.data import system_data
+from src.core.load import Load
 
 if TYPE_CHECKING:
     from src.core.types import RectAlignments
@@ -52,7 +53,7 @@ class Text(WidgetBase):
             font
             if font is not None
             else pygame.freetype.Font(
-                system_data.font_paths(DEFAULT_FONT_NAME)
+                Load("font").path[DEFAULT_FONT_NAME]
             )
         )
         self._font_size = font_size

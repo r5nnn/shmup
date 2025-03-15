@@ -8,7 +8,7 @@ from src.components.ui.buttons.inputmixins import (
     ToggleInputMixin,
     ClickInputMixin,
 )
-from src.core.load import get_sprites
+from src.core.load import Load, get_sprites
 from src.core.data import system_data
 
 if TYPE_CHECKING:
@@ -28,7 +28,7 @@ class ImageLabelMixin:
         padding: int = 20,
     ):
         if isinstance(images, str):
-            images = get_sprites(system_data.image_paths(images))
+            images = get_sprites(Load("image").path[images])
         self.images = images if isinstance(images, tuple) else (images,) * 3
         if scale_by is not None:
             self.images = tuple(
