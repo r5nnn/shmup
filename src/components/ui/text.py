@@ -80,7 +80,7 @@ class Text(WidgetBase):
 
     @override
     def blit(self) -> None:
-        system_data.window.blit(self.text_surface, self.rect)
+        system_data.abs_window.blit(self.text_surface, self.rect)
 
     @override
     def update(self) -> None:

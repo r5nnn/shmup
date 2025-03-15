@@ -34,12 +34,12 @@ class Options(State):
         self.bg_rect = pygame.Rect(
             0,
             0,
-            system_data.window_rect.width * 0.8,
-            (system_data.window_rect.height - self.title.get_height()) * 0.8,
+            system_data.abs_window_rect.width * 0.8,
+            (system_data.abs_window_rect.height - self.title.get_height()) * 0.8,
         )
         self.bg_rect.midtop = (
-            system_data.window_rect.centerx,
-            system_data.window_rect.height * 0.1 + 20 + self.title.get_height(),
+            system_data.abs_window_rect.centerx,
+            system_data.abs_window_rect.height * 0.1 + 20 + self.title.get_height(),
         )
         self.bg_surf = pygame.Surface(self.bg_rect.size)
         self.bg_surf.fill(PRIMARY)
@@ -64,13 +64,13 @@ class Options(State):
 
     @override
     def render(self) -> None:
-        system_data.window.blit(self.background, (0, 0))
-        system_data.window.blit(self.bg_surf, self.bg_rect)
-        system_data.window.blit(
+        system_data.abs_window.blit(self.background, (0, 0))
+        system_data.abs_window.blit(self.bg_surf, self.bg_rect)
+        system_data.abs_window.blit(
             self.title,
             (
-                system_data.window_rect.width / 2 - self.title.get_width() / 2,
-                system_data.window_rect.height * 0.1,
+                system_data.abs_window_rect.width / 2 - self.title.get_width() / 2,
+                system_data.abs_window_rect.height * 0.1,
             ),
         )
         widgethandler.blit()

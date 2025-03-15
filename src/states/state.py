@@ -17,7 +17,7 @@ class State:
         if len(statemanager.state_stack) >= 1:
             self.background = statemanager.current_state().background
         else:
-            self.background = pygame.Surface(system_data.window_rect.size)
+            self.background = pygame.Surface(system_data.abs_window_rect.size)
         self.widgets = ()
 
     def add_widgets(self) -> None:
@@ -42,7 +42,7 @@ class State:
         widgethandler.update()
 
     def render(self) -> None:
-        system_data.window.blit(self.background, (0, 0))
+        system_data.abs_window.blit(self.background, (0, 0))
         widgethandler.blit()
 
     def back(self) -> None:

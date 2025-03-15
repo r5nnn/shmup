@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 
 import pygame
 
@@ -22,10 +23,25 @@ def toggle_flag(flag: int) -> None:
     settings.flags[flag_name := DISPLAY_FLAG_NAMES_MAP[flag]] = (
         toggled := not settings.flags[DISPLAY_FLAG_NAMES_MAP[flag]]
     )
-    pygame.display.set_mode((1920, 1080), system_data.flags)
+    logger.info("Attempting to toggle flag, and setmode with %s and flags %s %s", settings.resolution, system_data.flags, settings.flags)
+    pygame.display.set_mode(settings.resolution, system_data.flags)
+    system_data.window = pygame.display.get_surface()
     logger.info(
         "Window flag %s toggled %s", flag_name, "on" if toggled else "off"
     )
+
+
+def set_resolution(size: tuple[int, int]) -> None:
+    if size == settings.resolution:
+        logging.info("Window resolution: %s equal to new resolution. Ignoring call.", settings.resolution)
+        return
+    logger.info("Attempting to set the mode of the screen with resolution %s and flags %s %s", size, system_data.flags, settings.flags)
+    pygame.display.set_mode(size, system_data.flags)
+    logger.info("Window resolution changed from %s to %s.", settings.resolution, size)
+    settings.resolution = size
+    system_data.window = pygame.display.get_surface()
+    system_data.window_rect = system_data.window.get_rect()
+    update_scale_factor()
 
 
 def toggle_fullscreen() -> None:
@@ -43,7 +59,8 @@ def toggle_fullscreen() -> None:
     if settings.keep_mouse_pos:
         pygame.mouse.set_visible(False)
         coords = events.get_abs_mouse_pos()
-    if system_data.flags & pygame.FULLSCREEN:
+    # if system_data.flags & pygame.FULLSCREEN:
+    if True:
         # Using the pygame inbuilt display.toggle_fullscreen to exit fullscreen
         # causes the noframe flag and potentially other flags to disappear.
         # Toggling the flag and manually setting the mode of the screen makes
@@ -53,6 +70,7 @@ def toggle_fullscreen() -> None:
         system_data.flags ^= pygame.FULLSCREEN
         settings.flags["fullscreen"] = True
         pygame.display.toggle_fullscreen()
+        system_data.window = pygame.display.get_surface()
         logger.info(
             "Fullscreen safely toggled on using"
             " pygame.display.toggle_fullscreen()."
@@ -65,3 +83,17 @@ def toggle_fullscreen() -> None:
         )
         events.set_abs_mouse_pos(coords)
         pygame.mouse.set_visible(True)
+
+
+def update_scale_factor() -> None:
+    if settings.non_int_scaling:
+        system_data.scale_factor = min(
+            system_data.window_rect.width / system_data.abs_window_rect.width,
+            system_data.window_rect.height / system_data.abs_window_rect.height,
+            )
+    else:
+        system_data.scale_factor = min(
+            system_data.window_rect.width // system_data.abs_window_rect.width,
+            system_data.window_rect.height // system_data.abs_window_rect.height,
+            )
+    logger.info("Scale factor calculated as %s, based on the window size: %s and internal surface size: %s.", system_data.scale_factor, system_data.window_rect.size, system_data.abs_window_rect.size)

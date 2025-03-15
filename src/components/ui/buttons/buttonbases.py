@@ -81,7 +81,7 @@ class RectButtonBaseMixin(WidgetBase):
     @override
     def blit(self) -> None:
         pygame.draw.rect(
-            system_data.window,
+            system_data.abs_window,
             self.color,
             self.rect,
             border_radius=self.radius,

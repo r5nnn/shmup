@@ -41,7 +41,7 @@ def process(events: list[pygame.event.Event]) -> None:
             case pygame.QUIT:
                 system_data.quit = True
 
-    _mouse_pos = pygame.mouse.get_pos()
+    _mouse_pos = tuple(x/system_data.scale_factor for x in pygame.mouse.get_pos())
 
 
 def is_key_down(key: int) -> bool:

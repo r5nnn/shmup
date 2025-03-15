@@ -8,6 +8,7 @@ from pathlib import Path
 from src.components import Audio
 from src.core import main, settings, system_data
 from src.core.constants import ROOT, DISPLAY_FLAG_NAMES_MAP
+from src.core.utils import update_scale_factor
 
 import pygame
 
@@ -26,24 +27,23 @@ for flag_name, enabled in settings.flags.items():
         system_data.flags |= DISPLAY_FLAG_NAMES_MAP.inverse[flag_name][0]
         logger.info("Added flag %s to system_data.", flag_name.upper())
 
-system_data.screen_rect = pygame.Rect(
-    0, 0, pygame.display.Info().current_w, pygame.display.Info().current_h
-)
+system_data.window = pygame.display.set_mode(settings.resolution, system_data.flags)
+logger.info("Created window with resolution %s.", settings.resolution)
 
-pygame.display.set_mode((1920, 1080), system_data.flags)
-
-system_data.window = pygame.display.get_surface()
 system_data.window_rect = system_data.window.get_rect()
+system_data.abs_window = pygame.Surface((1920, 1080))
+system_data.abs_window_rect = system_data.abs_window.get_rect()
+update_scale_factor()
 
 if (
-    system_data.window_rect.size == system_data.screen_rect.size
+    system_data.window_rect.size == system_data.abs_window_rect.size
     and system_data.default_config
 ):
     settings.keep_mouse_pos = False
     logger.info(
         "Screen size %s matches native window resolution %s, disabled "
         "keep_mouse_pos in system_data.",
-        system_data.screen_rect.size,
+        system_data.abs_window_rect.size,
         system_data.window_rect.size,
     )
 

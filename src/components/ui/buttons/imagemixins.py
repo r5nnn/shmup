@@ -67,7 +67,7 @@ class ImageLabelMixin:
         self.align_image()
 
     def blit(self) -> None:
-        system_data.window.blit(self.image, self.image_rect)
+        system_data.abs_window.blit(self.image, self.image_rect)
 
 
 class ToggleImageMixin(ToggleInputMixin, ImageLabelMixin):

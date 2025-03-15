@@ -48,8 +48,8 @@ class Title(State):
         )
         self.title_buttons = ImageClickButtonArray(
             (
-                system_data.window_rect.width * 0.65,
-                system_data.window_rect.height * 0.3,
+                system_data.abs_window_rect.width * 0.65,
+                system_data.abs_window_rect.height * 0.3,
             ),
             (4, 1),
             0,
@@ -70,19 +70,19 @@ class Title(State):
     def render(self) -> None:
         super().render()
         widgethandler.blit()
-        system_data.window.blit(
+        system_data.abs_window.blit(
             self.title,
             (
-                system_data.window_rect.width * 0.5
+                system_data.abs_window_rect.width * 0.5
                 - self.title.get_width() / 2,
-                system_data.window_rect.height * 0.1,
+                system_data.abs_window_rect.height * 0.1,
             ),
         )
-        system_data.window.blit(
+        system_data.abs_window.blit(
             self.splash,
             (
-                system_data.window_rect.width * 0.03,
-                system_data.window_rect.height * 0.25,
+                system_data.abs_window_rect.width * 0.03,
+                system_data.abs_window_rect.height * 0.25,
             ),
         )
 

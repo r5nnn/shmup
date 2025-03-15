@@ -14,6 +14,9 @@ import pygame.display
 from src.components import events, overlaymanager, statemanager
 from src.core.data import settings, system_data
 from src.core.utils import toggle_flag, toggle_fullscreen
+import faulthandler
+
+faulthandler.enable()
 
 if TYPE_CHECKING:
     from src.states.state import State
@@ -48,14 +51,20 @@ def gameloop() -> None:
             _running = False
 
         statemanager.current_state().update()
-        statemanager.current_state().render()
         if overlay := overlaymanager.current_overlay(accept_no_overlay=True):
             overlay.update()
+        statemanager.current_state().render()
+        if overlay:
             overlay.render()
 
         system_data.dt = pygame.time.Clock().tick(165) / 1000.0
+        system_data.window.blit(
+            pygame.transform.scale_by(
+                system_data.abs_window, system_data.scale_factor
+            ),
+            (0, 0),
+        )
         pygame.display.flip()
-
 
 
 _running = True
