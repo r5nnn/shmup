@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import warnings
 from typing import TYPE_CHECKING
 
@@ -12,6 +13,7 @@ if TYPE_CHECKING:
     from src.states.state import State
 
 
+logger = logging.getLogger("src.components.managers")
 state_dict = {}
 state_stack = []
 
@@ -56,15 +58,31 @@ def append(state_name: str, *, initial: bool = False) -> None:
     """
     if not initial:
         current_state().cleanup()
+    logger.debug(
+        "Attempting to add new state: %s to the state stack %s.",
+        state_name,
+        state_stack,
+    )
     state_stack.append(_initialise_state(state_name))
     current_state().startup()
+    logger.info(
+        "Appended new state: %s to the state stack %s.",
+        state_name,
+        state_stack,
+    )
 
 
 def pop() -> None:
     """Removes the state at the top of the state stack."""
+    logger.debug(
+        "Attempting to remove state %s off the state stack %s.",
+        current_state(),
+        state_stack,
+    )
     current_state().cleanup()
     state_stack.pop()
     current_state().startup()
+    logger.info("Popped top state off the state stack %s.", state_stack)
 
 
 def switch(state_name: str) -> None:
@@ -74,11 +92,22 @@ def switch(state_name: str) -> None:
     to.
     :raises KeyError: If initializing the state fails.
     """
+    logger.debug(
+        "Attempting to switch state %s for state %s in the state stack %s.",
+        current_state(),
+        state_name,
+        state_stack,
+    )
     current_state().clear_widgets()
     current_state().cleanup()
     state_stack.pop()
     state_stack.append(_initialise_state(state_name))
     current_state().startup()
+    logger.info(
+        "Switched state for state %s in the state stack %s.",
+        state_name,
+        state_stack,
+    )
 
 
 def back_to(state_name: str) -> None:
@@ -102,10 +131,20 @@ def back_to(state_name: str) -> None:
             stacklevel=2,
         )
         return
+    logger.debug(
+        "Attempting to go back to state %s in the state stack %s.",
+        state_name,
+        state_stack,
+    )
     current_state().cleanup()
     while current_state() != state_dict[state_name]:
         state_stack.pop()
     current_state().startup()
+    logger.debug(
+        "Removed all states until reaching state %s in the state stack %s.",
+        state_name,
+        state_stack,
+    )
 
 
 def quit_game() -> None:
@@ -116,3 +155,8 @@ def quit_game() -> None:
     if current_state():
         current_state().cleanup()
     pygame.event.post(pygame.event.Event(pygame.QUIT))
+    logger.info(
+        "Called quit_game method, exiting current state %s and posting "
+        "pygame.QUIT event in the event stack.",
+        current_state(),
+    )

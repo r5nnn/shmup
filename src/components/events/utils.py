@@ -31,22 +31,22 @@ def process(events: list[pygame.event.Event]) -> None:
     for event in events:
         match event.type:
             case pygame.KEYDOWN:
-                logger.debug("Key down event detected. Key %s.", event.button)
+                logger.debug("Key down event detected. Key %s.", event.key)
                 _keydown_events.append(event.key)
                 _held_keys.append(event.key)
             case pygame.KEYUP:
-                logger.debug("Key up event detected. Key %s.", event.button)
+                logger.debug("Key up event detected. Key %s.", event.key)
                 _keyup_events.append(event.key)
                 _held_keys.remove(event.key)
             case pygame.MOUSEBUTTONDOWN:
                 logger.debug(
-                    "Mouse button down event detected. Key %s.", event.button
+                    "Mouse button down event detected. Button %s.", event.button
                 )
                 _mousedown_events.append(event.button)
                 _mouse_buttons.append(event.button)
             case pygame.MOUSEBUTTONUP:
                 logger.debug(
-                    "Mouse button up event detected. Key %s.", event.button
+                    "Mouse button up event detected. Button %s.", event.button
                 )
                 _mouseup_events.append(event.button)
                 _mouse_buttons.remove(event.button)
