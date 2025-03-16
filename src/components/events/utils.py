@@ -57,7 +57,7 @@ def process(events: list[pygame.event.Event]) -> None:
     _mouse_pos = tuple(
         x / system_data.scale_factor for x in pygame.mouse.get_pos()
     )
-    logger.debug("Mouse position updated to new location: %s", _mouse_pos)
+    # logger.debug("Mouse position updated to new location: %s", _mouse_pos)
 
 
 def is_key_down(key: int) -> bool:

@@ -147,7 +147,7 @@ class Audio(metaclass=_AudioMeta):
         self.set_volume(new_volume)
 
     def __repr__(self):
-        return f"Audio(channel_name={self.channel_name}, channel_id={self.channel_id})"
+        return f"Audio(channel_name={self.channel_name})"
 
 
 _P = ParamSpec("_P")
