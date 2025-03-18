@@ -13,6 +13,7 @@ import pygame.display
 
 from src.components import events, overlaymanager, statemanager
 from src.core.data import settings, system_data
+from src.core.keybinds import keybinds
 from src.core.utils import toggle_flag, toggle_fullscreen
 import faulthandler
 

@@ -14,12 +14,7 @@ from src.core.load import Load
 logger = logging.getLogger("src.core")
 
 
-class Settings(BaseModel):
-    flags: dict[str, bool] = {"fullscreen": True, "noframe": True}
-    resolution: tuple[int, int] = (1920, 1080)
-    non_int_scaling: bool = True
-    keep_mouse_pos: bool = True
-
+class FileModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
     def save(self) -> None:
@@ -29,7 +24,7 @@ class Settings(BaseModel):
         logger.info("Saved current settings into config.json file: %s.", self)
 
     @classmethod
-    def load(cls) -> tuple["Settings", bool]:
+    def load(cls) -> tuple["FileModel", bool]:
         """Load a dict from a json file."""
         config_dir.touch()
         with config_dir.open() as file:
@@ -54,6 +49,13 @@ class Settings(BaseModel):
                     logger.info("Config file empty. Saving with default config.")
                 default_settings.save()
                 return default_settings, True
+
+
+class Settings(FileModel):
+    flags: dict[str, bool] = {"fullscreen": True, "noframe": True}
+    resolution: tuple[int, int] = (1920, 1080)
+    non_int_scaling: bool = True
+    keep_mouse_pos: bool = True
 
 
 @dataclass(kw_only=True)
