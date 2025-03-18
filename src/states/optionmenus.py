@@ -10,9 +10,9 @@ from src.components.ui import (
     TextRectToggleButton,
     TextDropdown,
 )
-from src.core.utils import toggle_flag, toggle_fullscreen, set_resolution
-from src.core.data import settings
+from src.core.data import settings, system_data
 from src.states.state import Overlay
+from src.core.utils import toggle_flag, toggle_fullscreen, set_resolution
 
 
 class OptionsOverlay(Overlay):
@@ -77,10 +77,18 @@ class GraphicsOptions(OptionsOverlay):
     def __init__(self):
         super().__init__()
         config_ = TextArrayConfig(
-            (("Fullscreen:", "Borderless:", "Resolution:"),)
+            (
+                (
+                    "Fullscreen:",
+                    "Borderless:",
+                    "Use non-integer resolution scaling:",
+                    "Resolution:",
+                ),
+            ),
+            wrap_width=self.row_width - self.padding,
         )
         self.text_row1 = TextArray(
-            self.text_pos, (3, 1), self.padding, config_
+            self.text_pos, (4, 1), self.padding, config_
         )
 
         config_ = TextButtonConfig(
@@ -108,21 +116,40 @@ class GraphicsOptions(OptionsOverlay):
             on_toggle_on=lambda: toggle_flag(pygame.NOFRAME),
             on_toggle_off=lambda: toggle_flag(pygame.NOFRAME),
         )
+        resolutions, resolutions_str = self.recalculate_resolutions(
+            non_int_scaling=settings.non_int_scaling
+        )
+        config_.position = (
+            self.row_positions[0] + self.padding,
+            self.text_row1.texts[2].rect.centery,
+        )
+        self.non_int_scaling_button = TextRectToggleButton(
+            config_,
+            self.button_size,
+            start_text=1 if settings.non_int_scaling else 0,
+            on_toggle_on=lambda: self.recalculate_resolutions(
+                non_int_scaling=True
+            ),
+            on_toggle_off=lambda: self.recalculate_resolutions(
+                non_int_scaling=False
+            ),
+        )
         self.resolution_dropdown = TextDropdown(
             (
                 self.row_positions[0] + self.padding,
-                self.text_row1.texts[2].rect.centery,
+                self.text_row1.texts[3].rect.centery,
             ),
             self.button_size,
-            choices=("1920x1080", "2560x1440"), start_choice=(0 if settings.resolution == (1920, 1080) else 1),
-            actions=(lambda: set_resolution((1920, 1080)),
-                     lambda: set_resolution((2560, 1440))),
+            choices=resolutions_str,
+            start_choice=resolutions.index(settings.resolution),
+            actions=lambda index: set_resolution(resolutions[index]),
             align="midleft",
         )
         self.widgets = (
             self.text_row1,
             self.fullscreen_button,
             self.borderless_button,
+            self.non_int_scaling_button,
             self.resolution_dropdown,
         )
 
@@ -138,6 +165,39 @@ class GraphicsOptions(OptionsOverlay):
             self.borderless_button.toggle_on()
         else:
             self.borderless_button.toggle_off()
+        if settings.non_int_scaling:
+            self.non_int_scaling_button.toggle_on()
+        else:
+            self.non_int_scaling_button.toggle_off()
+
+    def recalculate_resolutions(
+        self, *, non_int_scaling: bool, update_dropdown: bool = False
+    ) -> tuple[list[tuple[int, int]], list[str]]:
+        settings.non_int_scaling = non_int_scaling
+        resolutions = pygame.display.list_modes()
+        if not non_int_scaling:
+            resolutions = [
+                resolution
+                for resolution in resolutions
+                if resolution[0] / resolution[1]
+                == system_data.abs_window_rect.size[0]
+                / system_data.abs_window_rect.size[1]
+            ]
+        # Truncate list to remove low resolution options so that popup fits
+        # display since they would look bad anyway.
+        del resolutions[:17:-1]
+        resolutions_str = [
+            f"{resolution[0]}, {resolution[1]}" for resolution in resolutions
+        ]
+        # if update_dropdown:
+        #     if non_int_scaling:
+        #         for resolution in resolutions_str:
+        #             if not any(resolution == button.text for button in self.resolution_dropdown.option_button_arr.buttons):
+        #     else:
+        #         for button in (buttons := self.resolution_dropdown.option_button_arr.buttons):
+        #             if not any(button.text == resolution for resolution in resolutions_str):
+        #                 buttons.pop(button)
+        return resolutions, resolutions_str
 
 
 class KeybindsOptions(OptionsOverlay):

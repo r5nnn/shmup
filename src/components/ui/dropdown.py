@@ -14,6 +14,7 @@ from src.components.ui.widgetutils import WidgetBase
 if TYPE_CHECKING:
     import pygame
     from src.core.types import Colors, RectAlignments
+    from collections.abc import Sequence
 
 
 logger = logging.getLogger("src.components.ui")
@@ -31,9 +32,10 @@ class TextDropdown(WidgetBase):
         font_size: int = 32,
         choice_font_size: int = 24,
         *,
-        choices: tuple[str, ...],
+        choices: Sequence[str],
         start_choice: int | None = None,
-        actions: tuple[Callable | None, ...] | None = None,
+        actions: tuple[Callable | None, ...] | Callable[[int], ...] | None = None,
+        pass_index: bool = False,
         radius: int = 0,
         antialias: bool = False,
         align: RectAlignments = "topleft",
@@ -65,6 +67,7 @@ class TextDropdown(WidgetBase):
             colors=colors,
         )
         self.actions = actions
+        self.pass_index = pass_index
         self.choices = choices
         actions_ = (
             tuple(
@@ -110,15 +113,17 @@ class TextDropdown(WidgetBase):
         self.chosen = choice
         self.head_button.texts = (choice, choice)
         self.head_button.toggle_off_call(silent=True)
-        if (
+        if isinstance(self.actions, Callable):
+            self.actions(self.choices.index(choice))
+        elif (
             self.actions is not None
-            and self.actions[self.choices.index(choice)] is not None
+            and self.actions[self.choices.index(choice)] is not None and not self.pass_index
         ):
             self.actions[self.choices.index(choice)]()
         self.dropped = False
         logging.info("Selected new choice %s, closing popup, calling action if"
                      " not None and setting text of dropdown head to new "
-                     "choice.")
+                     "choice.", choice)
 
     def contains(self, x: int, y: int) -> bool:
         super().contains(x, y)
