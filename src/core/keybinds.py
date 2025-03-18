@@ -2,16 +2,21 @@ from pathlib import Path
 
 import pygame
 from pydantic import BaseModel
-from collections import deque
 
 from src.core.data import FileModel
 
 
+Keybinds_ = list[list[tuple[str, int]]]
+
+
 class UiKeybinds(BaseModel):
-    back: list[tuple[str, int]] = [("", pygame.K_ESCAPE)]
-    exit: list[tuple[str, int]] = [("keydown", pygame.K_END)]
-    fullscreen: list[tuple[str, int]] = [pygame.K_F11]
-    fullscreen_borderless: list[tuple[str, int]] = []
+    back: Keybinds_ = [[("keydown", pygame.K_ESCAPE)]]
+    quit: Keybinds_ = [[("keydown", pygame.K_END)]]
+    fullscreen: Keybinds_ = [[("keydown", pygame.K_F11)]]
+    noframe: Keybinds_ = [
+        [("key", pygame.K_LSHIFT), ("keydown", pygame.K_F11)],
+        [("key", pygame.K_RSHIFT), ("keydown", pygame.K_F11)],
+    ]
 
 
 class GameKeybinds(BaseModel):
@@ -24,9 +29,9 @@ class GameKeybinds(BaseModel):
 
 
 class Keybinds(FileModel):
-    ui = UiKeybinds()
-    game = GameKeybinds()
+    ui: UiKeybinds = UiKeybinds()
+    game: GameKeybinds = GameKeybinds()
 
 
 keybinds_dir = Path("keybinds.json")
-keybinds, _ = Keybinds.load()
+keybinds, _ = Keybinds.load(keybinds_dir)
