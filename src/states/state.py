@@ -18,25 +18,15 @@ class State:
             self.background = statemanager.current_state().background
         else:
             self.background = pygame.Surface(system_data.abs_window_rect.size)
-        self.widgets = ()
+        self.widgets = []
 
-    def add_widgets(self) -> None:
+    def startup(self) -> None:
         for widget in self.widgets:
             widgethandler.add_widget(widget)
 
-    def startup(self) -> None:
-        events.eventbinder.register(
-            ("keydown", pygame.K_ESCAPE), action=self.back
-        )
-        self.add_widgets()
-
-    def clear_widgets(self) -> None:
+    def cleanup(self) -> None:
         for widget in self.widgets:
             widgethandler.remove_widget(widget)
-
-    def cleanup(self) -> None:
-        events.eventbinder.deregister(("keydown", pygame.K_ESCAPE))
-        self.clear_widgets()
 
     def update(self) -> None:
         widgethandler.update()
@@ -60,11 +50,13 @@ class Overlay(State):
 
     @override
     def startup(self) -> None:
-        self.add_widgets()
+        for widget in self.widgets:
+            widgethandler.add_widget(widget)
 
     @override
     def cleanup(self) -> None:
-        self.clear_widgets()
+        for widget in self.widgets:
+            widgethandler.remove_widget(widget)
 
     @override
     def back(self) -> None:

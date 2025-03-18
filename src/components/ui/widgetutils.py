@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 from typing import override, Any
 
-from src.core import Validator
+from src.core.structs import Validator
 
 if TYPE_CHECKING:
     from src.core.types import RectAlignments

@@ -8,6 +8,9 @@ from typing import TYPE_CHECKING
 
 import pygame
 
+from src.components import events
+from src.core.keybinds import keybinds
+
 if TYPE_CHECKING:
     from src.core.types import AnyState
     from src.states.state import State
@@ -16,7 +19,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger("src.components.managers")
 state_dict = {}
 state_stack = []
-
 
 def current_state() -> AnyState:
     """Does what it says.
@@ -160,3 +162,12 @@ def quit_game() -> None:
         "pygame.QUIT event in the event stack.",
         current_state(),
     )
+
+def back() -> None:
+    """Calls the current state's back method."""
+    if current_state():
+        current_state().back()
+
+
+for key_combo in keybinds.ui.back:
+    events.eventbinder.register(*key_combo, action=back)
