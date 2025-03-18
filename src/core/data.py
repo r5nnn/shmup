@@ -8,8 +8,6 @@ from pathlib import Path
 import pygame
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from src.core.load import Load
-
 
 logger = logging.getLogger("src.core")
 
@@ -17,17 +15,17 @@ logger = logging.getLogger("src.core")
 class FileModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
-    def save(self) -> None:
-        config_dir.touch()
-        with config_dir.open("w") as file:
+    def save(self, directory: Path) -> None:
+        directory.touch()
+        with directory.open("w") as file:
             file.write(self.model_dump_json())
         logger.info("Saved current settings into config.json file: %s.", self)
 
     @classmethod
-    def load(cls) -> tuple["FileModel", bool]:
+    def load(cls, directory: Path) -> tuple["FileModel", bool]:
         """Load a dict from a json file."""
-        config_dir.touch()
-        with config_dir.open() as file:
+        directory.touch()
+        with directory.open() as file:
             try:
                 file_data = json.load(file)
                 logger.info(
@@ -37,17 +35,17 @@ class FileModel(BaseModel):
                 )
                 return cls.model_validate(file_data), False
             except (json.decoder.JSONDecodeError, ValidationError) as e:
-                backup_path = config_dir.with_suffix(".backup.json")
-                config_dir.rename(backup_path)  # Backup the corrupted file
                 default_settings = cls()
                 if e == ValidationError:
+                    backup_path = directory.with_suffix(".backup.json")
+                    directory.rename(backup_path)  # Backup the corrupted file
                     logger.exception(
                         "Config file corrupted. Overwriting config with"
                         "defaults."
                     )
                 else:
                     logger.info("Config file empty. Saving with default config.")
-                default_settings.save()
+                default_settings.save(directory)
                 return default_settings, True
 
 
@@ -78,4 +76,4 @@ class SystemData:
 
 system_data = SystemData()
 config_dir = Path("config.json")
-settings, system_data.default_config = Settings.load()
+settings, system_data.default_config = Settings.load(config_dir)

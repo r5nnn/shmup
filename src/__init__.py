@@ -1,7 +1,6 @@
 """Contains all the game's source code."""
 import logging
 import sys
-import function
 
 
 logging.basicConfig(
