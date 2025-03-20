@@ -8,7 +8,6 @@ from pathlib import Path
 import pygame
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-
 logger = logging.getLogger("src.core")
 
 

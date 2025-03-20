@@ -10,6 +10,7 @@ from src.components.ui import (
     TextRectToggleButton,
     TextDropdown,
 )
+from src.core import keybinds
 from src.core.data import settings, system_data
 from src.states.state import Overlay
 from src.core.utils import toggle_flag, toggle_fullscreen, set_resolution
@@ -31,12 +32,12 @@ class OptionsOverlay(Overlay):
                 len(statemanager.current_state().option_headings_group.buttons)
             )
         )
-        self.text_pos = (
+        self.text_pos = [
             statemanager.current_state().bg_rect.left + self.padding,
             statemanager.current_state().bg_rect.top
             + headings_group.buttons[0].height
             + self.padding,
-        )
+        ]
         self.button_size = (200, 30)
 
 
@@ -203,6 +204,37 @@ class GraphicsOptions(OptionsOverlay):
 class KeybindsOptions(OptionsOverlay):
     def __init__(self):
         super().__init__()
+        self.text_arr_arr = []
+        for field in keybinds.dict().values():
+            print(keybinds.dict())
+            # config_ = TextArrayConfig(
+            #     (
+            #         tuple(f"{keybind_name}:" for keybind_name in keybind_category.model_fields.keys()),
+            #     ),
+            #     wrap_width=self.row_width * i - self.padding,
+            # )
+            # text_arr = TextArray(
+            #     (self.text_pos[0] + self.row_width * (i-1), self.text_pos[1]),
+            #     (len(config_.text), 1),
+            #     self.padding,
+            #     config=config_
+            # )
+            # self.text_arr_arr.append(text_arr)
+
+        # config_ = TextArrayConfig(
+        #     (
+        #         (
+        #             "Fullscreen:",
+        #             "Borderless:",
+        #             "Use non-integer resolution scaling:",
+        #             "Resolution:",
+        #         ),
+        #     ),
+        #     wrap_width=self.row_width - self.padding,
+        # )
+        # self.text_row1 = TextArray(
+        #     self.text_pos, (4, 1), self.padding, config_
+        # )
 
 
 class AudioOptions(OptionsOverlay):
