@@ -18,7 +18,9 @@ class FileModel(BaseModel):
         directory.touch()
         with directory.open("w") as file:
             file.write(self.model_dump_json())
-        logger.info("Saved current settings into config.json file: %s.", self)
+        logger.info(
+            "Saved current settings into %s file: %s.", directory, self
+        )
 
     @classmethod
     def load(cls, directory: Path) -> tuple["FileModel", bool]:
@@ -28,8 +30,8 @@ class FileModel(BaseModel):
             try:
                 file_data = json.load(file)
                 logger.info(
-                    "Attempting to load existing config.json file with data: "
-                    "%s.",
+                    "Attempting to load existing file %s with data: %s.",
+                    directory,
                     file_data,
                 )
                 return cls.model_validate(file_data), False
@@ -43,7 +45,9 @@ class FileModel(BaseModel):
                         "defaults."
                     )
                 else:
-                    logger.info("Config file empty. Saving with default config.")
+                    logger.info(
+                        "File: %s empty. Saving with defaults.", directory
+                    )
                 default_settings.save(directory)
                 return default_settings, True
 
