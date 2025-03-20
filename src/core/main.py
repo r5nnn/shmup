@@ -15,9 +15,6 @@ from src.components import events, overlaymanager, statemanager
 from src.core.data import config_dir, settings, system_data
 from src.core.keybinds import keybinds, keybinds_dir
 from src.core.utils import toggle_flag, toggle_fullscreen
-import faulthandler
-
-faulthandler.enable()
 
 if TYPE_CHECKING:
     from src.states.state import State

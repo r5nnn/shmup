@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 from typing import override, Any
 
 from src.core.structs import Validator
@@ -33,7 +33,7 @@ class WidgetBase(ABC):
 
     def __init__(
         self,
-        position: tuple[int, int],
+        position: Sequence[int, int],
         align: RectAlignments | str = "topleft",
         *,
         sub_widget: bool = False,
