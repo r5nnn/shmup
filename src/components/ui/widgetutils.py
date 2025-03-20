@@ -33,7 +33,7 @@ class WidgetBase(ABC):
 
     def __init__(
         self,
-        position: Sequence[int, int],
+        position: tuple[int, int] | list[int],
         align: RectAlignments | str = "topleft",
         *,
         sub_widget: bool = False,

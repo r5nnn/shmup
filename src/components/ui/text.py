@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import warnings
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, override, Sequence
+from typing import TYPE_CHECKING, override
 
 import pygame
 from pygame import freetype
@@ -216,7 +216,7 @@ def _make_text(
 class TextArray(WidgetBase):
     def __init__(
         self,
-        arr_position: Sequence[int, int],
+        arr_position: tuple[int, int] | list[int],
         arr_shape: tuple[int, int],
         arr_padding: tuple[int, int] | int,
         config: TextArrayConfig,
