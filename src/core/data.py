@@ -1,4 +1,5 @@
 """Module for saving and loading game config file."""
+from __future__ import annotations
 
 import json
 import logging
@@ -23,7 +24,7 @@ class FileModel(BaseModel):
         )
 
     @classmethod
-    def load(cls, directory: Path) -> tuple["FileModel", bool]:
+    def load(cls, directory: Path) -> tuple[FileModel, bool]:
         """Load a dict from a json file."""
         directory.touch()
         with directory.open() as file:
@@ -56,7 +57,9 @@ class Settings(FileModel):
     flags: dict[str, bool] = {"fullscreen": True, "noframe": True}
     resolution: tuple[int, int] = (1920, 1080)
     non_int_scaling: bool = True
+    non_native_ratio: bool = False
     keep_mouse_pos: bool = True
+    fps: int = 165
 
 
 @dataclass(kw_only=True)
@@ -74,7 +77,7 @@ class SystemData:
     abs_window: pygame.Surface = ...
     abs_window_rect: pygame.Rect = ...
     screen_rect: pygame.Rect = ...
-    scale_factor: float = ...
+    scale_factor: list[float] | float = ...
 
 
 system_data = SystemData()
