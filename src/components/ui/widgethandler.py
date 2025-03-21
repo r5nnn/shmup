@@ -53,6 +53,9 @@ def add_widget(*widgets_: WidgetBase) -> None:
 def _add_widget_with_subwidgets(
     widget: WidgetBase, *, add_sub_widgets_first: bool
 ) -> None:
+    logger.debug("Widget: %s's sub_widget_on_top is %s, so adding sub "
+                 "widgets %s", widget.__class__.__name__, widget.sub_widget_on_top,
+                 "last" if add_sub_widgets_first else "first")
     def add_widget_() -> None:
         widgets.add(widget)
         move_to_top(widget)

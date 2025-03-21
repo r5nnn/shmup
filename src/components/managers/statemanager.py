@@ -168,6 +168,3 @@ def back() -> None:
     if current_state():
         current_state().back()
 
-
-for key_combo in keybinds.ui.back:
-    events.eventbinder.register(*key_combo, action=back)

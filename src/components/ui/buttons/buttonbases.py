@@ -212,3 +212,8 @@ class ButtonArrayBase(WidgetBase, ABC):
         y_pos: int,
         config: _BaseButtonArrayConfig,
     ) -> AnyButton: ...
+
+    def __repr__(self):
+        return (f"ButtonArrayBase(arr_position={self._x, self._y}, "
+                f"arr_shape=..., arr_padding={self.arr_padding}, config=...), "
+                f"sub_widget={self.sub_widget})")

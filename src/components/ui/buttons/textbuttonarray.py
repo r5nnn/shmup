@@ -249,6 +249,12 @@ class TextRectToggleButtonArray(ButtonArrayBase):
             requires_state=config.requires_state,
         )
 
+    def __repr__(self):
+        return (f"TextRectToggleButtonArray(arr_position={self._x, self._y}, "
+                f"arr_shape=..., arr_padding={self.arr_padding}, "
+                f"config=TextRectToggleButtonArrayConfig(...), "
+                f"arr_sub_widget={self.sub_widget})")
+
 
 @dataclass(kw_only=True)
 class TextRectClickButtonArrayConfig(TextClickButtonArrayConfig):

@@ -176,6 +176,8 @@ class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
             requires_state=requires_state,
         )
         self.align_rect()
+        self.sub_widgets.append(self.text_object)
+        print(self.sub_widget_on_top)
 
     def toggle_on(self) -> None:
         super().toggle_on()
@@ -206,6 +208,24 @@ class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
     def align_rect(self) -> None:
         RectButtonBaseMixin.align_rect(self)
         ToggleTextMixin.align_rect(self)
+
+    def __repr__(self):
+        return (f"TextRectToggleButton(config=TextButtonConfig("
+                f"position={self._x, self._y}, align={self.align}, "
+                f"audio_tags={self.audio_tags}, sub_widget={self.sub_widget}, "
+                f"text_colors={self.text_colors}, "
+                f"font={self.text_object.font}, "
+                f"font_size={self.text_object.font_size}, "
+                f"wrap_width={self.text_object.wrap_width}, "
+                f"wrap_padding={self.text_object.wrap_padding}, "
+                f"antialias={self.text_object.antialias}), "
+                f"size={self._width, self._height}, "
+                f"text={self.text_object.text}, start_text=..., "
+                f"text_align={self.text_align}, padding={self.padding}, "
+                f"radius={self.radius}, colors={self.colors}, "
+                f"on_toggle_on={self.on_toggle_on}, "
+                f"on_toggle_off={self.on_toggle_off}, "
+                f"requires_state={self.requires_state})")
 
 
 class TextRectClickButton(RectButtonBaseMixin, ClickTextMixin):
@@ -246,6 +266,7 @@ class TextRectClickButton(RectButtonBaseMixin, ClickTextMixin):
             antialias=config.antialias,
         )
         self.align_rect()
+        self.sub_widgets.append(self.text_object)
 
     def update_click(self) -> None:
         super().update_click()

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from src.components import Audio, events
 from src.components.managers import statemanager
+from src.components.managers.statemanager import back
 from src.core import keybinds, main, settings, system_data
 from src.core.constants import ROOT, DISPLAY_FLAG_NAMES_MAP
 from src.core.utils import toggle_flag, toggle_fullscreen, update_scale_factor
@@ -71,6 +72,8 @@ for keybind in keybinds.ui.quit:
     events.eventbinder.register(*keybind, action=statemanager.quit_game)
 for keybind in keybinds.ui.noframe:
     events.eventbinder.register(*keybind, action=lambda: toggle_flag(pygame.NOFRAME))
+for key_combo in keybinds.ui.back:
+    events.eventbinder.register(*key_combo, action=back)
 
 
 main.init(states, start_state)
