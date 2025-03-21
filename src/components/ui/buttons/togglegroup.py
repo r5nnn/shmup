@@ -17,26 +17,26 @@ class ToggleButtonGroup(WidgetBase):
         toggle_on_init: bool = True,
         sub_widget: bool = False,
     ):
-        self.buttons = buttons
+        super().__init__((0, 0), sub_widget=sub_widget)
+        self.sub_widgets = buttons
         self.start_button = start_button
-        for button in self.buttons:
+        for button in self.sub_widgets:
             button.sub_widget = True
         if toggle_on_init:
             self.toggle_start_button()
-        super().__init__((0, 0), sub_widget=sub_widget)
 
     @override
     def update(self) -> None:
-        for button in self.buttons:
+        for button in self.sub_widgets:
             button.update()
             if button.toggled:
-                for other_button in self.buttons:
+                for other_button in self.sub_widgets:
                     if other_button != button and other_button.toggled:
                         other_button.toggle_off_call(silent=True)
 
     @override
     def blit(self) -> None:
-        for button in self.buttons:
+        for button in self.sub_widgets:
             button.blit()
 
     @override
@@ -44,7 +44,7 @@ class ToggleButtonGroup(WidgetBase):
         return False
 
     def toggle_start_button(self) -> None:
-        self.buttons[self.start_button].toggle_on_call(silent=True)
+        self.sub_widgets[self.start_button].toggle_on_call(silent=True)
 
 
 class ToggleArrayGroup(ToggleButtonGroup):
@@ -57,7 +57,7 @@ class ToggleArrayGroup(ToggleButtonGroup):
         sub_widget: bool = False,
     ):
         super().__init__(
-            button_array.buttons,
+            button_array.sub_widgets,
             start_button,
             toggle_on_init=toggle_on_init,
             sub_widget=sub_widget,

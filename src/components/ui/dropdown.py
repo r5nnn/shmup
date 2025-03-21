@@ -96,18 +96,14 @@ class TextDropdown(WidgetBase):
             options_config,
             arr_sub_widget=True,
         )
+        self.sub_widgets.extend((self.option_button_arr, self.head_button))
         logger.info("Created text dropdown widget %s.", repr(self))
 
-    def blit(self) -> None:
-        self.head_button.blit()
-        if self.dropped:
-            self.option_button_arr.blit()
+    def blit(self) -> None: ...
 
     def update(self) -> None:
-        super().update()
-        self.head_button.update()
-        if self.dropped:
-            self.option_button_arr.update()
+        self.option_button_arr.hidden = not self.dropped
+        self.option_button_arr.disabled = not self.dropped
 
     def select_choice(self, choice: str) -> None:
         self.chosen = choice

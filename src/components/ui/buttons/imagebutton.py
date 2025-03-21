@@ -66,7 +66,6 @@ class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
 
     @override
     def update(self) -> None:
-        WidgetBase.update(self)
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
@@ -117,7 +116,6 @@ class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
 
     @override
     def update(self) -> None:
-        WidgetBase.update(self)
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
@@ -126,6 +124,15 @@ class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
     def align_rect(self) -> None:
         ImageButtonBaseMixin.align_rect(self)
         self.image_rect.topleft = self.rect.topleft
+
+    def __repr__(self):
+        return (f"ImageClickButton(config=ImageButtonConfig("
+                f"position={self._x,  self._y}, align={self._align}, "
+                f"audio_tags={self.audio_tags}, sub_widget={self.sub_widget}, "
+                f"images={self.images}, scale_by=...), "
+                f"mask_image={self.image_mask!r}, "
+                f"on_click={self.on_click_call!r}, "
+                f"on_release={self.on_release_call!r})")
 
 
 class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):

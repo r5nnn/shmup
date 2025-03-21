@@ -48,8 +48,8 @@ class Title(State):
         )
         self.title_buttons = ImageClickButtonArray(
             (
-                system_data.abs_window_rect.width * 0.65,
-                system_data.abs_window_rect.height * 0.3,
+                round(system_data.abs_window_rect.width * 0.65),
+                round(system_data.abs_window_rect.height * 0.3),
             ),
             (4, 1),
             0,

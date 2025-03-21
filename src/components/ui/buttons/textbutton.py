@@ -15,7 +15,6 @@ from src.components.ui.buttons.textmixins import (
     ToggleTextMixin,
     ClickTextMixin,
 )
-from src.components.ui.widgetutils import WidgetBase
 
 if TYPE_CHECKING:
     import pygame
@@ -69,10 +68,10 @@ class TextToggleButton(TextButtonBaseMixin, ToggleTextMixin):
         self.rect = self.text_rect
         self.align_rect()
         self._width, self._height = self.text_rect.size
+        self.sub_widgets.append(self.text_object)
 
     @override
     def update(self) -> None:
-        WidgetBase.update(self)
         ToggleTextMixin.update(self)
         if self.requires_realignment:
             self.requires_realignment = False
@@ -84,10 +83,6 @@ class TextToggleButton(TextButtonBaseMixin, ToggleTextMixin):
     @checktoggle
     def update_idle(self) -> None:
         super().update_idle()
-
-    @override
-    def blit(self) -> None:
-        ToggleTextMixin.blit(self)
 
     @override
     def align_rect(self) -> None:
@@ -125,18 +120,14 @@ class TextClickButton(TextButtonBaseMixin, ClickTextMixin):
         self.rect = self.text_rect
         self.align_rect()
         self._width, self._height = self.rect.size
+        self.sub_widgets.append(self.text_object)
 
     @override
     def update(self) -> None:
-        WidgetBase.update(self)
         ClickTextMixin.update(self)
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
-
-    @override
-    def blit(self) -> None:
-        ClickTextMixin.blit(self)
 
     def align_rect(self) -> None:
         TextButtonBaseMixin.align_rect(self)
@@ -211,7 +202,6 @@ class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
 
     def blit(self) -> None:
         RectButtonBaseMixin.blit(self)
-        ToggleTextMixin.blit(self)
 
     def align_rect(self) -> None:
         RectButtonBaseMixin.align_rect(self)
@@ -278,7 +268,6 @@ class TextRectClickButton(RectButtonBaseMixin, ClickTextMixin):
 
     def blit(self) -> None:
         RectButtonBaseMixin.blit(self)
-        ClickTextMixin.blit(self)
 
     def align_rect(self) -> None:
         RectButtonBaseMixin.align_rect(self)

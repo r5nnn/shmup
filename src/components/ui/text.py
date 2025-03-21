@@ -183,6 +183,14 @@ class Text(WidgetBase):
                 self.wrap_rects[-1].bottom - self.wrap_rects[0].top
             )
 
+    def __repr__(self):
+        return (f"Text(position={self._x, self._y}, text={self._text}, "
+                f"font={self._font}, font_size={self._font_size}, "
+                f"color={self._color}, align={self._align}, "
+                f"wrap_width={self.wrap_width}, "
+                f"wrap_padding={self.wrap_padding}, "
+                f"antialias={self._antialias}, sub_widget={self.sub_widget})")
+
 
 @dataclass
 class TextArrayConfig:
@@ -230,26 +238,24 @@ class TextArray(WidgetBase):
             if isinstance(arr_padding, tuple)
             else (arr_padding, arr_padding)
         )
-        self.texts = []
         x_pos, y_pos = self._x, self._y
         for column in range(arr_shape[1]):
             for row in range(arr_shape[0]):
-                self.texts.append(
+                self.sub_widgets.append(
                     _make_text(row, column, x_pos, y_pos, config)
                 )
-                y_pos = self.texts[-1].rect.bottom + arr_padding[1]
-            x_pos = self.texts[-1].rect.right + arr_padding[0]
+                y_pos = self.sub_widgets[-1].rect.bottom + arr_padding[1]
+            x_pos = self.sub_widgets[-1].rect.right + arr_padding[0]
             y_pos = self._y
 
     @override
     def update(self) -> None:
-        super().update()
-        for button in self.texts:
+        for button in self.sub_widgets:
             button.update()
 
     @override
     def blit(self) -> None:
-        for button in self.texts:
+        for button in self.sub_widgets:
             button.blit()
 
     @override

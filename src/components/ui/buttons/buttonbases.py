@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import override, TYPE_CHECKING
 
@@ -186,37 +186,24 @@ class ButtonArrayBase(WidgetBase, ABC):
         arr_sub_widget: bool = False,
     ):
         super().__init__(arr_position, sub_widget=arr_sub_widget)
-        self.buttons = []
-        arr_padding = (
+        self.shape = arr_shape
+        self.arr_padding = (
             arr_padding
             if isinstance(arr_padding, tuple)
             else (arr_padding, arr_padding)
         )
         x_pos, y_pos = self._x, self._y
-        for column in range(arr_shape[1]):
-            for row in range(arr_shape[0]):
-                self.buttons.append(
+        for column in range(self.shape[1]):
+            for row in range(self.shape[0]):
+                self.sub_widgets.append(
                     self.make_button(row, column, x_pos, y_pos, config)
                 )
-                y_pos = self.buttons[-1].rect.bottom + arr_padding[1]
-            x_pos = self.buttons[-1].rect.right + arr_padding[0]
+                y_pos = self.sub_widgets[-1].rect.bottom + self.arr_padding[1]
+            x_pos = self.sub_widgets[-1].rect.right + self.arr_padding[0]
             y_pos = self._y
+        self.sub_widget_on_top = False
 
-    @override
-    def update(self) -> None:
-        super().update()
-        for button in self.buttons:
-            button.update()
-
-    @override
-    def blit(self) -> None:
-        for button in self.buttons:
-            button.blit()
-
-    @override
-    def contains(self, x: int, y: int) -> bool | None:
-        return super().contains(x, y)
-
+    @abstractmethod
     def make_button(
         self,
         row: int,

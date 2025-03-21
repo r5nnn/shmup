@@ -13,7 +13,8 @@ from src.components.ui import (
 from src.core import keybinds
 from src.core.data import settings, system_data
 from src.states.state import Overlay
-from src.core.utils import toggle_flag, toggle_fullscreen, set_resolution
+from src.core.utils import toggle_flag, toggle_fullscreen, set_resolution, \
+    update_scale_factor
 
 
 class OptionsOverlay(Overlay):
@@ -22,20 +23,20 @@ class OptionsOverlay(Overlay):
         headings_group = statemanager.current_state().option_headings_group
         self.padding = statemanager.current_state().padding
         self.row_width = (
-            statemanager.current_state().option_headings_group.buttons[0].width
+            statemanager.current_state().option_headings_group.sub_widgets[0].width
         )
         self.row_positions = tuple(
             statemanager.current_state()
-            .option_headings_group.buttons[num]
+            .option_headings_group.sub_widgets[num]
             .rect.right
             for num in range(
-                len(statemanager.current_state().option_headings_group.buttons)
+                len(statemanager.current_state().option_headings_group.sub_widgets)
             )
         )
         self.text_pos = [
             statemanager.current_state().bg_rect.left + self.padding,
             statemanager.current_state().bg_rect.top
-            + headings_group.buttons[0].height
+            + headings_group.sub_widgets[0].height
             + self.padding,
         ]
         self.button_size = (200, 30)
@@ -54,7 +55,7 @@ class GeneralOptions(OptionsOverlay):
         config_ = TextButtonConfig(
             position=(
                 self.row_positions[0] + self.padding,
-                self.text_row1.texts[0].rect.centery,
+                self.text_row1.sub_widgets[0].rect.centery,
             ),
             align="midleft",
         )
@@ -82,20 +83,21 @@ class GraphicsOptions(OptionsOverlay):
                 (
                     "Fullscreen:",
                     "Borderless:",
-                    "Use non-integer resolution scaling:",
                     "Resolution:",
+                    "Allow non-integer resolution scaling:",
+                    "Allow non-native resolution ratio:"
                 ),
             ),
             wrap_width=self.row_width - self.padding,
         )
         self.text_row1 = TextArray(
-            self.text_pos, (4, 1), self.padding, config_
+            self.text_pos, (5, 1), self.padding, config_
         )
 
         config_ = TextButtonConfig(
             position=(
                 self.row_positions[0] + self.padding,
-                self.text_row1.texts[0].rect.centery,
+                self.text_row1.sub_widgets[0].rect.centery,
             ),
             align="midleft",
         )
@@ -108,7 +110,7 @@ class GraphicsOptions(OptionsOverlay):
         )
         config_.position = (
             self.row_positions[0] + self.padding,
-            self.text_row1.texts[1].rect.centery,
+            self.text_row1.sub_widgets[1].rect.centery,
         )
         self.borderless_button = TextRectToggleButton(
             config_,
@@ -120,9 +122,20 @@ class GraphicsOptions(OptionsOverlay):
         resolutions, resolutions_str = self.recalculate_resolutions(
             non_int_scaling=settings.non_int_scaling
         )
+        self.resolution_dropdown = TextDropdown(
+            (
+                self.row_positions[0] + self.padding,
+                self.text_row1.sub_widgets[2].rect.centery,
+            ),
+            self.button_size,
+            choices=resolutions_str,
+            start_choice=resolutions.index(settings.resolution),
+            actions=lambda index: set_resolution(resolutions[index]),
+            align="midleft",
+        )
         config_.position = (
             self.row_positions[0] + self.padding,
-            self.text_row1.texts[2].rect.centery,
+            self.text_row1.sub_widgets[3].rect.centery,
         )
         self.non_int_scaling_button = TextRectToggleButton(
             config_,
@@ -135,27 +148,23 @@ class GraphicsOptions(OptionsOverlay):
                 non_int_scaling=False
             ),
         )
-        self.resolution_dropdown = TextDropdown(
-            (
-                self.row_positions[0] + self.padding,
-                self.text_row1.texts[3].rect.centery,
-            ),
+        config_.position = (
+            self.row_positions[0] + self.padding,
+            self.text_row1.sub_widgets[4].rect.centery,
+        )
+        self.non_native_resolution_ratio_button = TextRectToggleButton(
+            config_,
             self.button_size,
-            choices=resolutions_str,
-            start_choice=resolutions.index(settings.resolution),
-            actions=lambda index: set_resolution(resolutions[index]),
-            align="midleft",
+            start_text=1 if settings.non_native_ratio else 0,
         )
         self.widgets = (
             self.text_row1,
             self.fullscreen_button,
             self.borderless_button,
             self.non_int_scaling_button,
+            self.non_native_resolution_ratio_button,
             self.resolution_dropdown,
         )
-
-    def render(self) -> None:
-        super().render()
 
     def update(self) -> None:
         if settings.flags["fullscreen"]:
@@ -175,14 +184,14 @@ class GraphicsOptions(OptionsOverlay):
         self, *, non_int_scaling: bool, update_dropdown: bool = False
     ) -> tuple[list[tuple[int, int]], list[str]]:
         settings.non_int_scaling = non_int_scaling
+        update_scale_factor()
         resolutions = pygame.display.list_modes()
         if not non_int_scaling:
             resolutions = [
                 resolution
                 for resolution in resolutions
-                if resolution[0] / resolution[1]
-                == system_data.abs_window_rect.size[0]
-                / system_data.abs_window_rect.size[1]
+                if min(resolution[0] // system_data.abs_window_rect.width,
+                       resolution[1] // system_data.abs_window_rect.height) != 0
             ]
         # Truncate list to remove low resolution options so that popup fits
         # display since they would look bad anyway.
@@ -207,14 +216,16 @@ class KeybindsOptions(OptionsOverlay):
         self.text_arr_arr = []
         for i, keybind_items in enumerate(keybinds):
             config_ = TextArrayConfig(
-                (tuple(f"{items[0]}:" for items in keybind_items[1]), ()),
+                (
+                    tuple(f"{items[0]}:" for items in keybind_items[1]), ()
+                ),
                 wrap_width=self.row_width * (i + 1) - self.padding,
             )
             text_arr = TextArray(
                 (self.text_pos[0] + self.row_width * 2 * i, self.text_pos[1]),
                 (len(config_.text[0]), 1),
                 self.padding,
-                config=config_,
+                config=config_
             )
             self.text_arr_arr.append(text_arr)
         self.widgets = (text_arr for text_arr in self.text_arr_arr)
