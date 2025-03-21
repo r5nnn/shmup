@@ -39,9 +39,9 @@ class ImageLabelMixin:
         self.use_mask = True
         if mask_image is None:
             self.image_mask = pygame.mask.from_surface(self.images[0])
-        elif mask_image is False:
-            self.use_mask = False
         else:
+            if mask_image is False:
+                self.use_mask = False
             self.image_mask = mask_image
         self.image_align = image_align
         self.padding = padding
