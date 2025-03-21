@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 from typing import override, Any
 
 from src.core.structs import Validator
@@ -26,7 +25,7 @@ class RenderNeeded(AlignmentNeeded):
         instance.requires_realignment = True
 
 
-class WidgetBase(ABC):
+class WidgetBase:
     x = AlignmentNeeded()
     y = AlignmentNeeded()
     align = AlignmentNeeded()
@@ -42,20 +41,21 @@ class WidgetBase(ABC):
         self._align = align
 
         self.sub_widget = sub_widget
+        self.sub_widget_on_top = True
+        self.sub_widgets = []
         self.disabled = False
+        self.hidden = False
         self.requires_realignment = False
 
-    @abstractmethod
-    def update(self) -> None:
-        if self.disabled:
-            return
+    def update(self) -> None: ...
 
-    @abstractmethod
     def blit(self) -> None: ...
 
-    # noinspection PyTypeChecker
-    @abstractmethod
-    def contains(self, x: int, y: int) -> bool:
+    def contains(self, x: int, y: int) -> ...:
         if self.disabled:  # noqa: RET503
             return False
         # return will be provided when method is overriden
+
+    def __repr__(self):
+        return (f"WidgetBase(position={self._x, self._y}, align={self.align}, "
+                f"sub_widget={self.sub_widget})")
