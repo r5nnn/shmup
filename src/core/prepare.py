@@ -5,10 +5,11 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from src.components import Audio
-from src.core import main, settings, system_data
+from src.components import Audio, events
+from src.components.managers import statemanager
+from src.core import keybinds, main, settings, system_data
 from src.core.constants import ROOT, DISPLAY_FLAG_NAMES_MAP
-from src.core.utils import update_scale_factor
+from src.core.utils import toggle_flag, toggle_fullscreen, update_scale_factor
 
 import pygame
 
@@ -63,6 +64,14 @@ Audio("sfx").add_audio(Load("audio").path["click"])
 
 states = {"title": title.Title, "options": options.Options, "game": game.Game}
 start_state = "title"
+
+for keybind in keybinds.ui.fullscreen:
+    events.eventbinder.register(*keybind, action=toggle_fullscreen)
+for keybind in keybinds.ui.quit:
+    events.eventbinder.register(*keybind, action=statemanager.quit_game)
+for keybind in keybinds.ui.noframe:
+    events.eventbinder.register(*keybind, action=lambda: toggle_flag(pygame.NOFRAME))
+
 
 main.init(states, start_state)
 logger.info(

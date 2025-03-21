@@ -56,7 +56,7 @@ def gameloop() -> None:
         if overlay:
             overlay.render()
 
-        system_data.dt = pygame.time.Clock().tick(165) / 1000.0
+        system_data.dt = pygame.time.Clock().tick(settings.fps) / 1000.0
         system_data.window.blit(
             pygame.transform.scale_by(
                 system_data.abs_window, system_data.scale_factor
@@ -67,11 +67,3 @@ def gameloop() -> None:
 
 
 _running = True
-
-
-for keybind in keybinds.ui.fullscreen:
-    events.eventbinder.register(*keybind, action=toggle_fullscreen)
-for keybind in keybinds.ui.quit:
-    events.eventbinder.register(*keybind, action=statemanager.quit_game)
-for keybind in keybinds.ui.noframe:
-    events.eventbinder.register(*keybind, action=lambda: toggle_flag(pygame.NOFRAME))
