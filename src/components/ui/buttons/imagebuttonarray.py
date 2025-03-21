@@ -180,6 +180,12 @@ class ImageClickButtonArray(ButtonArrayBase):
 
         return ImageClickButton(config_, mask_image, on_click, on_release)
 
+    def __repr__(self):
+        return (f"ImageClickButtonArray(arr_position={self._x, self._y}, "
+                f"arr_shape={self.shape}, arr_padding={self.arr_padding}, "
+                f"config=ImageClickButtonArrayConfig(...), "
+                f"arr_sub_widget={self.sub_widget})")
+
 
 @dataclass
 class ImageRectToggleButtonArrayConfig(ImageToggleButtonArrayConfig):
