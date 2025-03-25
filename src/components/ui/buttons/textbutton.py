@@ -15,6 +15,7 @@ from src.components.ui.buttons.textmixins import (
     ToggleTextMixin,
     ClickTextMixin,
 )
+from src.components.ui.widgetutils import CompositeWidgetBase, WidgetBase
 
 if TYPE_CHECKING:
     import pygame
@@ -68,21 +69,28 @@ class TextToggleButton(TextButtonBaseMixin, ToggleTextMixin):
         self.rect = self.text_rect
         self.align_rect()
         self._width, self._height = self.text_rect.size
-        self.sub_widgets.append(self.text_object)
 
     @override
-    def update(self) -> None:
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not CompositeWidgetBase.update(self, disabled_sub_widgets):
+            return
         ToggleTextMixin.update(self)
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
 
+    @override
     def update_hover(self) -> None:
         super().update_hover()
 
+    @override
     @checktoggle
     def update_idle(self) -> None:
         super().update_idle()
+
+    @override
+    def blit(self) -> None:
+        ToggleTextMixin.blit(self)
 
     @override
     def align_rect(self) -> None:
@@ -120,15 +128,21 @@ class TextClickButton(TextButtonBaseMixin, ClickTextMixin):
         self.rect = self.text_rect
         self.align_rect()
         self._width, self._height = self.rect.size
-        self.sub_widgets.append(self.text_object)
 
     @override
-    def update(self) -> None:
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not CompositeWidgetBase.update(self, disabled_sub_widgets):
+            return
         ClickTextMixin.update(self)
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
 
+    @override
+    def blit(self) -> None:
+        ClickTextMixin.blit(self)
+
+    @override
     def align_rect(self) -> None:
         TextButtonBaseMixin.align_rect(self)
 
@@ -176,56 +190,41 @@ class TextRectToggleButton(RectButtonBaseMixin, ToggleTextMixin):
             requires_state=requires_state,
         )
         self.align_rect()
-        self.sub_widgets.append(self.text_object)
-        print(self.sub_widget_on_top)
 
+    @override
     def toggle_on(self) -> None:
         super().toggle_on()
         self.color = self.colors[2]
 
+    @override
     def update_hover(self) -> None:
         super().update_hover()
         self.color = self.colors[1]
 
+    @override
     @checktoggle
     def update_idle(self) -> None:
         super().update_idle()
         self.color = self.colors[0]
 
-    def update(self) -> None:
-        RectButtonBaseMixin.update(self)
+    @override
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not RectButtonBaseMixin.update(self, disabled_sub_widgets):
+            return
         ToggleTextMixin.update(self)
-        if self.text_label_requires_realignment:
-            self.text_label_requires_realignment = False
-            self.align_text()
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
 
+    @override
     def blit(self) -> None:
         RectButtonBaseMixin.blit(self)
+        ToggleTextMixin.blit(self)
 
+    @override
     def align_rect(self) -> None:
         RectButtonBaseMixin.align_rect(self)
         ToggleTextMixin.align_rect(self)
-
-    def __repr__(self):
-        return (f"TextRectToggleButton(config=TextButtonConfig("
-                f"position={self._x, self._y}, align={self.align}, "
-                f"audio_tags={self.audio_tags}, sub_widget={self.sub_widget}, "
-                f"text_colors={self.text_colors}, "
-                f"font={self.text_object.font}, "
-                f"font_size={self.text_object.font_size}, "
-                f"wrap_width={self.text_object.wrap_width}, "
-                f"wrap_padding={self.text_object.wrap_padding}, "
-                f"antialias={self.text_object.antialias}), "
-                f"size={self._width, self._height}, "
-                f"text={self.text_object.text}, start_text=..., "
-                f"text_align={self.text_align}, padding={self.padding}, "
-                f"radius={self.radius}, colors={self.colors}, "
-                f"on_toggle_on={self.on_toggle_on}, "
-                f"on_toggle_off={self.on_toggle_off}, "
-                f"requires_state={self.requires_state})")
 
 
 class TextRectClickButton(RectButtonBaseMixin, ClickTextMixin):
@@ -266,30 +265,37 @@ class TextRectClickButton(RectButtonBaseMixin, ClickTextMixin):
             antialias=config.antialias,
         )
         self.align_rect()
-        self.sub_widgets.append(self.text_object)
 
+    @override
     def update_click(self) -> None:
         super().update_click()
         self.color = self.colors[2]
 
+    @override
     def update_hover(self) -> None:
         super().update_hover()
         self.color = self.colors[1]
 
+    @override
     def update_idle(self) -> None:
         super().update_idle()
         self.color = self.colors[0]
 
-    def update(self) -> None:
-        RectButtonBaseMixin.update(self)
+    @override
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not RectButtonBaseMixin.update(self, disabled_sub_widgets):
+            return
         ClickTextMixin.update(self)
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
 
+    @override
     def blit(self) -> None:
         RectButtonBaseMixin.blit(self)
+        ClickTextMixin.blit(self)
 
+    @override
     def align_rect(self) -> None:
         RectButtonBaseMixin.align_rect(self)
         ClickTextMixin.align_rect(self)

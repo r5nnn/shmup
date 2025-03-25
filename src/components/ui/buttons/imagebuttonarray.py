@@ -42,19 +42,15 @@ class ImageToggleButtonArrayConfig(_ImageButtonArrayConfig):
 class ImageToggleButtonArray(ButtonArrayBase):
     def __init__(
         self,
-        arr_position: tuple[int, int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: ImageToggleButtonArrayConfig,
         *,
-        arr_sub_widget: bool = False,
+        sub_widget: bool = False,
     ):
         super().__init__(
-            arr_position,
-            arr_shape,
-            arr_padding,
-            config,
-            arr_sub_widget=arr_sub_widget,
+            position, shape, padding, config, sub_widget=sub_widget
         )
 
     @override
@@ -125,19 +121,15 @@ class ImageClickButtonArrayConfig(_ImageButtonArrayConfig):
 class ImageClickButtonArray(ButtonArrayBase):
     def __init__(
         self,
-        arr_position: tuple[int, int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: ImageClickButtonArrayConfig,
         *,
-        arr_sub_widget: bool = False,
+        sub_widget: bool = False,
     ):
         super().__init__(
-            arr_position,
-            arr_shape,
-            arr_padding,
-            config,
-            arr_sub_widget=arr_sub_widget,
+            position, shape, padding, config, sub_widget=sub_widget
         )
 
     @override
@@ -180,12 +172,6 @@ class ImageClickButtonArray(ButtonArrayBase):
 
         return ImageClickButton(config_, mask_image, on_click, on_release)
 
-    def __repr__(self):
-        return (f"ImageClickButtonArray(arr_position={self._x, self._y}, "
-                f"arr_shape={self.shape}, arr_padding={self.arr_padding}, "
-                f"config=ImageClickButtonArrayConfig(...), "
-                f"arr_sub_widget={self.sub_widget})")
-
 
 @dataclass
 class ImageRectToggleButtonArrayConfig(ImageToggleButtonArrayConfig):
@@ -200,19 +186,15 @@ class ImageRectToggleButtonArrayConfig(ImageToggleButtonArrayConfig):
 class ImageRectToggleButtonArray(ButtonArrayBase):
     def __init__(
         self,
-        arr_position: tuple[int, int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: ImageRectToggleButtonArrayConfig,
         *,
-        arr_sub_widget: bool = False,
+        sub_widget: bool = False,
     ):
         super().__init__(
-            arr_position,
-            arr_shape,
-            arr_padding,
-            config,
-            arr_sub_widget=arr_sub_widget,
+            position, shape, padding, config, sub_widget=sub_widget
         )
 
     @override
@@ -290,19 +272,15 @@ class ImageRectClickButtonArrayConfig(ImageClickButtonArrayConfig):
 class ImageRectClickButtonArray(ButtonArrayBase):
     def __init__(
         self,
-        arr_position: tuple[int, int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: ImageRectClickButtonArrayConfig,
         *,
-        arr_sub_widget: bool = False,
+        sub_widget: bool = False,
     ):
         super().__init__(
-            arr_position,
-            arr_shape,
-            arr_padding,
-            config,
-            arr_sub_widget=arr_sub_widget,
+            position, shape, padding, config, sub_widget=sub_widget
         )
 
     @override

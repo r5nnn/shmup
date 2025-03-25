@@ -6,8 +6,8 @@ import pygame
 
 from src.components.managers import overlaymanager
 from src.components.ui import (
+    ToggleButtonGroup,
     widgethandler,
-    ToggleArrayGroup,
     TextRectToggleButtonArray,
     TextRectToggleButtonArrayConfig,
 )
@@ -35,11 +35,14 @@ class Options(State):
             0,
             0,
             system_data.abs_window_rect.width * 0.8,
-            (system_data.abs_window_rect.height - self.title.get_height()) * 0.8,
+            (system_data.abs_window_rect.height - self.title.get_height())
+            * 0.8,
         )
         self.bg_rect.midtop = (
             system_data.abs_window_rect.centerx,
-            system_data.abs_window_rect.height * 0.1 + 20 + self.title.get_height(),
+            system_data.abs_window_rect.height * 0.1
+            + 20
+            + self.title.get_height(),
         )
         self.bg_surf = pygame.Surface(self.bg_rect.size)
         self.bg_surf.fill(PRIMARY)
@@ -56,20 +59,23 @@ class Options(State):
                 (lambda: self.switch_overlay(AudioOptions),),
             ),
         )
-        self.option_headings_group = ToggleArrayGroup(
-            TextRectToggleButtonArray(self.bg_rect.topleft, (1, 4), 0, config),
+        self.option_headings_group = ToggleButtonGroup(
+            TextRectToggleButtonArray(
+                self.bg_rect.topleft, (1, 4), 0, config
+            ).buttons,
             toggle_on_init=False,
         )
-        self.widgets = (self.option_headings_group,)
+        self.widgets = [self.option_headings_group]
 
     @override
     def render(self) -> None:
-        system_data.abs_window.blit(self.background, (0, 0))
+        super().render()
         system_data.abs_window.blit(self.bg_surf, self.bg_rect)
         system_data.abs_window.blit(
             self.title,
             (
-                system_data.abs_window_rect.width / 2 - self.title.get_width() / 2,
+                system_data.abs_window_rect.width / 2
+                - self.title.get_width() / 2,
                 system_data.abs_window_rect.height * 0.1,
             ),
         )

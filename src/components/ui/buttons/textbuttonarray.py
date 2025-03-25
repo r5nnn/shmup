@@ -42,19 +42,15 @@ class TextToggleButtonArrayConfig(_TextButtonArrayConfig):
 class TextToggleButtonArray(ButtonArrayBase):
     def __init__(
         self,
-        arr_position: tuple[int, int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: TextToggleButtonArrayConfig,
         *,
-        arr_sub_widget: bool = False,
+        sub_widget: bool = False,
     ):
         super().__init__(
-            arr_position,
-            arr_shape,
-            arr_padding,
-            config,
-            arr_sub_widget=arr_sub_widget,
+            position, shape, padding, config, sub_widget=sub_widget
         )
 
     @override
@@ -114,19 +110,15 @@ class TextClickButtonArrayConfig(_TextButtonArrayConfig):
 class TextClickButtonArray(ButtonArrayBase):
     def __init__(
         self,
-        arr_position: tuple[int, int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: TextClickButtonArrayConfig,
         *,
-        arr_sub_widget: bool = False,
+        sub_widget: bool = False,
     ):
         super().__init__(
-            arr_position,
-            arr_shape,
-            arr_padding,
-            config,
-            arr_sub_widget=arr_sub_widget,
+            position, shape, padding, config, sub_widget=sub_widget
         )
 
     @override
@@ -178,19 +170,15 @@ class TextRectToggleButtonArrayConfig(TextToggleButtonArrayConfig):
 class TextRectToggleButtonArray(ButtonArrayBase):
     def __init__(
         self,
-        arr_position: tuple[int, int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: TextRectToggleButtonArrayConfig,
         *,
-        arr_sub_widget: bool = False,
+        sub_widget: bool = False,
     ):
         super().__init__(
-            arr_position,
-            arr_shape,
-            arr_padding,
-            config,
-            arr_sub_widget=arr_sub_widget,
+            position, shape, padding, config, sub_widget=sub_widget
         )
 
     @override
@@ -249,12 +237,6 @@ class TextRectToggleButtonArray(ButtonArrayBase):
             requires_state=config.requires_state,
         )
 
-    def __repr__(self):
-        return (f"TextRectToggleButtonArray(arr_position={self._x, self._y}, "
-                f"arr_shape=..., arr_padding={self.arr_padding}, "
-                f"config=TextRectToggleButtonArrayConfig(...), "
-                f"arr_sub_widget={self.sub_widget})")
-
 
 @dataclass(kw_only=True)
 class TextRectClickButtonArrayConfig(TextClickButtonArrayConfig):
@@ -268,19 +250,15 @@ class TextRectClickButtonArrayConfig(TextClickButtonArrayConfig):
 class TextRectClickButtonArray(ButtonArrayBase):
     def __init__(
         self,
-        arr_position: tuple[int, int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: TextRectClickButtonArrayConfig,
         *,
-        arr_sub_widget: bool = False,
+        sub_widget: bool = False,
     ):
         super().__init__(
-            arr_position,
-            arr_shape,
-            arr_padding,
-            config,
-            arr_sub_widget=arr_sub_widget,
+            position, shape, padding, config, sub_widget=sub_widget
         )
 
     @override

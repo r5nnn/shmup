@@ -8,7 +8,7 @@ from typing import override, TYPE_CHECKING
 
 import pygame
 
-from src.components.ui.widgetutils import WidgetBase
+from src.components.ui.widgetutils import CompositeWidgetBase, WidgetBase
 from src.core.data import system_data
 from src.core.constants import PRIMARY, SECONDARY, ACCENT
 
@@ -25,7 +25,7 @@ class _BaseButtonConfig:
     sub_widget: bool = False
 
 
-class RectButtonBaseMixin(WidgetBase):
+class RectButtonBaseMixin(CompositeWidgetBase):
     def __init__(
         self,
         position: tuple[int, int],
@@ -74,11 +74,6 @@ class RectButtonBaseMixin(WidgetBase):
         self.requires_realignment = True
 
     @override
-    def contains(self, x: int, y: int) -> bool | None:
-        super().contains(x, y)
-        return self.rect.collidepoint(x, y)
-
-    @override
     def blit(self) -> None:
         pygame.draw.rect(
             system_data.abs_window,
@@ -88,18 +83,30 @@ class RectButtonBaseMixin(WidgetBase):
         )
 
     @override
-    def update(self) -> None:
-        super().update()
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> bool:
+        if not super().update(disabled_sub_widgets):
+            return False
         if self.requires_realignment:
             self.align_rect()
+        return True
 
     def align_rect(self) -> None:
         setattr(self.rect, self._align, (self._x, self._y))
         self._x, self._y = self.rect.topleft
         self.requires_realignment = False
 
+    @override
+    def contains(self, x: int, y: int) -> list[WidgetBase]:
+        if not super().contains(x, y):
+            return []
+        return [self] if self.rect.collidepoint(x, y) else []
 
-class TextButtonBaseMixin(WidgetBase, ABC):
+    @override
+    def __str__(self):
+        return f"{super().__str__()[:-1]} {self.width=} {self.height=}>"
+
+
+class TextButtonBaseMixin(CompositeWidgetBase, ABC):
     # Defined when integrated with a buttons class.
     rect: pygame.Rect = ...
     _width: int = ...
@@ -116,13 +123,14 @@ class TextButtonBaseMixin(WidgetBase, ABC):
     ):
         super().__init__(position, align, sub_widget=sub_widget)
         self.audio_tags = (
-            ["click", None, "click"] if audio_tags is None else audio_tags 
+            ["click", None, "click"] if audio_tags is None else audio_tags
         )
 
     @override
-    def contains(self, x: int, y: int) -> bool | None:
-        super().contains(x, y)
-        return self.rect.collidepoint(x, y)
+    def contains(self, x: int, y: int) -> list[WidgetBase]:
+        if not super().contains(x, y):
+            return []
+        return [self] if self.rect.collidepoint(x, y) else []
 
     def align_rect(self) -> None:
         setattr(self.rect, self._align, (self._x, self._y))
@@ -130,8 +138,12 @@ class TextButtonBaseMixin(WidgetBase, ABC):
         self.text_object.x, self.text_object.y = self._x, self._y
         self.requires_realignment = False
 
+    @override
+    def __str__(self):
+        return f"{super().__str__()[:-1]}, {self.text_object.text=})"
 
-class ImageButtonBaseMixin(WidgetBase, ABC):
+
+class ImageButtonBaseMixin(CompositeWidgetBase, ABC):
     # Defined when integrated with a buttons class.
     rect: pygame.Rect = ...
     image_mask: pygame.Mask = ...
@@ -159,14 +171,19 @@ class ImageButtonBaseMixin(WidgetBase, ABC):
         self.requires_realignment = False
 
     @override
-    def contains(self, x: int, y: int) -> bool | None:
-        super().contains(x, y)
+    def contains(self, x: int, y: int) -> list[WidgetBase]:
+        if not super().contains(x, y):
+            return []
         if self.rect.collidepoint(x, y):
             if self.use_mask:
                 relx, rely = x - self.rect.x, y - self.rect.y
-                return bool(self.image_mask.get_at((relx, rely)))
-            return True
-        return False
+                return (
+                    [self]
+                    if bool(self.image_mask.get_at((relx, rely)))
+                    else []
+                )
+            return [self]
+        return []
 
 
 @dataclass(kw_only=True)
@@ -175,33 +192,53 @@ class _BaseButtonArrayConfig:
     align: RectAlignments = "topleft"
 
 
-class ButtonArrayBase(WidgetBase, ABC):
+class ButtonArrayBase(CompositeWidgetBase, ABC):
     def __init__(
         self,
-        arr_position: tuple[int, int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: _BaseButtonArrayConfig,
         *,
-        arr_sub_widget: bool = False,
+        sub_widget: bool = False,
     ):
-        super().__init__(arr_position, sub_widget=arr_sub_widget)
-        self.shape = arr_shape
-        self.arr_padding = (
-            arr_padding
-            if isinstance(arr_padding, tuple)
-            else (arr_padding, arr_padding)
+        super().__init__(position, sub_widget=sub_widget)
+        self.shape = shape
+        self.padding = (
+            padding if isinstance(padding, tuple) else (padding, padding)
         )
         x_pos, y_pos = self._x, self._y
+        self.buttons = []
         for column in range(self.shape[1]):
             for row in range(self.shape[0]):
-                self.sub_widgets.append(
+                self.buttons.append(
                     self.make_button(row, column, x_pos, y_pos, config)
                 )
-                y_pos = self.sub_widgets[-1].rect.bottom + self.arr_padding[1]
-            x_pos = self.sub_widgets[-1].rect.right + self.arr_padding[0]
+                y_pos = self.buttons[-1].rect.bottom + self.padding[1]
+            x_pos = self.buttons[-1].rect.right + self.padding[0]
             y_pos = self._y
-        self.sub_widget_on_top = False
+
+    @override
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> bool:
+        if not super().update(disabled_sub_widgets):
+            return False
+        for button in self.buttons:
+            if button not in disabled_sub_widgets and not button.disabled:
+                button.update(disabled_sub_widgets)
+        return True
+
+    @override
+    def blit(self) -> None:
+        for button in self.buttons:
+            if not button.hidden:
+                button.blit()
+
+    @override
+    def contains(self, x: int, y: int) -> list[AnyButton]:
+        if not super().contains(x, y):
+            return []
+        buttons = [button for button in self.buttons if button.contains(x, y)]
+        return [self] if buttons == self.buttons else buttons
 
     @abstractmethod
     def make_button(
@@ -212,8 +249,3 @@ class ButtonArrayBase(WidgetBase, ABC):
         y_pos: int,
         config: _BaseButtonArrayConfig,
     ) -> AnyButton: ...
-
-    def __repr__(self):
-        return (f"ButtonArrayBase(arr_position={self._x, self._y}, "
-                f"arr_shape=..., arr_padding={self.arr_padding}, config=...), "
-                f"sub_widget={self.sub_widget})")

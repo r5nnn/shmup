@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable, TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING, override
 
 from src.components.ui.buttons import (
     TextRectToggleButton,
@@ -9,7 +9,7 @@ from src.components.ui.buttons import (
     TextButtonConfig,
     TextRectClickButtonArray,
 )
-from src.components.ui.widgetutils import WidgetBase
+from src.components.ui.widgetutils import CompositeWidgetBase, WidgetBase
 
 if TYPE_CHECKING:
     import pygame
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger("src.components.ui")
 
 
-class TextDropdown(WidgetBase):
+class TextDropdown(CompositeWidgetBase):
     def __init__(
         self,
         position: tuple[int, int],
@@ -34,7 +34,9 @@ class TextDropdown(WidgetBase):
         *,
         choices: Sequence[str],
         start_choice: int | None = None,
-        actions: tuple[Callable | None, ...] | Callable[[int], ...] | None = None,
+        actions: (
+            tuple[Callable | None, ...] | Callable[[int], ...] | None
+        ) = None,
         pass_index: bool = False,
         radius: int = 0,
         antialias: bool = False,
@@ -94,16 +96,24 @@ class TextDropdown(WidgetBase):
             (len(choices), 1),
             0,
             options_config,
-            arr_sub_widget=True,
+            sub_widget=True,
         )
-        self.sub_widgets.extend((self.option_button_arr, self.head_button))
-        logger.info("Created text dropdown widget %s.", repr(self))
+        logger.info("Created text dropdown widget %s.", self)
 
-    def blit(self) -> None: ...
+    @override
+    def blit(self) -> None:
+        self.head_button.blit()
+        if self.dropped:
+            self.option_button_arr.blit()
 
-    def update(self) -> None:
-        self.option_button_arr.hidden = not self.dropped
-        self.option_button_arr.disabled = not self.dropped
+    @override
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not super().update(disabled_sub_widgets=disabled_sub_widgets):
+            return
+        if self.head_button not in disabled_sub_widgets:
+            self.head_button.update(disabled_sub_widgets)
+        if self.dropped and self.option_button_arr not in disabled_sub_widgets:
+            self.option_button_arr.update(disabled_sub_widgets)
 
     def select_choice(self, choice: str) -> None:
         self.chosen = choice
@@ -113,29 +123,28 @@ class TextDropdown(WidgetBase):
             self.actions(self.choices.index(choice))
         elif (
             self.actions is not None
-            and self.actions[self.choices.index(choice)] is not None and not self.pass_index
+            and self.actions[self.choices.index(choice)] is not None
+            and not self.pass_index
         ):
             self.actions[self.choices.index(choice)]()
         self.dropped = False
-        logging.info("Selected new choice %s, closing popup, calling action if"
-                     " not None and setting text of dropdown head to new "
-                     "choice.", choice)
+        logging.info(
+            "Selected new choice %s, closing popup, calling action if"
+            " not None and setting text of dropdown head to new "
+            "choice.",
+            choice,
+        )
 
-    def contains(self, x: int, y: int) -> bool:
-        super().contains(x, y)
-        return self.head_button.contains(x, y)
+    @override
+    def contains(self, x: int, y: int) -> list[WidgetBase]:
+        if not super().contains(x, y):
+            return []
+        head_contains = self.head_button.contains(x, y)
+        if not self.dropped:
+            return head_contains
+        dropped_contains = self.option_button_arr.contains(x, y)
+        return head_contains + dropped_contains
 
-    def __repr__(self):
-        return (f"{self.__class__.__name__}(position={self.x, self.y!r}, "
-                f"size={self.head_button.rect.size!r}, "
-                f"colors={self.head_button.colors!r}, "
-                f"audio_tags={self.head_button.audio_tags!r}, "
-                f"text_colors={self.head_button.text_colors!r}, "
-                f"font={self.head_button.text_object.font!r}, "
-                f"font_size={self.head_button.text_object.font_size!r}, "
-                f"choices={self.choices!r}, "
-                f"start_choice={self.start_choice!r}, "
-                f"actions={self.actions!r}, "
-                f"radius={self.head_button.radius!r}, "
-                f"antialias={self.head_button.text_object.antialias!r}, "
-                f"align={self.align!r}, sub_widget={self.sub_widget!r}")
+    @override
+    def __str__(self):
+        return f"{super().__str__()[:-1]} choices={self.choices}>"

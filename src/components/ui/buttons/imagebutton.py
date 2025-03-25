@@ -14,7 +14,7 @@ from src.components.ui.buttons.buttonbases import (
     _BaseButtonConfig,
 )
 from src.components.ui.buttons.inputmixins import checktoggle
-from src.components.ui.widgetutils import WidgetBase
+from src.components.ui.widgetutils import CompositeWidgetBase, WidgetBase
 
 if TYPE_CHECKING:
     import pygame
@@ -65,19 +65,15 @@ class ImageToggleButton(ImageButtonBaseMixin, ToggleImageMixin):
         ToggleImageMixin.blit(self)
 
     @override
-    def update(self) -> None:
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not CompositeWidgetBase.update(self, disabled_sub_widgets):
+            return
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
         ToggleImageMixin.update(self)
 
-    def update_hover(self) -> None:
-        super().update_hover()
-
-    @checktoggle
-    def update_idle(self) -> None:
-        super().update_idle()
-
+    @override
     def align_rect(self) -> None:
         ImageButtonBaseMixin.align_rect(self)
 
@@ -115,24 +111,18 @@ class ImageClickButton(ImageButtonBaseMixin, ClickImageMixin):
         ToggleImageMixin.blit(self)
 
     @override
-    def update(self) -> None:
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not CompositeWidgetBase.update(self, disabled_sub_widgets):
+            return
         if self.requires_realignment:
             self.requires_realignment = False
             self.align_rect()
         ClickImageMixin.update(self)
 
+    @override
     def align_rect(self) -> None:
         ImageButtonBaseMixin.align_rect(self)
         self.image_rect.topleft = self.rect.topleft
-
-    def __repr__(self):
-        return (f"ImageClickButton(config=ImageButtonConfig("
-                f"position={self._x,  self._y}, align={self._align}, "
-                f"audio_tags={self.audio_tags}, sub_widget={self.sub_widget}, "
-                f"images={self.images}, scale_by=...), "
-                f"mask_image={self.image_mask!r}, "
-                f"on_click={self.on_click_call!r}, "
-                f"on_release={self.on_release_call!r})")
 
 
 class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
@@ -175,27 +165,34 @@ class ImageRectToggleButton(RectButtonBaseMixin, ToggleImageMixin):
         )
         self.align_rect()
 
+    @override
     def toggle_on(self) -> None:
         super().toggle_on()
         self.color = self.colors[2]
 
+    @override
     def update_hover(self) -> None:
         super().update_hover()
         self.color = self.colors[1]
 
+    @override
     @checktoggle
     def update_idle(self) -> None:
         super().update_idle()
         self.color = self.colors[0]
 
-    def update(self) -> None:
-        RectButtonBaseMixin.update(self)
+    @override
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not RectButtonBaseMixin.update(self, disabled_sub_widgets):
+            return
         ToggleImageMixin.update(self)
 
+    @override
     def blit(self) -> None:
         RectButtonBaseMixin.blit(self)
         ToggleImageMixin.blit(self)
 
+    @override
     def align_rect(self) -> None:
         RectButtonBaseMixin.align_rect(self)
         ToggleImageMixin.align_rect(self)
@@ -236,26 +233,33 @@ class ImageRectClickButton(RectButtonBaseMixin, ClickImageMixin):
         )
         self.align_rect()
 
+    @override
     def update_click(self) -> None:
         super().update_click()
         self.color = self.colors[2]
 
+    @override
     def update_hover(self) -> None:
         super().update_hover()
         self.color = self.colors[1]
 
+    @override
     def update_idle(self) -> None:
         super().update_idle()
         self.color = self.colors[0]
 
-    def update(self) -> None:
-        RectButtonBaseMixin.update(self)
+    @override
+    def update(self, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not RectButtonBaseMixin.update(self, disabled_sub_widgets):
+            return
         ClickImageMixin.update(self)
 
+    @override
     def blit(self) -> None:
         RectButtonBaseMixin.blit(self)
         ClickImageMixin.blit(self)
 
+    @override
     def align_rect(self) -> None:
         RectButtonBaseMixin.align_rect(self)
         ToggleImageMixin.align_rect(self)

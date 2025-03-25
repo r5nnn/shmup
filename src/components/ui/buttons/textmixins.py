@@ -53,7 +53,6 @@ class TextLabelMixin:
         self.text_rect = self.text_object.rect
         self.padding = padding
         self.requires_realignment = True
-        self.text_label_requires_realignment = True
 
     def align_text(self) -> None:
         self.text_rect = self.text_object.rect
@@ -75,9 +74,14 @@ class TextLabelMixin:
     def align_rect(self) -> None:
         self.align_text()
 
+    def blit(self) -> None:
+        self.text_object.blit()
+
     def update(self) -> None:
+        self.text_object.update()
         if self.text_object.requires_realignment:
-            self.text_label_requires_realignment = True
+            self.text_object.requires_realignment = False
+            self.align_text()
 
 
 class ToggleTextMixin(ToggleInputMixin, TextLabelMixin):

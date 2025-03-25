@@ -9,7 +9,11 @@ from typing import TYPE_CHECKING, override
 import pygame
 from pygame import freetype
 
-from src.components.ui.widgetutils import RenderNeeded, WidgetBase
+from src.components.ui.widgetutils import (
+    CompositeWidgetBase,
+    RenderNeeded,
+    WidgetBase,
+)
 from src.core.constants import DEFAULT_FONT_SIZE, DEFAULT_FONT_NAME
 from src.core.data import system_data
 from src.core.load import Load
@@ -36,9 +40,15 @@ class Text(WidgetBase):
         wrap_padding: int = 0,
         *,
         antialias: bool = False,
+        allow_passthrough: bool = True,
         sub_widget: bool = False,
     ):
-        super().__init__(position, align, sub_widget=sub_widget)
+        super().__init__(
+            position,
+            align,
+            allow_passthrough=allow_passthrough,
+            sub_widget=sub_widget,
+        )
         if (
             font is not None and font_size != DEFAULT_FONT_SIZE
         ) and not isinstance(font, (pygame.freetype.Font, pygame.font.Font)):
@@ -52,9 +62,7 @@ class Text(WidgetBase):
         self._font = (
             font
             if font is not None
-            else pygame.freetype.Font(
-                Load("font").path[DEFAULT_FONT_NAME]
-            )
+            else pygame.freetype.Font(Load("font").path[DEFAULT_FONT_NAME])
         )
         self._font_size = font_size
         self._color = color if color is not None else pygame.Color("white")
@@ -94,7 +102,8 @@ class Text(WidgetBase):
 
     @override
     def contains(self, x: int, y: int) -> bool:
-        super().contains(x, y)
+        if not super().contains(x, y):
+            return False
         return self.rect.collidepoint(x, y)
 
     def render_text(
@@ -172,7 +181,7 @@ class Text(WidgetBase):
         )
 
     def align_rect(self) -> None:
-        self.requires_realignment = False
+        self.requires_realignment = self.sub_widget
         setattr(self.rect, self._align, (self._x, self._y))
         self._x, self._y = self.rect.topleft
         if self.wrap_rects:
@@ -183,13 +192,8 @@ class Text(WidgetBase):
                 self.wrap_rects[-1].bottom - self.wrap_rects[0].top
             )
 
-    def __repr__(self):
-        return (f"Text(position={self._x, self._y}, text={self._text}, "
-                f"font={self._font}, font_size={self._font_size}, "
-                f"color={self._color}, align={self._align}, "
-                f"wrap_width={self.wrap_width}, "
-                f"wrap_padding={self.wrap_padding}, "
-                f"antialias={self._antialias}, sub_widget={self.sub_widget})")
+    def __str__(self):
+        return f"{super().__str__()[:-1]} {self.text=}"
 
 
 @dataclass
@@ -202,6 +206,7 @@ class TextArrayConfig:
     wrap_width: int | None = None
     wrap_padding: int = 0
     antialias: bool = False
+    allow_passthrough: bool = True
 
 
 def _make_text(
@@ -217,47 +222,59 @@ def _make_text(
         config.wrap_width,
         config.wrap_padding,
         antialias=config.antialias,
+        allow_passthrough=config.allow_passthrough,
         sub_widget=True,
     )
 
 
-class TextArray(WidgetBase):
+class TextArray(CompositeWidgetBase):
     def __init__(
         self,
-        arr_position: tuple[int, int] | list[int],
-        arr_shape: tuple[int, int],
-        arr_padding: tuple[int, int] | int,
+        position: tuple[int, int] | list[int],
+        shape: tuple[int, int],
+        padding: tuple[int, int] | int,
         config: TextArrayConfig,
-        *,
-        arr_sub_widget: bool = False,
+        **kwargs,
     ):
-        super().__init__(arr_position, sub_widget=arr_sub_widget)
-
-        arr_padding = (
-            arr_padding
-            if isinstance(arr_padding, tuple)
-            else (arr_padding, arr_padding)
+        super().__init__(position, **kwargs)
+        self.shape = shape
+        self.padding = (
+            padding if isinstance(padding, tuple) else (padding, padding)
         )
+        self.texts = []
         x_pos, y_pos = self._x, self._y
-        for column in range(arr_shape[1]):
-            for row in range(arr_shape[0]):
-                self.sub_widgets.append(
+        for column in range(self.shape[1]):
+            for row in range(self.shape[0]):
+                self.texts.append(
                     _make_text(row, column, x_pos, y_pos, config)
                 )
-                y_pos = self.sub_widgets[-1].rect.bottom + arr_padding[1]
-            x_pos = self.sub_widgets[-1].rect.right + arr_padding[0]
+                y_pos = self.texts[-1].rect.bottom + self.padding[1]
+            x_pos = self.texts[-1].rect.right + self.padding[0]
             y_pos = self._y
 
     @override
-    def update(self) -> None:
-        for button in self.sub_widgets:
-            button.update()
+    def update(self, *, disabled_sub_widgets: list[WidgetBase] = ()) -> None:
+        if not super().update(disabled_sub_widgets):
+            return
+        for text_obj in self.texts:
+            if text_obj not in disabled_sub_widgets:
+                text_obj.update()
 
     @override
     def blit(self) -> None:
-        for button in self.sub_widgets:
-            button.blit()
+        for text_obj in self.texts:
+            if not text_obj.hidden:
+                text_obj.blit()
 
     @override
-    def contains(self, x: int, y: int) -> bool | None:
-        return super().contains(x, y)
+    def contains(self, x: int, y: int) -> list[Text]:
+        if not super().contains(x, y):
+            return []
+        texts = [
+            text_obj for text_obj in self.texts if text_obj.contains(x, y)
+        ]
+        return [self] if texts == self.texts else texts
+
+    @override
+    def __str__(self):
+        return f"{super().__str__()[:-1]} {self.shape=} {self.texts=}"
