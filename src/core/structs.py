@@ -2,15 +2,15 @@
 
 These utilities specifically have no other dependencies for the game.
 """
+
 from __future__ import annotations
 
-import inspect
 import logging
 import weakref
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from collections.abc import MutableSet
-from typing import Any, Callable, override
+from typing import Any, override
 
 log = logging.getLogger(__name__)
 
@@ -55,25 +55,6 @@ class Bidict(dict):
         if self[key] in self.inverse and not self.inverse[self[key]]:
             del self.inverse[self[key]]
         super().__delitem__(key)
-
-
-class Printable:
-    def __str__(self):
-        return self.__stringify(str)
-
-    def __repr__(self):
-        return self.__stringify(repr)
-
-    def __stringify(self, strfunc: Callable[[object], str]) -> str:
-        sig = inspect.signature(self.__init__)
-        values = []
-        for attr in sig.parameters:
-            value = getattr(self, attr)
-            values.append(strfunc(value))
-
-        clsname = type(self).__name__
-        args = ", ".join(values)
-        return f"{clsname}({args})"
 
 
 # Implementation of an insertion-ordered set. Necessary to keep track of the
