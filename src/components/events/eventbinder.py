@@ -108,7 +108,8 @@ def _update_sorted_bindings() -> None:
 
 
 def _are_inputs_active(
-    inputs: tuple[tuple[EventTypes, int]], used_inputs: set
+    inputs: tuple[tuple[EventTypes, int], ...],
+    used_inputs: set[tuple[EventTypes, int]],
 ) -> bool:
     for input_type, value in inputs:
         if (input_type, value) in used_inputs:

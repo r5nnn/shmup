@@ -20,6 +20,7 @@ logger = logging.getLogger("src.components.managers")
 state_dict = {}
 state_stack = []
 
+
 def current_state() -> AnyState:
     """Does what it says.
 
@@ -163,8 +164,8 @@ def quit_game() -> None:
         current_state(),
     )
 
+
 def back() -> None:
     """Calls the current state's back method."""
     if current_state():
         current_state().back()
-

@@ -14,10 +14,14 @@ if TYPE_CHECKING:
 
 
 class Projectile(Entity):
-    def __init__(self, owner: Entity, sprite: pygame.Surface | None = None,
-                 spawn_location: RectAlignments | tuple[int, int] = "midtop",
-                 spawn_alignment: RectAlignments = "midbottom",
-                 sprite_rect: pygame.Rect | None = None):
+    def __init__(
+        self,
+        owner: Entity,
+        sprite: pygame.Surface | None = None,
+        spawn_location: RectAlignments | tuple[int, int] = "midtop",
+        spawn_alignment: RectAlignments = "midbottom",
+        sprite_rect: pygame.Rect | None = None,
+    ):
 
         if not (sprite or sprite_rect):
             msg = "Must provide either sprite or sprite_rect, not neither."
@@ -37,9 +41,13 @@ class Projectile(Entity):
             calculated_spawn = getattr(owner.abs_rect, spawn_location)
 
         super().__init__(
-            calculated_spawn, sprite=current_sprite,
-            sprite_rect=sprite.get_rect() if sprite_rect is None else sprite_rect,
-            spawn_alignment=spawn_alignment)
+            calculated_spawn,
+            sprite=current_sprite,
+            sprite_rect=(
+                sprite.get_rect() if sprite_rect is None else sprite_rect
+            ),
+            spawn_alignment=spawn_alignment,
+        )
 
     @override
     def update(self) -> None:
@@ -51,25 +59,32 @@ class Projectile(Entity):
         super().blit()
 
     @override
-    def on_collide(self, collided_sprite: Entity) -> None:
-        ...
+    def on_collide(self, collided_sprite: Entity) -> None: ...
 
 
 class SimpleBullet(Projectile):
-    def __init__(self, owner: Entity, sprite: pygame.Surface | None = None,
-                 spawn_location: RectAlignments | tuple[int, int] = "midtop",
-                 spawn_alignment: RectAlignments = "midbottom",
-                 sprite_rect: pygame.Rect | None = None, speed: int = 1000,
-                 direction: int = 0):
-        super().__init__(owner, sprite, spawn_location, spawn_alignment,
-                         sprite_rect)
+    def __init__(
+        self,
+        owner: Entity,
+        sprite: pygame.Surface | None = None,
+        spawn_location: RectAlignments | tuple[int, int] = "midtop",
+        spawn_alignment: RectAlignments = "midbottom",
+        sprite_rect: pygame.Rect | None = None,
+        speed: int = 1000,
+        direction: int = 0,
+    ):
+        super().__init__(
+            owner, sprite, spawn_location, spawn_alignment, sprite_rect
+        )
 
         angle_radians = math.radians(direction)
         self.dx = speed * math.sin(angle_radians)
         self.dy = -speed * math.cos(angle_radians)
 
     def update(self) -> None:
-        self._rect.move_ip(self.dx * system_data["dt"], self.dy * system_data["dt"])
+        self._rect.move_ip(
+            self.dx * system_data["dt"], self.dy * system_data["dt"]
+        )
         super().update()
 
     def blit(self) -> None:

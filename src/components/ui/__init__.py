@@ -33,7 +33,4 @@ from src.components.ui.buttons.imagebuttonarray import (
     ImageClickButtonArray,
     ImageClickButtonArrayConfig,
 )
-from src.components.ui.buttons.togglegroup import (
-    ToggleButtonGroup,
-    ToggleArrayGroup,
-)
+from src.components.ui.buttons.togglegroup import ToggleButtonGroup

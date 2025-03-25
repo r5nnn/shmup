@@ -1,4 +1,5 @@
 """Module for saving and loading game config file."""
+
 from __future__ import annotations
 
 import json

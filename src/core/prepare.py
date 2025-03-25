@@ -32,7 +32,9 @@ for flag_name, enabled in settings.flags.items():
         system_data.flags |= DISPLAY_FLAG_NAMES_MAP.inverse[flag_name][0]
         logger.info("Added flag %s to system_data.", flag_name.upper())
 
-system_data.window = pygame.display.set_mode(settings.resolution, system_data.flags)
+system_data.window = pygame.display.set_mode(
+    settings.resolution, system_data.flags
+)
 logger.info("Created window with resolution %s.", settings.resolution)
 
 system_data.window_rect = system_data.window.get_rect()
@@ -71,7 +73,9 @@ for keybind in keybinds.ui.fullscreen:
 for keybind in keybinds.ui.quit:
     events.eventbinder.register(*keybind, action=statemanager.quit_game)
 for keybind in keybinds.ui.noframe:
-    events.eventbinder.register(*keybind, action=lambda: toggle_flag(pygame.NOFRAME))
+    events.eventbinder.register(
+        *keybind, action=lambda: toggle_flag(pygame.NOFRAME)
+    )
 for key_combo in keybinds.ui.back:
     events.eventbinder.register(*key_combo, action=back)
 

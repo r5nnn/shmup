@@ -1,4 +1,5 @@
 """Module for loading assets from files."""
+
 from __future__ import annotations
 
 import json
@@ -43,8 +44,11 @@ def parse_spritesheet(spritesheet_file: Path) -> tuple[pygame.Surface, ...]:
         sprite_list.append(
             spritesheet.subsurface(res["x"], res["y"], res["w"], res["h"])
         )
-    logger.info("Parsed spritesheet %s into sprites %s.", spritesheet_file,
-             tuple(sprite_list))
+    logger.info(
+        "Parsed spritesheet %s into sprites %s.",
+        spritesheet_file,
+        tuple(sprite_list),
+    )
     return tuple(sprite_list)
 
 
@@ -67,17 +71,21 @@ class _LoadMeta(type):
 
     _instances: ClassVar[dict[str, Load]] = {}
 
-    def __call__(cls, name: str,
-                 directory: Path | None = None,
-                 *accept: str,
-                 exclude_dirs: list[str] | None = None,
-                 ) -> Load:
+    def __call__(
+        cls,
+        name: str,
+        directory: Path | None = None,
+        *accept: str,
+        exclude_dirs: list[str] | None = None,
+    ) -> Load:
         """Ensure each channel_id has a unique instance."""
         if name in cls._instances:
             return cls._instances[name]  # Return existing instance
 
         # Create and store new instance
-        instance = super().__call__(directory, *accept, exclude_dirs=exclude_dirs)
+        instance = super().__call__(
+            directory, *accept, exclude_dirs=exclude_dirs
+        )
         cls._instances[name] = instance
         return instance
 

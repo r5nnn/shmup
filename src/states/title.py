@@ -21,7 +21,9 @@ class Title(State):
     def __init__(self):
         super().__init__()
         # images
-        self.background = pygame.image.load(Load("image").path["menu"]).convert()
+        self.background = pygame.image.load(
+            Load("image").path["menu"]
+        ).convert()
         self.title = pygame.transform.scale_by(
             pygame.image.load(Load("image").path["title main"]), 4
         )
@@ -55,7 +57,7 @@ class Title(State):
             0,
             config,
         )
-        self.widgets = (self.title_buttons,)
+        self.widgets = [self.title_buttons]
 
     @override
     def startup(self) -> None:
@@ -69,7 +71,6 @@ class Title(State):
     @override
     def render(self) -> None:
         super().render()
-        widgethandler.blit()
         system_data.abs_window.blit(
             self.title,
             (
@@ -85,6 +86,7 @@ class Title(State):
                 system_data.abs_window_rect.height * 0.25,
             ),
         )
+        widgethandler.blit()
 
     @override
     def back(self) -> None:

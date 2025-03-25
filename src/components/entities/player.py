@@ -1,4 +1,5 @@
 """Contains the base class for all the game's players."""
+
 from __future__ import annotations
 
 import logging
@@ -26,15 +27,20 @@ class PlayerStats(TypedDict):
 class Player(Entity, ABC):
     """Base class for all the game's players."""
 
-    def __init__(self, game: Game,
-                 spawn: tuple[int, int],
-                 spawn_alignment: RectAlignments = "center",
-                 sprite: pygame.Surface | None = None,
-                 spritesheet: list[pygame.Surface] | None = None,
-                 sprite_rect: pygame.Rect | None = None,
-                 rect_offset: tuple[int, int] = (0, 0),
-                 stats: PlayerStats | None = None):
-        if (sprite is None) == (spritesheet is None):  # if both None or both provided
+    def __init__(
+        self,
+        game: Game,
+        spawn: tuple[int, int],
+        spawn_alignment: RectAlignments = "center",
+        sprite: pygame.Surface | None = None,
+        spritesheet: list[pygame.Surface] | None = None,
+        sprite_rect: pygame.Rect | None = None,
+        rect_offset: tuple[int, int] = (0, 0),
+        stats: PlayerStats | None = None,
+    ):
+        if (sprite is None) == (
+            spritesheet is None
+        ):  # if both None or both provided
             msg = "Provide either a single sprite or a spritesheet, not both."
             raise ValueError(msg)
         self.game = game
@@ -45,7 +51,10 @@ class Player(Entity, ABC):
         self.speed = stats.get("speed", 2)
         super().__init__(
             (spawn[0] + rect_offset[0], spawn[1] + rect_offset[1]),
-            sprite or spritesheet[0], sprite_rect, spawn_alignment)
+            sprite or spritesheet[0],
+            sprite_rect,
+            spawn_alignment,
+        )
 
         self.keys = []
         self.dx, self.dy = 0.0, 0.0
@@ -57,19 +66,26 @@ class Player(Entity, ABC):
     @override
     @property
     def spawn(self):
-        return (self._spawn[0] - self.rect_offset_x,
-                self._spawn[1] - self.rect_offset_y)
+        return (
+            self._spawn[0] - self.rect_offset_x,
+            self._spawn[1] - self.rect_offset_y,
+        )
 
     @spawn.setter
     def spawn(self, value):
-        self._spawn = (value[0] + self.rect_offset_x,
-                       value[1] + self.rect_offset_y)
+        self._spawn = (
+            value[0] + self.rect_offset_x,
+            value[1] + self.rect_offset_y,
+        )
 
     @override
     def move_to_spawn(self):
         super().move_to_spawn()
-        logging.info("%r moved to spawnpoint: %d", self,
-                     getattr(self.rect, self.spawn_alignment))
+        logging.info(
+            "%r moved to spawnpoint: %d",
+            self,
+            getattr(self.rect, self.spawn_alignment),
+        )
 
     def _set_direction(self):
         self.dx, self.dy = 0.0, 0.0
@@ -101,7 +117,9 @@ class Player(Entity, ABC):
         elif self.spritesheet:
             self.sprite = self.spritesheet[0]
 
-        logging.debug("Direction of player set as x: %f, y: %f.", self.dx, self.dy)
+        logging.debug(
+            "Direction of player set as x: %f, y: %f.", self.dx, self.dy
+        )
 
     def _set_direction_sprite(self, direction: str):
         if self.spritesheet:
@@ -114,8 +132,7 @@ class Player(Entity, ABC):
             }
             self.sprite = direction_map.get(direction, self.spritesheet[0])
 
-    def attack(self):
-        ...
+    def attack(self): ...
 
     @override
     def update(self):
@@ -129,8 +146,10 @@ class Player(Entity, ABC):
         self.x += self.dx * system_data["dt"]
         self.y += self.dy * system_data["dt"]
 
-        self.rect.center = (round(self.x) + self.rect_offset_x,
-                            round(self.y) + self.rect_offset_y)
+        self.rect.center = (
+            round(self.x) + self.rect_offset_x,
+            round(self.y) + self.rect_offset_y,
+        )
         if not screen_rect.contains(self.rect):
             self.rect.clamp_ip(screen_rect)
             self.x = float(self.rect.centerx - self.rect_offset_x)
@@ -139,8 +158,7 @@ class Player(Entity, ABC):
         self._abs_rect.center = (round(self.x), round(self.y))
 
     @abstractmethod
-    def blit(self):
-        ...
+    def blit(self): ...
 
     @override
     def on_collide(self, sprite):
@@ -150,23 +168,35 @@ class Player(Entity, ABC):
 
     def __repr__(self):
         parent_repr = super().__repr__()
-        return (f"{parent_repr}, Player(spritesheet={self.spritesheet!r}, "
-                f"rect_offset=({self.rect_offset_x!r}, {self.rect_offset_y!r}),"
-                f" stats={{'health': {self.health!r},'speed': {self.speed!r}}})")
+        return (
+            f"{parent_repr}, Player(spritesheet={self.spritesheet!r}, "
+            f"rect_offset=({self.rect_offset_x!r}, {self.rect_offset_y!r}),"
+            f" stats={{'health': {self.health!r},'speed': {self.speed!r}}})"
+        )
 
 
 class Remi(Player):
     def __init__(self, game: Game):
-        super().__init__(game, spawn=screen_center,
-                         spritesheet=[pygame.transform.scale_by(image, 2) for image in
-                                      sprites("remi")],
-                         sprite_rect=pygame.Rect(0, 0, 20, 20), rect_offset=(1, -7),
-                         stats={"health": 4, "speed": 250, "spells": 3})
+        super().__init__(
+            game,
+            spawn=screen_center,
+            spritesheet=[
+                pygame.transform.scale_by(image, 2)
+                for image in sprites("remi")
+            ],
+            sprite_rect=pygame.Rect(0, 0, 20, 20),
+            rect_offset=(1, -7),
+            stats={"health": 4, "speed": 250, "spells": 3},
+        )
 
         # Initialize shift animation for the attack effect
         self.shift_animation = Animation(
-            [pygame.transform.scale_by(image, 2) for image in
-             sprites("remi attack effect")], frame_duration=50)
+            [
+                pygame.transform.scale_by(image, 2)
+                for image in sprites("remi attack effect")
+            ],
+            frame_duration=50,
+        )
 
         # Set initial states and configurations
         self.shift_animation.set_direction(forward=False)
@@ -204,8 +234,10 @@ class Remi(Player):
     @override
     def blit(self) -> None:
         # Blit the main player sprite
-        sprite_position = (round(self.x) - self.sprite.get_width() // 2,
-                           round(self.y) - self.sprite.get_height() // 2)
+        sprite_position = (
+            round(self.x) - self.sprite.get_width() // 2,
+            round(self.y) - self.sprite.get_height() // 2,
+        )
         if self.show_hitbox:
             faded_sprite = self.sprite.copy()
             faded_sprite.set_alpha(128)
@@ -217,15 +249,25 @@ class Remi(Player):
         # Blit the shift animation if attacking
         if self.attacking:
             sprite = self.shift_animation.get_frame()
-            sprite_position = (round(self.x) - sprite.get_width() // 2,
-                               round(self.y) - sprite.get_height() // 2 - 11)
+            sprite_position = (
+                round(self.x) - sprite.get_width() // 2,
+                round(self.y) - sprite.get_height() // 2 - 11,
+            )
             screen.blit(sprite, sprite_position)
 
     @override
     def attack(self) -> None:
         """Fires a bullet and triggers an animation frame update."""
-        bullet_left = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4),
-                                   spawn_location=(-15, 5), spawn_alignment="topleft")
-        bullet_right = SimpleBullet(owner=self, sprite_rect=pygame.Rect(0, 0, 4, 4),
-                                    spawn_location=(15, 5), spawn_alignment="topright")
+        bullet_left = SimpleBullet(
+            owner=self,
+            sprite_rect=pygame.Rect(0, 0, 4, 4),
+            spawn_location=(-15, 5),
+            spawn_alignment="topleft",
+        )
+        bullet_right = SimpleBullet(
+            owner=self,
+            sprite_rect=pygame.Rect(0, 0, 4, 4),
+            spawn_location=(15, 5),
+            spawn_alignment="topright",
+        )
         self.game.player_bullets.add(bullet_left, bullet_right)

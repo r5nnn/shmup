@@ -63,6 +63,7 @@ def gameloop() -> None:
             (0, 0),
         )
         pygame.display.flip()
+        logger.debug("\n")
 
 
 _running = True

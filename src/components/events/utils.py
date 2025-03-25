@@ -40,7 +40,8 @@ def process(events: list[pygame.event.Event]) -> None:
                 _held_keys.remove(event.key)
             case pygame.MOUSEBUTTONDOWN:
                 logger.debug(
-                    "Mouse button down event detected. Button %s.", event.button
+                    "Mouse button down event detected. Button %s.",
+                    event.button,
                 )
                 _mousedown_events.append(event.button)
                 _mouse_buttons.append(event.button)

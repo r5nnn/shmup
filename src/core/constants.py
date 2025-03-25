@@ -26,17 +26,19 @@ DEFAULT_FONT_SIZE = 32
 
 # convert from constant to name
 
-DISPLAY_FLAG_NAMES_MAP = Bidict({
-    pygame.FULLSCREEN: "fullscreen",
-    pygame.DOUBLEBUF: "doublebuf",
-    pygame.HWSURFACE: "hwsurface",
-    pygame.OPENGL: "opengl",
-    pygame.NOFRAME: "noframe",
-    pygame.RESIZABLE: "resizable",
-    pygame.SCALED: "scaled",
-    pygame.SHOWN: "shown",
-    pygame.HIDDEN: "hidden",
-})
+DISPLAY_FLAG_NAMES_MAP = Bidict(
+    {
+        pygame.FULLSCREEN: "fullscreen",
+        pygame.DOUBLEBUF: "doublebuf",
+        pygame.HWSURFACE: "hwsurface",
+        pygame.OPENGL: "opengl",
+        pygame.NOFRAME: "noframe",
+        pygame.RESIZABLE: "resizable",
+        pygame.SCALED: "scaled",
+        pygame.SHOWN: "shown",
+        pygame.HIDDEN: "hidden",
+    }
+)
 
 # sources root
 
