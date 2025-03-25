@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-from typing import override, Any
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, override, Any
 
 from src.core.structs import Validator
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from src.core.types import RectAlignments
 
 
@@ -25,37 +26,50 @@ class RenderNeeded(AlignmentNeeded):
         instance.requires_realignment = True
 
 
-class WidgetBase:
+class WidgetBase(ABC):
     x = AlignmentNeeded()
     y = AlignmentNeeded()
     align = AlignmentNeeded()
 
     def __init__(
         self,
-        position: tuple[int, int] | list[int],
+        position: Sequence[int, int],
         align: RectAlignments | str = "topleft",
         *,
+        allow_passthrough: bool = False,
         sub_widget: bool = False,
     ):
         self._x, self._y = position
         self._align = align
-
+        self.allows_passthrough = allow_passthrough
         self.sub_widget = sub_widget
-        self.sub_widget_on_top = True
-        self.sub_widgets = []
+
+        self.has_sub_widgets = False
         self.disabled = False
         self.hidden = False
         self.requires_realignment = False
 
+    @abstractmethod
     def update(self) -> None: ...
 
+    @abstractmethod
     def blit(self) -> None: ...
 
-    def contains(self, x: int, y: int) -> ...:
-        if self.disabled:  # noqa: RET503
-            return False
-        # return will be provided when method is overriden
+    @abstractmethod
+    def contains(self, x: int, y: int) -> bool:
+        return not self.disabled
 
-    def __repr__(self):
-        return (f"WidgetBase(position={self._x, self._y}, align={self.align}, "
-                f"sub_widget={self.sub_widget})")
+    @override
+    def __str__(self):
+        return f"<{self.__class__.__module__}.{self.__class__.__name__} {self.x=}, {self.y=}>"
+
+
+class CompositeWidgetBase(WidgetBase, ABC):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.has_sub_widgets = True
+
+    @abstractmethod
+    @override
+    def update(self, disabled_sub_widgets: Sequence[WidgetBase] = ()) -> bool:
+        return self not in disabled_sub_widgets
