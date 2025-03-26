@@ -99,23 +99,43 @@ def toggle_fullscreen() -> None:
         pygame.mouse.set_visible(True)
 
 
-def update_scale_factor() -> None:
-    if settings.non_int_scaling:
-        system_data.scale_factor = min(
-            system_data.window_rect.width / system_data.abs_window_rect.width,
-            system_data.window_rect.height
-            / system_data.abs_window_rect.height,
-        )
+def update_scale_factor(*, non_native_ratio: bool | None = None) -> None:
+    if non_native_ratio is not None:
+        settings.non_native_ratio = non_native_ratio
     else:
-        system_data.scale_factor = min(
-            system_data.window_rect.width // system_data.abs_window_rect.width,
-            system_data.window_rect.height
-            // system_data.abs_window_rect.height,
+        non_native_ratio = settings.non_native_ratio
+    if settings.non_int_scaling:
+        scalex = (
+            system_data.window_rect.width / system_data.abs_window_rect.width
         )
+        scaley = (
+            system_data.window_rect.height / system_data.abs_window_rect.height
+        )
+        if non_native_ratio:
+            system_data.scale_factor = (scalex, scaley)
+        else:
+            minimum_ratio = min(scalex, scaley)
+            system_data.scale_factor = (minimum_ratio, minimum_ratio)
+    else:
+        int_scalex = (
+            system_data.window_rect.width // system_data.abs_window_rect.width
+        )
+        int_scaley = (
+            system_data.window_rect.height
+            // system_data.abs_window_rect.height
+        )
+        if non_native_ratio:
+            system_data.scale_factor = (int_scalex, int_scaley)
+        else:
+            minimum_int_ratio = min(int_scalex, int_scaley)
+            system_data.scale_factor = minimum_int_ratio
     logger.info(
-        "Scale factor calculated as %s, based on the window size: %s and "
-        "internal surface size: %s.",
+        "Scale factor calculated as %s filtering based on non_int_scaling as "
+        "%s, non_native_resolution as %s, window size: %s and internal "
+        "surface size: %s.",
         system_data.scale_factor,
+        settings.non_int_scaling,
+        settings.non_native_ratio,
         system_data.window_rect.size,
         system_data.abs_window_rect.size,
     )

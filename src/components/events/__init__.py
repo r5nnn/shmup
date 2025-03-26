@@ -1,5 +1,7 @@
 """Contains utilities for handling and binding events."""
 
+import logging
+
 from src.components.events import eventbinder
 from src.components.events.utils import (
     process,
@@ -13,3 +15,6 @@ from src.components.events.utils import (
     get_abs_mouse_pos,
     set_abs_mouse_pos,
 )
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)

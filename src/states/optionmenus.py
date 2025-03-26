@@ -134,10 +134,9 @@ class GraphicsOptions(OptionsOverlay):
             self.button_size,
             choices=resolutions_str,
             start_choice=resolutions.index(settings.resolution),
-            actions=None,
+            actions=lambda index: set_resolution(resolutions[index]),
             align="midleft",
         )
-        lambda index: set_resolution(resolutions[index])
         config_.position = (
             self.row_positions[0] + self.padding,
             self.text_row1.texts[3].rect.centery,
@@ -160,7 +159,8 @@ class GraphicsOptions(OptionsOverlay):
         self.non_native_resolution_ratio_button = TextRectToggleButton(
             config_,
             self.button_size,
-            start_text=1 if settings.non_native_ratio else 0,
+            on_toggle_on=lambda: update_scale_factor(non_native_ratio=True),
+            on_toggle_off=lambda: update_scale_factor(non_native_ratio=False),
         )
         self.widgets = [
             self.text_row1,
@@ -184,9 +184,13 @@ class GraphicsOptions(OptionsOverlay):
             self.non_int_scaling_button.toggle_on()
         else:
             self.non_int_scaling_button.toggle_off()
+        if settings.non_native_ratio:
+            self.non_native_resolution_ratio_button.toggle_on()
+        else:
+            self.non_native_resolution_ratio_button.toggle_off()
 
     def recalculate_resolutions(
-        self, *, non_int_scaling: bool, update_dropdown: bool = False
+        self, *, non_int_scaling: bool
     ) -> tuple[list[tuple[int, int]], list[str]]:
         settings.non_int_scaling = non_int_scaling
         update_scale_factor()
