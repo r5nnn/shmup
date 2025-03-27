@@ -9,6 +9,7 @@ import pygame.display
 from pygame.sprite import Sprite
 
 from src.core import system_data
+from src.core.load import Load, get_sprites
 
 if TYPE_CHECKING:
     from src.core.types import RectAlignments
@@ -19,49 +20,34 @@ class Entity(Sprite):
 
     def __init__(
         self,
-        spawn: tuple[int, int],
-        sprite: pygame.Surface,
+        spawn_pos: tuple[int, int],
+        sprite: pygame.Surface | str,
         sprite_rect: pygame.Rect | None = None,
         spawn_alignment: RectAlignments = "center",
     ):
         Sprite.__init__(self)
-        self._spawn = spawn
+        self.spawn = spawn_pos
         self.spawn_alignment = spawn_alignment
-        self.sprite = sprite
-        self._rect = (
+        if isinstance(sprite, str):
+            self.sprite = get_sprites(Load("images").path[sprite])
+        else:
+            self.sprite = sprite
+        self.rect = (
             sprite_rect if sprite_rect is not None else sprite.get_rect()
         )
-        self._abs_rect = self.sprite.get_rect().copy()
+        self.abs_rect = self.sprite.get_rect().copy()
         self.move_to_spawn()
 
-    @property
-    def spawn(self) -> tuple[int, int]:
-        return self._spawn
-
-    @property
-    def rect(self) -> pygame.Rect:
-        return self._rect
-
-    @property
-    def abs_rect(self) -> pygame.Rect:
-        return self._abs_rect
-
     def move_to_spawn(self) -> None:
-        setattr(self._rect, self.spawn_alignment, self._spawn)
+        setattr(self.rect, self.spawn_alignment, self.spawn)
 
     @override
     def update(self) -> None: ...
 
     def blit(self) -> None:
-        system_data.window.blit(self.sprite, self._rect)
+        system_data.abs_window.blit(self.sprite, self.rect)
 
     def on_collide(self, collided_sprite: Entity) -> None: ...
-
-    def __repr__(self):
-        return (
-            f"Entity(spawn={self.spawn!r}, sprite={self.sprite!r}, "
-            f"sprite_rect={self.rect!r}, spawn_alignment={self.spawn_alignment})"
-        )
 
 
 class EntityGroup(pygame.sprite.Group):

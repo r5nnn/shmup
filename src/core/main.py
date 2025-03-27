@@ -38,6 +38,7 @@ def gameloop() -> None:
     if statemanager.state_dict is None:
         msg = "Control module has not been initialised with state_dict."
         raise RuntimeError(msg)
+    clock = pygame.time.Clock()
 
     while _running:
         events.process(pygame.event.get())
@@ -55,7 +56,7 @@ def gameloop() -> None:
         if overlay:
             overlay.render()
 
-        system_data.dt = pygame.time.Clock().tick(settings.fps) / settings.fps
+        system_data.dt = clock.tick(system_data.fps) / 100
         system_data.window.blit(
             pygame.transform.scale_by(
                 system_data.abs_window, system_data.scale_factor

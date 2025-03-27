@@ -8,7 +8,7 @@ from src.components.ui import (
     TextArrayConfig,
     TextButtonConfig,
     TextRectToggleButton,
-    TextDropdown,
+    TextDropdown, TextRectToggleButtonArray, TextRectToggleButtonArrayConfig,
 )
 from src.core import keybinds
 from src.core.data import settings, system_data
@@ -218,7 +218,7 @@ class GraphicsOptions(OptionsOverlay):
         #     else:
         #         for button in (buttons := self.resolution_dropdown.option_button_arr.buttons):
         #             if not any(button.text == resolution for resolution in resolutions_str):
-        #                 buttons.pop(button)
+        #                 buttonsw.pop(button)
         return resolutions, resolutions_str
 
 
@@ -226,20 +226,31 @@ class KeybindsOptions(OptionsOverlay):
     def __init__(self):
         super().__init__()
         self.text_arr_arr = []
+        self.button_arr_arr_arr = []
         for i, keybind_items in enumerate(keybinds):
-            config_ = TextArrayConfig(
-                (tuple(f"{items[0]}:" for items in keybind_items[1]), ()),
+            textconfig_ = TextArrayConfig(
+                (tuple(f"{items[0]}:".replace("_", " ") for items in keybind_items[1]), ()),
                 wrap_width=self.row_width * (i + 1) - self.padding,
             )
             text_arr = TextArray(
                 (self.text_pos[0] + self.row_width * 2 * i, self.text_pos[1]),
-                (len(config_.text[0]), 1),
+                (len(textconfig_.text[0]), 1),
                 self.padding,
-                config=config_,
+                config=textconfig_,
             )
             self.text_arr_arr.append(text_arr)
+            key_names = []
+            for items in keybind_items[1]:
+                for keybinds_ in items[1]:
+                    keybind = ""
+                    for _, key in keybinds_:
+                        keybind += f"{pygame.key.name(key)} + "
+                    key_names.append(keybind[:-3])
+            buttonconfig_ = TextRectToggleButtonArrayConfig(
+                texts=(key_names, ()), sizes=self.button_size
+            )
+            TextRectToggleButtonArray(self.row_positions[i + 1], self.texts)
         self.widgets = self.text_arr_arr
-
 
 class AudioOptions(OptionsOverlay):
     def __init__(self):

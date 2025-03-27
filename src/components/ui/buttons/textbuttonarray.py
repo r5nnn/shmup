@@ -17,6 +17,7 @@ from src.components.ui.buttons.buttonbases import (
 
 if TYPE_CHECKING:
     import pygame
+    from collections.abc import Sequence
     from src.core.types import Colors, AnyButton, Align
 
 
@@ -32,7 +33,7 @@ class _TextButtonArrayConfig(_BaseButtonArrayConfig):
 
 @dataclass
 class TextToggleButtonArrayConfig(_TextButtonArrayConfig):
-    texts: tuple[tuple[str | list[str | None], ...], ...] = None
+    texts: tuple[Sequence[str | Sequence[str | None], ...], ...] = None
     start_texts: tuple[tuple[int, ...], ...] | int = 0
     on_toggle_on: tuple[tuple[Callable | None, ...], ...] | None = None
     on_toggle_off: tuple[tuple[Callable | None, ...], ...] | None = None
@@ -160,7 +161,7 @@ class TextClickButtonArray(ButtonArrayBase):
 
 @dataclass(kw_only=True)
 class TextRectToggleButtonArrayConfig(TextToggleButtonArrayConfig):
-    sizes: tuple[tuple[tuple[int, int], ...], ...] | tuple[int, int]
+    sizes: tuple[Sequence[Sequence[int, int], ...], ...] | tuple[int, int]
     radius: int = 0
     colors: Colors | None = None
     text_align: Align | None = None

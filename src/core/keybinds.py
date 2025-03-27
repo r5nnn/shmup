@@ -20,12 +20,12 @@ class UiKeybinds(BaseModel):
 
 
 class GameKeybinds(BaseModel):
-    move_up: list[int] = [pygame.K_w, pygame.K_UP]
-    move_down: list[int] = [pygame.K_s, pygame.K_DOWN]
-    move_left: list[int] = [pygame.K_a, pygame.K_LEFT]
-    move_right: list[int] = [pygame.K_d, pygame.K_RIGHT]
-    focus: list[int] = [pygame.K_LSHIFT, pygame.K_RSHIFT]
-    main_attack: list[int] = [pygame.K_z]
+    move_up: Keybinds_ = [[("key", pygame.K_w)], [("key", pygame.K_UP)]]
+    move_down: Keybinds_ = [[("key", pygame.K_s)], [("key", pygame.K_DOWN)]]
+    move_left: Keybinds_ = [[("key", pygame.K_a)], [("key",pygame.K_LEFT)]]
+    move_right: Keybinds_ = [[("key", pygame.K_d)], [("key", pygame.K_RIGHT)]]
+    focus: Keybinds_ = [[("key", pygame.K_LSHIFT)], [("key", pygame.K_RSHIFT)]]
+    main_attack: Keybinds_ = [[("key",pygame.K_z)]]
 
 
 class Keybinds(FileModel):

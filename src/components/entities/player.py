@@ -60,7 +60,7 @@ class Player(Entity, ABC):
         self.keys = []
         self.dx, self.dy = 0.0, 0.0
         self.x, self.y = float(spawn[0]), float(spawn[1])
-        self._abs_rect.center = round(self.x), round(self.y)
+        self.abs_rect.center = round(self.x), round(self.y)
 
     @override
     @property
@@ -140,12 +140,12 @@ class Player(Entity, ABC):
             round(self.x) + self.rect_offset_x,
             round(self.y) + self.rect_offset_y,
         )
-        if not system_data.screen_rect.contains(self.rect):
-            self.rect.clamp_ip(system_data.screen_rect)
+        if not system_data.abs_window_rect.contains(self.rect):
+            self.rect.clamp_ip(system_data.abs_window_rect)
             self.x = float(self.rect.centerx - self.rect_offset_x)
             self.y = float(self.rect.centery - self.rect_offset_y)
 
-        self._abs_rect.center = (round(self.x), round(self.y))
+        self.abs_rect.center = (round(self.x), round(self.y))
 
     @abstractmethod
     def blit(self): ...
@@ -175,7 +175,7 @@ class Remi(Player):
             ],
             sprite_rect=pygame.Rect(0, 0, 20, 20),
             rect_offset=(1, -7),
-            stats={"health": 4, "speed": 250, "spells": 3},
+            stats={"health": 4, "speed": 40, "spells": 3},
         )
 
         # Initialize shift animation for the attack effect

@@ -60,12 +60,12 @@ class Settings(FileModel):
     non_int_scaling: bool = True
     non_native_ratio: bool = False
     keep_mouse_pos: bool = True
-    fps: int = 165
 
 
 @dataclass(kw_only=True)
 class SystemData:
     flags: int = pygame.SCALED
+    fps: int = 165
     dt: float = 1.0
     quit: bool = False
     version: str = "0.0.3"

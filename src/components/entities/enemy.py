@@ -70,7 +70,7 @@ class Enemy(Entity):
 
     @override
     def blit(self) -> None:
-        system_data.window.blit(self.sprite, self.rect)
+        system_data.abs_window.blit(self.sprite, self.rect)
 
     @override
     def on_collide(self, sprite: Entity) -> None:
