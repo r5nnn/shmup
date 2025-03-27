@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING
 from typing import TypedDict, override
 
 from src.components.entities.entityutils import Entity
-from src.core import screen
+from src.core.data import system_data
 
 
 if TYPE_CHECKING:
     import pygame
-    from src.components import RectAlignments
+    from src.core.types import RectAlignments
 
 
 class EnemyStats(TypedDict):
@@ -70,7 +70,7 @@ class Enemy(Entity):
 
     @override
     def blit(self) -> None:
-        screen.blit(self.sprite, self.rect)
+        system_data.window.blit(self.sprite, self.rect)
 
     @override
     def on_collide(self, sprite: Entity) -> None:

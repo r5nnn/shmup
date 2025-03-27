@@ -55,7 +55,7 @@ def gameloop() -> None:
         if overlay:
             overlay.render()
 
-        system_data.dt = pygame.time.Clock().tick(settings.fps) / 1000.0
+        system_data.dt = pygame.time.Clock().tick(settings.fps) / settings.fps
         system_data.window.blit(
             pygame.transform.scale_by(
                 system_data.abs_window, system_data.scale_factor

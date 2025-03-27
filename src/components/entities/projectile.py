@@ -51,7 +51,7 @@ class Projectile(Entity):
 
     @override
     def update(self) -> None:
-        if not screen_rect.contains(self._rect):
+        if not system_data.abs_window_rect.contains(self._rect):
             self.kill()
 
     @override
@@ -83,7 +83,7 @@ class SimpleBullet(Projectile):
 
     def update(self) -> None:
         self._rect.move_ip(
-            self.dx * system_data["dt"], self.dy * system_data["dt"]
+            self.dx * system_data.dt, self.dy * system_data.dt
         )
         super().update()
 

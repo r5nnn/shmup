@@ -8,8 +8,10 @@ from typing import override
 import pygame.display
 from pygame.sprite import Sprite
 
+from src.core import system_data
+
 if TYPE_CHECKING:
-    from src.components import RectAlignments
+    from src.core.types import RectAlignments
 
 
 class Entity(Sprite):
@@ -51,7 +53,7 @@ class Entity(Sprite):
     def update(self) -> None: ...
 
     def blit(self) -> None:
-        screen.blit(self.sprite, self._rect)
+        system_data.window.blit(self.sprite, self._rect)
 
     def on_collide(self, collided_sprite: Entity) -> None: ...
 
