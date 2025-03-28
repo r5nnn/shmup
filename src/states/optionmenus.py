@@ -8,7 +8,9 @@ from src.components.ui import (
     TextArrayConfig,
     TextButtonConfig,
     TextRectToggleButton,
-    TextDropdown, TextRectToggleButtonArray, TextRectToggleButtonArrayConfig,
+    TextDropdown,
+    TextRectToggleButtonArray,
+    TextRectToggleButtonArrayConfig,
 )
 from src.core import keybinds
 from src.core.data import settings, system_data
@@ -229,7 +231,13 @@ class KeybindsOptions(OptionsOverlay):
         self.button_arr_arr_arr = []
         for i, keybind_items in enumerate(keybinds):
             textconfig_ = TextArrayConfig(
-                (tuple(f"{items[0]}:".replace("_", " ") for items in keybind_items[1]), ()),
+                (
+                    tuple(
+                        f"{items[0]}:".replace("_", " ")
+                        for items in keybind_items[1]
+                    ),
+                    (),
+                ),
                 wrap_width=self.row_width * (i + 1) - self.padding,
             )
             text_arr = TextArray(
@@ -251,6 +259,7 @@ class KeybindsOptions(OptionsOverlay):
             # )
             # TextRectToggleButtonArray(self.row_positions[i + 1], self.texts)
         self.widgets = self.text_arr_arr
+
 
 class AudioOptions(OptionsOverlay):
     def __init__(self):

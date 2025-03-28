@@ -1,15 +1,24 @@
 from typing import override
 
+import pygame
+
 from src.components import entities
 from src.components.entities import EntityGroup, Remi
-from .state import State
+from src.core.load import Load
+from src.states.state import State
+from src.components.entities.enemy import Enemy
+from src.core import system_data
 
 
 class Game(State):
     def __init__(self):
         super().__init__()
         self.player = Remi(self)
+        self.enemy = Enemy(self,
+                           system_data.abs_window_rect.topleft,
+                           pygame.transform.scale_by(pygame.image.load(Load("image").path["oscarF"]), 2), 2, "topleft")
         self.enemies = EntityGroup()
+        self.enemies.add(self.enemy)
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
 
