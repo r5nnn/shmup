@@ -70,7 +70,7 @@ class SimpleBullet(Projectile):
         spawn_location: RectAlignments | tuple[int, int] = "midtop",
         spawn_alignment: RectAlignments = "midbottom",
         sprite_rect: pygame.Rect | None = None,
-        speed: int = 1000,
+        speed: int = 100,
         direction: int = 0,
     ):
         super().__init__(

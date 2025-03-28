@@ -246,10 +246,10 @@ class KeybindsOptions(OptionsOverlay):
                     for _, key in keybinds_:
                         keybind += f"{pygame.key.name(key)} + "
                     key_names.append(keybind[:-3])
-            buttonconfig_ = TextRectToggleButtonArrayConfig(
-                texts=(key_names, ()), sizes=self.button_size
-            )
-            TextRectToggleButtonArray(self.row_positions[i + 1], self.texts)
+            # buttonconfig_ = TextRectToggleButtonArrayConfig(
+            #     texts=(key_names, ()), sizes=self.button_size
+            # )
+            # TextRectToggleButtonArray(self.row_positions[i + 1], self.texts)
         self.widgets = self.text_arr_arr
 
 class AudioOptions(OptionsOverlay):

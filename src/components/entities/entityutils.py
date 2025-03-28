@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from abc import ABC
 from typing import TYPE_CHECKING
 from typing import override
 
@@ -15,37 +16,49 @@ if TYPE_CHECKING:
     from src.core.types import RectAlignments
 
 
-class Entity(Sprite):
+class Entity(Sprite, ABC):
     """Base class for all the game's entities."""
 
     def __init__(
         self,
-        spawn_pos: tuple[int, int],
+        spawnpoint: tuple[int, int],
         sprite: pygame.Surface | str,
+        sprite_scale: int = 1,
         sprite_rect: pygame.Rect | None = None,
+        rect_offset: tuple[int, int] = (0, 0),
+        rect_alignment: RectAlignments = "center",
         spawn_alignment: RectAlignments = "center",
     ):
         Sprite.__init__(self)
-        self.spawn = spawn_pos
+        self.spawnpoint = spawnpoint
+        self.rect_offset = rect_offset
+        self.rect_alignment = rect_alignment
         self.spawn_alignment = spawn_alignment
         if isinstance(sprite, str):
-            self.sprite = get_sprites(Load("images").path[sprite])
+            if sprite_scale > 1:
+                self.sprites = tuple(
+                    pygame.transform.scale_by(sprite, 2)
+                    for sprite in get_sprites(Load("image").path[sprite])
+                )
+            else:
+                self.sprites = get_sprites(Load("image").path[sprite])
+            self.sprite = self.sprites[0]
         else:
+            self.sprites = ()
             self.sprite = sprite
         self.rect = (
             sprite_rect if sprite_rect is not None else sprite.get_rect()
         )
-        self.abs_rect = self.sprite.get_rect().copy()
         self.move_to_spawn()
 
     def move_to_spawn(self) -> None:
-        setattr(self.rect, self.spawn_alignment, self.spawn)
+        setattr(self.rect, self.spawn_alignment, self.spawnpoint)
 
     @override
     def update(self) -> None: ...
 
     def blit(self) -> None:
-        system_data.abs_window.blit(self.sprite, self.rect)
+        system_data.abs_window.blit(self.sprite, [coord + self.rect_offset[i] for coord, i in enumerate(getattr(self.rect, self.rect_alignment))])
 
     def on_collide(self, collided_sprite: Entity) -> None: ...
 
