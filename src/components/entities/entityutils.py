@@ -49,16 +49,26 @@ class Entity(Sprite, ABC):
         self.rect = (
             sprite_rect if sprite_rect is not None else sprite.get_rect()
         )
+        self.abs_rect = self.sprite.get_rect() if sprite_rect is not None else self.rect.copy()
         self.move_to_spawn()
 
     def move_to_spawn(self) -> None:
-        setattr(self.rect, self.spawn_alignment, self.spawnpoint)
+        setattr(self.abs_rect, self.spawn_alignment, self.spawnpoint)
+        setattr(self.rect, self.rect_alignment, self.get_rect_pos(self.rect_alignment))
+
+    def get_rect_pos(self, alignment: RectAlignments) -> list[int]:
+        return [coord + self.rect_offset[i] for i, coord in
+         enumerate(getattr(self.abs_rect, alignment))]
+
+    def get_abs_rect_pos(self, alignment: RectAlignments) -> list[int]:
+        return [coord - self.rect_offset[i] for i, coord in enumerate(getattr(self.rect, alignment))]
 
     @override
-    def update(self) -> None: ...
+    def update(self) -> None:
+        setattr(self.rect, self.rect_alignment, self.get_rect_pos(self.rect_alignment))
 
     def blit(self) -> None:
-        system_data.abs_window.blit(self.sprite, [coord + self.rect_offset[i] for coord, i in enumerate(getattr(self.rect, self.rect_alignment))])
+        system_data.abs_window.blit(self.sprite, self.abs_rect)
 
     def on_collide(self, collided_sprite: Entity) -> None: ...
 

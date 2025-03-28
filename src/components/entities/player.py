@@ -51,16 +51,19 @@ class Player(Entity, ABC):
             rect_alignment,
             spawn_alignment,
         )
-
         self.keys = []
         self.dx, self.dy = 0.0, 0.0
-        self.x, self.y = spawnpoint
+        self.show_hitbox = False
+        if self.sprites:
+            self.direction_map = {
+                None: (self.sprites[0]),
+                "up": self.sprites[1],
+                "down": self.sprites[2],
+                "left": self.sprites[3],
+                "right": self.sprites[4],
+            }
 
-    @override
-    def move_to_spawn(self):
-        super().move_to_spawn()
-
-    def _set_direction(self):
+    def set_direction(self) -> None:
         self.dx, self.dy = 0.0, 0.0
         direction = None
         self.show_hitbox = False
@@ -85,46 +88,37 @@ class Player(Entity, ABC):
             self.dy /= 2
             self.show_hitbox = True
 
-        if direction:
-            self._set_direction_sprite(direction)
-        elif self.sprites:
-            self.sprite = self.sprites[0]
-
-    def _set_direction_sprite(self, direction: str):
         if self.sprites:
-            direction_map = {
-                "default": self.sprites[0],
-                "up": self.sprites[1],
-                "down": self.sprites[2],
-                "left": self.sprites[3],
-                "right": self.sprites[4],
-            }
-            self.sprite = direction_map.get(direction, self.sprite)
+            self.set_current_sprites(direction)
 
-    def attack(self): ...
+    def set_current_sprites(self, direction: str | None) -> None:
+        self.sprite = self.direction_map[direction]
+
+    def attack(self) -> None: ...
 
     @override
-    def update(self):
+    def update(self) -> None:
         for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT):
             if events.is_key_down(key) and key not in self.keys:
                 self.keys.append(key)
             elif events.is_key_up(key) and key in self.keys:
                 self.keys.remove(key)
 
-        self._set_direction()
-        self.x += round(self.dx * system_data.dt)
-        self.y += round(self.dy * system_data.dt)
-
-        self.rect.topleft = (self.x, self.y)
+        self.set_direction()
+        self.abs_rect.topleft = tuple(map(lambda i, j: i + j, self.abs_rect.topleft, (round(self.dx * system_data.dt),
+                                  round(self.dy * system_data.dt))))
+        super().update()
         if not system_data.abs_window_rect.contains(self.rect):
             self.rect.clamp_ip(system_data.abs_window_rect)
-            self.x, self.y = getattr(self.rect, self.rect_alignment)
+            setattr(self.abs_rect, self.rect_alignment,
+                    self.get_abs_rect_pos(self.rect_alignment))
 
     @abstractmethod
-    def blit(self): ...
+    def blit(self) -> None:
+        pygame.draw.rect(system_data.abs_window, pygame.Color("white"), self.rect)
 
     @override
-    def on_collide(self, sprite):
+    def on_collide(self, sprite: Entity) -> None:
         self.health -= 1
         self.move_to_spawn()
 
@@ -138,11 +132,26 @@ class Remi(Player):
             sprite_scale=2,
             sprite_rect=pygame.Rect(0, 100, 20, 20),
             rect_offset=(1, -7),
-            rect_alignment="center",
             stats={"health": 4, "speed": 40, "spells": 3},
         )
-        self.faded_sprite = self.sprite.copy()
-        self.faded_sprite.set_alpha(128)
+        def make_faded_sprite(sprite_: pygame.Surface) -> pygame.Surface:
+            faded_sprite = sprite_.copy()
+            faded_sprite.set_alpha(128)
+            return faded_sprite
+        self.faded_sprites = []
+        if self.sprites:
+            for sprite in self.sprites:
+                self.faded_sprites.append(make_faded_sprite(sprite))
+            self.faded_sprite = self.faded_sprites[0]
+            self.direction_map = {
+                None: (self.sprites[0], self.faded_sprites[0]),
+                "up": (self.sprites[1], self.faded_sprites[1]),
+                "down": (self.sprites[2], self.faded_sprites[2]),
+                "left": (self.sprites[3], self.faded_sprites[3]),
+                "right": (self.sprites[4], self.faded_sprites[4]),
+            }
+        else:
+            self.faded_sprite = make_faded_sprite(self.sprite)
         self.show_hitbox = False
         self.fire_rate = 100
         self.last_shot_time = 0
@@ -150,7 +159,7 @@ class Remi(Player):
         self.shift_pressed = False
 
     @override
-    def update(self):
+    def update(self) -> None:
         # Handle base player movement and direction logic
         super().update()
         self.attacking = False
@@ -165,10 +174,10 @@ class Remi(Player):
     @override
     def blit(self) -> None:
         if self.show_hitbox:
-            system_data.abs_window.blit(self.faded_sprite, (self.x, self.y))
-            pygame.draw.rect(system_data.abs_window, pygame.Color("white"), self.rect)
+            system_data.abs_window.blit(self.faded_sprite, self.abs_rect)
+            super().blit()
         else:
-            system_data.abs_window.blit(self.sprite, self.x, self.y)
+            Entity.blit(self)
 
     @override
     def attack(self) -> None:
@@ -180,3 +189,7 @@ class Remi(Player):
             spawn_alignment="midtop",
         )
         self.game.player_bullets.add(bullet)
+
+    def set_current_sprites(self, direction: str | None) -> None:
+        self.sprite = self.direction_map[direction][0]
+        self.faded_sprite = self.direction_map[direction][1]
