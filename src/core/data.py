@@ -14,9 +14,15 @@ logger = logging.getLogger("src.core")
 
 
 class FileModel(BaseModel):
-    model_config = ConfigDict(extra="ignore")
+    """Base class for pydantic models saving and loading from json files."""
 
+    model_config = ConfigDict(extra="ignore")
     def save(self, directory: Path) -> None:
+        """Saves the current config into the json file of directory specified.
+
+        The json file is created if it does not already exist, and the
+        default config is saved to that file.
+        """
         directory.touch()
         with directory.open("w") as file:
             file.write(self.model_dump_json())
@@ -26,7 +32,13 @@ class FileModel(BaseModel):
 
     @classmethod
     def load(cls, directory: Path) -> tuple[FileModel, bool]:
-        """Load a dict from a json file."""
+        """Load a config dictionary from a json file into a pydantic object.
+
+        The json file is created if it does not already exist. If the file is
+        empty, loads the default config. If the file fails pydantic validation
+        checks, the invalid config is saved as a .backup file, and the default
+        config is loaded in its place.
+        """
         directory.touch()
         with directory.open() as file:
             try:
@@ -48,13 +60,15 @@ class FileModel(BaseModel):
                     )
                 else:
                     logger.info(
-                        "File: %s empty. Saving with defaults.", directory
+                        "File: %s empty. Saving and loading with defaults.", directory
                     )
                 default_settings.save(directory)
                 return default_settings, True
 
 
 class Settings(FileModel):
+    """Class containing settings that should be saved between sessions."""
+
     flags: dict[str, bool] = {"fullscreen": True, "noframe": True}
     resolution: tuple[int, int] = (1920, 1080)
     non_int_scaling: bool = True
@@ -64,6 +78,8 @@ class Settings(FileModel):
 
 @dataclass(kw_only=True)
 class SystemData:
+    """Dataclass containing globals that don't need to be saved."""
+
     flags: int = pygame.SCALED
     fps: int = 165
     dt: float = 1.0

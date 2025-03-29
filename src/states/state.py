@@ -15,6 +15,9 @@ if TYPE_CHECKING:
 
 
 class Overlay:
+    background: None | pygame.Surface
+    widgets: list[WidgetBase]
+
     def __init__(self):
         """Base class for making overlays.
 
@@ -35,8 +38,8 @@ class Overlay:
         It also doesn't update the widgethandler, since that is handled by the
         current state.
         """
-        self.background: None | pygame.Surface = None
-        self.widgets: list[WidgetBase] = []
+        self.background = None
+        self.widgets = []
 
     def startup(self) -> None:
         """Method called whenever the overlay added to the overlay stack.
@@ -71,6 +74,7 @@ class Overlay:
         """Removes the top overlay from the overlay stack."""
         overlaymanager.pop()
 
+    @override
     def __str__(self):
         return (
             f"<{self.__class__.__name__} self.widgets="
