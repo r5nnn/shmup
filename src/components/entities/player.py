@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABC
+from dataclasses import dataclass
 from typing import TypedDict, override, TYPE_CHECKING
 
 import pygame
 
 from src.components import events
-from src.components.entities.entityutils import Entity
+from src.components.entities.entityutils import Animation, Entity
 from src.components.entities.projectile import SimpleBullet
 from src.core.data import system_data
 
@@ -17,68 +18,54 @@ if TYPE_CHECKING:
     from src.states.game import Game
 
 
-class PlayerStats(TypedDict):
-    health: int
-    speed: int
-    spells: int
+@dataclass
+class PlayerStats:
+    health: int = 1
+    speed: int = 30
+    spells: int = 3
+    fire_rate: int = 100
 
 
 class Player(Entity, ABC):
     """Base class for all the game's players."""
 
+    direction_map: dict[None | str, list[pygame.Surface]]
     def __init__(
         self,
         game: Game,
         spawnpoint: tuple[int, int],
-        sprite: pygame.Surface | str,
         spawn_alignment: RectAlignments = "center",
-        sprite_scale: int = 1,
-        sprite_rect: pygame.Rect | None = None,
-        rect_offset: tuple[int, int] = (0, 0),
-        rect_alignment: RectAlignments = "center",
         stats: PlayerStats | None = None,
+        **kwargs
     ):
-        self.game = game
-        stats = {} if stats is None else stats
-        self.health = stats.get("health", 1)
-        self.speed = stats.get("speed", 2)
         super().__init__(
             spawnpoint,
-            sprite,
-            sprite_scale,
-            sprite_rect,
-            rect_offset,
-            rect_alignment,
             spawn_alignment,
+            **kwargs
         )
+        self.game = game
+        if stats is None:
+            stats = PlayerStats()
+        self.health = stats.health
+        self.speed = stats.speed
+        self.spells = stats.spells
+        self.fire_rate = stats.fire_rate
         self.type = "player"
         self.keys = []
         self.dx, self.dy = 0.0, 0.0
-        self.show_hitbox = False
-        def make_faded_sprite(sprite_: pygame.Surface) -> pygame.Surface:
-            faded_sprite = sprite_.copy()
-            faded_sprite.set_alpha(128)
-            return faded_sprite
 
-        self.faded_sprites = []
         if self.sprites:
-            for sprite in self.sprites:
-                self.faded_sprites.append(make_faded_sprite(sprite))
-            self.faded_sprite = self.faded_sprites[0]
             self.direction_map = {
-                None: (self.sprites[0], self.faded_sprites[0]),
-                "up": (self.sprites[1], self.faded_sprites[1]),
-                "down": (self.sprites[2], self.faded_sprites[2]),
-                "left": (self.sprites[3], self.faded_sprites[3]),
-                "right": (self.sprites[4], self.faded_sprites[4]),
+                None: [self.sprites[0]],
+                "up": [self.sprites[1]],
+                "down": [self.sprites[2]],
+                "left": [self.sprites[3]],
+                "right": [self.sprites[4]],
             }
-        else:
-            self.faded_sprite = make_faded_sprite(self.sprite)
 
     def set_direction(self) -> None:
         self.dx, self.dy = 0.0, 0.0
         direction = None
-        self.show_hitbox = False
 
         for key in self.keys:
             match key:
@@ -95,14 +82,11 @@ class Player(Entity, ABC):
                     self.dx = self.speed
                     direction = "right"
 
-        if events.is_key_pressed(pygame.K_LSHIFT):
-            self.dx /= 2
-            self.dy /= 2
-            self.show_hitbox = True
-
         if self.sprites:
-            self.sprite = self.direction_map[direction][0]
-            self.faded_sprite = self.direction_map[direction][1]
+            self.set_sprite(direction)
+
+    def set_sprite(self, direction: str | None) -> None:
+        self.sprite = self.direction_map[direction][0]
 
     def attack(self) -> None: ...
 
@@ -127,7 +111,7 @@ class Player(Entity, ABC):
                 self.get_abs_rect_pos(self.rect_alignment),
             )
 
-    @abstractmethod
+    @override
     def blit(self) -> None:
         pygame.draw.rect(
             system_data.abs_window, pygame.Color("white"), self.rect
@@ -139,35 +123,24 @@ class Player(Entity, ABC):
         self.move_to_spawn()
 
 
-class Remi(Player):
-    def __init__(self, game: Game):
-        super().__init__(
-            game,
-            spawnpoint=system_data.abs_window_rect.center,
-            sprite="remi",
-            sprite_scale=2,
-            sprite_rect=pygame.Rect(0, 100, 20, 20),
-            rect_offset=(1, -7),
-            stats={"health": 4, "speed": 40, "spells": 3},
-        )
+class FocusPlayer(Player):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.show_hitbox = False
 
-        self.fire_rate = 100
-        self.last_shot_time = 0
-        self.attacking = False
-        self.shift_pressed = False
+        def make_faded_sprite(sprite_: pygame.Surface) -> pygame.Surface:
+            faded_sprite = sprite_.copy()
+            faded_sprite.set_alpha(128)
+            return faded_sprite
 
-    @override
-    def update(self) -> None:
-        # Handle base player movement and direction logic
-        super().update()
-        self.attacking = False
-        if events.is_key_pressed(pygame.K_z):
-            # Set attacking state and check fire rate cooldown
-            self.attacking = True
-            current_time = pygame.time.get_ticks()
-            if current_time - self.last_shot_time >= self.fire_rate:
-                self.attack()
-                self.last_shot_time = current_time
+        self.faded_sprites = []
+        if self.sprites:
+            for i, sprite_key in enumerate(zip(self.sprites, self.direction_map.keys())):
+                self.faded_sprites.append(make_faded_sprite(sprite_key[0]))
+                self.direction_map[sprite_key[1]].append(self.faded_sprites[i])
+            self.faded_sprite = self.faded_sprites[0]
+        else:
+            self.faded_sprite = make_faded_sprite(self.sprite)
 
     @override
     def blit(self) -> None:
@@ -176,6 +149,45 @@ class Remi(Player):
             super().blit()
         else:
             Entity.blit(self)
+
+    @override
+    def set_direction(self) -> None:
+        self.show_hitbox = False
+        super().set_direction()
+        if events.is_key_pressed(pygame.K_LSHIFT):
+            self.dx /= 2
+            self.dy /= 2
+            self.show_hitbox = True
+
+    @override
+    def set_sprite(self, direction: str | None) -> None:
+        super().set_sprite(direction)
+        self.faded_sprite = self.direction_map[direction][1]
+
+
+class Remi(FocusPlayer):
+    def __init__(self, game: Game):
+        super().__init__(
+            game,
+            spawnpoint=system_data.abs_window_rect.center,
+            sprite="remi",
+            sprite_scale=2,
+            sprite_rect=pygame.Rect(0, 100, 20, 20),
+            rect_offset=(1, -7),
+            stats=PlayerStats(health=4, speed=40),
+        )
+        self.last_shot_time = 0
+
+    @override
+    def update(self) -> None:
+        # Handle base player movement and direction logic
+        super().update()
+        if events.is_key_pressed(pygame.K_z):
+            # Set attacking state and check fire rate cooldown
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_shot_time >= self.fire_rate:
+                self.attack()
+                self.last_shot_time = current_time
 
     @override
     def attack(self) -> None:

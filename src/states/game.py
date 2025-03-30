@@ -15,8 +15,9 @@ class Game(State):
         super().__init__()
         self.player = Remi(self)
         self.enemy = Enemy(self,
-                           system_data.abs_window_rect.topleft,
-                           pygame.transform.scale_by(pygame.image.load(Load("image").path["oscarF"]), 2), 2, "topleft")
+                           system_data.abs_window_rect.topleft, "topleft",
+                           sprite=pygame.image.load(Load("image").path["oscarF"]),
+                                                    sprite_scale=2, rect_alignment="center")
         self.enemies = EntityGroup()
         self.enemies.add(self.enemy)
         self.player_bullets = EntityGroup()

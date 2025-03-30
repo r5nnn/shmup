@@ -23,18 +23,9 @@ class Enemy(Entity):
 
     def __init__(
         self,
-        game: Game,
-        spawnpoint: tuple[int, int],
-        sprite: pygame.Surface | str,
-        sprite_scale: int = 1,
-        spawn_alignment: RectAlignments = "center",
-        sprite_rect: pygame.Rect | None = None,
-        rect_offset: tuple[int, int] = (0, 0),
-        rect_alignment: RectAlignments = "center",
-        stats: EnemyStats | None = None,
+        game: Game, *args, stats: EnemyStats | None = None, **kwargs
     ):
-        super().__init__(spawnpoint, sprite, sprite_scale, sprite_rect,
-                         rect_offset, rect_alignment, spawn_alignment)
+        super().__init__(*args, **kwargs)
         self.type = "enemy"
         self.game = game
         stats = {} if stats is None else stats
