@@ -26,6 +26,7 @@ class Game(State):
         self.enemies.add(self.enemy)
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
+        self.enemy_drops = EntityGroup()
         self.widgets = [self.health_txt]
 
     @override
@@ -34,6 +35,7 @@ class Game(State):
         self.enemies.update()
         self.player_bullets.update()
         self.enemy_bullets.update()
+        self.enemy_drops.update()
         entities.update_collisions(self)
         self.health_txt.text = f"Health: {self.player.health}"
         super().update()
@@ -46,6 +48,7 @@ class Game(State):
         self.enemies.blit()
         self.enemy_bullets.blit()
         self.player_bullets.blit()
+        self.enemy_drops.blit()
 
     @override
     def startup(self) -> None:

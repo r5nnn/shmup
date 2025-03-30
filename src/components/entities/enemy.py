@@ -5,13 +5,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from typing import TypedDict, override
 
-from src.components.entities.entityutils import Entity
+import pygame
+
+from src.components.entities.entity import Entity
+from src.components.entities.item import FallingItem
 from src.components.entities.projectile import Projectile
+from src.core.load import Load
 
 if TYPE_CHECKING:
     from src.states import Game
-    import pygame
-    from src.core.types import RectAlignments
 
 
 class EnemyStats(TypedDict):
@@ -41,4 +43,11 @@ class Enemy(Entity):
     @override
     def on_collide(self, sprite: Entity) -> None:
         if isinstance(sprite, Projectile):
+            self.drop_item()
             self.kill()
+
+    def drop_item(self) -> None:
+        self.game.enemy_drops.add(FallingItem(
+            50, self.abs_rect.center,
+            sprite=pygame.image.load(Load("image").path["level"]).convert(),
+            sprite_scale=2))

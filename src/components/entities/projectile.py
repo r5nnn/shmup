@@ -6,7 +6,7 @@ from typing import override
 
 import pygame
 
-from src.components.entities.entityutils import Entity
+from src.components.entities.entity import Entity
 from src.core.data import system_data
 
 if TYPE_CHECKING:
@@ -22,7 +22,7 @@ class Projectile(Entity):
         spawn_alignment: RectAlignments = "midbottom",
         sprite_rect: pygame.Rect | None = None,
     ):
-
+        self.type = f"{owner}bullet"
         if not (sprite or sprite_rect):
             msg = "Must provide either sprite or sprite_rect, not neither."
             raise ValueError(msg)
@@ -54,13 +54,6 @@ class Projectile(Entity):
         super().update()
         if not system_data.abs_window_rect.contains(self.rect):
             self.kill()
-
-    @override
-    def blit(self) -> None:
-        super().blit()
-
-    @override
-    def on_collide(self, collided_sprite: Entity) -> None: ...
 
 
 class SimpleBullet(Projectile):

@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 class Entity(Sprite, ABC):
 
-    type: Literal["player", "enemy", "playerbullet", "enemybullet"]
+    type: Literal["player", "enemy", "playerbullet", "enemybullet", "item"] | str
 
     def __init__(
         self,

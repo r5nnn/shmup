@@ -9,7 +9,7 @@ from typing import TypedDict, override, TYPE_CHECKING
 import pygame
 
 from src.components import events
-from src.components.entities.entityutils import Animation, Entity
+from src.components.entities.entity import Animation, Entity
 from src.components.entities.projectile import SimpleBullet
 from src.core.data import system_data
 
@@ -30,6 +30,7 @@ class Player(Entity, ABC):
     """Base class for all the game's players."""
 
     direction_map: dict[None | str, list[pygame.Surface]]
+    level: int
     def __init__(
         self,
         game: Game,
@@ -50,6 +51,7 @@ class Player(Entity, ABC):
         self.speed = stats.speed
         self.spells = stats.spells
         self.fire_rate = stats.fire_rate
+        self.level = 0
         self.type = "player"
         self.keys = []
         self.dx, self.dy = 0.0, 0.0
@@ -119,8 +121,11 @@ class Player(Entity, ABC):
 
     @override
     def on_collide(self, sprite: Entity) -> None:
-        self.health -= 1
-        self.move_to_spawn()
+        if sprite.type in ("enemy", "enemybullet"):
+            self.health -= 1
+            self.move_to_spawn()
+        elif sprite.type == "item":
+            self.level += 1
 
 
 class FocusPlayer(Player):
