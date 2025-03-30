@@ -199,3 +199,8 @@ class Remi(FocusPlayer):
             spawn_alignment="midtop",
         )
         self.game.player_bullets.add(bullet)
+
+    def on_collide(self, sprite: Entity) -> None:
+        super().on_collide(sprite)
+        if self.health <= 0:
+            self.game.game_over()

@@ -183,7 +183,6 @@ class Text(WidgetBase):
     def align_rect(self) -> None:
         self.requires_realignment = self.sub_widget
         setattr(self.rect, self._align, (self._x, self._y))
-        self._x, self._y = self.rect.topleft
         if self.wrap_rects:
             for line_rect in self.wrap_rects:
                 line_rect.left = self._x

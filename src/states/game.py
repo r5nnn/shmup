@@ -4,6 +4,8 @@ import pygame
 
 from src.components import entities
 from src.components.entities import EntityGroup, Remi
+from src.components.managers import statemanager
+from src.components.ui import Text, widgethandler
 from src.core.load import Load
 from src.states.state import State
 from src.components.entities.enemy import Enemy
@@ -14,6 +16,8 @@ class Game(State):
     def __init__(self):
         super().__init__()
         self.player = Remi(self)
+        self.health_txt = Text(system_data.abs_window_rect.topright,
+                               text=f"Health: {self.player.health}", align="topright")
         self.enemy = Enemy(self,
                            system_data.abs_window_rect.topleft, "topleft",
                            sprite=pygame.image.load(Load("image").path["oscarF"]),
@@ -22,27 +26,34 @@ class Game(State):
         self.enemies.add(self.enemy)
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
+        self.widgets = [self.health_txt]
 
     @override
-    def update(self):
+    def update(self) -> None:
         self.player.update()
         self.enemies.update()
         self.player_bullets.update()
         self.enemy_bullets.update()
         entities.update_collisions(self)
+        self.health_txt.text = f"Health: {self.player.health}"
+        super().update()
 
     @override
-    def render(self):
+    def render(self) -> None:
         super().render()
+        widgethandler.blit()
         self.player.blit()
         self.enemies.blit()
         self.enemy_bullets.blit()
         self.player_bullets.blit()
 
     @override
-    def startup(self):
+    def startup(self) -> None:
         super().startup()
 
     @override
-    def cleanup(self):
+    def cleanup(self) -> None:
         super().cleanup()
+
+    def game_over(self) -> None:
+        statemanager.pop()
