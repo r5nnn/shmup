@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pygame.sprite
 
-from src.components.entities.entity import Entity
+from src.components.entities.entity import Entity, EntityGroup
 
 if TYPE_CHECKING:
     from src.states.game import Game
@@ -15,32 +15,36 @@ def update_collisions(game: "Game") -> None:
     player_enemy_collisions = pygame.sprite.spritecollide(
         game.player, game.enemies, dokill=False
     )
-    _handle_sprite_collisions(game.player, player_enemy_collisions)
+    handle_sprite_collisions(game.player, player_enemy_collisions)
 
     player_bullet_enemy_collisions = pygame.sprite.groupcollide(
         game.player_bullets, game.enemies, dokilla=True, dokillb=True
     )
-    _handle_group_collisions(player_bullet_enemy_collisions)
+    handle_group_collisions(player_bullet_enemy_collisions)
 
     enemy_bullet_player_collisions = pygame.sprite.spritecollide(
         game.player, game.enemy_bullets, dokill=True
     )
-    _handle_sprite_collisions(game.player, enemy_bullet_player_collisions)
+    handle_sprite_collisions(game.player, enemy_bullet_player_collisions)
 
     enemy_drop_player_collisions = pygame.sprite.spritecollide(
-        game.player, game.enemy_drops, dokill=True
+        game.player, game.enemy_drops, dokill=True, collided=abs1_spritecollide
     )
-    _handle_sprite_collisions(game.player, enemy_drop_player_collisions)
+    handle_sprite_collisions(game.player, enemy_drop_player_collisions)
 
 
-def _handle_group_collisions(collisions: dict) -> None:
+def handle_group_collisions(collisions: dict) -> None:
     for sprite, collided_sprites in collisions.items():
         for other_sprite in collided_sprites:
             sprite.on_collide(other_sprite)
             other_sprite.on_collide(sprite)
 
 
-def _handle_sprite_collisions(sprite: Entity, collisions: list) -> None:
+def handle_sprite_collisions(sprite: Entity, collisions: list) -> None:
     for other_sprite in collisions:
         sprite.on_collide(other_sprite)
         other_sprite.on_collide(sprite)
+
+
+def abs1_spritecollide(sprite1: Entity, sprite2: Entity) -> bool:
+    return sprite1.abs_rect.colliderect(sprite2.rect)

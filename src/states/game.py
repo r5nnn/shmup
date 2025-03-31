@@ -5,7 +5,7 @@ import pygame
 from src.components import entities
 from src.components.entities import EntityGroup, Remi
 from src.components.managers import statemanager
-from src.components.ui import Text, widgethandler
+from src.components.ui import Text, TextArray, TextArrayConfig, widgethandler
 from src.core.load import Load
 from src.states.state import State
 from src.components.entities.enemy import Enemy
@@ -16,8 +16,11 @@ class Game(State):
     def __init__(self):
         super().__init__()
         self.player = Remi(self)
-        self.health_txt = Text(system_data.abs_window_rect.topright,
-                               text=f"Health: {self.player.health}", align="topright")
+        config = TextArrayConfig(
+            text=((f"Health: {self.player.health}", f"Level: {self.player.level}"), ()),
+            align="topright"
+        )
+        self.stats = TextArray(system_data.abs_window_rect.topright, (2, 1), 20, config)
         self.enemy = Enemy(self, (500, 500), "topleft",
                            sprite=pygame.image.load(Load("image").path["oscarF"]),
                                                     sprite_scale=2, rect_alignment="center")
@@ -26,7 +29,7 @@ class Game(State):
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
         self.enemy_drops = EntityGroup()
-        self.widgets = [self.health_txt]
+        self.widgets = [self.stats]
 
     @override
     def update(self) -> None:
@@ -36,7 +39,8 @@ class Game(State):
         self.enemy_bullets.update()
         self.enemy_drops.update()
         entities.update_collisions(self)
-        self.health_txt.text = f"Health: {self.player.health}"
+        self.stats.texts[0].text = f"Health: {self.player.health}"
+        self.stats.texts[1].text = f"Level: {self.player.level}"
         super().update()
 
     @override

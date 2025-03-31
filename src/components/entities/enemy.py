@@ -48,6 +48,6 @@ class Enemy(Entity):
 
     def drop_item(self) -> None:
         self.game.enemy_drops.add(FallingItem(
-            50, self.abs_rect.center,
+            0, self.abs_rect.center, acceleration=7, max_speed=50,
             sprite=pygame.image.load(Load("image").path["level"]).convert(),
             sprite_scale=2))

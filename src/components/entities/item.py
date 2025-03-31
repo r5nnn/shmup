@@ -23,13 +23,17 @@ class Item(Entity):
             self.kill()
 
 class FallingItem(Item):
-    def __init__(self, speed: int, *args, **kwargs):
+    def __init__(self, speed: int, *args, acceleration: float = 500,
+                 max_speed: int | None = 100, **kwargs):
         self.speed = speed
         super().__init__(*args, **kwargs)
-        self.gravity = 1
+        self.acceleration = acceleration
+        self.max_speed = max_speed
+        self.current_speed = self.speed
 
     def update(self) -> None:
         super().update()
-        if self.gravity >= 100:
-            self.gravity **= 1.1
-        self.abs_rect.move_ip(0, self.speed * self.gravity * system_data.dt)
+        self.current_speed += self.acceleration * system_data.dt
+        if self.max_speed is not None:
+            self.current_speed = min(self.current_speed, self.max_speed)
+        self.abs_rect.move_ip(0, self.current_speed * system_data.dt)

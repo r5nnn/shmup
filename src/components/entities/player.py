@@ -200,7 +200,6 @@ class Remi(FocusPlayer):
         bullet = SimpleBullet(
             owner=self,
             sprite_rect=pygame.Rect(0, 0, 4, 4),
-            sprite_scale=2,
             spawn_location=(0, 0),
             spawn_alignment="midtop",
         )
