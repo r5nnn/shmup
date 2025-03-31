@@ -25,7 +25,7 @@ class Entity(Sprite, ABC):
         spawnpoint: tuple[int, int],
         spawn_alignment: RectAlignments = "center",
         *,
-        sprite: pygame.Surface | str,
+        sprite: pygame.Surface | str | None = None,
         sprite_scale: int = 1,
         sprite_rect: pygame.Rect | None = None,
         rect_alignment: RectAlignments = "center",
@@ -51,7 +51,10 @@ class Entity(Sprite, ABC):
         self.spawnpoint = spawnpoint
         self.spawn_alignment = spawn_alignment
 
-        if isinstance(sprite, str):
+        if not (sprite or sprite_rect):
+            msg = "Must provide either sprite or sprite_rect, not neither."
+            raise ValueError(msg)
+        elif isinstance(sprite, str):
             if sprite_scale > 1:
                 self.sprites = tuple(
                     pygame.transform.scale_by(sprite, 2)
@@ -62,7 +65,11 @@ class Entity(Sprite, ABC):
             self.sprite = self.sprites[0]
         else:
             self.sprites = ()
-            self.sprite = sprite
+            if sprite is None:
+                self.sprite = pygame.Surface(sprite_rect.size)
+                self.rect = sprite_rect
+            else:
+                self.sprite = sprite
             if sprite_scale > 1:
                 self.sprite = pygame.transform.scale_by(self.sprite, sprite_scale)
         self.rect = (

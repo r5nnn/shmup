@@ -26,7 +26,10 @@ class FallingItem(Item):
     def __init__(self, speed: int, *args, **kwargs):
         self.speed = speed
         super().__init__(*args, **kwargs)
+        self.gravity = 1
 
     def update(self) -> None:
         super().update()
-        self.abs_rect.move_ip(0, self.speed * system_data.dt)
+        if self.gravity >= 100:
+            self.gravity **= 1.1
+        self.abs_rect.move_ip(0, self.speed * self.gravity * system_data.dt)

@@ -17,7 +17,8 @@ class Projectile(Entity):
     def __init__(
         self,
         owner: Entity,
-        sprite: pygame.Surface | None = None,
+        sprite: pygame.Surface | str | None = None,
+        sprite_scale: int = 1,
         spawn_location: RectAlignments | tuple[int, int] = "midtop",
         spawn_alignment: RectAlignments = "midbottom",
         sprite_rect: pygame.Rect | None = None,
@@ -42,7 +43,7 @@ class Projectile(Entity):
 
         super().__init__(
             calculated_spawn,
-            sprite=current_sprite,
+            sprite=current_sprite, sprite_scale=sprite_scale,
             sprite_rect=(
                 sprite.get_rect() if sprite_rect is None else sprite_rect
             ),
@@ -60,7 +61,8 @@ class SimpleBullet(Projectile):
     def __init__(
         self,
         owner: Entity,
-        sprite: pygame.Surface | None = None,
+        sprite: pygame.Surface | str = None,
+        sprite_scale: int = 1,
         spawn_location: RectAlignments | tuple[int, int] = "midtop",
         spawn_alignment: RectAlignments = "midbottom",
         sprite_rect: pygame.Rect | None = None,
@@ -68,18 +70,19 @@ class SimpleBullet(Projectile):
         direction: int = 0,
     ):
         super().__init__(
-            owner, sprite, spawn_location, spawn_alignment, sprite_rect
+            owner, sprite, sprite_scale, spawn_location, spawn_alignment, sprite_rect
         )
-
         angle_radians = math.radians(direction)
         self.dx = speed * math.sin(angle_radians)
         self.dy = -speed * math.cos(angle_radians)
 
+    @override
     def update(self) -> None:
         self.abs_rect.move_ip(
             self.dx * system_data.dt, self.dy * system_data.dt
         )
         super().update()
 
+    @override
     def blit(self) -> None:
         super().blit()

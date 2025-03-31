@@ -18,8 +18,7 @@ class Game(State):
         self.player = Remi(self)
         self.health_txt = Text(system_data.abs_window_rect.topright,
                                text=f"Health: {self.player.health}", align="topright")
-        self.enemy = Enemy(self,
-                           system_data.abs_window_rect.topleft, "topleft",
+        self.enemy = Enemy(self, (500, 500), "topleft",
                            sprite=pygame.image.load(Load("image").path["oscarF"]),
                                                     sprite_scale=2, rect_alignment="center")
         self.enemies = EntityGroup()
