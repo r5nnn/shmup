@@ -1,0 +1,42 @@
+{ "frames": {
+   "Sprite-00010": {
+    "frame": { "x": 0, "y": 0, "w": 31, "h": 29 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 31, "h": 29 },
+    "sourceSize": { "w": 31, "h": 29 },
+    "duration": 100
+   },
+   "Sprite-00011": {
+    "frame": { "x": 31, "y": 0, "w": 31, "h": 29 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 31, "h": 29 },
+    "sourceSize": { "w": 31, "h": 29 },
+    "duration": 100
+   },
+   "Sprite-00012": {
+    "frame": { "x": 62, "y": 0, "w": 31, "h": 29 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 31, "h": 29 },
+    "sourceSize": { "w": 31, "h": 29 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.x-dev",
+  "image": "remi attack.png",
+  "format": "RGBA8888",
+  "size": { "w": 93, "h": 29 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
