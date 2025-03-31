@@ -171,6 +171,10 @@ class FocusPlayer(Player):
 
 
 class Remi(FocusPlayer):
+    bullet_patterns = (
+        ((1, 0),),
+        ((1, 5), (1, -5)),
+    )
     def __init__(self, game: Game):
         super().__init__(
             game,
@@ -197,13 +201,36 @@ class Remi(FocusPlayer):
     @override
     def attack(self) -> None:
         """Fires a bullet and triggers an animation frame update."""
-        bullet = SimpleBullet(
-            owner=self,
-            sprite_rect=pygame.Rect(0, 0, 4, 4),
-            spawn_location=(0, 0),
-            spawn_alignment="midtop",
-        )
-        self.game.player_bullets.add(bullet)
+        bullets = []
+        match self.level:
+            case 0:
+                bullets.append(SimpleBullet(
+                    owner=self,
+                    sprite_rect=pygame.Rect(0, 0, 4, 4),
+                    spawn_location=(0, 0),
+                    spawn_alignment="midtop",
+                ),
+                )
+            case 1:
+                bullets.extend((SimpleBullet(
+                    owner=self,
+                    sprite_rect=pygame.Rect(0, 0, 4, 4),
+                    spawn_location=(0, 0),
+                    spawn_alignment="midtop",
+                ), SimpleBullet(
+                    owner=self,
+                    sprite_rect=pygame.Rect(0, 0, 4, 4),
+                    spawn_location=(0, 0),
+                    spawn_alignment="midtop",
+                    direction=1
+                ),SimpleBullet(
+                    owner=self,
+                    sprite_rect=pygame.Rect(0, 0, 4, 4),
+                    spawn_location=(0, 0),
+                    spawn_alignment="midtop",
+                    direction=-1
+                )))
+        self.game.player_bullets.add(*bullets)
 
     def on_collide(self, sprite: Entity) -> None:
         super().on_collide(sprite)

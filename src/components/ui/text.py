@@ -276,4 +276,4 @@ class TextArray(CompositeWidgetBase):
 
     @override
     def __str__(self):
-        return f"{super().__str__()[:-1]} {self.shape=} {self.texts=}"
+        return f"{super().__str__()[:-1]} {self.shape=} {self.texts=}>"

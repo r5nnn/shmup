@@ -75,11 +75,17 @@ class SimpleBullet(Projectile):
         angle_radians = math.radians(direction)
         self.dx = speed * math.sin(angle_radians)
         self.dy = -speed * math.cos(angle_radians)
+        print(self.dx)
 
     @override
     def update(self) -> None:
+        dtx = self.dx * system_data.dt
+        dty = self.dy * system_data.dt
+        print(math.ceil(dtx) if dtx >= 0 else math.floor(dtx),
+            math.ceil(dty) if dty >= 0 else math.floor(dty))
         self.abs_rect.move_ip(
-            self.dx * system_data.dt, self.dy * system_data.dt
+            math.ceil(dtx) if dtx >= 0 else math.floor(dtx),
+            math.ceil(dty) if dty >= 0 else math.floor(dty)
         )
         super().update()
 
