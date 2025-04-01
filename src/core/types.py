@@ -43,6 +43,7 @@ TextRectAlignments = Literal["right", "left", "center", "justified"]
 EventTypes = Literal[
     "key", "keydown", "keyup", "mouse", "mousedown", "mouseup", "quit"
 ]
+BulletPatterns = Literal["up", "spread", "widespread"]
 
 # Commonly needed parameter types
 

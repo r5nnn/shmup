@@ -175,6 +175,7 @@ class Remi(FocusPlayer):
         ((1, 0),),
         ((1, 5), (1, -5)),
     )
+
     def __init__(self, game: Game):
         super().__init__(
             game,
@@ -232,6 +233,7 @@ class Remi(FocusPlayer):
                 )))
         self.game.player_bullets.add(*bullets)
 
+    @override
     def on_collide(self, sprite: Entity) -> None:
         super().on_collide(sprite)
         if self.health <= 0:

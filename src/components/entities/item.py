@@ -22,6 +22,7 @@ class Item(Entity):
         if collided_entity.type == "player":
             self.kill()
 
+
 class FallingItem(Item):
     def __init__(self, speed: int, *args, acceleration: float = 500,
                  max_speed: int | None = 100, **kwargs):
