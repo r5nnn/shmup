@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from abc import abstractmethod, ABC
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from typing import override
@@ -20,7 +21,7 @@ class Projectile(Entity):
         owner: Entity,
         sprite: pygame.Surface | str | None = None,
         sprite_scale: int = 1,
-        spawn_location: RectAlignments | tuple[int, int] = "midtop",
+        spawn_location: RectAlignments | list[int] = "midtop",
         spawn_alignment: RectAlignments = "midbottom",
         sprite_rect: pygame.Rect | None = None,
     ):
@@ -35,10 +36,10 @@ class Projectile(Entity):
         else:
             current_sprite = sprite
 
-        if isinstance(spawn_location, tuple):
+        if isinstance(spawn_location, list):
             x_offset, y_offset = spawn_location
             spawn_x, spawn_y = getattr(owner.abs_rect, spawn_alignment)
-            calculated_spawn = (spawn_x + x_offset, spawn_y + y_offset)
+            calculated_spawn = [spawn_x + x_offset, spawn_y + y_offset]
         else:
             calculated_spawn = getattr(owner.abs_rect, spawn_location)
 
@@ -64,7 +65,7 @@ class SimpleBullet(Projectile):
         owner: Entity,
         sprite: pygame.Surface | str | None = None,
         sprite_scale: int = 1,
-        spawn_location: RectAlignments | tuple[int, int] = "midtop",
+        spawn_location: RectAlignments | list[int] = "midtop",
         spawn_alignment: RectAlignments = "midbottom",
         sprite_rect: pygame.Rect | None = None,
         speed: int = 100,
@@ -93,40 +94,65 @@ class SimpleBullet(Projectile):
 
 
 @dataclass
-class SimpleBulletConfig:
-    ...
+class BulletConfig:
+    sprite: pygame.Surface | str | None = None
+    sprite_scale: int = 1
+    spawn_location: RectAlignments | list[int] = "midtop"
+    spawn_alignment: RectAlignments = "midbottom"
+    sprite_rect: pygame.Rect | None = None
 
-class BulletPatternBase:
-    def __init__(self, pattern: BulletPatterns = "up", **flags: int | None):
+
+class BulletPatternBase(ABC):
+    def __init__(self, owner: Entity, config: BulletConfig, pattern: BulletPatterns = "up", number: int = 1, **flags):
+        self.bullets = []
         self.pattern = pattern
         match self.pattern:
-            case "up":
-                self.create_up_bullets(**flags)
-            case "spread": ...
-            case "widespread": ...
+            case "up": self.create_up_bullets(owner, config, number)
+            case "spread": self.create_spread_bullets(owner, config, number)
+            case "widespread": self.create_widespread_bullets(owner, config, number)
 
-    def create_up_bullets(self, number: int | None, padding: int = 2):
-        number = number if number is not None else 1
+    @abstractmethod
+    def create_up_bullets(self, owner: Entity, config: BulletConfig, number: int = 1, padding: int = 2, **flags) -> list[Projectile]: ...
+
+    @abstractmethod
+    def create_spread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1) -> list[Projectile]: ...
+
+    @abstractmethod
+    def create_widespread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1) -> list[Projectile]: ...
+
+
+@dataclass
+class SimpleBulletConfig(BulletConfig):
+    speed: int = 100
+    direction: int = 0
+
+
+class SimpleBulletPattern(BulletPatternBase):
+    def __init__(self, owner: Entity, config: SimpleBulletConfig,
+                 pattern: BulletPatterns = "up", number: int = 1,
+                 padding: int = 5, **flags):
+        super().__init__(owner, config, pattern, number, padding=padding, **flags)
+
+    @override
+    def create_up_bullets(self, owner: Entity, config: SimpleBulletConfig, number: int = 1, **flags) -> list[SimpleBullet]:
+        flags["padding"] = 20
+        print(number)
         for i in range(number):
-            ...
+            bullet = SimpleBullet(owner, config.sprite, config.sprite_scale, config.spawn_location,
+                                  config.spawn_alignment, config.sprite_rect, config.speed, config.direction)
+            self.bullets.append(bullet)
+        total_width = 0
+        for bullet in self.bullets:
+            total_width += bullet.rect.width
+        total_width += flags["padding"] * (number - 1)
+        current_offset = owner.abs_rect.centerx - total_width / 2
+        for bullet in self.bullets:
+            bullet.spawnpoint[0] -= current_offset
+            current_offset -= bullet.rect.width + flags["padding"]
+        return self.bullets
 
+    @override
+    def create_spread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1) -> list[Projectile]: ...
 
-class SimpleBulletPattern:
-    def __init__(self, owner: Entity, pattern: BulletPatterns = "up", number: int = 1, padding: int = 5, **kwargs):
-        self.pattern = pattern
-        bullets = []
-        match pattern:
-            case "up":
-                for i in range(number):
-                    bullet = SimpleBullet(owner, **kwargs)
-                    bullets.append(bullet)
-                total_width = 0
-                for bullet in bullets:
-                    total_width += bullet.rect.width
-                total_width += padding * (number - 1)
-                current_offset = owner.abs_rect.centerx - total_width / 2
-                for bullet in bullets:
-                    bullet.spawnpoint[0] -= current_offset
-                    current_offset -= bullet.rect.width + padding
-            case "spread": ...
-            case "widespread": ...
+    @override
+    def create_widespread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1) -> list[Projectile]: ...

@@ -22,7 +22,7 @@ class Entity(Sprite, ABC):
 
     def __init__(
         self,
-        spawnpoint: tuple[int, int],
+        spawnpoint: list[int, int],
         spawn_alignment: RectAlignments = "center",
         *,
         sprite: pygame.Surface | str | None = None,

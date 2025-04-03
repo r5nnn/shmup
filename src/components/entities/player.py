@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-from abc import abstractmethod, ABC
+from abc import ABC
 from dataclasses import dataclass
-from typing import TypedDict, override, TYPE_CHECKING
+from typing import override, TYPE_CHECKING
 
 import pygame
 
 from src.components import events
-from src.components.entities.entity import Animation, Entity
-from src.components.entities.projectile import SimpleBullet
+from src.components.entities.entity import Entity
+from src.components.entities.projectile import SimpleBullet, SimpleBulletPattern, SimpleBulletConfig
 from src.core.data import system_data
 
 if TYPE_CHECKING:
@@ -202,36 +202,12 @@ class Remi(FocusPlayer):
     @override
     def attack(self) -> None:
         """Fires a bullet and triggers an animation frame update."""
-        bullets = []
-        match self.level:
-            case 0:
-                bullets.append(SimpleBullet(
-                    owner=self,
-                    sprite_rect=pygame.Rect(0, 0, 4, 4),
-                    spawn_location=(0, 0),
-                    spawn_alignment="midtop",
-                ),
-                )
-            case 1:
-                bullets.extend((SimpleBullet(
-                    owner=self,
-                    sprite_rect=pygame.Rect(0, 0, 4, 4),
-                    spawn_location=(0, 0),
-                    spawn_alignment="midtop",
-                ), SimpleBullet(
-                    owner=self,
-                    sprite_rect=pygame.Rect(0, 0, 4, 4),
-                    spawn_location=(0, 0),
-                    spawn_alignment="midtop",
-                    direction=1
-                ),SimpleBullet(
-                    owner=self,
-                    sprite_rect=pygame.Rect(0, 0, 4, 4),
-                    spawn_location=(0, 0),
-                    spawn_alignment="midtop",
-                    direction=-1
-                )))
-        self.game.player_bullets.add(*bullets)
+        config = SimpleBulletConfig(
+            sprite_rect=pygame.Rect(0, 0, 4, 4),
+            spawn_location=[0, 0],
+            spawn_alignment="midtop")
+        bullets = SimpleBulletPattern(self, config, "up", self.level+1)
+        self.game.player_bullets.add(*bullets.bullets)
 
     @override
     def on_collide(self, sprite: Entity) -> None:
