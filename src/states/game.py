@@ -21,11 +21,11 @@ class Game(State):
             align="topright"
         )
         self.stats = TextArray(system_data.abs_window_rect.topright, (2, 1), 20, config)
-        self.enemy = Enemy(self, (500, 500), "topleft",
-                           sprite=pygame.image.load(Load("image").path["oscarF"]),
-                                                    sprite_scale=2, rect_alignment="center")
         self.enemies = EntityGroup()
-        self.enemies.add(self.enemy)
+        for i in range(100):
+            self.enemy = self.enemies.add(Enemy(self, (500+i*10, 800), "topleft",
+                               sprite=pygame.image.load(Load("image").path["oscarF"]),
+                                                        sprite_scale=2, rect_alignment="center"))
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
         self.enemy_drops = EntityGroup()

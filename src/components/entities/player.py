@@ -207,6 +207,7 @@ class Remi(FocusPlayer):
             spawn_location=[0, 0],
             spawn_alignment="midtop")
         bullets = SimpleBulletPattern(self, config, "up", self.level+1)
+        print(f'{bullets.bullets!r} bullets')
         self.game.player_bullets.add(*bullets.bullets)
 
     @override

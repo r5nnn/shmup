@@ -58,6 +58,9 @@ class Projectile(Entity):
         if not system_data.abs_window_rect.contains(self.rect):
             self.kill()
 
+    def __repr__(self):
+        return f"<{self.__class__.__module__}.{self.__class__.__name__} {self.spawnpoint=} {self.rect.topleft=}>"
+
 
 class SimpleBullet(Projectile):
     def __init__(
@@ -93,6 +96,9 @@ class SimpleBullet(Projectile):
         super().blit()
 
 
+from dataclasses import dataclass
+from abc import ABC, abstractmethod
+
 @dataclass
 class BulletConfig:
     sprite: pygame.Surface | str | None = None
@@ -107,18 +113,23 @@ class BulletPatternBase(ABC):
         self.bullets = []
         self.pattern = pattern
         match self.pattern:
-            case "up": self.create_up_bullets(owner, config, number)
-            case "spread": self.create_spread_bullets(owner, config, number)
-            case "widespread": self.create_widespread_bullets(owner, config, number)
+            case "up": self.create_up_bullets(owner, config, number, **flags)
+            case "spread": self.create_spread_bullets(owner, config, number, **flags)
+            case "widespread": self.create_widespread_bullets(owner, config, number, **flags)
+        for bullet in self.bullets:
+            bullet.move_to_spawn()
 
     @abstractmethod
-    def create_up_bullets(self, owner: Entity, config: BulletConfig, number: int = 1, padding: int = 2, **flags) -> list[Projectile]: ...
+    def create_up_bullets(self, owner: Entity, config: BulletConfig, number: int = 1, offset: int = 10, **flags) -> list[Projectile]:
+        pass
 
     @abstractmethod
-    def create_spread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1) -> list[Projectile]: ...
+    def create_spread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1, **flags) -> list[Projectile]:
+        pass
 
     @abstractmethod
-    def create_widespread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1) -> list[Projectile]: ...
+    def create_widespread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1, **flags) -> list[Projectile]:
+        pass
 
 
 @dataclass
@@ -128,31 +139,42 @@ class SimpleBulletConfig(BulletConfig):
 
 
 class SimpleBulletPattern(BulletPatternBase):
-    def __init__(self, owner: Entity, config: SimpleBulletConfig,
-                 pattern: BulletPatterns = "up", number: int = 1,
-                 padding: int = 5, **flags):
-        super().__init__(owner, config, pattern, number, padding=padding, **flags)
+    def __init__(self, owner: Entity, config: SimpleBulletConfig, pattern: BulletPatterns = "up",
+                 number: int = 1, offset: int = 10, **flags):
+        super().__init__(owner, config, pattern, number, offset=offset, **flags)
 
-    @override
-    def create_up_bullets(self, owner: Entity, config: SimpleBulletConfig, number: int = 1, **flags) -> list[SimpleBullet]:
-        flags["padding"] = 20
-        print(number)
+    def create_up_bullets(self, owner: Entity, config: SimpleBulletConfig, number: int = 1, offset: int = 2, **flags) -> list[SimpleBullet]:
+        """Creates bullets evenly distributed at the specified spawn location with equal spacing (offset)."""
         for i in range(number):
-            bullet = SimpleBullet(owner, config.sprite, config.sprite_scale, config.spawn_location,
-                                  config.spawn_alignment, config.sprite_rect, config.speed, config.direction)
+            # Create the bullet instance
+            bullet = SimpleBullet(
+                owner,
+                config.sprite,
+                config.sprite_scale,
+                config.spawn_location,
+                config.spawn_alignment,
+                config.sprite_rect,
+                config.speed,
+                config.direction
+            )
             self.bullets.append(bullet)
-        total_width = 0
+
+        # Calculate the total width and center offset for distribution
+        total_width = sum(bullet.rect.width for bullet in self.bullets) + offset * (number - 1)
+        current_offset = -total_width / 2
+
         for bullet in self.bullets:
-            total_width += bullet.rect.width
-        total_width += flags["padding"] * (number - 1)
-        current_offset = owner.abs_rect.centerx - total_width / 2
-        for bullet in self.bullets:
-            bullet.spawnpoint[0] -= current_offset
-            current_offset -= bullet.rect.width + flags["padding"]
+            # Adjust bullet spawn positions for equal distribution
+            bullet.spawnpoint = [
+                owner.abs_rect.midtop[0] + current_offset,  # Adjust x-coordinate
+                bullet.spawnpoint[1]  # Keep y-coordinate as-is
+            ]
+            current_offset += bullet.rect.width + offset
+
         return self.bullets
 
-    @override
-    def create_spread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1) -> list[Projectile]: ...
+    def create_spread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1, **flags) -> list[Projectile]:
+        pass
 
-    @override
-    def create_widespread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1) -> list[Projectile]: ...
+    def create_widespread_bullets(self, owner: Entity, config: BulletConfig, number: int = 1, **flags) -> list[Projectile]:
+        pass
