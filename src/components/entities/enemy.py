@@ -34,7 +34,8 @@ class Enemy(Entity):
         self.health = stats.get("health", 1)
 
     @override
-    def update(self) -> None: ...
+    def update(self) -> None:
+        print(self.rect)
 
     @override
     def blit(self) -> None:

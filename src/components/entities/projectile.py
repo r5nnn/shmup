@@ -90,14 +90,11 @@ class SimpleBullet(Projectile):
             math.ceil(dty) if dty >= 0 else math.floor(dty)
         )
         super().update()
+        print(self.rect)
 
     @override
     def blit(self) -> None:
         super().blit()
-
-
-from dataclasses import dataclass
-from abc import ABC, abstractmethod
 
 @dataclass
 class BulletConfig:
@@ -170,6 +167,7 @@ class SimpleBulletPattern(BulletPatternBase):
                 bullet.spawnpoint[1]  # Keep y-coordinate as-is
             ]
             current_offset += bullet.rect.width + offset
+            print(bullet.abs_rect, bullet.rect)
 
         return self.bullets
 

@@ -22,10 +22,9 @@ class Game(State):
         )
         self.stats = TextArray(system_data.abs_window_rect.topright, (2, 1), 20, config)
         self.enemies = EntityGroup()
-        for i in range(100):
-            self.enemy = self.enemies.add(Enemy(self, (500+i*10, 800), "topleft",
-                               sprite=pygame.image.load(Load("image").path["oscarF"]),
-                                                        sprite_scale=2, rect_alignment="center"))
+        self.enemy = Enemy(self, (500, 800), "topleft", sprite=pygame.image.load(Load("image").path["oscarF"]),
+              sprite_scale=2, rect_alignment="center")
+        self.enemies.add(self.enemy)
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
         self.enemy_drops = EntityGroup()
