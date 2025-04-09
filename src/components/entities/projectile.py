@@ -90,7 +90,6 @@ class SimpleBullet(Projectile):
             math.ceil(dty) if dty >= 0 else math.floor(dty)
         )
         super().update()
-        print(self.rect)
 
     @override
     def blit(self) -> None:
@@ -113,8 +112,6 @@ class BulletPatternBase(ABC):
             case "up": self.create_up_bullets(owner, config, number, **flags)
             case "spread": self.create_spread_bullets(owner, config, number, **flags)
             case "widespread": self.create_widespread_bullets(owner, config, number, **flags)
-        for bullet in self.bullets:
-            bullet.move_to_spawn()
 
     @abstractmethod
     def create_up_bullets(self, owner: Entity, config: BulletConfig, number: int = 1, offset: int = 10, **flags) -> list[Projectile]:
@@ -142,32 +139,35 @@ class SimpleBulletPattern(BulletPatternBase):
 
     def create_up_bullets(self, owner: Entity, config: SimpleBulletConfig, number: int = 1, offset: int = 2, **flags) -> list[SimpleBullet]:
         """Creates bullets evenly distributed at the specified spawn location with equal spacing (offset)."""
-        for i in range(number):
+        bullets = []
+        for _ in range(number):
             # Create the bullet instance
             bullet = SimpleBullet(
                 owner,
                 config.sprite,
                 config.sprite_scale,
-                config.spawn_location,
+                [0, 0],  # Temporary spawn location, will be adjusted below
                 config.spawn_alignment,
                 config.sprite_rect,
                 config.speed,
                 config.direction
             )
-            self.bullets.append(bullet)
+            bullets.append(bullet)
 
         # Calculate the total width and center offset for distribution
-        total_width = sum(bullet.rect.width for bullet in self.bullets) + offset * (number - 1)
+        total_width = sum(bullet.rect.width for bullet in bullets) + offset * (number - 1)
         current_offset = -total_width / 2
 
-        for bullet in self.bullets:
+        for bullet in bullets:
             # Adjust bullet spawn positions for equal distribution
-            bullet.spawnpoint = [
+            new_spawn = [
                 owner.abs_rect.midtop[0] + current_offset,  # Adjust x-coordinate
-                bullet.spawnpoint[1]  # Keep y-coordinate as-is
+                owner.abs_rect.midtop[1]  # Use owner's y position
             ]
+            bullet.spawnpoint = new_spawn
+            bullet.move_to_spawn()  # Explicitly move bullet to new position
             current_offset += bullet.rect.width + offset
-            print(bullet.abs_rect, bullet.rect)
+            self.bullets.append(bullet)
 
         return self.bullets
 

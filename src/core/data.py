@@ -17,6 +17,7 @@ class FileModel(BaseModel):
     """Base class for pydantic models saving and loading from json files."""
 
     model_config = ConfigDict(extra="ignore")
+
     def save(self, directory: Path) -> None:
         """Saves the current config into the json file of directory specified.
 
@@ -60,7 +61,8 @@ class FileModel(BaseModel):
                     )
                 else:
                     logger.info(
-                        "File: %s empty. Saving and loading with defaults.", directory
+                        "File: %s empty. Saving and loading with defaults.",
+                        directory,
                     )
                 default_settings.save(directory)
                 return default_settings, True

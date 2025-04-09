@@ -24,7 +24,9 @@ class Game(State):
         self.enemies = EntityGroup()
         self.enemy = Enemy(self, (500, 800), "topleft", sprite=pygame.image.load(Load("image").path["oscarF"]),
               sprite_scale=2, rect_alignment="center")
-        self.enemies.add(self.enemy)
+        self.enemy1 = Enemy(self, (700, 800), "topleft", sprite=pygame.image.load(Load("image").path["oscarF"]),
+                           sprite_scale=2, rect_alignment="center")
+        self.enemies.add(self.enemy, self.enemy1)
         self.player_bullets = EntityGroup()
         self.enemy_bullets = EntityGroup()
         self.enemy_drops = EntityGroup()

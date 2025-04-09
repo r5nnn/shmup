@@ -24,8 +24,14 @@ class Item(Entity):
 
 
 class FallingItem(Item):
-    def __init__(self, speed: int, *args, acceleration: float = 500,
-                 max_speed: int | None = 100, **kwargs):
+    def __init__(
+        self,
+        speed: int,
+        *args,
+        acceleration: float = 500,
+        max_speed: int | None = 100,
+        **kwargs,
+    ):
         self.speed = speed
         super().__init__(*args, **kwargs)
         self.acceleration = acceleration

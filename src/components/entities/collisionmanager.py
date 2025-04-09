@@ -21,8 +21,8 @@ def update_collisions(game: "Game") -> None:
         game.player_bullets, game.enemies, dokilla=True, dokillb=True
     )
     handle_group_collisions(player_bullet_enemy_collisions)
-    print([sprite for sprite in game.player_bullets.sprites()])
-    print([enemy for enemy in game.enemies.sprites()])
+    print(*[f"{sprite} bullet" for sprite in game.player_bullets.sprites()])
+    print(*[f"{enemy} enemy" for enemy in game.enemies.sprites()])
 
     enemy_bullet_player_collisions = pygame.sprite.spritecollide(
         game.player, game.enemy_bullets, dokill=True

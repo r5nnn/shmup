@@ -18,7 +18,9 @@ if TYPE_CHECKING:
 
 class Entity(Sprite, ABC):
 
-    type: Literal["player", "enemy", "playerbullet", "enemybullet", "item"] | str
+    type: (
+        Literal["player", "enemy", "playerbullet", "enemybullet", "item"] | str
+    )
 
     def __init__(
         self,
@@ -54,7 +56,7 @@ class Entity(Sprite, ABC):
         if not (sprite or sprite_rect):
             msg = "Must provide either sprite or sprite_rect, not neither."
             raise ValueError(msg)
-        elif isinstance(sprite, str):
+        if isinstance(sprite, str):
             if sprite_scale > 1:
                 self.sprites = tuple(
                     pygame.transform.scale_by(sprite, 2)
@@ -71,7 +73,9 @@ class Entity(Sprite, ABC):
             else:
                 self.sprite = sprite
             if sprite_scale > 1:
-                self.sprite = pygame.transform.scale_by(self.sprite, sprite_scale)
+                self.sprite = pygame.transform.scale_by(
+                    self.sprite, sprite_scale
+                )
         self.rect = (
             sprite_rect if sprite_rect is not None else self.sprite.get_rect()
         )
@@ -146,6 +150,10 @@ class Entity(Sprite, ABC):
         The collided entity is passed as a parameter.
         """
 
+    def __repr__(self):
+        return (f"<{self.__class__.__module__}.{self.__class__.__name__} "
+                f"{self.spawnpoint=} {self.rect=}, {self.abs_rect=}>")
+
 
 class EntityGroup(pygame.sprite.Group):
     """Child class of `pygame.sprite.Group` that includes a `blit()` method."""
@@ -159,8 +167,14 @@ class EntityGroup(pygame.sprite.Group):
 
 
 class Animation:
-    def __init__(self, frame: str, frame_duration: int, frame_scale: int = 1, *,
-                 start_playing: bool = False):
+    def __init__(
+        self,
+        frame: str,
+        frame_duration: int,
+        frame_scale: int = 1,
+        *,
+        start_playing: bool = False,
+    ):
         if frame_scale > 1:
             self.frames = tuple(
                 pygame.transform.scale_by(sprite, 2)

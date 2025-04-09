@@ -24,8 +24,7 @@ class Enemy(Entity):
     """Base class for all the game's enemies."""
 
     def __init__(
-        self,
-        game: Game, *args, stats: EnemyStats | None = None, **kwargs
+        self, game: Game, *args, stats: EnemyStats | None = None, **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.type = "enemy"
@@ -35,7 +34,7 @@ class Enemy(Entity):
 
     @override
     def update(self) -> None:
-        print(self.rect)
+        ...
 
     @override
     def blit(self) -> None:
@@ -48,7 +47,15 @@ class Enemy(Entity):
             self.kill()
 
     def drop_item(self) -> None:
-        self.game.enemy_drops.add(FallingItem(
-            0, self.abs_rect.center, acceleration=7, max_speed=50,
-            sprite=pygame.image.load(Load("image").path["level"]).convert(),
-            sprite_scale=2))
+        self.game.enemy_drops.add(
+            FallingItem(
+                1,
+                self.abs_rect.center,
+                acceleration=7,
+                max_speed=30,
+                sprite=pygame.image.load(
+                    Load("image").path["level"]
+                ).convert(),
+                sprite_scale=2,
+            )
+        )
